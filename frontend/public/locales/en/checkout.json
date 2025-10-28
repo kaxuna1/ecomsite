@@ -1,0 +1,20 @@
+{
+  "title": "Secure Checkout",
+  "intro": "After confirming your order, you will receive an email and SMS with manual payment instructions. Orders ship once payment is verified by our concierge team.",
+  "contactLegend": "Contact Information",
+  "nameLabel": "Full name",
+  "nameError": "Please enter your name",
+  "emailLabel": "Email address",
+  "emailError": "Email is required",
+  "phoneLabel": "Phone (optional for SMS updates)",
+  "shippingLegend": "Shipping",
+  "addressLabel": "Address",
+  "addressError": "Address is required",
+  "notesLabel": "Order notes (optional)",
+  "orderTotal": "Order Total",
+  "manualProcessing": "Payment is processed manually for bespoke verification. Expect a confirmation within 24 hours.",
+  "submitting": "Submitting…",
+  "placeOrder": "Place order",
+  "error": "An error occurred. Please try again or contact our concierge.",
+  "success": "Thank you. We have emailed manual payment instructions and will ship once confirmed."
+}

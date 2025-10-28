@@ -107,6 +107,35 @@ export async function deleteCMSPage(pageId: number): Promise<void> {
   await api.delete(`/cms/pages/${pageId}`);
 }
 
+/**
+ * Create a page with blocks from a template
+ */
+export async function createCMSPageWithBlocks(
+  pagePayload: CreatePagePayload,
+  blocks: Array<{ blockType: string; blockKey: string; content: any; displayOrder: number }>
+): Promise<CMSPage> {
+  // First create the page
+  const newPage = await createCMSPage(pagePayload);
+
+  // Then create all blocks for the page
+  if (blocks.length > 0) {
+    await Promise.all(
+      blocks.map(block =>
+        createCMSBlock({
+          pageId: newPage.id,
+          blockType: block.blockType,
+          blockKey: block.blockKey,
+          displayOrder: block.displayOrder,
+          content: block.content,
+          isEnabled: true
+        })
+      )
+    );
+  }
+
+  return newPage;
+}
+
 // ============================================================================
 // BLOCK MANAGEMENT
 // ============================================================================

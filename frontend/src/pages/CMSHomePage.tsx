@@ -3,14 +3,17 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { fetchHomePage } from '../api/cms';
 import BlockRenderer from '../components/cms/BlockRenderer';
 
 export default function CMSHomePage() {
-  // Fetch CMS homepage content
+  const { i18n } = useTranslation();
+
+  // Fetch CMS homepage content with current language
   const { data: pageData, isLoading, error } = useQuery({
-    queryKey: ['cms-home'],
-    queryFn: fetchHomePage,
+    queryKey: ['cms-home', i18n.language],
+    queryFn: () => fetchHomePage(i18n.language),
     staleTime: 5 * 60 * 1000 // Cache for 5 minutes
   });
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18n from '../i18n/config';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
@@ -6,6 +7,13 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
+    // Add language parameter to all requests
+    const currentLanguage = i18n.language || 'en';
+    config.params = {
+      ...config.params,
+      lang: currentLanguage
+    };
+
     // Check if we're in the admin area
     const isInAdminArea = window.location.pathname.startsWith('/admin');
 

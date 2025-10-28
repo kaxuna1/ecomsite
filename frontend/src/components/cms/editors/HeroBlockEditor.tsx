@@ -192,6 +192,70 @@ export default function HeroBlockEditor({ content, onChange }: HeroBlockEditorPr
         />
       </FormField>
 
+      {/* Hero Image Settings */}
+      <div className="space-y-4 p-4 bg-jade/5 border border-jade/20 rounded-xl">
+        <div className="flex items-center gap-2">
+          <svg className="h-5 w-5 text-jade" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <h4 className="font-semibold text-champagne">Hero Image</h4>
+        </div>
+
+        <FormField label="Background Image URL" helpText="Image for background or side display">
+          <input
+            type="url"
+            value={formData.backgroundImage || ''}
+            onChange={(e) => handleChange('backgroundImage', e.target.value)}
+            placeholder="https://example.com/image.jpg"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-jade transition-colors font-mono text-sm"
+          />
+        </FormField>
+
+        <FormField label="Image Alt Text" helpText="Accessibility description">
+          <input
+            type="text"
+            value={formData.backgroundImageAlt || ''}
+            onChange={(e) => handleChange('backgroundImageAlt', e.target.value)}
+            placeholder="e.g., Luxury scalp care products"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-jade transition-colors"
+          />
+        </FormField>
+
+        {formData.backgroundImage && (
+          <div className="relative rounded-lg overflow-hidden border border-white/10">
+            <img
+              src={formData.backgroundImage}
+              alt={formData.backgroundImageAlt || 'Hero image preview'}
+              className="w-full h-48 object-cover"
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23374151" width="400" height="300"/%3E%3Ctext fill="%239CA3AF" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImage not found%3C/text%3E%3C/svg%3E';
+              }}
+            />
+            <div className="absolute bottom-2 right-2 px-2 py-1 bg-midnight/80 backdrop-blur-sm rounded text-xs text-champagne/80">
+              Preview
+            </div>
+          </div>
+        )}
+
+        {(formData.template === 'full-width-overlay' || formData.template === 'gradient-modern') && (
+          <FormField label="Overlay Opacity" helpText="Darkness of text overlay (0-100)">
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={formData.overlayOpacity || 50}
+                onChange={(e) => handleChange('overlayOpacity', parseInt(e.target.value))}
+                className="flex-1 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-jade"
+              />
+              <span className="text-champagne font-mono text-sm w-12 text-right">
+                {formData.overlayOpacity || 50}%
+              </span>
+            </div>
+          </FormField>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <FormField label="CTA Button Text" required>
           <input

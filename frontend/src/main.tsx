@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import App from './App';
 import './styles/global.css';
+import './i18n/config'; // Initialize i18next configuration
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { I18nProvider } from './context/I18nContext';

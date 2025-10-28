@@ -1,5 +1,6 @@
-import { Suspense, lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
+import { Route, Routes, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Layout from './components/Layout';
 import LoadingScreen from './components/LoadingScreen';
@@ -8,6 +9,7 @@ import AuthGuard from './components/AuthGuard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const HomePage = lazy(() => import('./pages/CMSHomePage'));
+const CMSPage = lazy(() => import('./pages/CMSPage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const NewArrivalsPage = lazy(() => import('./pages/NewArrivalsPage'));
 const BestSellersPage = lazy(() => import('./pages/BestSellersPage'));
@@ -37,55 +39,97 @@ const AdminCMSInlineEditor = lazy(() => import('./pages/admin/AdminCMSInlineEdit
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const RegularUsers = lazy(() => import('./pages/admin/RegularUsers'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminTranslations = lazy(() => import('./pages/admin/AdminTranslations'));
+const AdminCMSTranslations = lazy(() => import('./pages/admin/AdminCMSTranslations'));
+
+// Language wrapper component to sync i18n with URL
+function LanguageWrapper() {
+  const { lang } = useParams<{ lang: string }>();
+  const { i18n } = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (lang && ['en', 'ka'].includes(lang) && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    } else if (lang && !['en', 'ka'].includes(lang)) {
+      // Invalid language, redirect to English
+      navigate('/en', { replace: true });
+    }
+  }, [lang, i18n, navigate]);
+
+  return null;
+}
+
+// Component to redirect non-language-prefixed URLs
+function LanguageRedirect() {
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // If path doesn't start with /admin and isn't already language-prefixed
+  if (!pathname.startsWith('/admin')) {
+    return <Navigate to={`/en${pathname}`} replace />;
+  }
+
+  return null;
+}
 
 function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <Routes>
-        {/* Public routes with layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="new-arrivals" element={<NewArrivalsPage />} />
-          <Route path="best-sellers" element={<BestSellersPage />} />
-          <Route path="sale" element={<SalePage />} />
-          <Route path="products/:id" element={<ProductDetailPage />} />
-          <Route path="cart" element={<CartPage />} />
-          <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="order-success" element={<OrderSuccessPage />} />
+        {/* Redirect root to default language */}
+        <Route path="/" element={<Navigate to="/en" replace />} />
 
-          {/* Protected account routes with layout */}
-          <Route
-            path="account/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="account/orders"
-            element={
-              <ProtectedRoute>
-                <OrdersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="account/favorites"
-            element={
-              <ProtectedRoute>
-                <FavoritesPage />
-              </ProtectedRoute>
-            }
-          />
+        {/* Language-prefixed routes */}
+        <Route path="/:lang">
+          {/* Public routes with layout */}
+          <Route element={<><LanguageWrapper /><Layout /></>}>
+            <Route index element={<HomePage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="new-arrivals" element={<NewArrivalsPage />} />
+            <Route path="best-sellers" element={<BestSellersPage />} />
+            <Route path="sale" element={<SalePage />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="order-success" element={<OrderSuccessPage />} />
+
+            {/* Protected account routes with layout */}
+            <Route
+              path="account/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="account/orders"
+              element={
+                <ProtectedRoute>
+                  <OrdersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="account/favorites"
+              element={
+                <ProtectedRoute>
+                  <FavoritesPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Dynamic CMS pages - must be last to avoid conflicts */}
+            <Route path=":slug" element={<CMSPage />} />
+          </Route>
+
+          {/* Auth routes without layout */}
+          <Route path="login" element={<><LanguageWrapper /><LoginPage /></>} />
+          <Route path="signup" element={<><LanguageWrapper /><SignupPage /></>} />
         </Route>
 
-        {/* Auth routes without layout */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-
-        {/* Admin routes */}
+        {/* Admin routes - not language-specific */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin"
@@ -104,7 +148,12 @@ function App() {
           <Route path="cms/inline-edit/:id" element={<AdminCMSInlineEditor />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="customers" element={<RegularUsers />} />
+          <Route path="translations" element={<AdminTranslations />} />
+          <Route path="cms-translations" element={<AdminCMSTranslations />} />
         </Route>
+
+        {/* Catch-all: redirect any non-language-prefixed paths to /en/{path} */}
+        <Route path="*" element={<LanguageRedirect />} />
       </Routes>
     </Suspense>
   );

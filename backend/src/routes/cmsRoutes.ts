@@ -28,7 +28,10 @@ const upload = multer({
  */
 router.get(
   '/pages/:slug/public',
-  param('slug').isString().notEmpty(),
+  [
+    param('slug').isString().notEmpty(),
+    query('lang').optional().isString()
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -36,7 +39,8 @@ router.get(
     }
 
     try {
-      const page = await cmsService.getPublicPage(req.params.slug);
+      const language = (req.query.lang as string) || 'en';
+      const page = await cmsService.getPublicPage(req.params.slug, language);
       if (!page) {
         return res.status(404).json({ message: 'Page not found' });
       }
@@ -230,6 +234,111 @@ router.delete(
     } catch (error) {
       console.error('Error deleting page:', error);
       res.status(500).json({ message: 'Error deleting page' });
+    }
+  }
+);
+
+// ============================================================================
+// PAGE TRANSLATION ROUTES (Admin only)
+// ============================================================================
+
+/**
+ * GET /api/cms/pages/:id/translations
+ * Get all translations for a page
+ */
+router.get(
+  '/pages/:id/translations',
+  adminAuth,
+  param('id').isInt({ min: 1 }).toInt(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translations = await cmsService.getAllPageTranslations(parseInt(req.params.id));
+      res.json(translations);
+    } catch (error) {
+      console.error('Error fetching page translations:', error);
+      res.status(500).json({ message: 'Error fetching page translations' });
+    }
+  }
+);
+
+/**
+ * GET /api/cms/pages/:id/translations/:lang
+ * Get a specific translation for a page
+ */
+router.get(
+  '/pages/:id/translations/:lang',
+  adminAuth,
+  [
+    param('id').isInt({ min: 1 }).toInt(),
+    param('lang').isString().notEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translation = await cmsService.getPageTranslation(
+        parseInt(req.params.id),
+        req.params.lang
+      );
+
+      if (!translation) {
+        return res.status(404).json({ message: 'Translation not found' });
+      }
+
+      res.json(translation);
+    } catch (error) {
+      console.error('Error fetching page translation:', error);
+      res.status(500).json({ message: 'Error fetching page translation' });
+    }
+  }
+);
+
+/**
+ * POST /api/cms/pages/:id/translations/:lang
+ * Create or update a page translation
+ */
+router.post(
+  '/pages/:id/translations/:lang',
+  adminAuth,
+  [
+    param('id').isInt({ min: 1 }).toInt(),
+    param('lang').isString().notEmpty(),
+    body('title').isString().notEmpty(),
+    body('slug').isString().notEmpty().matches(/^[a-z0-9-]+$/),
+    body('metaTitle').optional().isString(),
+    body('metaDescription').optional().isString()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translation = await cmsService.createPageTranslation(
+        parseInt(req.params.id),
+        req.params.lang,
+        req.body
+      );
+
+      res.status(201).json(translation);
+    } catch (error: any) {
+      console.error('Error creating page translation:', error);
+      if (error.code === '23505') {
+        return res.status(409).json({ message: 'Translation with this slug already exists for this language' });
+      }
+      if (error.code === '23503') {
+        return res.status(404).json({ message: 'Page or language not found' });
+      }
+      res.status(500).json({ message: 'Error creating page translation' });
     }
   }
 );
@@ -491,6 +600,105 @@ router.post(
     } catch (error) {
       console.error('Error restoring block version:', error);
       res.status(500).json({ message: 'Error restoring block version' });
+    }
+  }
+);
+
+// ============================================================================
+// BLOCK TRANSLATION ROUTES (Admin only)
+// ============================================================================
+
+/**
+ * GET /api/cms/blocks/:id/translations
+ * Get all translations for a block
+ */
+router.get(
+  '/blocks/:id/translations',
+  adminAuth,
+  param('id').isInt({ min: 1 }).toInt(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translations = await cmsService.getAllBlockTranslations(parseInt(req.params.id));
+      res.json(translations);
+    } catch (error) {
+      console.error('Error fetching block translations:', error);
+      res.status(500).json({ message: 'Error fetching block translations' });
+    }
+  }
+);
+
+/**
+ * GET /api/cms/blocks/:id/translations/:lang
+ * Get a specific translation for a block
+ */
+router.get(
+  '/blocks/:id/translations/:lang',
+  adminAuth,
+  [
+    param('id').isInt({ min: 1 }).toInt(),
+    param('lang').isString().notEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translation = await cmsService.getBlockTranslation(
+        parseInt(req.params.id),
+        req.params.lang
+      );
+
+      if (!translation) {
+        return res.status(404).json({ message: 'Translation not found' });
+      }
+
+      res.json(translation);
+    } catch (error) {
+      console.error('Error fetching block translation:', error);
+      res.status(500).json({ message: 'Error fetching block translation' });
+    }
+  }
+);
+
+/**
+ * POST /api/cms/blocks/:id/translations/:lang
+ * Create or update a block translation
+ */
+router.post(
+  '/blocks/:id/translations/:lang',
+  adminAuth,
+  [
+    param('id').isInt({ min: 1 }).toInt(),
+    param('lang').isString().notEmpty(),
+    body('content').isObject().notEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const translation = await cmsService.createBlockTranslation(
+        parseInt(req.params.id),
+        req.params.lang,
+        req.body.content
+      );
+
+      res.status(201).json(translation);
+    } catch (error: any) {
+      console.error('Error creating block translation:', error);
+      if (error.code === '23503') {
+        return res.status(404).json({ message: 'Block or language not found' });
+      }
+      res.status(500).json({ message: 'Error creating block translation' });
     }
   }
 );

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import {
   ShoppingBagIcon,
   MagnifyingGlassIcon,
@@ -18,20 +19,34 @@ import {
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { useI18n } from '../context/I18nContext';
+import { useLocalizedPath } from '../hooks/useLocalizedPath';
 import { getFavorites } from '../api/favorites';
 import LanguageSwitcher from './LanguageSwitcher';
+import SearchModal from './SearchModal';
 
 function Navbar() {
   const { items, total, removeItem } = useCart();
   const { user, isAuthenticated, userLogout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const { t } = useI18n();
+  const { t } = useTranslation('common');
+  const localizedPath = useLocalizedPath();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [cartPreviewOpen, setCartPreviewOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+
+  // CMD+K / CTRL+K keyboard shortcut to open search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Fetch favorites count
   const { data: favorites } = useQuery({
@@ -43,17 +58,17 @@ function Navbar() {
   const favoritesCount = favorites?.length || 0;
 
   const navigation = [
-    { name: t('nav.home'), href: '/' },
-    { name: t('nav.products'), href: '/products' },
-    { name: 'New Arrivals', href: '/new-arrivals' },
-    { name: 'Best Sellers', href: '/best-sellers' },
-    { name: 'Sale', href: '/sale' }
+    { name: t('nav.home'), href: localizedPath('/') },
+    { name: t('nav.products'), href: localizedPath('/products') },
+    { name: 'New Arrivals', href: localizedPath('/new-arrivals') },
+    { name: 'Best Sellers', href: localizedPath('/best-sellers') },
+    { name: 'Sale', href: localizedPath('/sale') }
   ];
 
   const userMenuItems = [
-    { name: 'Profile', href: '/account/profile', icon: UserCircleIcon },
-    { name: 'Orders', href: '/account/orders', icon: ShoppingBagIcon },
-    { name: 'Favorites', href: '/account/favorites', icon: HeartIcon }
+    { name: 'Profile', href: localizedPath('/account/profile'), icon: UserCircleIcon },
+    { name: 'Orders', href: localizedPath('/account/orders'), icon: ShoppingBagIcon },
+    { name: 'Favorites', href: localizedPath('/account/favorites'), icon: HeartIcon }
   ];
 
   return (
@@ -81,13 +96,13 @@ function Navbar() {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="group flex items-center">
+            <Link to={localizedPath('/')} className="group flex items-center">
               <motion.span
                 className="text-2xl font-display uppercase tracking-[0.3em] text-midnight transition-colors group-hover:text-jade lg:text-3xl"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
-                {t('common.brand')}
+                {t('brand')}
               </motion.span>
             </Link>
 
@@ -123,48 +138,19 @@ function Navbar() {
 
             {/* Right Side Icons */}
             <div className="flex items-center gap-4 lg:gap-6">
-              {/* Search */}
-              <div className="relative">
-                {searchOpen ? (
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 200, opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
-                    className="flex items-center"
-                  >
-                    <input
-                      type="search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search products..."
-                      className="w-full rounded-full border border-champagne/60 bg-champagne/20 px-4 py-2 pr-10 text-sm text-midnight placeholder-midnight/50 focus:border-jade focus:outline-none focus:ring-2 focus:ring-jade/20"
-                      autoFocus
-                      onBlur={() => {
-                        if (!searchQuery) setSearchOpen(false);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setSearchOpen(false);
-                      }}
-                      className="absolute right-3 text-midnight/50 hover:text-midnight"
-                    >
-                      <XMarkIcon className="h-4 w-4" />
-                    </button>
-                  </motion.div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setSearchOpen(true)}
-                    className="group relative p-2 text-midnight/70 transition-colors hover:text-jade"
-                    aria-label="Search"
-                  >
-                    <MagnifyingGlassIcon className="h-6 w-6" />
-                  </button>
-                )}
-              </div>
+              {/* Search Button */}
+              <button
+                type="button"
+                onClick={() => setSearchModalOpen(true)}
+                className="group relative flex items-center gap-2 p-2 text-midnight/70 transition-colors hover:text-jade"
+                aria-label="Search"
+                title="Search (Cmd+K)"
+              >
+                <MagnifyingGlassIcon className="h-6 w-6" />
+                <span className="hidden lg:flex items-center gap-1 text-xs text-midnight/40">
+                  <kbd className="px-1.5 py-0.5 bg-champagne/30 rounded text-[10px] font-mono">⌘K</kbd>
+                </span>
+              </button>
 
               {/* Account/User Menu */}
               {isAuthenticated && user ? (
@@ -229,7 +215,7 @@ function Navbar() {
                 </div>
               ) : (
                 <Link
-                  to="/login"
+                  to={localizedPath('/login')}
                   className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-midnight/70 transition-colors hover:text-jade"
                   aria-label="Login"
                 >
@@ -240,7 +226,7 @@ function Navbar() {
 
               {/* Wishlist */}
               <Link
-                to="/account/favorites"
+                to={localizedPath('/account/favorites')}
                 className="group relative hidden p-2 text-midnight/70 transition-colors hover:text-jade sm:block"
                 aria-label="Wishlist"
               >
@@ -267,7 +253,7 @@ function Navbar() {
                 onMouseLeave={() => setCartPreviewOpen(false)}
               >
                 <Link
-                  to="/cart"
+                  to={localizedPath('/cart')}
                   className="group relative flex items-center gap-2 p-2 text-midnight/70 transition-colors hover:text-jade"
                   aria-label={`Cart (${itemCount} items)`}
                 >
@@ -365,7 +351,7 @@ function Navbar() {
                           <span className="font-bold text-jade">${total.toFixed(2)}</span>
                         </div>
                         <Link
-                          to="/cart"
+                          to={localizedPath('/cart')}
                           className="block w-full rounded-full bg-jade py-3 text-center text-sm font-semibold text-white transition-all hover:bg-jade/90 hover:shadow-lg"
                         >
                           View Cart
@@ -406,7 +392,7 @@ function Navbar() {
             >
               <div className="flex items-center justify-between border-b border-champagne/40 p-6">
                 <span className="font-display text-2xl uppercase tracking-[0.3em] text-midnight">
-                  {t('common.brand')}
+                  {t('brand')}
                 </span>
                 <button
                   type="button"
@@ -484,7 +470,7 @@ function Navbar() {
                 ) : (
                   <>
                     <Link
-                      to="/login"
+                      to={localizedPath('/login')}
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
                     >
@@ -492,7 +478,7 @@ function Navbar() {
                       <span>Login</span>
                     </Link>
                     <Link
-                      to="/signup"
+                      to={localizedPath('/signup')}
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-jade/10 text-jade hover:bg-jade/20"
                     >
@@ -506,6 +492,9 @@ function Navbar() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
     </>
   );
 }

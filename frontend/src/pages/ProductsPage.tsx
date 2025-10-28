@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { fetchProducts } from '../api/products';
@@ -14,10 +15,19 @@ function ProductsPage() {
   const { data: products, isLoading } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
   const { t } = useI18n();
   const prefersReducedMotion = useReducedMotion();
+  const [searchParams] = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
+
+  // Initialize search query from URL parameter on mount
+  useEffect(() => {
+    const searchParam = searchParams.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [searchParams]);
 
   // Get unique categories
   const categories = useMemo(() => {

@@ -1,0 +1,76 @@
+{
+  "brand": "Luxia",
+  "brandTagline": "Luxia Products — Elevated scalp care",
+  "language": "Language",
+  "loading": "Loading content…",
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "sale": "Sale",
+    "cart": "Cart",
+    "cartWithCount": "Cart ({{count}})",
+    "admin": "Admin",
+    "account": "Account",
+    "login": "Login",
+    "signup": "Sign up",
+    "logout": "Logout"
+  },
+  "hero": {
+    "label": "Scalp Products",
+    "title": "Illuminate your hair from the root",
+    "description": "Our clinically proven serums, masks, and massage tools restore balance to the scalp biome, delivering shine and resilience worthy of a crown.",
+    "promise": "Clinical-grade scalp rituals, delivered with concierge care.",
+    "ctaPrimary": "Explore collections",
+    "ctaSecondary": "Reserve consultation",
+    "highlights": {
+      "clinicalTitle": "Clinically vetted actives",
+      "clinicalDescription": "Dermatologist-reviewed ingredients calm irritation and rebalance the scalp microbiome without silicones or sulfates.",
+      "ritualTitle": "Modern ritual essentials",
+      "ritualDescription": "Layerable textures and precision tools turn nightly care into a restorative ceremony."
+    },
+    "metrics": {
+      "consultations": "Personal consultations completed",
+      "satisfaction": "Client satisfaction rating",
+      "turnaround": "Average concierge response time"
+    }
+  },
+  "home": {
+    "precisionTitle": "Precision-formulated for sensitive scalps",
+    "precisionBody": "Luxia's bioactive concentrates feature marine stem cells, cold-pressed adaptogens, and dermatologically vetted peptides. Each formula is fragrance-free, color-safe, and tested on all hair textures.",
+    "designedTitle": "Products designed by trichologists",
+    "designedBody": "Our experts blend holistic massage therapy with targeted actives to calm inflammation, reduce shedding, and accelerate healthy growth cycles.",
+    "featuredHeading": "Signature Products",
+    "featuredIntro": "From detoxifying scalp masks to overnight serums, our products are meticulously packaged for elevated vanities and travel essentials alike.",
+    "featuredProducts": {
+      "celestialName": "Celestial Detox Mask",
+      "celestialDescription": "Volcanic enzymes and willow bark gently exfoliate buildup while micro algae replenish essential minerals.",
+      "nocturneName": "Nocturne Renewal Serum",
+      "nocturneDescription": "Peptide-rich serum that floods the follicles with antioxidants and soothing ceramides overnight.",
+      "luminousName": "Luminous Scalp Tonic",
+      "luminousDescription": "Cooling tonic balancing sebum and pH while infusing shine with sustainably sourced sea kelp."
+    },
+    "researchHeading": "Backed by mindful research",
+    "researchIntro": "Our formulations are reviewed with dermatologists and mindfulness coaches to harmonize results with product care. Each release reflects a six-month testing cadence with real clients.",
+    "researchPoints": {
+      "phBalance": "98% reported calmer, balanced scalps after 4 weeks",
+      "shedding": "87% saw visibly reduced shedding by week 6",
+      "product": "Consistent product care improved overall hair confidence in 9 of 10 clients"
+    },
+    "testimonialsHeading": "Voices from the collection",
+    "testimonials": {
+      "avaQuote": "\"Luxia transformed my nightly routine into a ceremony. The serum soothed my scalp within days and the glow is unreal.\"",
+      "avaName": "Ava D., creative director",
+      "lailaQuote": "\"The consultation experience felt so personal. Their team listened to my scalp struggles and paired me with a product lineup that actually works.\"",
+      "lailaName": "Laila K., textile artist",
+      "theoQuote": "\"Every product feels purposeful. I love the botanical notes and the instant relief from tightness after workouts.\"",
+      "theoName": "Theo M., movement coach"
+    }
+  },
+  "footer": {
+    "visit": "Visit",
+    "stay": "Stay in touch",
+    "crafted": "© {{year}} Luxia Products. Crafted with reverence for healthy scalps."
+  }
+}

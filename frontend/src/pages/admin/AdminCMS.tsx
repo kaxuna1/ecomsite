@@ -1,25 +1,38 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, EyeIcon, GlobeAltIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/outline';
 import {
   fetchCMSPages,
   fetchPageBlocks,
+  createCMSPageWithBlocks,
   updateCMSPage,
   deleteCMSPage,
   fetchFooterSettings,
   updateFooterSettings,
   type CMSPage,
   type CMSBlock,
-  type FooterSettings
+  type FooterSettings,
+  type CreatePagePayload
 } from '../../api/cmsAdmin';
 import FooterEditor from '../../components/cms/editors/FooterEditor';
+import { PAGE_TEMPLATES, type PageTemplate } from '../../config/pageTemplates';
 
 export default function AdminCMS() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
   const [showFooterEditor, setShowFooterEditor] = useState(false);
+  const [showNewPageModal, setShowNewPageModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate>(PAGE_TEMPLATES[0]);
+  const [newPageData, setNewPageData] = useState({
+    title: '',
+    slug: '',
+    metaDescription: '',
+    metaKeywords: '',
+    isPublished: false
+  });
 
   const { data: pages, isLoading } = useQuery({
     queryKey: ['cms-pages'],
@@ -61,6 +74,27 @@ export default function AdminCMS() {
     }
   });
 
+  const createPageMutation = useMutation({
+    mutationFn: ({ pagePayload, blocks }: {
+      pagePayload: CreatePagePayload;
+      blocks: Array<{ blockType: string; blockKey: string; content: any; displayOrder: number }>
+    }) => createCMSPageWithBlocks(pagePayload, blocks),
+    onSuccess: (newPage) => {
+      queryClient.invalidateQueries({ queryKey: ['cms-pages'] });
+      setShowNewPageModal(false);
+      setNewPageData({
+        title: '',
+        slug: '',
+        metaDescription: '',
+        metaKeywords: '',
+        isPublished: false
+      });
+      setSelectedTemplate(PAGE_TEMPLATES[0]);
+      // Redirect to inline editor for the new page
+      navigate(`/admin/cms/inline-edit/${newPage.id}`);
+    }
+  });
+
   const handleToggleStatus = (page: CMSPage) => {
     const newStatus = !page.isPublished;
     statusMutation.mutate({ pageId: page.id, isPublished: newStatus });
@@ -78,6 +112,59 @@ export default function AdminCMS() {
 
   const handleFooterSave = () => {
     setShowFooterEditor(false);
+  };
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+  };
+
+  const handleTemplateSelect = (template: PageTemplate) => {
+    setSelectedTemplate(template);
+    // Auto-fill fields if blank
+    if (template.id !== 'blank') {
+      setNewPageData(prev => ({
+        ...prev,
+        title: prev.title || template.name,
+        slug: prev.slug || template.suggestedSlug,
+        metaDescription: prev.metaDescription || template.metaDescription
+      }));
+    }
+  };
+
+  const handleTitleChange = (title: string) => {
+    setNewPageData({
+      ...newPageData,
+      title,
+      slug: generateSlug(title)
+    });
+  };
+
+  const handleCreatePage = () => {
+    if (!newPageData.title.trim() || !newPageData.slug.trim()) {
+      alert('Please enter a page title and slug');
+      return;
+    }
+
+    createPageMutation.mutate({
+      pagePayload: {
+        title: newPageData.title,
+        slug: newPageData.slug,
+        metaDescription: newPageData.metaDescription || undefined,
+        metaKeywords: newPageData.metaKeywords || undefined,
+        isPublished: newPageData.isPublished
+      },
+      blocks: selectedTemplate.blocks
+    });
+  };
+
+  const handleViewLive = (slug: string) => {
+    const url = `/${slug}`;
+    window.open(url, '_blank');
   };
 
   if (isLoading) {
@@ -99,12 +186,13 @@ export default function AdminCMS() {
           >
             Edit Footer
           </button>
-          <Link
-            to="/admin/cms/new"
-            className="px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+          <button
+            onClick={() => setShowNewPageModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
           >
-            Create New Page
-          </Link>
+            <PlusIcon className="h-5 w-5" />
+            New Page
+          </button>
         </div>
       </div>
 
@@ -123,44 +211,63 @@ export default function AdminCMS() {
                 }`}
                 onClick={() => setSelectedPageId(page.id)}
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-champagne">{page.title}</h3>
-                    <p className="text-sm text-champagne/60 mt-1">/{page.slug}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <GlobeAltIcon className="h-4 w-4 text-jade" />
+                      <p className="text-sm text-champagne/70 font-mono">/{page.slug}</p>
+                    </div>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                       page.isPublished
                         ? 'bg-jade/20 text-jade'
-                        : 'bg-champagne/20 text-champagne'
+                        : 'bg-amber-500/20 text-amber-400'
                     }`}
                   >
-                    {page.isPublished ? 'published' : 'draft'}
+                    {page.isPublished ? 'Published' : 'Draft'}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
+                  {page.isPublished && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewLive(page.slug);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-jade text-midnight rounded hover:bg-jade/90 transition-colors text-sm font-semibold"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                      View Live
+                    </button>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleToggleStatus(page);
                     }}
-                    className="px-3 py-1 bg-jade/20 text-jade rounded hover:bg-jade/30 transition-colors text-sm"
+                    className={`px-3 py-1 rounded hover:bg-opacity-80 transition-colors text-sm ${
+                      page.isPublished
+                        ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'
+                        : 'bg-jade/20 text-jade hover:bg-jade/30'
+                    }`}
                   >
                     {page.isPublished ? 'Unpublish' : 'Publish'}
                   </button>
                   <Link
                     to={`/admin/cms/inline-edit/${page.id}`}
-                    className="px-3 py-1 bg-jade text-midnight rounded hover:bg-jade/90 transition-colors text-sm font-semibold"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    ✨ Inline Edit
-                  </Link>
-                  <Link
-                    to={`/admin/cms/edit/${page.id}`}
                     className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Advanced Edit
+                    Inline Edit
+                  </Link>
+                  <Link
+                    to={`/admin/cms/edit/${page.id}`}
+                    className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors text-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Advanced
                   </Link>
                   <button
                     onClick={(e) => {
@@ -261,6 +368,215 @@ export default function AdminCMS() {
                   onSave={handleFooterSave}
                   isSaving={footerMutation.isPending}
                 />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* New Page Modal */}
+      <AnimatePresence>
+        {showNewPageModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowNewPageModal(false)}
+              className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-40"
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-midnight border border-white/10 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-jade/10 to-champagne/10 flex-shrink-0">
+                  <div>
+                    <h2 className="font-display text-2xl text-champagne">Create New Page</h2>
+                    <p className="text-sm text-champagne/60 mt-1">Add a new page to your site</p>
+                  </div>
+                  <button
+                    onClick={() => setShowNewPageModal(false)}
+                    className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+
+                {/* Content - Scrollable */}
+                <div className="px-6 py-6 space-y-5 overflow-y-auto flex-1">
+                  {/* Template Selector */}
+                  <div>
+                    <label className="block text-sm font-semibold text-champagne mb-3">
+                      Start with Template
+                    </label>
+                    <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2">
+                      {PAGE_TEMPLATES.map((template) => (
+                        <button
+                          key={template.id}
+                          type="button"
+                          onClick={() => handleTemplateSelect(template)}
+                          className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+                            selectedTemplate.id === template.id
+                              ? 'border-jade bg-jade/10 shadow-lg'
+                              : 'border-white/10 bg-white/5 hover:border-jade/50 hover:bg-white/10'
+                          }`}
+                        >
+                          {selectedTemplate.id === template.id && (
+                            <div className="absolute top-2 right-2 p-1 bg-jade rounded-full">
+                              <CheckIcon className="h-3 w-3 text-midnight" />
+                            </div>
+                          )}
+                          <div className="text-3xl mb-2">{template.icon}</div>
+                          <h4 className="font-semibold text-champagne text-sm mb-1">
+                            {template.name}
+                          </h4>
+                          <p className="text-xs text-champagne/60 line-clamp-2">
+                            {template.description}
+                          </p>
+                          {template.blocks.length > 0 && (
+                            <div className="mt-2 flex items-center gap-1.5 text-xs text-jade">
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                              </svg>
+                              {template.blocks.length} blocks
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-xs text-champagne/50">
+                      {selectedTemplate.id === 'blank'
+                        ? 'You can add blocks after creating the page'
+                        : `This template includes ${selectedTemplate.blocks.length} pre-configured blocks`
+                      }
+                    </p>
+                  </div>
+
+                  {/* Page Title */}
+                  <div>
+                    <label className="block text-sm font-semibold text-champagne mb-2">
+                      Page Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={newPageData.title}
+                      onChange={(e) => handleTitleChange(e.target.value)}
+                      placeholder="e.g., About Us, Contact, Services"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all"
+                      autoFocus
+                    />
+                    <p className="mt-1.5 text-xs text-champagne/50">
+                      This will be displayed in the browser tab and search results
+                    </p>
+                  </div>
+
+                  {/* URL Slug */}
+                  <div>
+                    <label className="block text-sm font-semibold text-champagne mb-2">
+                      URL Slug *
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-champagne/60 font-mono text-sm">/</span>
+                      <input
+                        type="text"
+                        value={newPageData.slug}
+                        onChange={(e) => setNewPageData({ ...newPageData, slug: e.target.value })}
+                        placeholder="about-us"
+                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all font-mono"
+                      />
+                    </div>
+                    <p className="mt-1.5 text-xs text-champagne/50">
+                      Auto-generated from title. Only lowercase letters, numbers, and hyphens.
+                    </p>
+                  </div>
+
+                  {/* Meta Description */}
+                  <div>
+                    <label className="block text-sm font-semibold text-champagne mb-2">
+                      Meta Description
+                    </label>
+                    <textarea
+                      value={newPageData.metaDescription}
+                      onChange={(e) => setNewPageData({ ...newPageData, metaDescription: e.target.value })}
+                      placeholder="A brief description for search engines (150-160 characters recommended)"
+                      rows={3}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all resize-none"
+                    />
+                    <p className="mt-1.5 text-xs text-champagne/50">
+                      {newPageData.metaDescription.length} characters
+                    </p>
+                  </div>
+
+                  {/* Meta Keywords */}
+                  <div>
+                    <label className="block text-sm font-semibold text-champagne mb-2">
+                      Meta Keywords
+                    </label>
+                    <input
+                      type="text"
+                      value={newPageData.metaKeywords}
+                      onChange={(e) => setNewPageData({ ...newPageData, metaKeywords: e.target.value })}
+                      placeholder="keyword1, keyword2, keyword3"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all"
+                    />
+                    <p className="mt-1.5 text-xs text-champagne/50">
+                      Comma-separated keywords for SEO (optional)
+                    </p>
+                  </div>
+
+                  {/* Publish Status */}
+                  <div className="flex items-center gap-3 p-4 bg-jade/5 border border-jade/20 rounded-lg">
+                    <input
+                      type="checkbox"
+                      id="publishStatus"
+                      checked={newPageData.isPublished}
+                      onChange={(e) => setNewPageData({ ...newPageData, isPublished: e.target.checked })}
+                      className="h-5 w-5 rounded border-jade/40 text-jade focus:ring-jade focus:ring-offset-0"
+                    />
+                    <label htmlFor="publishStatus" className="text-sm text-champagne cursor-pointer">
+                      <span className="font-semibold">Publish immediately</span>
+                      <p className="text-xs text-champagne/60 mt-0.5">
+                        Uncheck to save as draft and publish later
+                      </p>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/10 bg-white/5 flex-shrink-0">
+                  <button
+                    onClick={() => setShowNewPageModal(false)}
+                    className="px-5 py-2.5 text-champagne hover:bg-white/5 rounded-lg transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCreatePage}
+                    disabled={createPageMutation.isPending || !newPageData.title || !newPageData.slug}
+                    className="px-6 py-2.5 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {createPageMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <PlusIcon className="h-5 w-5" />
+                        Create Page
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </>

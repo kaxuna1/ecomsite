@@ -1,0 +1,10 @@
+{
+  "profile": "Profile",
+  "orders": "Orders",
+  "favorites": "Favorites",
+  "addresses": "Addresses",
+  "logout": "Logout",
+  "login": "Login",
+  "signup": "Sign Up",
+  "welcome": "Welcome back"
+}

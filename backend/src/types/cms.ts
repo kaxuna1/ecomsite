@@ -73,6 +73,27 @@ export interface CMSBlockVersion {
   createdAt: Date;
 }
 
+export interface CMSPageTranslation {
+  id: number;
+  pageId: number;
+  languageCode: string;
+  title: string;
+  slug: string;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CMSBlockTranslation {
+  id: number;
+  blockId: number;
+  languageCode: string;
+  content: BlockContent;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // ============================================================================
 // BLOCK CONTENT TYPES
 // ============================================================================
@@ -300,6 +321,17 @@ export interface UpdateMediaPayload {
   filename?: string;
   altText?: string;
   caption?: string;
+}
+
+export interface CreatePageTranslationPayload {
+  title: string;
+  slug: string;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+export interface CreateBlockTranslationPayload {
+  content: BlockContent;
 }
 
 // ============================================================================

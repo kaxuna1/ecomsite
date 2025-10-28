@@ -18,7 +18,8 @@ import {
   TagIcon,
   PlusIcon,
   ArrowRightIcon,
-  CubeIcon
+  CubeIcon,
+  LanguageIcon
 } from '@heroicons/react/24/outline';
 import { fetchProducts } from '../../api/products';
 import { fetchOrders, updateOrderStatus } from '../../api/orders';
@@ -381,6 +382,16 @@ function AdminDashboard() {
                 className="flex w-full items-center justify-between rounded-xl bg-white/5 p-3 text-sm text-champagne transition-colors hover:bg-white/10"
               >
                 <span>View All Orders</span>
+                <ArrowRightIcon className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/admin/translations"
+                className="flex w-full items-center justify-between rounded-xl bg-white/5 p-3 text-sm text-champagne transition-colors hover:bg-white/10"
+              >
+                <div className="flex items-center gap-2">
+                  <LanguageIcon className="h-4 w-4" />
+                  <span>Manage Translations</span>
+                </div>
                 <ArrowRightIcon className="h-4 w-4" />
               </Link>
             </div>

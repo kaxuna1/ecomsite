@@ -6,11 +6,15 @@ import {
   CMSPage,
   CMSBlock,
   CMSBlockVersion,
+  CMSPageTranslation,
+  CMSBlockTranslation,
   CreatePagePayload,
   UpdatePagePayload,
   CreateBlockPayload,
   UpdateBlockPayload,
   ReorderBlocksPayload,
+  CreatePageTranslationPayload,
+  CreateBlockTranslationPayload,
   PageWithBlocksResponse,
   BlockWithVersionsResponse,
   PublicPageResponse,
@@ -85,16 +89,23 @@ export async function getPageWithBlocks(slug: string): Promise<PageWithBlocksRes
 /**
  * Get public page data (for frontend consumption)
  */
-export async function getPublicPage(slug: string): Promise<PublicPageResponse | null> {
+export async function getPublicPage(slug: string, language: string = 'en'): Promise<PublicPageResponse | null> {
   const result = await pool.query(
     `SELECT
-      p.slug, p.title, p.meta_description as "metaDescription", p.meta_keywords as "metaKeywords",
-      b.id, b.block_type as "blockType", b.block_key as "blockKey", b.content, b.settings, b.display_order as "displayOrder"
+      COALESCE(pt.slug, p.slug) as slug,
+      COALESCE(pt.title, p.title) as title,
+      COALESCE(pt.meta_description, p.meta_description) as "metaDescription",
+      p.meta_keywords as "metaKeywords",
+      b.id, b.block_type as "blockType", b.block_key as "blockKey",
+      COALESCE(bt.content, b.content) as content,
+      b.settings, b.display_order as "displayOrder"
      FROM cms_pages p
+     LEFT JOIN cms_page_translations pt ON p.id = pt.page_id AND pt.language_code = $2
      LEFT JOIN cms_blocks b ON p.id = b.page_id AND b.is_enabled = true
-     WHERE p.slug = $1 AND p.is_published = true
+     LEFT JOIN cms_block_translations bt ON b.id = bt.block_id AND bt.language_code = $2
+     WHERE (p.slug = $1 OR pt.slug = $1) AND p.is_published = true
      ORDER BY b.display_order ASC`,
-    [slug]
+    [slug, language]
   );
 
   if (result.rows.length === 0) return null;
@@ -445,7 +456,7 @@ export async function restoreBlockVersion(
     blockId,
     {
       content: version.content,
-      settings: version.settings
+      settings: version.settings || undefined
     },
     adminId
   );
@@ -504,6 +515,155 @@ function mapBlockVersionFromDb(row: any): CMSBlockVersion {
     createdBy: row.created_by,
     createdAt: row.created_at
   };
+}
+
+/**
+ * Map database row to CMSPageTranslation object
+ */
+function mapPageTranslationFromDb(row: any): CMSPageTranslation {
+  return {
+    id: row.id,
+    pageId: row.page_id,
+    languageCode: row.language_code,
+    title: row.title,
+    slug: row.slug,
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+/**
+ * Map database row to CMSBlockTranslation object
+ */
+function mapBlockTranslationFromDb(row: any): CMSBlockTranslation {
+  return {
+    id: row.id,
+    blockId: row.block_id,
+    languageCode: row.language_code,
+    content: row.content,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+// ============================================================================
+// PAGE TRANSLATION MANAGEMENT
+// ============================================================================
+
+/**
+ * Create or update a page translation
+ */
+export async function createPageTranslation(
+  pageId: number,
+  languageCode: string,
+  data: CreatePageTranslationPayload
+): Promise<CMSPageTranslation> {
+  const result = await pool.query(
+    `INSERT INTO cms_page_translations
+     (page_id, language_code, title, slug, meta_title, meta_description)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     ON CONFLICT (page_id, language_code)
+     DO UPDATE SET
+       title = EXCLUDED.title,
+       slug = EXCLUDED.slug,
+       meta_title = EXCLUDED.meta_title,
+       meta_description = EXCLUDED.meta_description,
+       updated_at = CURRENT_TIMESTAMP
+     RETURNING *`,
+    [
+      pageId,
+      languageCode,
+      data.title,
+      data.slug,
+      data.metaTitle || null,
+      data.metaDescription || null
+    ]
+  );
+
+  return mapPageTranslationFromDb(result.rows[0]);
+}
+
+/**
+ * Get a specific page translation
+ */
+export async function getPageTranslation(
+  pageId: number,
+  languageCode: string
+): Promise<CMSPageTranslation | null> {
+  const result = await pool.query(
+    `SELECT * FROM cms_page_translations WHERE page_id = $1 AND language_code = $2`,
+    [pageId, languageCode]
+  );
+
+  return result.rows.length > 0 ? mapPageTranslationFromDb(result.rows[0]) : null;
+}
+
+/**
+ * Get all translations for a page
+ */
+export async function getAllPageTranslations(pageId: number): Promise<CMSPageTranslation[]> {
+  const result = await pool.query(
+    `SELECT * FROM cms_page_translations WHERE page_id = $1 ORDER BY language_code`,
+    [pageId]
+  );
+
+  return result.rows.map(mapPageTranslationFromDb);
+}
+
+// ============================================================================
+// BLOCK TRANSLATION MANAGEMENT
+// ============================================================================
+
+/**
+ * Create or update a block translation
+ */
+export async function createBlockTranslation(
+  blockId: number,
+  languageCode: string,
+  content: BlockContent
+): Promise<CMSBlockTranslation> {
+  const result = await pool.query(
+    `INSERT INTO cms_block_translations
+     (block_id, language_code, content)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (block_id, language_code)
+     DO UPDATE SET
+       content = EXCLUDED.content,
+       updated_at = CURRENT_TIMESTAMP
+     RETURNING *`,
+    [blockId, languageCode, JSON.stringify(content)]
+  );
+
+  return mapBlockTranslationFromDb(result.rows[0]);
+}
+
+/**
+ * Get a specific block translation
+ */
+export async function getBlockTranslation(
+  blockId: number,
+  languageCode: string
+): Promise<CMSBlockTranslation | null> {
+  const result = await pool.query(
+    `SELECT * FROM cms_block_translations WHERE block_id = $1 AND language_code = $2`,
+    [blockId, languageCode]
+  );
+
+  return result.rows.length > 0 ? mapBlockTranslationFromDb(result.rows[0]) : null;
+}
+
+/**
+ * Get all translations for a block
+ */
+export async function getAllBlockTranslations(blockId: number): Promise<CMSBlockTranslation[]> {
+  const result = await pool.query(
+    `SELECT * FROM cms_block_translations WHERE block_id = $1 ORDER BY language_code`,
+    [blockId]
+  );
+
+  return result.rows.map(mapBlockTranslationFromDb);
 }
 
 // ============================================================================

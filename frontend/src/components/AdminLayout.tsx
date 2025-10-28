@@ -38,6 +38,18 @@ function AdminLayout() {
               CMS
             </NavLink>
             <NavLink
+              to="/admin/translations"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              Translations
+            </NavLink>
+            <NavLink
+              to="/admin/cms-translations"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              CMS Translations
+            </NavLink>
+            <NavLink
               to="/admin/admin-users"
               className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
             >

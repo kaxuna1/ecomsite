@@ -1,0 +1,13 @@
+{
+  "dashboard": "Dashboard",
+  "products": "Products",
+  "orders": "Orders",
+  "users": "Users",
+  "cms": "CMS",
+  "translations": "Translations",
+  "settings": "Settings",
+  "addProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "deleteProduct": "Delete Product",
+  "manageTranslations": "Manage Translations"
+}

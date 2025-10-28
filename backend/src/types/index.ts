@@ -29,6 +29,33 @@ export interface ProductPayload {
   isFeatured?: boolean;
 }
 
+export interface ProductTranslation {
+  id: number;
+  productId: number;
+  languageCode: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  highlights?: string[];
+  usage?: string;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductTranslationPayload {
+  name: string;
+  shortDescription: string;
+  description: string;
+  highlights?: string[];
+  usage?: string;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
 export interface Order {
   id: number;
   customer_name: string;

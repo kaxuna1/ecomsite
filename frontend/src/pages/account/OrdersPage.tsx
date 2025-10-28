@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { fetchOrders } from '../../api/orders';
 import type { Order } from '../../types/product';
+import OrderStatusTimeline from '../../components/OrderStatusTimeline';
 
 export default function OrdersPage() {
   const location = useLocation();
@@ -254,7 +255,16 @@ export default function OrdersPage() {
                       transition={{ duration: 0.2 }}
                       className="border-t border-champagne/40 bg-champagne/5"
                     >
-                      <div className="p-6 space-y-4">
+                      <div className="p-6 space-y-6">
+                        {/* Order Status Timeline */}
+                        <div>
+                          <h4 className="font-semibold text-midnight mb-4">Order Status</h4>
+                          <OrderStatusTimeline
+                            currentStatus={order.status}
+                            createdAt={order.createdAt}
+                          />
+                        </div>
+
                         {/* Items */}
                         <div>
                           <h4 className="font-semibold text-midnight mb-3">Order Items</h4>

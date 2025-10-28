@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchPublicFooterSettings } from '../api/cms';
 import { useI18n } from '../context/I18nContext';
 
@@ -49,11 +50,12 @@ interface FooterSettings {
 
 function Footer() {
   const { t } = useI18n();
+  const { i18n } = useTranslation();
   const year = new Date().getFullYear();
 
   const { data: footerSettings } = useQuery<FooterSettings>({
-    queryKey: ['footer-settings-public'],
-    queryFn: fetchPublicFooterSettings,
+    queryKey: ['footer-settings-public', i18n.language],
+    queryFn: () => fetchPublicFooterSettings(i18n.language),
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
 

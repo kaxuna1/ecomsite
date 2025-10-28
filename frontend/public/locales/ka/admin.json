@@ -1,0 +1,13 @@
+{
+  "dashboard": "მთავარი პანელი",
+  "products": "პროდუქტები",
+  "orders": "შეკვეთები",
+  "users": "მომხმარებლები",
+  "cms": "კონტენტი",
+  "translations": "თარგმანები",
+  "settings": "პარამეტრები",
+  "addProduct": "პროდუქტის დამატება",
+  "editProduct": "პროდუქტის რედაქტირება",
+  "deleteProduct": "პროდუქტის წაშლა",
+  "manageTranslations": "თარგმანების მართვა"
+}

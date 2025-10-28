@@ -45,3 +45,11 @@ export const updateProduct = async (id: number, formData: FormData): Promise<Pro
 export const deleteProduct = async (id: number): Promise<void> => {
   await api.delete(`/products/${id}`);
 };
+
+export const searchProducts = async (query: string): Promise<Product[]> => {
+  if (!query || query.trim().length === 0) {
+    return [];
+  }
+  const response = await api.get<Product[]>(`/products?search=${encodeURIComponent(query)}`);
+  return response.data;
+};

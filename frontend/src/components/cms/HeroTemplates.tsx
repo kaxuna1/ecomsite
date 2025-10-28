@@ -80,7 +80,7 @@ export default function HeroTemplates({ content }: HeroTemplateProps) {
 // Template 1: Split-Screen Hero (Current Default)
 function SplitScreenHero({ content }: HeroTemplateProps) {
   const prefersReducedMotion = useReducedMotion();
-  const { headline, subheadline, description, ctaText, ctaLink, style } = content;
+  const { headline, subheadline, description, ctaText, ctaLink, style, backgroundImage, backgroundImageAlt } = content;
   const enableAnimations = style?.enableAnimations !== false;
 
   const sectionClasses = [
@@ -165,8 +165,8 @@ function SplitScreenHero({ content }: HeroTemplateProps) {
                 transition={{ duration: 0.4 }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=900&q=80"
-                  alt="Luxury Product"
+                  src={backgroundImage || "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=900&q=80"}
+                  alt={backgroundImageAlt || "Luxury Product"}
                   className="aspect-[3/4] w-full object-cover"
                   loading="eager"
                 />
@@ -181,7 +181,7 @@ function SplitScreenHero({ content }: HeroTemplateProps) {
 
 // Template 2: Centered Minimal (Apple-style)
 function CenteredMinimalHero({ content }: HeroTemplateProps) {
-  const { headline, subheadline, ctaText, ctaLink } = content;
+  const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center bg-white text-midnight overflow-hidden">
@@ -220,19 +220,21 @@ function CenteredMinimalHero({ content }: HeroTemplateProps) {
           </Link>
         </motion.div>
 
-        <motion.div
-          className="mt-16"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          <img
-            src="https://images.unsplash.com/photo-1522338242992-e1a54906a8da?auto=format&fit=crop&w=1200&q=80"
-            alt="Product Showcase"
-            className="rounded-3xl shadow-2xl mx-auto max-w-4xl w-full"
-            loading="eager"
-          />
-        </motion.div>
+        {backgroundImage && (
+          <motion.div
+            className="mt-16"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+          >
+            <img
+              src={backgroundImage}
+              alt={backgroundImageAlt || "Product Showcase"}
+              className="rounded-3xl shadow-2xl mx-auto max-w-4xl w-full"
+              loading="eager"
+            />
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -240,18 +242,22 @@ function CenteredMinimalHero({ content }: HeroTemplateProps) {
 
 // Template 3: Full-Width Overlay (Dramatic)
 function FullWidthOverlayHero({ content }: HeroTemplateProps) {
-  const { headline, subheadline, ctaText, ctaLink } = content;
+  const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt, overlayOpacity } = content;
+  const opacity = (overlayOpacity ?? 50) / 100;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=2000&q=80"
-          alt="Background"
+          src={backgroundImage || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=2000&q=80"}
+          alt={backgroundImageAlt || "Background"}
           className="w-full h-full object-cover"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-midnight/90 via-midnight/70 to-midnight/40" />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-midnight via-midnight/80 to-midnight/50"
+          style={{ opacity }}
+        />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 text-white">
@@ -300,18 +306,20 @@ function FullWidthOverlayHero({ content }: HeroTemplateProps) {
 
 // Template 4: Asymmetric Bold (Modern Magazine-style)
 function AsymmetricBoldHero({ content }: HeroTemplateProps) {
-  const { headline, subheadline, ctaText, ctaLink } = content;
+  const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
     <section className="relative min-h-screen bg-champagne text-midnight overflow-hidden">
-      <div className="absolute top-0 right-0 w-1/2 h-full">
-        <img
-          src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=1200&q=80"
-          alt="Hero Image"
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-      </div>
+      {backgroundImage && (
+        <div className="absolute top-0 right-0 w-1/2 h-full">
+          <img
+            src={backgroundImage}
+            alt={backgroundImageAlt || "Hero Image"}
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+      )}
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 lg:py-32">
         <div className="max-w-2xl">
@@ -385,7 +393,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
 
 // Template 5: Luxury Minimal (High-end Brand)
 function LuxuryMinimalHero({ content }: HeroTemplateProps) {
-  const { headline, subheadline, ctaText, ctaLink } = content;
+  const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
     <section className="relative min-h-screen bg-white text-midnight flex items-center">
@@ -437,8 +445,8 @@ function LuxuryMinimalHero({ content }: HeroTemplateProps) {
           >
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1571380401583-72ca84994796?auto=format&fit=crop&w=1200&q=80"
-                alt="Luxury Product"
+                src={backgroundImage || "https://images.unsplash.com/photo-1571380401583-72ca84994796?auto=format&fit=crop&w=1200&q=80"}
+                alt={backgroundImageAlt || "Luxury Product"}
                 className="w-full rounded-2xl shadow-2xl"
                 loading="eager"
               />
@@ -453,10 +461,27 @@ function LuxuryMinimalHero({ content }: HeroTemplateProps) {
 // Template 6: Gradient Modern (Futuristic)
 function GradientModernHero({ content }: HeroTemplateProps) {
   const prefersReducedMotion = useReducedMotion();
-  const { headline, subheadline, ctaText, ctaLink } = content;
+  const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt, overlayOpacity } = content;
+  const opacity = backgroundImage ? (overlayOpacity ?? 70) / 100 : 1;
 
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-jade via-midnight to-midnight text-white flex items-center overflow-hidden">
+      {backgroundImage && (
+        <>
+          <div className="absolute inset-0">
+            <img
+              src={backgroundImage}
+              alt={backgroundImageAlt || "Background"}
+              className="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-jade via-midnight to-midnight"
+            style={{ opacity }}
+          />
+        </>
+      )}
       <motion.div
         className="absolute top-20 left-20 w-96 h-96 bg-jade/30 rounded-full blur-3xl"
         animate={prefersReducedMotion ? undefined : {

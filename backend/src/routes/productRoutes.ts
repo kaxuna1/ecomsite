@@ -26,13 +26,11 @@ router.get('/', async (req, res) => {
     const filters = {
       isNew: req.query.isNew === 'true',
       isFeatured: req.query.isFeatured === 'true',
-      onSale: req.query.onSale === 'true'
+      onSale: req.query.onSale === 'true',
+      language: (req.query.lang as string) || 'en'
     };
 
-    // Only pass filters if at least one is true
-    const hasFilters = filters.isNew || filters.isFeatured || filters.onSale;
-    const products = await productService.list(hasFilters ? filters : undefined);
-
+    const products = await productService.list(filters);
     res.json(products);
   } catch (error: any) {
     res.status(500).json({ message: error.message ?? 'Internal server error' });
@@ -41,7 +39,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const product = await productService.get(Number(req.params.id));
+    const language = (req.query.lang as string) || 'en';
+    const product = await productService.get(Number(req.params.id), language);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -143,6 +142,84 @@ router.delete('/:id', authenticate, async (req, res) => {
     res.status(204).send();
   } catch (error: any) {
     res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+// Translation routes
+router.get('/:id/translations', async (req, res) => {
+  try {
+    const productId = Number(req.params.id);
+    const product = await productService.get(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const translations = await productService.getAllTranslations(productId);
+    res.json(translations);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+router.get('/:id/translations/:lang', async (req, res) => {
+  try {
+    const productId = Number(req.params.id);
+    const languageCode = req.params.lang;
+
+    const product = await productService.get(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const translation = await productService.getTranslation(productId, languageCode);
+    if (!translation) {
+      return res.status(404).json({ message: 'Translation not found' });
+    }
+
+    res.json(translation);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+const translationValidators = [
+  body('name').isString().trim().notEmpty(),
+  body('shortDescription').isString().trim().notEmpty(),
+  body('description').isString().trim().notEmpty()
+];
+
+router.post('/:id/translations/:lang', authenticate, translationValidators, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const productId = Number(req.params.id);
+    const languageCode = req.params.lang;
+
+    const product = await productService.get(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
+
+    const translation = await productService.createTranslation(productId, languageCode, {
+      name: req.body.name,
+      shortDescription: req.body.shortDescription,
+      description: req.body.description,
+      highlights,
+      usage: req.body.usage,
+      slug: req.body.slug,
+      metaTitle: req.body.metaTitle,
+      metaDescription: req.body.metaDescription
+    });
+
+    res.status(201).json(translation);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message ?? 'Invalid payload' });
   }
 });
 

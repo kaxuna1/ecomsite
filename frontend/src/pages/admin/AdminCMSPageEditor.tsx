@@ -14,6 +14,7 @@ import {
 } from '../../api/cmsAdmin';
 import VisualBlockEditor from '../../components/cms/editors/VisualBlockEditor';
 import BlockRenderer from '../../components/cms/BlockRenderer';
+import { getBlockTemplate, getBlockTemplateJSON } from '../../utils/blockTemplates';
 
 export default function AdminCMSPageEditor() {
   const { id } = useParams<{ id: string }>();
@@ -388,14 +389,43 @@ function NewBlockForm({
 }) {
   const [blockType, setBlockType] = useState('hero');
   const [blockKey, setBlockKey] = useState('');
-  const [content, setContent] = useState('{}');
+  const [content, setContent] = useState(getBlockTemplateJSON('hero'));
+  const [useTemplate, setUseTemplate] = useState(true);
 
-  const blockTypes = ['hero', 'features', 'products', 'testimonials', 'newsletter'];
+  const blockTypes = ['hero', 'features', 'products', 'testimonials', 'newsletter', 'text_image', 'stats', 'cta', 'faq'];
+
+  // Update content when block type changes and template is enabled
+  const handleBlockTypeChange = (newType: string) => {
+    setBlockType(newType);
+    if (useTemplate) {
+      setContent(getBlockTemplateJSON(newType));
+    }
+  };
+
+  // Toggle between template and empty JSON
+  const handleTemplateToggle = (enabled: boolean) => {
+    setUseTemplate(enabled);
+    if (enabled) {
+      setContent(getBlockTemplateJSON(blockType));
+    } else {
+      setContent('{}');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const parsedContent = JSON.parse(content);
+      // Parse the content, handling empty strings and whitespace
+      const trimmedContent = content.trim();
+      let parsedContent;
+
+      if (trimmedContent === '' || trimmedContent === '{}') {
+        // If empty or just {}, use the template
+        parsedContent = getBlockTemplate(blockType);
+      } else {
+        parsedContent = JSON.parse(trimmedContent);
+      }
+
       onSubmit({
         pageId,
         blockType,
@@ -405,18 +435,24 @@ function NewBlockForm({
         isEnabled: true
       });
     } catch (error) {
-      alert('Invalid JSON format');
+      alert('Invalid JSON format. Please check your JSON syntax or use the template.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-jade/10 border border-jade/30 rounded-lg p-4">
+        <p className="text-sm text-champagne/80">
+          Select a block type to add to your page. A template will be loaded automatically with sample content.
+        </p>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm text-champagne/60 mb-2">Block Type</label>
           <select
             value={blockType}
-            onChange={(e) => setBlockType(e.target.value)}
+            onChange={(e) => handleBlockTypeChange(e.target.value)}
             className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
           >
             {blockTypes.map((type) => (
@@ -438,15 +474,33 @@ function NewBlockForm({
           />
         </div>
       </div>
-      <div>
-        <label className="block text-sm text-champagne/60 mb-2">Content (JSON)</label>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="block text-sm text-champagne/60">Content (JSON)</label>
+          <button
+            type="button"
+            onClick={() => handleTemplateToggle(!useTemplate)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              useTemplate
+                ? 'bg-jade/20 text-jade border border-jade/40'
+                : 'bg-white/5 text-champagne/70 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            {useTemplate ? '✓ Using Template' : 'Use Template'}
+          </button>
+        </div>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          rows={10}
+          rows={12}
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne font-mono text-sm focus:outline-none focus:border-jade"
           placeholder='{"title": "Example", "description": "..."}'
         />
+        <p className="text-xs text-champagne/50">
+          {useTemplate
+            ? 'Template loaded with sample content. You can edit it or customize after creation.'
+            : 'Enter custom JSON or leave empty to use the default template.'}
+        </p>
       </div>
       <div className="flex gap-3">
         <button

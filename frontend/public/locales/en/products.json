@@ -1,0 +1,13 @@
+{
+  "title": "Shop Luxia Products",
+  "description": "Discover targeted treatments for detox, nourishment, and renewal. Each product is ethically sourced and tested for sensitive scalps.",
+  "loading": "Loading products…",
+  "notFound": "Product not found.",
+  "loadingDetail": "Loading product details…",
+  "highlights": "Highlights",
+  "usage": "Usage",
+  "addToCart": "Add to cart",
+  "newArrivals": "New Arrivals",
+  "bestSellers": "Best Sellers",
+  "onSale": "On Sale"
+}
