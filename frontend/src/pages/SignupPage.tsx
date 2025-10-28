@@ -1,0 +1,279 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { motion } from 'framer-motion';
+import { UserPlusIcon, EnvelopeIcon, LockClosedIcon, UserIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
+import type { RegisterPayload } from '../types/product';
+
+interface SignupFormData extends RegisterPayload {
+  confirmPassword: string;
+}
+
+export default function SignupPage() {
+  const navigate = useNavigate();
+  const { userRegister } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<SignupFormData>();
+
+  const password = watch('password');
+
+  const onSubmit = async (data: SignupFormData) => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      await userRegister({
+        name: data.name,
+        email: data.email,
+        password: data.password
+      });
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to create account. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-champagne/30 via-white to-blush/20 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full"
+      >
+        {/* Header */}
+        <div className="text-center mb-8">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-jade/10 mb-4"
+          >
+            <UserPlusIcon className="h-8 w-8 text-jade" />
+          </motion.div>
+          <h2 className="font-display text-4xl text-midnight mb-2">Create Account</h2>
+          <p className="text-midnight/60">Join us and start shopping</p>
+        </div>
+
+        {/* Form Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-3xl shadow-2xl p-8 border border-champagne/40"
+        >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Error Message */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            {/* Name Field */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-semibold text-midnight mb-2">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <UserIcon className="h-5 w-5 text-midnight/40" />
+                </div>
+                <input
+                  {...register('name', {
+                    required: 'Name is required',
+                    minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                  })}
+                  type="text"
+                  id="name"
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
+                    errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  }`}
+                  placeholder="John Doe"
+                />
+              </div>
+              {errors.name && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-sm text-red-600"
+                >
+                  {errors.name.message}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold text-midnight mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <EnvelopeIcon className="h-5 w-5 text-midnight/40" />
+                </div>
+                <input
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address'
+                    }
+                  })}
+                  type="email"
+                  id="email"
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
+                    errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  }`}
+                  placeholder="you@example.com"
+                />
+              </div>
+              {errors.email && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-sm text-red-600"
+                >
+                  {errors.email.message}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-semibold text-midnight mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <LockClosedIcon className="h-5 w-5 text-midnight/40" />
+                </div>
+                <input
+                  {...register('password', {
+                    required: 'Password is required',
+                    minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                  })}
+                  type="password"
+                  id="password"
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
+                    errors.password ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  }`}
+                  placeholder="••••••••"
+                />
+              </div>
+              {errors.password && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-sm text-red-600"
+                >
+                  {errors.password.message}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-midnight mb-2">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <CheckCircleIcon className="h-5 w-5 text-midnight/40" />
+                </div>
+                <input
+                  {...register('confirmPassword', {
+                    required: 'Please confirm your password',
+                    validate: (value) => value === password || 'Passwords do not match'
+                  })}
+                  type="password"
+                  id="confirmPassword"
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
+                    errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  }`}
+                  placeholder="••••••••"
+                />
+              </div>
+              {errors.confirmPassword && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-sm text-red-600"
+                >
+                  {errors.confirmPassword.message}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <motion.button
+              type="submit"
+              disabled={isLoading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-jade text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <motion.div
+                    className="h-5 w-5 border-2 border-white/20 border-t-white rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  />
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <>
+                  <UserPlusIcon className="h-5 w-5" />
+                  <span>Create Account</span>
+                </>
+              )}
+            </motion.button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-midnight/60">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="font-semibold text-jade hover:text-jade/80 transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Back to Home */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-6 text-center"
+        >
+          <Link
+            to="/"
+            className="text-sm text-midnight/60 hover:text-midnight transition-colors"
+          >
+            Back to Home
+          </Link>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}

@@ -23,7 +23,16 @@ const parseJsonArray = (value: string | undefined, errorMessage: string) => {
 
 router.get('/', async (req, res) => {
   try {
-    const products = await productService.list();
+    const filters = {
+      isNew: req.query.isNew === 'true',
+      isFeatured: req.query.isFeatured === 'true',
+      onSale: req.query.onSale === 'true'
+    };
+
+    // Only pass filters if at least one is true
+    const hasFilters = filters.isNew || filters.isFeatured || filters.onSale;
+    const products = await productService.list(hasFilters ? filters : undefined);
+
     res.json(products);
   } catch (error: any) {
     res.status(500).json({ message: error.message ?? 'Internal server error' });
@@ -70,10 +79,13 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
         shortDescription: req.body.shortDescription,
         description: req.body.description,
         price: Number(req.body.price),
+        salePrice: req.body.salePrice ? Number(req.body.salePrice) : undefined,
         inventory: Number(req.body.inventory),
         categories,
         highlights,
-        usage: req.body.usage
+        usage: req.body.usage,
+        isNew: req.body.isNew === 'true',
+        isFeatured: req.body.isFeatured === 'true'
       },
       imageUrl
     );
@@ -101,10 +113,13 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, asyn
         shortDescription: req.body.shortDescription,
         description: req.body.description,
         price: Number(req.body.price),
+        salePrice: req.body.salePrice ? Number(req.body.salePrice) : undefined,
         inventory: Number(req.body.inventory),
         categories,
         highlights,
-        usage: req.body.usage
+        usage: req.body.usage,
+        isNew: req.body.isNew === 'true',
+        isFeatured: req.body.isFeatured === 'true'
       },
       imageUrl
     );

@@ -1,5 +1,6 @@
 import { pool } from '../db/client';
 import type { OrderPayload } from '../types';
+import { promoCodeService } from './promoCodeService';
 
 const mapOrder = (row: any, items: any[]) => ({
   id: row.id,
@@ -40,15 +41,28 @@ export const orderService = {
     );
     return orders;
   },
-  async create(payload: OrderPayload) {
+  async listByUserId(userId: number) {
+    const ordersResult = await pool.query(
+      'SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC',
+      [userId]
+    );
+    const orders = await Promise.all(
+      ordersResult.rows.map(async (row) => {
+        const items = await getItems(row.id);
+        return mapOrder(row, items);
+      })
+    );
+    return orders;
+  },
+  async create(payload: OrderPayload, userId?: number) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // Insert order
+      // Insert order (with optional user_id, address_id, and promo code)
       const orderResult = await client.query(
-        `INSERT INTO orders (customer_name, customer_email, customer_phone, customer_notes, customer_address, total, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+        `INSERT INTO orders (customer_name, customer_email, customer_phone, customer_notes, customer_address, total, status, user_id, address_id, promo_code_id, discount_amount)
+         VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7, $8, $9, $10)
          RETURNING *`,
         [
           payload.customer.name,
@@ -56,7 +70,11 @@ export const orderService = {
           payload.customer.phone ?? null,
           payload.customer.notes ?? null,
           payload.customer.address,
-          payload.total
+          payload.total,
+          userId ?? null,
+          payload.addressId ?? null,
+          payload.promoCode?.id ?? null,
+          payload.promoCode?.discount ?? 0
         ]
       );
       const orderId = orderResult.rows[0].id;
@@ -88,6 +106,16 @@ export const orderService = {
         await client.query(
           'UPDATE products SET inventory = inventory - $1 WHERE id = $2',
           [item.quantity, item.productId]
+        );
+      }
+
+      // Record promo code usage if applied
+      if (payload.promoCode) {
+        await promoCodeService.recordUsage(
+          payload.promoCode.id,
+          orderId,
+          payload.promoCode.discount,
+          userId
         );
       }
 

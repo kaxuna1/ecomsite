@@ -25,6 +25,24 @@ function AdminLayout() {
             >
               Orders
             </NavLink>
+            <NavLink
+              to="/admin/promo-codes"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              Promo Codes
+            </NavLink>
+            <NavLink
+              to="/admin/admin-users"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              Admin Users
+            </NavLink>
+            <NavLink
+              to="/admin/customers"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              Customers
+            </NavLink>
             <button
               type="button"
               onClick={logout}

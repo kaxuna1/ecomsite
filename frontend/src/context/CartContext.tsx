@@ -6,7 +6,7 @@ import {
   ReactNode,
   useEffect
 } from 'react';
-import type { Product } from '../types/product';
+import type { Product, PromoCode } from '../types/product';
 
 type CartItem = {
   product: Product;
@@ -15,13 +15,17 @@ type CartItem = {
 
 interface CartState {
   items: CartItem[];
+  promoCode: PromoCode | null;
+  discount: number;
 }
 
 type Action =
   | { type: 'ADD'; product: Product; quantity: number }
   | { type: 'REMOVE'; productId: number }
   | { type: 'UPDATE'; productId: number; quantity: number }
-  | { type: 'CLEAR' };
+  | { type: 'CLEAR' }
+  | { type: 'APPLY_PROMO'; promoCode: PromoCode; discount: number }
+  | { type: 'REMOVE_PROMO' };
 
 const CartContext = createContext<{
   items: CartItem[];
@@ -30,13 +34,23 @@ const CartContext = createContext<{
   updateQuantity: (productId: number, quantity: number) => void;
   clear: () => void;
   total: number;
+  subtotal: number;
+  promoCode: PromoCode | null;
+  discount: number;
+  applyPromoCode: (promoCode: PromoCode, discount: number) => void;
+  removePromoCode: () => void;
 }>({
   items: [],
   addItem: () => undefined,
   removeItem: () => undefined,
   updateQuantity: () => undefined,
   clear: () => undefined,
-  total: 0
+  total: 0,
+  subtotal: 0,
+  promoCode: null,
+  discount: 0,
+  applyPromoCode: () => undefined,
+  removePromoCode: () => undefined
 });
 
 const CART_STORAGE_KEY = 'luxia-cart';
@@ -47,6 +61,7 @@ const reducer = (state: CartState, action: Action): CartState => {
       const existing = state.items.find((item) => item.product.id === action.product.id);
       if (existing) {
         return {
+          ...state,
           items: state.items.map((item) =>
             item.product.id === action.product.id
               ? { ...item, quantity: item.quantity + action.quantity }
@@ -54,12 +69,13 @@ const reducer = (state: CartState, action: Action): CartState => {
           )
         };
       }
-      return { items: [...state.items, { product: action.product, quantity: action.quantity }] };
+      return { ...state, items: [...state.items, { product: action.product, quantity: action.quantity }] };
     }
     case 'REMOVE':
-      return { items: state.items.filter((item) => item.product.id !== action.productId) };
+      return { ...state, items: state.items.filter((item) => item.product.id !== action.productId) };
     case 'UPDATE':
       return {
+        ...state,
         items: state.items.map((item) =>
           item.product.id === action.productId
             ? { ...item, quantity: Math.max(action.quantity, 1) }
@@ -67,7 +83,11 @@ const reducer = (state: CartState, action: Action): CartState => {
         )
       };
     case 'CLEAR':
-      return { items: [] };
+      return { items: [], promoCode: null, discount: 0 };
+    case 'APPLY_PROMO':
+      return { ...state, promoCode: action.promoCode, discount: action.discount };
+    case 'REMOVE_PROMO':
+      return { ...state, promoCode: null, discount: 0 };
     default:
       return state;
   }
@@ -76,7 +96,7 @@ const reducer = (state: CartState, action: Action): CartState => {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, () => {
     if (typeof window === 'undefined') {
-      return { items: [] };
+      return { items: [], promoCode: null, discount: 0 };
     }
     const stored = window.localStorage.getItem(CART_STORAGE_KEY);
     if (stored) {
@@ -86,7 +106,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.warn('Failed to parse cart state from storage', error);
       }
     }
-    return { items: [] };
+    return { items: [], promoCode: null, discount: 0 };
   });
 
   useEffect(() => {
@@ -106,14 +126,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clear = () => dispatch({ type: 'CLEAR' });
 
-  const total = useMemo(
+  const applyPromoCode = (promoCode: PromoCode, discount: number) => {
+    dispatch({ type: 'APPLY_PROMO', promoCode, discount });
+  };
+
+  const removePromoCode = () => {
+    dispatch({ type: 'REMOVE_PROMO' });
+  };
+
+  const subtotal = useMemo(
     () => state.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
     [state.items]
   );
 
+  const total = useMemo(
+    () => Math.max(subtotal - state.discount, 0),
+    [subtotal, state.discount]
+  );
+
   const value = useMemo(
-    () => ({ items: state.items, addItem, removeItem, updateQuantity, clear, total }),
-    [state.items, total]
+    () => ({
+      items: state.items,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clear,
+      total,
+      subtotal,
+      promoCode: state.promoCode,
+      discount: state.discount,
+      applyPromoCode,
+      removePromoCode
+    }),
+    [state.items, state.promoCode, state.discount, total, subtotal]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

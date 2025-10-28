@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '../../api/auth';
+import { adminLogin } from '../../api/auth';
 import { useAuth } from '../../context/AuthContext';
 
 interface LoginForm {
@@ -18,7 +18,7 @@ function AdminLogin() {
   } = useForm<LoginForm>();
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: adminLogin,
     onSuccess: (data) => setToken(data.token)
   });
 

@@ -16,16 +16,51 @@ const mapProduct = (row: any) => ({
   shortDescription: row.short_description,
   description: row.description,
   price: parseFloat(row.price),
+  salePrice: row.sale_price ? parseFloat(row.sale_price) : null,
   imageUrl: row.image_url,
   inventory: row.inventory,
   categories: row.categories,
   highlights: row.highlights ?? undefined,
-  usage: row.usage ?? undefined
+  usage: row.usage ?? undefined,
+  isNew: row.is_new ?? false,
+  isFeatured: row.is_featured ?? false,
+  salesCount: row.sales_count ?? 0
 });
 
 export const productService = {
-  async list() {
-    const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+  async list(filters?: { isNew?: boolean; isFeatured?: boolean; onSale?: boolean }) {
+    let query = 'SELECT * FROM products WHERE 1=1';
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (filters?.isNew) {
+      query += ` AND is_new = $${paramIndex}`;
+      params.push(true);
+      paramIndex++;
+    }
+
+    if (filters?.isFeatured) {
+      query += ` AND is_featured = $${paramIndex}`;
+      params.push(true);
+      paramIndex++;
+    }
+
+    if (filters?.onSale) {
+      query += ` AND sale_price IS NOT NULL`;
+    }
+
+    // Order by: featured items use sales_count, new items use created_at, sale items use discount %
+    if (filters?.isFeatured) {
+      query += ' ORDER BY sales_count DESC, created_at DESC';
+    } else if (filters?.isNew) {
+      query += ' ORDER BY created_at DESC';
+    } else if (filters?.onSale) {
+      query += ' ORDER BY ((price - sale_price) / price) DESC, created_at DESC';
+    } else {
+      query += ' ORDER BY created_at DESC';
+    }
+
+    const result = await pool.query(query, params);
     return result.rows.map(mapProduct);
   },
   async get(id: number) {
@@ -34,19 +69,22 @@ export const productService = {
   },
   async create(payload: ProductPayload, imagePath: string) {
     const result = await pool.query(
-      `INSERT INTO products (name, short_description, description, price, image_url, inventory, categories, highlights, usage)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO products (name, short_description, description, price, sale_price, image_url, inventory, categories, highlights, usage, is_new, is_featured)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         payload.name,
         payload.shortDescription,
         payload.description,
         payload.price,
+        payload.salePrice ?? null,
         imagePath,
         payload.inventory,
         JSON.stringify(payload.categories),
         payload.highlights ? JSON.stringify(payload.highlights) : null,
-        payload.usage ?? null
+        payload.usage ?? null,
+        payload.isNew ?? false,
+        payload.isFeatured ?? false
       ]
     );
     return mapProduct(result.rows[0]);
@@ -58,21 +96,24 @@ export const productService = {
     const finalImagePath = imagePath ?? current.imageUrl;
     const result = await pool.query(
       `UPDATE products
-       SET name=$1, short_description=$2, description=$3, price=$4,
-         image_url=$5, inventory=$6, categories=$7, highlights=$8, usage=$9,
-         updated_at=CURRENT_TIMESTAMP
-       WHERE id=$10
+       SET name=$1, short_description=$2, description=$3, price=$4, sale_price=$5,
+         image_url=$6, inventory=$7, categories=$8, highlights=$9, usage=$10,
+         is_new=$11, is_featured=$12, updated_at=CURRENT_TIMESTAMP
+       WHERE id=$13
        RETURNING *`,
       [
         payload.name,
         payload.shortDescription,
         payload.description,
         payload.price,
+        payload.salePrice ?? null,
         finalImagePath,
         payload.inventory,
         JSON.stringify(payload.categories),
         payload.highlights ? JSON.stringify(payload.highlights) : null,
         payload.usage ?? null,
+        payload.isNew ?? false,
+        payload.isFeatured ?? false,
         id
       ]
     );

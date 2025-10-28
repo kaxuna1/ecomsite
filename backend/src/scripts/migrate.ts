@@ -7,11 +7,15 @@ CREATE TABLE IF NOT EXISTS products (
   short_description TEXT NOT NULL,
   description TEXT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
+  sale_price DECIMAL(10,2),
   image_url TEXT NOT NULL,
   inventory INTEGER NOT NULL DEFAULT 0,
   categories JSONB NOT NULL,
   highlights JSONB,
   usage TEXT,
+  is_new BOOLEAN DEFAULT FALSE,
+  is_featured BOOLEAN DEFAULT FALSE,
+  sales_count INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
