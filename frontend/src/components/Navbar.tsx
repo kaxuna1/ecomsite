@@ -8,7 +8,6 @@ function Navbar() {
   const { items } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const { t } = useI18n();
-  const prefersReducedMotion = useReducedMotion();
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur">
@@ -39,24 +38,7 @@ function Navbar() {
               `transition-colors ${isActive ? 'text-jade' : 'hover:text-jade hover:text-opacity-100'}`
             }
           >
-            <motion.span
-              key={prefersReducedMotion ? 'cart-label' : `cart-${itemCount}`}
-              initial={prefersReducedMotion ? false : { scale: 0.9, opacity: 0 }}
-              animate={prefersReducedMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="inline-flex items-center gap-1"
-            >
-              {t('nav.cartWithCount', { values: { count: itemCount } })}
-              {!prefersReducedMotion && itemCount > 0 && (
-                <motion.span
-                  key={`dot-${itemCount}`}
-                  className="relative block h-2 w-2 rounded-full bg-jade"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                />
-              )}
-            </motion.span>
+            {t('nav.cartWithCount', { values: { count: itemCount } })}
           </NavLink>
           <NavLink to="/admin/login" className="transition-colors hover:text-jade hover:text-opacity-100">
             {t('nav.admin')}

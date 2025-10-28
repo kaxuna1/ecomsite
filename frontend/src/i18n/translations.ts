@@ -73,8 +73,7 @@ export const translations = {
       loading: 'Loading product details…',
       highlights: 'Highlights',
       usage: 'Usage',
-      addToCart: 'Add to cart',
-      addedToCart: 'Added!'
+      addToCart: 'Add to cart'
     },
     cart: {
       title: 'Your Rituals',
@@ -186,8 +185,7 @@ export const translations = {
       loading: 'პროდუქტის დეტალები იტვირთება…',
       highlights: 'გამორჩეულები',
       usage: 'გამოყენება',
-      addToCart: 'დამატება კალათაში',
-      addedToCart: 'დაემატა!'
+      addToCart: 'დამატება კალათაში'
     },
     cart: {
       title: 'შენი რიტუალები',
