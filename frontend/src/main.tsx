@@ -8,6 +8,7 @@ import App from './App';
 import './styles/global.css';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { I18nProvider } from './context/I18nContext';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <BrowserRouter>
           <AuthProvider>
             <CartProvider>
-              <App />
+              <I18nProvider>
+                <App />
+              </I18nProvider>
             </CartProvider>
           </AuthProvider>
         </BrowserRouter>

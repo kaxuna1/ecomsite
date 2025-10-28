@@ -61,8 +61,8 @@ function AdminLogin() {
           </label>
           {errors.password && <p className="mt-1 text-xs text-rose-200">{errors.password.message}</p>}
         </div>
-        <button type="submit" className="btn-primary w-full bg-blush text-midnight hover:bg-champagne" disabled={mutation.isLoading}>
-          {mutation.isLoading ? 'Signing in…' : 'Sign in'}
+        <button type="submit" className="btn-primary w-full bg-blush text-midnight hover:bg-champagne" disabled={mutation.isPending}>
+          {mutation.isPending ? 'Signing in…' : 'Sign in'}
         </button>
         {mutation.isError && <p className="text-center text-xs text-rose-200">Invalid credentials. Try again.</p>}
       </form>
