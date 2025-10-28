@@ -10,7 +10,11 @@ const required = (value: string | undefined, fallback?: string) => {
 
 export const env = {
   port: Number(process.env.PORT ?? 4000),
-  dbPath: process.env.DATABASE_PATH ?? './data/luxia.db',
+  dbHost: process.env.DB_HOST ?? 'localhost',
+  dbPort: Number(process.env.DB_PORT ?? 5432),
+  dbName: process.env.DB_NAME ?? 'luxia',
+  dbUser: process.env.DB_USER ?? 'postgres',
+  dbPassword: process.env.DB_PASSWORD ?? '',
   jwtSecret: required(process.env.JWT_SECRET, 'super-secret-key'),
   adminEmail: required(process.env.ADMIN_EMAIL, 'concierge@luxia.local'),
   adminPasswordHash: process.env.ADMIN_PASSWORD_HASH,

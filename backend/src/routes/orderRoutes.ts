@@ -6,8 +6,13 @@ import { sendOrderConfirmation } from '../utils/notifications';
 
 const router = Router();
 
-router.get('/', authenticate, (req, res) => {
-  res.json(orderService.list());
+router.get('/', authenticate, async (req, res) => {
+  try {
+    const orders = await orderService.list();
+    res.json(orders);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
 });
 
 router.post(
@@ -28,7 +33,7 @@ router.post(
     }
 
     try {
-      const order = orderService.create(req.body);
+      const order = await orderService.create(req.body);
       await sendOrderConfirmation(
         {
           name: order.customer.name,
@@ -45,16 +50,20 @@ router.post(
   }
 );
 
-router.patch('/:id', authenticate, [body('status').isString().notEmpty()], (req, res) => {
+router.patch('/:id', authenticate, [body('status').isString().notEmpty()], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const order = orderService.updateStatus(Number(req.params.id), req.body.status);
-  if (!order) {
-    return res.status(404).json({ message: 'Order not found' });
+  try {
+    const order = await orderService.updateStatus(Number(req.params.id), req.body.status);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json(order);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
   }
-  res.json(order);
 });
 
 export default router;

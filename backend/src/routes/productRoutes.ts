@@ -21,16 +21,25 @@ const parseJsonArray = (value: string | undefined, errorMessage: string) => {
   throw new Error(errorMessage);
 };
 
-router.get('/', (req, res) => {
-  res.json(productService.list());
+router.get('/', async (req, res) => {
+  try {
+    const products = await productService.list();
+    res.json(products);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const product = productService.get(Number(req.params.id));
-  if (!product) {
-    return res.status(404).json({ message: 'Product not found' });
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await productService.get(Number(req.params.id));
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
   }
-  res.json(product);
 });
 
 const productValidators = [
@@ -41,7 +50,7 @@ const productValidators = [
   body('inventory').isInt({ min: 0 })
 ];
 
-router.post('/', authenticate, upload.single('image'), productValidators, (req, res) => {
+router.post('/', authenticate, upload.single('image'), productValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -55,7 +64,7 @@ router.post('/', authenticate, upload.single('image'), productValidators, (req, 
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
 
     const imageUrl = productService.saveImage(req.file);
-    const product = productService.create(
+    const product = await productService.create(
       {
         name: req.body.name,
         shortDescription: req.body.shortDescription,
@@ -75,7 +84,7 @@ router.post('/', authenticate, upload.single('image'), productValidators, (req, 
   }
 });
 
-router.put('/:id', authenticate, upload.single('image'), productValidators, (req, res) => {
+router.put('/:id', authenticate, upload.single('image'), productValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -85,7 +94,7 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, (req
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
     const imageUrl = req.file ? productService.saveImage(req.file) : undefined;
-    const product = productService.update(
+    const product = await productService.update(
       Number(req.params.id),
       {
         name: req.body.name,
@@ -110,12 +119,16 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, (req
   }
 });
 
-router.delete('/:id', authenticate, (req, res) => {
-  const success = productService.remove(Number(req.params.id));
-  if (!success) {
-    return res.status(404).json({ message: 'Product not found' });
+router.delete('/:id', authenticate, async (req, res) => {
+  try {
+    const success = await productService.remove(Number(req.params.id));
+    if (!success) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.status(204).send();
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
   }
-  res.status(204).send();
 });
 
 export default router;
