@@ -48,10 +48,23 @@ export interface HeroContent {
   description?: string;
   ctaText: string;
   ctaLink: string;
-  backgroundImage: string;
+  backgroundImage?: string;
   backgroundImageAlt?: string;
   overlayOpacity?: number;
   textAlignment?: 'left' | 'center' | 'right';
+  template?: 'split-screen' | 'centered-minimal' | 'full-width-overlay' | 'asymmetric-bold' | 'luxury-minimal' | 'gradient-modern';
+  style?: {
+    backgroundColor?: string;
+    secondaryColor?: string;
+    accentColor?: string;
+    textColor?: string;
+    headlineSize?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    paddingTop?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+    paddingBottom?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+    minHeight?: 'auto' | 'screen' | '75vh' | '50vh';
+    backgroundVideo?: string;
+    enableAnimations?: boolean;
+  };
 }
 
 // Features Block

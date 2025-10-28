@@ -505,3 +505,237 @@ function mapBlockVersionFromDb(row: any): CMSBlockVersion {
     createdAt: row.created_at
   };
 }
+
+// ============================================================================
+// FOOTER SETTINGS MANAGEMENT
+// ============================================================================
+
+export interface FooterSettings {
+  id: number;
+  brandName: string;
+  brandTagline: string | null;
+  brandLogoUrl: string | null;
+  footerColumns: any[];
+  contactInfo: any;
+  socialLinks: any[];
+  newsletterEnabled: boolean;
+  newsletterTitle: string;
+  newsletterDescription: string;
+  newsletterPlaceholder: string;
+  newsletterButtonText: string;
+  copyrightText: string | null;
+  bottomLinks: any[];
+  backgroundColor: string;
+  textColor: string;
+  accentColor: string;
+  layoutType: string;
+  columnsCount: number;
+  showDividers: boolean;
+  isPublished: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+
+export interface UpdateFooterPayload {
+  brandName?: string;
+  brandTagline?: string;
+  brandLogoUrl?: string;
+  footerColumns?: any[];
+  contactInfo?: any;
+  socialLinks?: any[];
+  newsletterEnabled?: boolean;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  newsletterPlaceholder?: string;
+  newsletterButtonText?: string;
+  copyrightText?: string;
+  bottomLinks?: any[];
+  backgroundColor?: string;
+  textColor?: string;
+  accentColor?: string;
+  layoutType?: string;
+  columnsCount?: number;
+  showDividers?: boolean;
+  isPublished?: boolean;
+}
+
+/**
+ * Get published footer settings (for public use)
+ */
+export async function getFooterSettings(): Promise<FooterSettings | null> {
+  const result = await pool.query(
+    'SELECT * FROM footer_settings WHERE is_published = true ORDER BY id DESC LIMIT 1'
+  );
+
+  return result.rows.length > 0 ? mapFooterFromDb(result.rows[0]) : null;
+}
+
+/**
+ * Get footer settings for admin (including unpublished)
+ */
+export async function getFooterSettingsAdmin(): Promise<FooterSettings | null> {
+  const result = await pool.query(
+    'SELECT * FROM footer_settings ORDER BY id DESC LIMIT 1'
+  );
+
+  return result.rows.length > 0 ? mapFooterFromDb(result.rows[0]) : null;
+}
+
+/**
+ * Update footer settings
+ */
+export async function updateFooterSettings(payload: UpdateFooterPayload): Promise<FooterSettings | null> {
+  // Get the current footer settings (there should only be one row)
+  const currentResult = await pool.query('SELECT id FROM footer_settings ORDER BY id DESC LIMIT 1');
+
+  if (currentResult.rows.length === 0) {
+    return null;
+  }
+
+  const footerId = currentResult.rows[0].id;
+
+  const updates: string[] = [];
+  const params: any[] = [];
+  let paramCount = 1;
+
+  if (payload.brandName !== undefined) {
+    updates.push(`brand_name = $${paramCount++}`);
+    params.push(payload.brandName);
+  }
+
+  if (payload.brandTagline !== undefined) {
+    updates.push(`brand_tagline = $${paramCount++}`);
+    params.push(payload.brandTagline);
+  }
+
+  if (payload.brandLogoUrl !== undefined) {
+    updates.push(`brand_logo_url = $${paramCount++}`);
+    params.push(payload.brandLogoUrl);
+  }
+
+  if (payload.footerColumns !== undefined) {
+    updates.push(`footer_columns = $${paramCount++}`);
+    params.push(JSON.stringify(payload.footerColumns));
+  }
+
+  if (payload.contactInfo !== undefined) {
+    updates.push(`contact_info = $${paramCount++}`);
+    params.push(JSON.stringify(payload.contactInfo));
+  }
+
+  if (payload.socialLinks !== undefined) {
+    updates.push(`social_links = $${paramCount++}`);
+    params.push(JSON.stringify(payload.socialLinks));
+  }
+
+  if (payload.newsletterEnabled !== undefined) {
+    updates.push(`newsletter_enabled = $${paramCount++}`);
+    params.push(payload.newsletterEnabled);
+  }
+
+  if (payload.newsletterTitle !== undefined) {
+    updates.push(`newsletter_title = $${paramCount++}`);
+    params.push(payload.newsletterTitle);
+  }
+
+  if (payload.newsletterDescription !== undefined) {
+    updates.push(`newsletter_description = $${paramCount++}`);
+    params.push(payload.newsletterDescription);
+  }
+
+  if (payload.newsletterPlaceholder !== undefined) {
+    updates.push(`newsletter_placeholder = $${paramCount++}`);
+    params.push(payload.newsletterPlaceholder);
+  }
+
+  if (payload.newsletterButtonText !== undefined) {
+    updates.push(`newsletter_button_text = $${paramCount++}`);
+    params.push(payload.newsletterButtonText);
+  }
+
+  if (payload.copyrightText !== undefined) {
+    updates.push(`copyright_text = $${paramCount++}`);
+    params.push(payload.copyrightText);
+  }
+
+  if (payload.bottomLinks !== undefined) {
+    updates.push(`bottom_links = $${paramCount++}`);
+    params.push(JSON.stringify(payload.bottomLinks));
+  }
+
+  if (payload.backgroundColor !== undefined) {
+    updates.push(`background_color = $${paramCount++}`);
+    params.push(payload.backgroundColor);
+  }
+
+  if (payload.textColor !== undefined) {
+    updates.push(`text_color = $${paramCount++}`);
+    params.push(payload.textColor);
+  }
+
+  if (payload.accentColor !== undefined) {
+    updates.push(`accent_color = $${paramCount++}`);
+    params.push(payload.accentColor);
+  }
+
+  if (payload.layoutType !== undefined) {
+    updates.push(`layout_type = $${paramCount++}`);
+    params.push(payload.layoutType);
+  }
+
+  if (payload.columnsCount !== undefined) {
+    updates.push(`columns_count = $${paramCount++}`);
+    params.push(payload.columnsCount);
+  }
+
+  if (payload.showDividers !== undefined) {
+    updates.push(`show_dividers = $${paramCount++}`);
+    params.push(payload.showDividers);
+  }
+
+  if (payload.isPublished !== undefined) {
+    updates.push(`is_published = $${paramCount++}`);
+    params.push(payload.isPublished);
+  }
+
+  if (updates.length === 0) {
+    return getFooterSettingsAdmin();
+  }
+
+  params.push(footerId);
+  const query = `UPDATE footer_settings SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`;
+
+  const result = await pool.query(query, params);
+  return mapFooterFromDb(result.rows[0]);
+}
+
+/**
+ * Map database row to FooterSettings object
+ */
+function mapFooterFromDb(row: any): FooterSettings {
+  return {
+    id: row.id,
+    brandName: row.brand_name,
+    brandTagline: row.brand_tagline,
+    brandLogoUrl: row.brand_logo_url,
+    footerColumns: row.footer_columns,
+    contactInfo: row.contact_info,
+    socialLinks: row.social_links,
+    newsletterEnabled: row.newsletter_enabled,
+    newsletterTitle: row.newsletter_title,
+    newsletterDescription: row.newsletter_description,
+    newsletterPlaceholder: row.newsletter_placeholder,
+    newsletterButtonText: row.newsletter_button_text,
+    copyrightText: row.copyright_text,
+    bottomLinks: row.bottom_links,
+    backgroundColor: row.background_color,
+    textColor: row.text_color,
+    accentColor: row.accent_color,
+    layoutType: row.layout_type,
+    columnsCount: row.columns_count,
+    showDividers: row.show_dividers,
+    isPublished: row.is_published,
+    updatedAt: row.updated_at,
+    createdAt: row.created_at
+  };
+}

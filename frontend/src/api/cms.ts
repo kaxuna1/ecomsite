@@ -24,3 +24,16 @@ export async function fetchPage(slug: string): Promise<CMSPageResponse> {
 export async function fetchHomePage(): Promise<CMSPageResponse> {
   return fetchPage('home');
 }
+
+/**
+ * Fetch published footer settings
+ */
+export async function fetchPublicFooterSettings(): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/cms/footer`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch footer settings: ${response.statusText}`);
+  }
+
+  return response.json();
+}

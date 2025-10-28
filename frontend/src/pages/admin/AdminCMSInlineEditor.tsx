@@ -189,7 +189,7 @@ export default function AdminCMSInlineEditor() {
       </div>
 
       {/* Page Content with Editable Blocks */}
-      <div className="pt-24">
+      <div>
         {blocks.length === 0 ? (
           <div className="min-h-[60vh] flex items-center justify-center">
             <div className="text-center">

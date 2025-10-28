@@ -1,19 +1,25 @@
-import { Link } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
-import {
-  CheckBadgeIcon,
-  HeartIcon,
-  SparklesIcon,
-  ArrowRightIcon
-} from '@heroicons/react/24/outline';
-import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+import HeroTemplates from './HeroTemplates';
 import type { HeroContent } from '../../types/cms';
 
 interface HeroBlockProps {
-  content: HeroContent;
+  content: HeroContent & { template?: string };
 }
 
 export default function HeroBlock({ content }: HeroBlockProps) {
+  return <HeroTemplates content={content} />;
+}
+
+// Keep the old component for reference/fallback
+function OldHeroBlock({ content }: HeroBlockProps) {
+  const { Link } = require('react-router-dom');
+  const { motion, useReducedMotion } = require('framer-motion');
+  const {
+    CheckBadgeIcon,
+    HeartIcon,
+    SparklesIcon,
+    ArrowRightIcon
+  } = require('@heroicons/react/24/outline');
+  const { StarIcon: StarIconSolid } = require('@heroicons/react/24/solid');
   const prefersReducedMotion = useReducedMotion();
   const {
     headline,

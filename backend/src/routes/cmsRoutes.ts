@@ -648,4 +648,93 @@ router.delete(
   }
 );
 
+// ============================================================================
+// FOOTER SETTINGS ROUTES
+// ============================================================================
+
+/**
+ * GET /api/cms/footer
+ * Get published footer settings (public endpoint)
+ */
+router.get('/footer', async (req, res) => {
+  try {
+    const footer = await cmsService.getFooterSettings();
+    if (!footer) {
+      return res.status(404).json({ message: 'Footer settings not found' });
+    }
+
+    res.json(footer);
+  } catch (error) {
+    console.error('Error fetching footer settings:', error);
+    res.status(500).json({ message: 'Error fetching footer settings' });
+  }
+});
+
+/**
+ * GET /api/cms/admin/footer
+ * Get footer settings for admin editing
+ */
+router.get('/admin/footer', adminAuth, async (req, res) => {
+  try {
+    const footer = await cmsService.getFooterSettingsAdmin();
+    if (!footer) {
+      return res.status(404).json({ message: 'Footer settings not found' });
+    }
+
+    res.json(footer);
+  } catch (error) {
+    console.error('Error fetching footer settings for admin:', error);
+    res.status(500).json({ message: 'Error fetching footer settings' });
+  }
+});
+
+/**
+ * PUT /api/cms/admin/footer
+ * Update footer settings
+ */
+router.put(
+  '/admin/footer',
+  adminAuth,
+  [
+    body('brandName').optional().isString(),
+    body('brandTagline').optional().isString(),
+    body('brandLogoUrl').optional().isString(),
+    body('footerColumns').optional().isArray(),
+    body('contactInfo').optional().isObject(),
+    body('socialLinks').optional().isArray(),
+    body('newsletterEnabled').optional().isBoolean(),
+    body('newsletterTitle').optional().isString(),
+    body('newsletterDescription').optional().isString(),
+    body('newsletterPlaceholder').optional().isString(),
+    body('newsletterButtonText').optional().isString(),
+    body('copyrightText').optional().isString(),
+    body('bottomLinks').optional().isArray(),
+    body('backgroundColor').optional().isString(),
+    body('textColor').optional().isString(),
+    body('accentColor').optional().isString(),
+    body('layoutType').optional().isString(),
+    body('columnsCount').optional().isInt({ min: 1, max: 6 }),
+    body('showDividers').optional().isBoolean(),
+    body('isPublished').optional().isBoolean()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const footer = await cmsService.updateFooterSettings(req.body);
+      if (!footer) {
+        return res.status(404).json({ message: 'Footer settings not found' });
+      }
+
+      res.json(footer);
+    } catch (error) {
+      console.error('Error updating footer settings:', error);
+      res.status(500).json({ message: 'Error updating footer settings' });
+    }
+  }
+);
+
 export default router;

@@ -165,3 +165,99 @@ export async function reorderCMSBlocks(
   });
   return response.data;
 }
+
+// ============================================================================
+// FOOTER SETTINGS MANAGEMENT
+// ============================================================================
+
+export interface FooterColumn {
+  title: string;
+  links: Array<{
+    label: string;
+    url: string;
+    is_external?: boolean;
+  }>;
+}
+
+export interface FooterContactInfo {
+  address?: {
+    label: string;
+    street: string;
+    city: string;
+    country: string;
+  };
+  email?: string;
+  phone?: string;
+}
+
+export interface FooterSocialLink {
+  platform: string;
+  url: string;
+  icon: string;
+  is_enabled: boolean;
+}
+
+export interface FooterSettings {
+  id: number;
+  brandName: string;
+  brandTagline: string | null;
+  brandLogoUrl: string | null;
+  footerColumns: FooterColumn[];
+  contactInfo: FooterContactInfo;
+  socialLinks: FooterSocialLink[];
+  newsletterEnabled: boolean;
+  newsletterTitle: string;
+  newsletterDescription: string;
+  newsletterPlaceholder: string;
+  newsletterButtonText: string;
+  copyrightText: string | null;
+  bottomLinks: Array<{ label: string; url: string }>;
+  backgroundColor: string;
+  textColor: string;
+  accentColor: string;
+  layoutType: string;
+  columnsCount: number;
+  showDividers: boolean;
+  isPublished: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+
+export interface UpdateFooterPayload {
+  brandName?: string;
+  brandTagline?: string;
+  brandLogoUrl?: string;
+  footerColumns?: FooterColumn[];
+  contactInfo?: FooterContactInfo;
+  socialLinks?: FooterSocialLink[];
+  newsletterEnabled?: boolean;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  newsletterPlaceholder?: string;
+  newsletterButtonText?: string;
+  copyrightText?: string;
+  bottomLinks?: Array<{ label: string; url: string }>;
+  backgroundColor?: string;
+  textColor?: string;
+  accentColor?: string;
+  layoutType?: string;
+  columnsCount?: number;
+  showDividers?: boolean;
+  isPublished?: boolean;
+}
+
+/**
+ * Fetch footer settings for admin editing
+ */
+export async function fetchFooterSettings(): Promise<FooterSettings> {
+  const response = await api.get<FooterSettings>('/cms/admin/footer');
+  return response.data;
+}
+
+/**
+ * Update footer settings
+ */
+export async function updateFooterSettings(payload: UpdateFooterPayload): Promise<FooterSettings> {
+  const response = await api.put<FooterSettings>('/cms/admin/footer', payload);
+  return response.data;
+}

@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import {
   fetchCMSPages,
   fetchPageBlocks,
   updateCMSPage,
   deleteCMSPage,
+  fetchFooterSettings,
+  updateFooterSettings,
   type CMSPage,
-  type CMSBlock
+  type CMSBlock,
+  type FooterSettings
 } from '../../api/cmsAdmin';
+import FooterEditor from '../../components/cms/editors/FooterEditor';
 
 export default function AdminCMS() {
   const queryClient = useQueryClient();
   const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
+  const [showFooterEditor, setShowFooterEditor] = useState(false);
 
   const { data: pages, isLoading } = useQuery({
     queryKey: ['cms-pages'],
@@ -23,6 +30,12 @@ export default function AdminCMS() {
     queryKey: ['cms-blocks', selectedPageId],
     queryFn: () => fetchPageBlocks(selectedPageId!),
     enabled: !!selectedPageId
+  });
+
+  const { data: footerSettings } = useQuery({
+    queryKey: ['footer-settings'],
+    queryFn: fetchFooterSettings,
+    enabled: showFooterEditor
   });
 
   const statusMutation = useMutation({
@@ -41,6 +54,13 @@ export default function AdminCMS() {
     }
   });
 
+  const footerMutation = useMutation({
+    mutationFn: updateFooterSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['footer-settings'] });
+    }
+  });
+
   const handleToggleStatus = (page: CMSPage) => {
     const newStatus = !page.isPublished;
     statusMutation.mutate({ pageId: page.id, isPublished: newStatus });
@@ -50,6 +70,14 @@ export default function AdminCMS() {
     if (confirm('Are you sure you want to delete this page?')) {
       deleteMutation.mutate(pageId);
     }
+  };
+
+  const handleFooterChange = (updates: Partial<FooterSettings>) => {
+    footerMutation.mutate(updates);
+  };
+
+  const handleFooterSave = () => {
+    setShowFooterEditor(false);
   };
 
   if (isLoading) {
@@ -64,12 +92,20 @@ export default function AdminCMS() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-3xl uppercase tracking-wider">CMS Management</h1>
-        <Link
-          to="/admin/cms/new"
-          className="px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
-        >
-          Create New Page
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowFooterEditor(true)}
+            className="px-4 py-2 bg-champagne/20 text-champagne rounded-lg hover:bg-champagne/30 transition-colors font-semibold"
+          >
+            Edit Footer
+          </button>
+          <Link
+            to="/admin/cms/new"
+            className="px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+          >
+            Create New Page
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -181,6 +217,55 @@ export default function AdminCMS() {
           )}
         </div>
       </div>
+
+      {/* Footer Editor Modal */}
+      <AnimatePresence>
+        {showFooterEditor && footerSettings && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFooterEditor(false)}
+              className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-40"
+            />
+
+            {/* Slide-out Panel */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-midnight border-l border-white/10 z-50 overflow-hidden flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-midnight/95 backdrop-blur-sm">
+                <div>
+                  <h2 className="font-display text-2xl text-champagne">Footer Editor</h2>
+                  <p className="text-sm text-champagne/60 mt-1">Customize your site footer</p>
+                </div>
+                <button
+                  onClick={() => setShowFooterEditor(false)}
+                  className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-6 py-6">
+                <FooterEditor
+                  footer={footerSettings}
+                  onChange={handleFooterChange}
+                  onSave={handleFooterSave}
+                  isSaving={footerMutation.isPending}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
