@@ -18,8 +18,22 @@ export const translations = {
       title: 'Illuminate your hair from the root',
       description:
         'Our clinically proven serums, masks, and massage tools restore balance to the scalp biome, delivering shine and resilience worthy of a crown.',
+      promise: 'Clinical-grade scalp rituals, delivered with concierge care.',
       ctaPrimary: 'Explore collections',
-      ctaSecondary: 'Reserve consultation'
+      ctaSecondary: 'Reserve consultation',
+      highlights: {
+        clinicalTitle: 'Clinically vetted actives',
+        clinicalDescription:
+          'Dermatologist-reviewed ingredients calm irritation and rebalance the scalp microbiome without silicones or sulfates.',
+        ritualTitle: 'Modern ritual essentials',
+        ritualDescription:
+          'Layerable textures and precision tools turn nightly care into a restorative ceremony.'
+      },
+      metrics: {
+        consultations: 'Personal consultations completed',
+        satisfaction: 'Client satisfaction rating',
+        turnaround: 'Average concierge response time'
+      }
     },
     home: {
       precisionTitle: 'Precision-formulated for sensitive scalps',
@@ -130,8 +144,22 @@ export const translations = {
       title: 'განანათე თმა ფესვიდან',
       description:
         'ჩვენი კლინიკურად დამტკიცებული შრატები, ნიღბები და მასაჟორის ინსტრუმენტები აბალანსებს თავის კანის ბიომს, ანიჭებს ბრწყინვალებასა და გამძლეობას.',
+      promise: 'კლინიკური დონის სკალპის რიტუალები, კონსიერჟის ზრუნვით.',
       ctaPrimary: 'აღმოაჩინე კოლექციები',
-      ctaSecondary: 'დაჯავშნე კონსულტაცია'
+      ctaSecondary: 'დაჯავშნე კონსულტაცია',
+      highlights: {
+        clinicalTitle: 'კლინიკურად დამტკიცებული აქტივები',
+        clinicalDescription:
+          'დერმატოლოგების მიერ გადამოწმებული ინგრედიენტები ამშვიდებს გაღიზიანებას და აბალანსებს სკალპის მიკრობიომს სილიკონებისა და სულფატების გარეშე.',
+        ritualTitle: 'თანამედროვე რიტუალის აუცილებლობები',
+        ritualDescription:
+          'ფენებად მისადაგებული ტექსტურები და ზუსტი ინსტრუმენტები საღამოს მოვლას აქცევს აღდგენით ცერემონიად.'
+      },
+      metrics: {
+        consultations: 'პირადი კონსულტაციები დასრულდა',
+        satisfaction: 'კლიენტების კმაყოფილების მაჩვენებელი',
+        turnaround: 'კონსიერჟის საშუალო პასუხის დრო'
+      }
     },
     home: {
       precisionTitle: 'ზუსტი ფორმულა მგრძნობიარე სკალპისთვის',
