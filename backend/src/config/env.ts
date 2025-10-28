@@ -22,7 +22,7 @@ export const env = {
   smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
   smtpUser: process.env.SMTP_USER,
   smtpPassword: process.env.SMTP_PASSWORD,
-  notifyFrom: process.env.NOTIFY_FROM ?? 'Luxia Rituals <no-reply@luxia.local>',
+  notifyFrom: process.env.NOTIFY_FROM ?? 'Luxia Products <no-reply@luxia.local>',
   smsFrom: process.env.SMS_FROM,
   smsWebhookUrl: process.env.SMS_WEBHOOK_URL,
   smsApiKey: process.env.SMS_API_KEY

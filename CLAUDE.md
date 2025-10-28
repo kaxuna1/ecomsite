@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Luxia Rituals is a full-stack TypeScript e-commerce application for luxury scalp and hair-care products. The architecture consists of:
+Luxia Products is a full-stack TypeScript e-commerce application for luxury scalp and hair-care products. The architecture consists of:
 
 - **Frontend**: Vite + React + Tailwind CSS storefront with mobile-first design
 - **Backend**: Express + SQLite API with JWT authentication

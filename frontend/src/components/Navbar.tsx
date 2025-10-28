@@ -1,5 +1,4 @@
 import { Link, NavLink } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -30,7 +29,7 @@ function Navbar() {
               `transition-colors ${isActive ? 'text-jade' : 'hover:text-jade hover:text-opacity-100'}`
             }
           >
-            {t('nav.rituals')}
+            {t('nav.products')}
           </NavLink>
           <NavLink
             to="/cart"

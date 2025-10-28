@@ -1,6 +1,6 @@
-# Luxia Rituals Commerce Stack
+# Luxia Products Commerce Stack
 
-Luxia Rituals is a luxury scalp and hair-care storefront with a full-stack TypeScript implementation. The project includes a Vite + React frontend optimized for mobile-first shopping experiences and an Express + SQLite backend that powers products, orders, and manual payment workflows.
+Luxia Products is a luxury scalp and hair-care storefront with a full-stack TypeScript implementation. The project includes a Vite + React frontend optimized for mobile-first shopping experiences and an Express + SQLite backend that powers products, orders, and manual payment workflows.
 
 ## Project layout
 

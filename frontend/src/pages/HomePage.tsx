@@ -8,21 +8,21 @@ function HomePage() {
   const { t } = useI18n();
   const prefersReducedMotion = useReducedMotion();
 
-  const featuredRituals = useMemo(
+  const featuredProducts = useMemo(
     () => [
       {
-        name: t('home.featuredRituals.celestialName'),
-        description: t('home.featuredRituals.celestialDescription'),
+        name: t('home.featuredProducts.celestialName'),
+        description: t('home.featuredProducts.celestialDescription'),
         image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=80'
       },
       {
-        name: t('home.featuredRituals.nocturneName'),
-        description: t('home.featuredRituals.nocturneDescription'),
+        name: t('home.featuredProducts.nocturneName'),
+        description: t('home.featuredProducts.nocturneDescription'),
         image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80'
       },
       {
-        name: t('home.featuredRituals.luminousName'),
-        description: t('home.featuredRituals.luminousDescription'),
+        name: t('home.featuredProducts.luminousName'),
+        description: t('home.featuredProducts.luminousDescription'),
         image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80'
       }
     ],
@@ -40,7 +40,7 @@ function HomePage() {
         gradient: 'from-jade/20 via-white/80 to-blush/50'
       },
       {
-        label: t('home.researchPoints.ritual'),
+        label: t('home.researchPoints.product'),
         gradient: 'from-midnight/10 via-white/80 to-jade/30'
       }
     ],
@@ -123,17 +123,17 @@ function HomePage() {
             <p className="mx-auto mt-4 max-w-2xl text-sm text-midnight/70">{t('home.featuredIntro')}</p>
           </motion.div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredRituals.map((ritual) => (
+            {featuredProducts.map((product) => (
               <motion.article
-                key={ritual.name}
+                key={product.name}
                 className="group flex flex-col overflow-hidden rounded-3xl border border-champagne/40 bg-white shadow-xl"
                 whileHover={prefersReducedMotion ? undefined : { y: -8 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 20 }}
               >
                 <div className="aspect-[4/5] w-full bg-gradient-to-br from-champagne via-blush to-white">
                   <motion.img
-                    src={ritual.image}
-                    alt={ritual.name}
+                    src={product.image}
+                    alt={product.name}
                     className="h-full w-full object-cover object-center"
                     loading="lazy"
                     whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
@@ -141,8 +141,8 @@ function HomePage() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-6">
-                  <h3 className="font-display text-lg text-midnight">{ritual.name}</h3>
-                  <p className="text-sm text-midnight/70">{ritual.description}</p>
+                  <h3 className="font-display text-lg text-midnight">{product.name}</h3>
+                  <p className="text-sm text-midnight/70">{product.description}</p>
                 </div>
               </motion.article>
             ))}

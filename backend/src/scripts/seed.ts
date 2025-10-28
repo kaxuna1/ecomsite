@@ -4,11 +4,11 @@ const sampleProducts = [
   {
     name: 'Luminescent Scalp Renewal Elixir',
     shortDescription: 'Revitalize the scalp with a cold-pressed botanical concentrate.',
-    description: `Our signature elixir delivers a weekly reset ritual infused with neroli blossom, rare tea seed oil, and marine minerals. Designed to soothe micro-inflammation while restoring the scalp's natural barrier for lustrous, resilient hair.`,
+    description: `Our signature elixir delivers a weekly reset treatment infused with neroli blossom, rare tea seed oil, and marine minerals. Designed to soothe micro-inflammation while restoring the scalp's natural barrier for lustrous, resilient hair.`,
     price: 128,
     imageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80',
     inventory: 50,
-    categories: ['rituals', 'treatments'],
+    categories: ['products', 'treatments'],
     highlights: [
       'Clinically balanced for sensitive scalps',
       'Infused with adaptogenic botanicals and cold-pressed oils',

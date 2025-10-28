@@ -37,7 +37,7 @@ function AdminLogin() {
       >
         <div className="text-center">
           <h1 className="font-display text-2xl uppercase tracking-[0.4em]">Admin</h1>
-          <p className="mt-2 text-sm text-champagne/70">Sign in to manage rituals and orders.</p>
+          <p className="mt-2 text-sm text-champagne/70">Sign in to manage products and orders.</p>
         </div>
         <div>
           <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-champagne/70">
