@@ -32,6 +32,12 @@ function AdminLayout() {
               Promo Codes
             </NavLink>
             <NavLink
+              to="/admin/cms"
+              className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
+            >
+              CMS
+            </NavLink>
+            <NavLink
               to="/admin/admin-users"
               className={({ isActive }) => (isActive ? 'text-blush' : 'hover:text-blush')}
             >

@@ -11,6 +11,7 @@ import favoritesRoutes from './routes/favoritesRoutes';
 import promoCodeRoutes from './routes/promoCodeRoutes';
 import adminUserRoutes from './routes/adminUserRoutes';
 import addressRoutes from './routes/addressRoutes';
+import cmsRoutes from './routes/cmsRoutes';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/favorites', favoritesRoutes);
 app.use('/api/promo-codes', promoCodeRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/addresses', addressRoutes);
+app.use('/api/cms', cmsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

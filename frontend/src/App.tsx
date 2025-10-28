@@ -7,7 +7,7 @@ import AdminLayout from './components/AdminLayout';
 import AuthGuard from './components/AuthGuard';
 import ProtectedRoute from './components/ProtectedRoute';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePage = lazy(() => import('./pages/CMSHomePage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const NewArrivalsPage = lazy(() => import('./pages/NewArrivalsPage'));
 const BestSellersPage = lazy(() => import('./pages/BestSellersPage'));
@@ -31,6 +31,9 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
 const AdminPromoCodes = lazy(() => import('./pages/admin/AdminPromoCodes'));
+const AdminCMS = lazy(() => import('./pages/admin/AdminCMS'));
+const AdminCMSPageEditor = lazy(() => import('./pages/admin/AdminCMSPageEditor'));
+const AdminCMSInlineEditor = lazy(() => import('./pages/admin/AdminCMSInlineEditor'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const RegularUsers = lazy(() => import('./pages/admin/RegularUsers'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
@@ -96,6 +99,9 @@ function App() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="promo-codes" element={<AdminPromoCodes />} />
+          <Route path="cms" element={<AdminCMS />} />
+          <Route path="cms/edit/:id" element={<AdminCMSPageEditor />} />
+          <Route path="cms/inline-edit/:id" element={<AdminCMSInlineEditor />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="customers" element={<RegularUsers />} />
         </Route>
