@@ -137,7 +137,7 @@ function AdminProducts() {
         <title>Manage Products — Luxia</title>
       </Helmet>
       <section className="rounded-3xl bg-white/10 p-8 text-champagne">
-        <h1 className="font-display text-3xl">Ritual Catalogue</h1>
+        <h1 className="font-display text-3xl">Product Catalogue</h1>
         <p className="mt-2 text-sm text-champagne/70">Upload, update, or archive products. Images are stored on the server.</p>
       </section>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-3xl bg-white/5 p-8 text-champagne">
@@ -256,7 +256,7 @@ function AdminProducts() {
         )}
       </form>
       <section className="space-y-4">
-        <h2 className="font-display text-2xl text-champagne">Current rituals</h2>
+        <h2 className="font-display text-2xl text-champagne">Current products</h2>
         <ul className="space-y-4" aria-label="Product list">
           {products?.map((product) => (
             <li key={product.id} className="rounded-3xl bg-white/5 p-6 text-champagne shadow-md">

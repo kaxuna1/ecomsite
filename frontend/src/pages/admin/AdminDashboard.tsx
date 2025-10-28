@@ -21,7 +21,7 @@ function AdminDashboard() {
         </p>
       </section>
       <div className="grid gap-6 md:grid-cols-3">
-        <MetricCard label="Active rituals" value={products?.length ?? 0} />
+        <MetricCard label="Active products" value={products?.length ?? 0} />
         <MetricCard label="Pending payments" value={pendingOrders} />
         <MetricCard label="Total orders" value={orders?.length ?? 0} />
       </div>

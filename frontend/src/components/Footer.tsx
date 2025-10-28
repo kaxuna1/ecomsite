@@ -25,7 +25,7 @@ function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-widest">{t('footer.stay')}</h3>
             <p className="mt-4 text-sm text-champagne/80">
-              hello@luxiarituals.com
+              hello@luxiaproducts.com
               <br />
               (212) 555-0199
             </p>

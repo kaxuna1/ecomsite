@@ -18,8 +18,8 @@ const transporter = env.smtpHost
   : null;
 
 export async function sendOrderConfirmation(contact: Contact, orderId: number) {
-  const subject = `Luxia Rituals — Order ${orderId} received`;
-  const text = `Dear ${contact.name},\n\nThank you for reserving your Luxia rituals.\n\nOur concierge team will review your order and send manual payment instructions shortly.\n\nWarmly,\nLuxia Rituals`;
+  const subject = `Luxia Products — Order ${orderId} received`;
+  const text = `Dear ${contact.name},\n\nThank you for reserving your Luxia products.\n\nOur concierge team will review your order and send manual payment instructions shortly.\n\nWarmly,\nLuxia Products`;
 
   if (transporter) {
     await transporter.sendMail({
@@ -42,7 +42,7 @@ export async function sendOrderConfirmation(contact: Contact, orderId: number) {
       body: JSON.stringify({
         to: contact.phone,
         from: env.smsFrom,
-        message: `Luxia Rituals: Order ${orderId} received. Check email for manual payment instructions.`
+        message: `Luxia Products: Order ${orderId} received. Check email for manual payment instructions.`
       })
     }).catch((error) => console.error('SMS notification failed', error));
   } else if (contact.phone) {
