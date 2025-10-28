@@ -10,9 +10,10 @@ const required = (value: string | undefined, fallback?: string) => {
 
 export const env = {
   port: Number(process.env.PORT ?? 4000),
-  databaseUrl: required(process.env.DATABASE_URL),
-  databaseSsl: process.env.DATABASE_SSL === 'true',
+  dbPath: process.env.DATABASE_PATH ?? './data/luxia.db',
   jwtSecret: required(process.env.JWT_SECRET, 'super-secret-key'),
+  adminEmail: required(process.env.ADMIN_EMAIL, 'concierge@luxia.local'),
+  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH,
   smtpHost: process.env.SMTP_HOST,
   smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
   smtpUser: process.env.SMTP_USER,
@@ -20,12 +21,5 @@ export const env = {
   notifyFrom: process.env.NOTIFY_FROM ?? 'Luxia Rituals <no-reply@luxia.local>',
   smsFrom: process.env.SMS_FROM,
   smsWebhookUrl: process.env.SMS_WEBHOOK_URL,
-  smsApiKey: process.env.SMS_API_KEY,
-  s3Region: required(process.env.S3_REGION),
-  s3Bucket: required(process.env.S3_BUCKET),
-  s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
-  s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  s3Endpoint: process.env.S3_ENDPOINT,
-  s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
-  s3PublicUrl: process.env.S3_PUBLIC_URL
+  smsApiKey: process.env.SMS_API_KEY
 };

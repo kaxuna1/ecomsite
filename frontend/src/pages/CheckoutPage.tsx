@@ -118,8 +118,8 @@ function CheckoutPage() {
           <p className="text-sm text-champagne/70">
             Payment is processed manually for bespoke verification. Expect a confirmation within 24 hours.
           </p>
-          <button type="submit" className="btn-primary bg-white text-midnight hover:bg-blush" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Submitting…' : 'Place order'}
+          <button type="submit" className="btn-primary bg-white text-midnight hover:bg-blush" disabled={mutation.isLoading}>
+            {mutation.isLoading ? 'Submitting…' : 'Place order'}
           </button>
           {mutation.isError && (
             <p className="text-xs text-rose-200">An error occurred. Please try again or contact our concierge.</p>

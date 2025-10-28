@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 
 export interface AuthenticatedRequest extends Request {
-  user?: { username: string };
+  user?: { email: string };
 }
 
 export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -13,8 +13,8 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
   }
   const token = header.replace('Bearer ', '');
   try {
-    const payload = jwt.verify(token, env.jwtSecret) as { username: string };
-    req.user = { username: payload.username };
+    const payload = jwt.verify(token, env.jwtSecret) as { email: string };
+    req.user = { email: payload.email };
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });

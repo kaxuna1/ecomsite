@@ -5,7 +5,7 @@ import { login } from '../../api/auth';
 import { useAuth } from '../../context/AuthContext';
 
 interface LoginForm {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -41,14 +41,14 @@ function AdminLogin() {
         </div>
         <div>
           <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-champagne/70">
-            Username
+            Email
             <input
-              type="text"
+              type="email"
               className="mt-2 w-full rounded-full border border-white/20 bg-midnight px-4 py-3 text-champagne"
-              {...register('username', { required: 'Username is required' })}
+              {...register('email', { required: 'Email is required' })}
             />
           </label>
-          {errors.username && <p className="mt-1 text-xs text-rose-200">{errors.username.message}</p>}
+          {errors.email && <p className="mt-1 text-xs text-rose-200">{errors.email.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-champagne/70">
@@ -61,8 +61,8 @@ function AdminLogin() {
           </label>
           {errors.password && <p className="mt-1 text-xs text-rose-200">{errors.password.message}</p>}
         </div>
-        <button type="submit" className="btn-primary w-full bg-blush text-midnight hover:bg-champagne" disabled={mutation.isPending}>
-          {mutation.isPending ? 'Signing in…' : 'Sign in'}
+        <button type="submit" className="btn-primary w-full bg-blush text-midnight hover:bg-champagne" disabled={mutation.isLoading}>
+          {mutation.isLoading ? 'Signing in…' : 'Sign in'}
         </button>
         {mutation.isError && <p className="text-center text-xs text-rose-200">Invalid credentials. Try again.</p>}
       </form>

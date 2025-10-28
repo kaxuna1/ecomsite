@@ -5,10 +5,9 @@ export interface Product {
   description: string;
   price: number;
   image_url: string;
-  image_key: string;
   inventory: number;
-  categories: string[];
-  highlights: string[] | null;
+  categories: string;
+  highlights: string | null;
   usage: string | null;
 }
 
@@ -21,6 +20,18 @@ export interface ProductPayload {
   categories: string[];
   highlights?: string[];
   usage?: string;
+}
+
+export interface Order {
+  id: number;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  customer_notes: string | null;
+  customer_address: string;
+  total: number;
+  status: string;
+  created_at: string;
 }
 
 export interface OrderPayload {

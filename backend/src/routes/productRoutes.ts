@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 import { productService } from '../services/productService';
@@ -21,25 +21,16 @@ const parseJsonArray = (value: string | undefined, errorMessage: string) => {
   throw new Error(errorMessage);
 };
 
-router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const products = await productService.list();
-    res.json(products);
-  } catch (error) {
-    next(error);
-  }
+router.get('/', (req, res) => {
+  res.json(productService.list());
 });
 
-router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const product = await productService.get(Number(req.params.id));
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json(product);
-  } catch (error) {
-    next(error);
+router.get('/:id', (req, res) => {
+  const product = productService.get(Number(req.params.id));
+  if (!product) {
+    return res.status(404).json({ message: 'Product not found' });
   }
+  res.json(product);
 });
 
 const productValidators = [
@@ -50,7 +41,7 @@ const productValidators = [
   body('inventory').isInt({ min: 0 })
 ];
 
-router.post('/', authenticate, upload.single('image'), productValidators, async (req: Request, res: Response) => {
+router.post('/', authenticate, upload.single('image'), productValidators, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -63,7 +54,8 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
 
-    const product = await productService.create(
+    const imageUrl = productService.saveImage(req.file);
+    const product = productService.create(
       {
         name: req.body.name,
         shortDescription: req.body.shortDescription,
@@ -74,69 +66,56 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
         highlights,
         usage: req.body.usage
       },
-      req.file
+      imageUrl
     );
 
     res.status(201).json(product);
   } catch (error: any) {
-    const message = typeof error?.message === 'string' ? error.message : 'Unable to create product';
-    const status = /invalid|required/i.test(message) ? 400 : 500;
-    res.status(status).json({ message });
+    res.status(400).json({ message: error.message ?? 'Invalid payload' });
   }
 });
 
-router.put(
-  '/:id',
-  authenticate,
-  upload.single('image'),
-  productValidators,
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    try {
-      const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
-      const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
-      const product = await productService.update(
-        Number(req.params.id),
-        {
-          name: req.body.name,
-          shortDescription: req.body.shortDescription,
-          description: req.body.description,
-          price: Number(req.body.price),
-          inventory: Number(req.body.inventory),
-          categories,
-          highlights,
-          usage: req.body.usage
-        },
-        req.file ?? undefined
-      );
-
-      if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
-      }
-
-      res.json(product);
-    } catch (error: any) {
-      const message = typeof error?.message === 'string' ? error.message : 'Unable to update product';
-      const status = /invalid|required/i.test(message) ? 400 : 500;
-      res.status(status).json({ message });
-    }
+router.put('/:id', authenticate, upload.single('image'), productValidators, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
 
-router.delete('/:id', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const success = await productService.remove(Number(req.params.id));
-    if (!success) {
+    const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
+    const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
+    const imageUrl = req.file ? productService.saveImage(req.file) : undefined;
+    const product = productService.update(
+      Number(req.params.id),
+      {
+        name: req.body.name,
+        shortDescription: req.body.shortDescription,
+        description: req.body.description,
+        price: Number(req.body.price),
+        inventory: Number(req.body.inventory),
+        categories,
+        highlights,
+        usage: req.body.usage
+      },
+      imageUrl
+    );
+
+    if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    res.status(204).send();
-  } catch (error) {
-    next(error);
+
+    res.json(product);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message ?? 'Invalid payload' });
   }
+});
+
+router.delete('/:id', authenticate, (req, res) => {
+  const success = productService.remove(Number(req.params.id));
+  if (!success) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+  res.status(204).send();
 });
 
 export default router;

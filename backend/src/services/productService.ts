@@ -1,177 +1,106 @@
-import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import crypto from 'crypto';
+import fs from 'fs';
 import path from 'path';
-import { pool } from '../db/client';
+import { fileURLToPath } from 'url';
+import { db } from '../db/client';
 import type { ProductPayload } from '../types';
-import { env } from '../config/env';
-import { s3Client, publicUrlForKey } from '../utils/s3';
 
-const toStringArray = (value: unknown) => {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item));
-  }
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed.map((item) => String(item)) : [];
-    } catch (error) {
-      return [];
-    }
-  }
-  return [];
-};
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadDir = path.resolve(__dirname, '../../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const mapProduct = (row: any) => ({
   id: row.id,
   name: row.name,
   shortDescription: row.short_description,
   description: row.description,
-  price: Number(row.price),
+  price: row.price,
   imageUrl: row.image_url,
-  inventory: Number(row.inventory),
-  categories: toStringArray(row.categories),
-  highlights: row.highlights ? toStringArray(row.highlights) : undefined,
+  inventory: row.inventory,
+  categories: JSON.parse(row.categories) as string[],
+  highlights: row.highlights ? (JSON.parse(row.highlights) as string[]) : undefined,
   usage: row.usage ?? undefined
 });
 
-const uploadImage = async (file: Express.Multer.File) => {
-  const extension = path.extname(file.originalname) || '.jpg';
-  const key = `products/${Date.now()}-${crypto.randomUUID()}${extension}`;
-  await s3Client.send(
-    new PutObjectCommand({
-      Bucket: env.s3Bucket,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype
-    })
-  );
-  return { imageUrl: publicUrlForKey(key), imageKey: key };
-};
-
-const deleteImage = async (key: string | null | undefined) => {
-  if (!key) return;
-  try {
-    await s3Client.send(
-      new DeleteObjectCommand({
-        Bucket: env.s3Bucket,
-        Key: key
-      })
-    );
-  } catch (error) {
-    // Swallow delete errors to avoid blocking CRUD operations
-    console.warn('Failed to delete object from S3', error);
-  }
-};
-
-const getRow = async (id: number) => {
-  const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
-  return result.rows[0] ?? null;
-};
-
 export const productService = {
-  async list() {
-    const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
-    return result.rows.map(mapProduct);
+  list() {
+    const stmt = db.prepare('SELECT * FROM products ORDER BY created_at DESC');
+    return stmt.all().map(mapProduct);
   },
-  async get(id: number) {
-    const row = await getRow(id);
+  get(id: number) {
+    const stmt = db.prepare('SELECT * FROM products WHERE id = ?');
+    const row = stmt.get(id);
     return row ? mapProduct(row) : null;
   },
-  async create(payload: ProductPayload, file: Express.Multer.File) {
-    if (!file) {
-      throw new Error('Product image file is required');
-    }
-
-    const uploaded = await uploadImage(file);
-
-    try {
-      const result = await pool.query(
-        `INSERT INTO products
-          (name, short_description, description, price, image_url, image_key, inventory, categories, highlights, usage)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10)
-        RETURNING *`,
-        [
-          payload.name,
-          payload.shortDescription,
-          payload.description,
-          payload.price,
-          uploaded.imageUrl,
-          uploaded.imageKey,
-          payload.inventory,
-          JSON.stringify(payload.categories),
-          payload.highlights ? JSON.stringify(payload.highlights) : null,
-          payload.usage ?? null
-        ]
-      );
-      return mapProduct(result.rows[0]);
-    } catch (error) {
-      await deleteImage(uploaded.imageKey);
-      throw error;
-    }
+  create(payload: ProductPayload, imagePath: string) {
+    const stmt = db.prepare(`
+      INSERT INTO products (name, short_description, description, price, image_url, inventory, categories, highlights, usage)
+      VALUES (@name, @short_description, @description, @price, @image_url, @inventory, @categories, @highlights, @usage)
+    `);
+    const result = stmt.run({
+      name: payload.name,
+      short_description: payload.shortDescription,
+      description: payload.description,
+      price: payload.price,
+      image_url: imagePath,
+      inventory: payload.inventory,
+      categories: JSON.stringify(payload.categories),
+      highlights: payload.highlights ? JSON.stringify(payload.highlights) : null,
+      usage: payload.usage ?? null
+    });
+    return this.get(Number(result.lastInsertRowid));
   },
-  async update(id: number, payload: ProductPayload, file?: Express.Multer.File) {
-    const existing = await getRow(id);
-    if (!existing) return null;
+  update(id: number, payload: ProductPayload, imagePath?: string) {
+    const current = this.get(id);
+    if (!current) return null;
 
-    let imageUrl = existing.image_url as string;
-    let imageKey = existing.image_key as string;
-    let uploaded: { imageUrl: string; imageKey: string } | undefined;
+    const stmt = db.prepare(`
+      UPDATE products
+      SET name=@name, short_description=@short_description, description=@description, price=@price,
+        image_url=@image_url, inventory=@inventory, categories=@categories, highlights=@highlights, usage=@usage,
+        updated_at=CURRENT_TIMESTAMP
+      WHERE id=@id
+    `);
+    stmt.run({
+      id,
+      name: payload.name,
+      short_description: payload.shortDescription,
+      description: payload.description,
+      price: payload.price,
+      image_url: imagePath ?? current.imageUrl,
+      inventory: payload.inventory,
+      categories: JSON.stringify(payload.categories),
+      highlights: payload.highlights ? JSON.stringify(payload.highlights) : null,
+      usage: payload.usage ?? null
+    });
 
-    if (file) {
-      uploaded = await uploadImage(file);
-      imageUrl = uploaded.imageUrl;
-      imageKey = uploaded.imageKey;
+    if (imagePath && current.imageUrl && current.imageUrl.startsWith('/uploads/')) {
+      const toDelete = path.join(uploadDir, path.basename(current.imageUrl));
+      if (fs.existsSync(toDelete)) {
+        fs.unlinkSync(toDelete);
+      }
     }
 
-    try {
-      const result = await pool.query(
-        `UPDATE products
-         SET name = $1,
-             short_description = $2,
-             description = $3,
-             price = $4,
-             image_url = $5,
-             image_key = $6,
-             inventory = $7,
-             categories = $8::jsonb,
-             highlights = $9::jsonb,
-             usage = $10,
-             updated_at = NOW()
-         WHERE id = $11
-         RETURNING *`,
-        [
-          payload.name,
-          payload.shortDescription,
-          payload.description,
-          payload.price,
-          imageUrl,
-          imageKey,
-          payload.inventory,
-          JSON.stringify(payload.categories),
-          payload.highlights ? JSON.stringify(payload.highlights) : null,
-          payload.usage ?? null,
-          id
-        ]
-      );
-
-      if (uploaded) {
-        await deleteImage(existing.image_key as string);
-      }
-
-      return mapProduct(result.rows[0]);
-    } catch (error) {
-      if (uploaded) {
-        await deleteImage(uploaded.imageKey);
-      }
-      throw error;
-    }
+    return this.get(id);
   },
-  async remove(id: number) {
-    const existing = await getRow(id);
-    if (!existing) return false;
-
-    await pool.query('DELETE FROM products WHERE id = $1', [id]);
-    await deleteImage(existing.image_key as string);
+  remove(id: number) {
+    const product = this.get(id);
+    if (!product) return false;
+    const stmt = db.prepare('DELETE FROM products WHERE id = ?');
+    stmt.run(id);
+    if (product.imageUrl && product.imageUrl.startsWith('/uploads/')) {
+      const filePath = path.join(uploadDir, path.basename(product.imageUrl));
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
     return true;
+  },
+  saveImage(file: Express.Multer.File) {
+    const filename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+    const destination = path.join(uploadDir, filename);
+    fs.writeFileSync(destination, file.buffer);
+    return `/uploads/${filename}`;
   }
 };

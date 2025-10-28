@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { orderService } from '../services/orderService';
 import { authenticate } from '../middleware/authMiddleware';
@@ -6,13 +6,8 @@ import { sendOrderConfirmation } from '../utils/notifications';
 
 const router = Router();
 
-router.get('/', authenticate, async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const orders = await orderService.list();
-    res.json(orders);
-  } catch (error) {
-    next(error);
-  }
+router.get('/', authenticate, (req, res) => {
+  res.json(orderService.list());
 });
 
 router.post(
@@ -26,17 +21,14 @@ router.post(
     body('items.*.quantity').isInt({ min: 1 }),
     body('total').isFloat({ min: 0 })
   ],
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     try {
-      const order = await orderService.create(req.body);
-      if (!order) {
-        throw new Error('Unable to create order');
-      }
+      const order = orderService.create(req.body);
       await sendOrderConfirmation(
         {
           name: order.customer.name,
@@ -53,21 +45,16 @@ router.post(
   }
 );
 
-router.patch(
-  '/:id',
-  authenticate,
-  [body('status').isString().notEmpty()],
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const order = await orderService.updateStatus(Number(req.params.id), req.body.status);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-    res.json(order);
+router.patch('/:id', authenticate, [body('status').isString().notEmpty()], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+  const order = orderService.updateStatus(Number(req.params.id), req.body.status);
+  if (!order) {
+    return res.status(404).json({ message: 'Order not found' });
+  }
+  res.json(order);
+});
 
 export default router;

@@ -1,12 +1,13 @@
 # Luxia Rituals Commerce Stack
 
-Luxia Rituals is a luxury scalp and hair-care storefront with a full-stack TypeScript implementation. The project includes a Vite + React frontend optimized for mobile-first shopping experiences and an Express + PostgreSQL backend that powers products, orders, and manual payment workflows.
+Luxia Rituals is a luxury scalp and hair-care storefront with a full-stack TypeScript implementation. The project includes a Vite + React frontend optimized for mobile-first shopping experiences and an Express + SQLite backend that powers products, orders, and manual payment workflows.
 
 ## Project layout
 
 ```
 frontend/   # Vite + React + Tailwind storefront & admin UI
-backend/    # Express API, PostgreSQL persistence, notification utilities
+backend/    # Express API, SQLite persistence, notification utilities
+data/       # Created at runtime for SQLite database storage
 ```
 
 ## Frontend (Vite + React)
@@ -33,11 +34,11 @@ Create a `.env` file in `frontend/` as needed. The app defaults to `http://local
 VITE_API_URL=http://localhost:4000/api
 ```
 
-## Backend (Express + PostgreSQL + S3)
+## Backend (Express + SQLite)
 
 - REST endpoints for products (`/api/products`), orders (`/api/orders`), and authentication (`/api/auth`).
-- PostgreSQL persistence powered by the official `pg` driver; automatic migrations create tables on first run.
-- Product image uploads streamed directly to S3-compatible object storage and served via their public URLs.
+- SQLite persistence powered by `better-sqlite3`; automatic migrations create tables on first run.
+- Product image uploads stored under `backend/uploads/` and served statically.
 - Manual payment friendly workflow with email/SMS notifications prompting the customer to follow offline instructions.
 - Admin authentication via JWT with configurable credentials.
 
@@ -46,21 +47,23 @@ VITE_API_URL=http://localhost:4000/api
 ```bash
 cd backend
 npm install
-npm run migrate    # create/update PostgreSQL tables
+npm run migrate    # create/update SQLite tables
 npm run dev        # start API with hot reload
 npm run build      # type-check and emit dist/
-npm start          # run compiled server (runs migrations + seeds default admin)
+npm start          # run compiled server
 ```
 
-Copy `.env.example` to `.env` and adjust values as needed. The backend requires a PostgreSQL connection string plus S3 configuration for product media. On startup the API guarantees an admin user (`sa` / `123456`) exists—change the password immediately in production by updating the `admin_users` table.
+Copy `.env.example` to `.env` and adjust values as needed. If `ADMIN_PASSWORD_HASH` is omitted, the default password is `LuxiaAdmin2024!` (hashed in-memory at runtime). Generate a bcrypt hash via Node REPL:
 
-> **Tip:** If you serve images from a CDN or custom S3 endpoint, set `S3_PUBLIC_URL` so product responses include the fully qualified URL you expect the storefront to render.
+```bash
+node -e "console.log(require('bcryptjs').hashSync('YourSecurePassword', 10))"
+```
 
 ### API overview
 
 | Method & Path              | Description                                      | Auth required |
 |---------------------------|--------------------------------------------------|---------------|
-| `POST /api/auth/login`    | Exchange admin credentials for a JWT (username/password) | No      |
+| `POST /api/auth/login`    | Exchange admin credentials for a JWT             | No            |
 | `GET /api/products`       | List published products                          | No            |
 | `GET /api/products/:id`   | Retrieve a single product                        | No            |
 | `POST /api/products`      | Create product with multipart form (image upload)| Yes           |
@@ -74,11 +77,10 @@ Copy `.env.example` to `.env` and adjust values as needed. The backend requires 
 
 1. **Install dependencies** on the target host (Node.js 18+ recommended).
 2. **Configure environment** variables (`backend/.env`). Provide SMTP and SMS settings for production notifications.
-3. **Provision storage**: ensure a PostgreSQL database and S3-compatible bucket exist. Grant credentials to the backend runtime.
-4. **Run migrations**: `npm run migrate` in `backend/` once per environment.
-5. **Start backend**: `npm run start` (or run through a process manager like PM2/systemd). Ensure port `PORT` is exposed.
-6. **Build frontend**: `npm run build` inside `frontend/`. Serve the `frontend/dist` folder via a static host (e.g., Nginx, Vercel, or S3/CloudFront).
-7. **Configure reverse proxy** so the frontend can reach the backend API (`/api`). Product images are hosted from your S3 bucket/CDN, so no local static directory exposure is required.
+3. **Run migrations**: `npm run migrate` in `backend/` once per environment.
+4. **Start backend**: `npm run start` (or run through a process manager like PM2/systemd). Ensure port `PORT` is exposed.
+5. **Build frontend**: `npm run build` inside `frontend/`. Serve the `frontend/dist` folder via a static host (e.g., Nginx, Vercel, or S3/CloudFront).
+6. **Configure reverse proxy** so the frontend can reach the backend API (`/api`) and uploaded media (`/uploads`). Alternatively, set `VITE_API_URL` to the deployed backend URL.
 
 For containerized deployments, build two images (frontend static assets, backend API) or leverage a monorepo workflow that serves `frontend/dist` from the backend by copying files into a CDN/static bucket.
 
@@ -106,7 +108,7 @@ For containerized deployments, build two images (frontend static assets, backend
 
 ## Seed data (optional)
 
-Use the admin dashboard to upload initial products. Ensure the configured S3 bucket is writable by the backend IAM/user credentials.
+Use the admin dashboard to upload initial products. Ensure the backend `uploads/` directory is writable by the server process.
 
 ## Testing notes
 
