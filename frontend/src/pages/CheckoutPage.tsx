@@ -2,8 +2,10 @@ import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { createOrder } from '../api/orders';
 import { useCart } from '../context/CartContext';
+import { useI18n } from '../context/I18nContext';
 
 interface CheckoutForm {
   name: string;
@@ -16,6 +18,8 @@ interface CheckoutForm {
 function CheckoutPage() {
   const { items, total, clear } = useCart();
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const prefersReducedMotion = useReducedMotion();
   const {
     register,
     handleSubmit,
@@ -39,45 +43,53 @@ function CheckoutPage() {
     });
   };
 
+  const fadeIn = prefersReducedMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 24 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 }
+      };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
       <Helmet>
-        <title>Luxia Checkout</title>
+        <title>{t('checkout.title')} — {t('common.brand')}</title>
       </Helmet>
-      <h1 className="font-display text-3xl">Secure Checkout</h1>
-      <p className="mt-4 text-sm text-midnight/70">
-        After confirming your ritual, you will receive an email and SMS with manual payment instructions. Orders ship once payment is verified by our concierge team.
-      </p>
+      <motion.div {...fadeIn}>
+        <h1 className="font-display text-3xl text-midnight">{t('checkout.title')}</h1>
+        <p className="mt-4 text-sm text-midnight/70">{t('checkout.intro')}</p>
+      </motion.div>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-10 space-y-6">
-        <fieldset className="space-y-4 rounded-3xl bg-white p-6 shadow-md">
+        <motion.fieldset className="space-y-4 rounded-3xl bg-white p-6 shadow-md" {...fadeIn}>
           <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-midnight/60">
-            Contact Information
+            {t('checkout.contactLegend')}
           </legend>
           <div>
             <label className="block text-sm font-semibold text-midnight">
-              Full name
+              {t('checkout.nameLabel')}
               <input
                 type="text"
                 className="mt-2 w-full rounded-full border border-midnight/10 bg-champagne px-4 py-3"
-                {...register('name', { required: 'Please enter your name' })}
+                {...register('name', { required: t('checkout.nameError') })}
               />
             </label>
             {errors.name && <p className="mt-1 text-xs text-rose-500">{errors.name.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-semibold text-midnight">
-              Email address
+              {t('checkout.emailLabel')}
               <input
                 type="email"
                 className="mt-2 w-full rounded-full border border-midnight/10 bg-champagne px-4 py-3"
-                {...register('email', { required: 'Email is required' })}
+                {...register('email', { required: t('checkout.emailError') })}
               />
             </label>
             {errors.email && <p className="mt-1 text-xs text-rose-500">{errors.email.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-semibold text-midnight">
-              Phone (optional for SMS updates)
+              {t('checkout.phoneLabel')}
               <input
                 type="tel"
                 className="mt-2 w-full rounded-full border border-midnight/10 bg-champagne px-4 py-3"
@@ -85,23 +97,23 @@ function CheckoutPage() {
               />
             </label>
           </div>
-        </fieldset>
-        <fieldset className="space-y-4 rounded-3xl bg-white p-6 shadow-md">
-          <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-midnight/60">Shipping</legend>
+        </motion.fieldset>
+        <motion.fieldset className="space-y-4 rounded-3xl bg-white p-6 shadow-md" {...fadeIn}>
+          <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-midnight/60">{t('checkout.shippingLegend')}</legend>
           <div>
             <label className="block text-sm font-semibold text-midnight">
-              Address
+              {t('checkout.addressLabel')}
               <textarea
                 rows={3}
                 className="mt-2 w-full rounded-3xl border border-midnight/10 bg-champagne px-4 py-3"
-                {...register('address', { required: 'Address is required' })}
+                {...register('address', { required: t('checkout.addressError') })}
               />
             </label>
             {errors.address && <p className="mt-1 text-xs text-rose-500">{errors.address.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-semibold text-midnight">
-              Order notes (optional)
+              {t('checkout.notesLabel')}
               <textarea
                 rows={3}
                 className="mt-2 w-full rounded-3xl border border-midnight/10 bg-champagne px-4 py-3"
@@ -109,27 +121,28 @@ function CheckoutPage() {
               />
             </label>
           </div>
-        </fieldset>
-        <section className="space-y-4 rounded-3xl bg-midnight px-6 py-8 text-champagne">
+        </motion.fieldset>
+        <motion.section
+          className="space-y-4 rounded-3xl bg-midnight px-6 py-8 text-champagne"
+          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
+          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="flex items-center justify-between">
-            <p className="text-lg font-semibold">Order Total</p>
+            <p className="text-lg font-semibold">{t('checkout.orderTotal')}</p>
             <p className="text-lg font-semibold">${total.toFixed(2)}</p>
           </div>
-          <p className="text-sm text-champagne/70">
-            Payment is processed manually for bespoke verification. Expect a confirmation within 24 hours.
-          </p>
-          <button type="submit" className="btn-primary bg-white text-midnight hover:bg-blush" disabled={mutation.isLoading}>
-            {mutation.isLoading ? 'Submitting…' : 'Place order'}
+          <p className="text-sm text-champagne/70">{t('checkout.manualProcessing')}</p>
+          <button type="submit" className="btn-primary bg-white text-midnight hover:bg-blush" disabled={mutation.isPending}>
+            {mutation.isPending ? t('checkout.submitting') : t('checkout.placeOrder')}
           </button>
           {mutation.isError && (
-            <p className="text-xs text-rose-200">An error occurred. Please try again or contact our concierge.</p>
+            <p className="text-xs text-rose-200">{t('checkout.error')}</p>
           )}
           {mutation.isSuccess && (
-            <p className="text-xs text-champagne/80">
-              Thank you. We have emailed manual payment instructions and will ship once confirmed.
-            </p>
+            <p className="text-xs text-champagne/80">{t('checkout.success')}</p>
           )}
-        </section>
+        </motion.section>
       </form>
     </div>
   );

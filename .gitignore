@@ -6,6 +6,11 @@ yarn-error.log*
 *.local
 .env
 frontend/dist
+frontend/*.tsbuildinfo
+frontend/tailwind.config.js
+frontend/tailwind.config.d.ts
+frontend/vite.config.js
+frontend/vite.config.d.ts
 backend/dist
 backend/data
 backend/.env
