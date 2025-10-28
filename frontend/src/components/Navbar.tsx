@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
 import LanguageSwitcher from './LanguageSwitcher';
