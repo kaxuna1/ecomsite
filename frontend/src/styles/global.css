@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+a {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-champagne;
+}
+
+button {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-midnight;
+}
+
+body {
+  @apply antialiased;
+}
+
+.btn-primary {
+  @apply rounded-full bg-midnight px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-champagne transition hover:bg-jade focus-visible:outline-none;
+}
+
+.btn-secondary {
+  @apply rounded-full border border-midnight px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-midnight transition hover:border-jade hover:text-jade;
+}
