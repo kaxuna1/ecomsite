@@ -1,16 +1,19 @@
+import { useI18n } from '../context/I18nContext';
+
 function Footer() {
+  const { t } = useI18n();
+  const year = new Date().getFullYear();
+
   return (
     <footer className="bg-midnight text-champagne">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <h2 className="font-display text-xl uppercase tracking-[0.3em]">Luxia</h2>
-            <p className="mt-4 max-w-xs text-sm text-champagne/80">
-              Premium scalp and hair-care rituals crafted in small batches with clinical-grade botanicals.
-            </p>
+            <h2 className="font-display text-xl uppercase tracking-[0.3em]">{t('common.brand')}</h2>
+            <p className="mt-4 max-w-xs text-sm text-champagne/80">{t('hero.description')}</p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-widest">Visit</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-widest">{t('footer.visit')}</h3>
             <p className="mt-4 text-sm text-champagne/80">
               Atelier Luxia
               <br />
@@ -20,7 +23,7 @@ function Footer() {
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-widest">Stay in touch</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-widest">{t('footer.stay')}</h3>
             <p className="mt-4 text-sm text-champagne/80">
               hello@luxiarituals.com
               <br />
@@ -29,7 +32,7 @@ function Footer() {
           </div>
         </div>
         <p className="mt-8 text-xs uppercase tracking-[0.2em] text-champagne/60">
-          © {new Date().getFullYear()} Luxia Rituals. Crafted with reverence for healthy scalps.
+          {t('footer.crafted', { values: { year } })}
         </p>
       </div>
     </footer>
