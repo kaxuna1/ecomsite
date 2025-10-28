@@ -1,0 +1,13 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Luxia Scalp Rituals Emblem</title>
+  <desc id="desc">A stylized droplet with radiating lines, symbolizing nourishment.</desc>
+  <defs>
+    <linearGradient id="golden" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7ede2" />
+      <stop offset="100%" stop-color="#e8c7c8" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="32" fill="#0c0f1d" />
+  <path d="M64 18c-14 16-26 32-26 46 0 15 11 28 26 28s26-13 26-28c0-14-12-30-26-46zm0 62c-9 0-16-8-16-18 0-8 6-18 16-30 10 12 16 22 16 30 0 10-7 18-16 18z" fill="url(#golden)" />
+  <circle cx="64" cy="108" r="6" fill="#e8c7c8" />
+</svg>
