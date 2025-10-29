@@ -63,7 +63,7 @@ docker run -d -p 80:80 \
 - **Entry Point**: `src/server.ts` → `src/app.ts` (Express app configuration)
 - **Database**: `src/db/client.ts` - PostgreSQL connection pool using `pg` library
 - **Migrations**: `src/scripts/migrate.ts` - Single file with all DDL (creates tables, indexes, functions)
-- **Routes**: `src/routes/` - 14 Express routers organized by domain
+- **Routes**: `src/routes/` - 15 Express routers organized by domain
   - `authRoutes.ts` - Admin authentication
   - `userAuthRoutes.ts` - Customer authentication
   - `productRoutes.ts` - Product CRUD with image upload (multipart/form-data)
@@ -78,10 +78,11 @@ docker run -d -p 80:80 \
   - `variantRoutes.ts` - Product variant management
   - `languageRoutes.ts` - Multilingual configuration
   - `adminUserRoutes.ts` - Admin user management
-- **Services**: `src/services/` - 16 business logic modules
-  - Product, order, user, auth, CMS, media, navigation, settings, etc.
+  - `apiKeysRoutes.ts` - Encrypted API keys management
+- **Services**: `src/services/` - 17 business logic modules
+  - Product, order, user, auth, CMS, media, navigation, settings, API keys, etc.
   - Service layer isolates business logic from routes
-- **Middleware**: `src/middleware/authMiddleware.ts` - JWT authentication guards
+- **Middleware**: `src/middleware/authMiddleware.ts` - JWT authentication guards; `rateLimiter.ts` - Rate limiting
 - **Types**: `src/types/` - Shared TypeScript interfaces and types
 - **Config**: `src/config/env.ts` - Environment variable validation with defaults
 - **Utilities**: `src/utils/` - Notification templates, image processing helpers
@@ -171,6 +172,11 @@ docker run -d -p 80:80 \
 - **site_settings**: Key-value configuration (logo_type, logo_text, logo_image_url)
 - **footer_settings**: Footer configuration (brand_name, brand_tagline, columns, contact, newsletter, social)
 - **footer_settings_translations**: Multilingual footer content
+
+### API Keys Management
+
+- **api_keys**: Encrypted API key storage (key_name UNIQUE, key_value encrypted, category, description, is_active, created_by, updated_by)
+- **api_keys_audit_log**: Complete audit trail (key_name, action, admin_user_id, admin_user_email, ip_address, user_agent, old_value masked, new_value masked, metadata JSONB, created_at)
 
 ### Database Features
 
@@ -403,6 +409,16 @@ All API routes are prefixed with `/api`:
 - `GET /api/admin/users/:id` - Get customer details
 - `PUT /api/admin/users/:id` - Update customer
 
+**API Keys:**
+- `GET /api/admin/api-keys` - List all API keys (masked values)
+- `GET /api/admin/api-keys/:keyName?decrypt=true` - Get specific API key (optionally decrypted)
+- `POST /api/admin/api-keys` - Create or update single API key
+- `PUT /api/admin/api-keys` - Bulk update multiple API keys
+- `DELETE /api/admin/api-keys/:keyName` - Permanently delete API key
+- `PATCH /api/admin/api-keys/:keyName/deactivate` - Soft delete (deactivate) API key
+- `POST /api/admin/api-keys/validate/:feature` - Validate required keys for a feature
+- `GET /api/admin/api-keys/audit-log?keyName=xxx&limit=100` - Get audit log entries
+
 ## Key Features
 
 ### 1. Multilingual Support (i18next)
@@ -591,6 +607,103 @@ All API routes are prefixed with `/api`:
 - Automatic decrements on order creation
 - Manual adjustments in product editor
 - Low stock indicators (can be added)
+
+### 10. API Keys Management
+
+**Secure Storage & Encryption:**
+- AES-256-GCM encryption for all stored API keys
+- PBKDF2 key derivation (100,000 iterations)
+- Individual salt and IV per encrypted value
+- Automatic value masking in UI
+- Environment-based encryption key (ENCRYPTION_KEY)
+
+**Supported Service Categories:**
+- **Payment Gateways**: Stripe, PayPal (5 keys)
+- **Communication**: Twilio SMS, SendGrid, Mailgun (6 keys)
+- **AI & ML**: OpenAI, Anthropic Claude (3 keys)
+- **Analytics**: Google Analytics, Facebook Pixel, TikTok, Mixpanel (5 keys)
+- **Shipping**: Shippo, EasyPost, ShipStation (4 keys)
+- **Storage & CDN**: AWS S3, Cloudflare (6 keys)
+- **Search**: Algolia (3 keys)
+- **Marketing**: Klaviyo, Mailchimp, HubSpot (3 keys)
+- **Other**: Google Maps, reCAPTCHA, Exchange Rate API (4 keys)
+
+**Admin Interface:**
+- Organized by category with 8 sections
+- Toggle visibility (masked by default)
+- Copy to clipboard functionality
+- Clear individual keys
+- Auto-save with loading states
+- Security notice banner
+
+**API Endpoints:**
+- `GET /api/admin/api-keys` - List all keys (masked)
+- `GET /api/admin/api-keys/:keyName` - Get specific key (with decrypt option)
+- `POST /api/admin/api-keys` - Create/update single key
+- `PUT /api/admin/api-keys` - Bulk update multiple keys
+- `DELETE /api/admin/api-keys/:keyName` - Permanently delete key
+- `PATCH /api/admin/api-keys/:keyName/deactivate` - Soft delete (deactivate)
+- `POST /api/admin/api-keys/validate/:feature` - Validate required keys for features
+- `GET /api/admin/api-keys/audit-log` - View audit log entries
+
+**Security Features:**
+- Audit logging for all key access and modifications
+- Tracks: admin user, IP address, user agent, timestamp
+- Rate limiting: 30 requests per 15 minutes per user
+- Admin-only access (JWT required)
+- Masked values in audit logs
+- Row-level tracking of created_by/updated_by
+
+**Feature Validation:**
+- Validates required keys for specific integrations
+- 25+ predefined feature mappings
+- Examples: `stripe`, `paypal`, `openai`, `twilio`, `aws_s3`, etc.
+- Returns missing required keys and optional keys
+
+**Setup Instructions:**
+
+1. **Generate Encryption Key** (Production):
+   ```bash
+   cd backend
+   npm run generate-key
+   # Copy the generated key to your .env file
+   ```
+
+2. **Set Environment Variable**:
+   ```bash
+   # Add to backend/.env
+   ENCRYPTION_KEY=your-generated-256-bit-key-here
+   ```
+
+3. **Access Admin Interface**:
+   - Navigate to `/admin/settings`
+   - Click "API Keys" tab
+   - Add keys by category
+   - Keys are automatically encrypted on save
+
+4. **Use Keys in Code**:
+   ```typescript
+   import { getAPIKey } from '../services/apiKeysService';
+
+   // Get decrypted key value
+   const stripeKey = await getAPIKey('stripe_secret_key');
+
+   // Validate feature requirements
+   import { validateAPIKeysForFeature } from '../services/apiKeysService';
+   const validation = await validateAPIKeysForFeature('stripe');
+   // Returns: { valid: boolean, missing: string[], optional?: string[] }
+   ```
+
+**Database Tables:**
+- `api_keys`: Encrypted key storage with metadata
+- `api_keys_audit_log`: Complete audit trail of all operations
+
+**Important Notes:**
+- Never commit ENCRYPTION_KEY to version control
+- Use strong, unique keys for production
+- Rotate encryption keys periodically
+- Monitor audit logs for suspicious activity
+- Consider Redis for distributed deployments (current: in-memory rate limiting)
 
 ## Image Handling
 
