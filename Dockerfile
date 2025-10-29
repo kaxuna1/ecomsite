@@ -64,8 +64,9 @@ COPY --from=backend-builder /app/backend/tsconfig.json ./backend/
 # Copy frontend build
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# Create uploads directory for product images
-RUN mkdir -p /app/backend/uploads
+# Create uploads directories for product images and CMS media
+RUN mkdir -p /app/backend/uploads/cms && \
+    mkdir -p /app/backend/uploads/products
 
 # Copy configuration files
 COPY docker/nginx.conf /etc/nginx/sites-available/default
@@ -102,7 +103,8 @@ ENV PORT=4000 \
     NODE_ENV=production \
     INITIAL_ADMIN_EMAIL=admin@luxia.local \
     INITIAL_ADMIN_PASSWORD=LuxiaAdmin2024! \
-    INITIAL_ADMIN_NAME="Super Administrator"
+    INITIAL_ADMIN_NAME="Super Administrator" \
+    BASE_URL=http://localhost
 
 # Expose port 80
 EXPOSE 80

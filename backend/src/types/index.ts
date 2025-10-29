@@ -1,3 +1,20 @@
+export interface ProductMedia {
+  id: number;
+  productId: number;
+  mediaId: number;
+  isFeatured: boolean;
+  displayOrder: number;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
+  width: number | null;
+  height: number | null;
+  altText: string | null;
+  caption: string | null;
+  url: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -19,6 +36,7 @@ export interface Product {
   meta_keywords?: string[];
   og_image_url?: string;
   canonical_url?: string;
+  images?: ProductMedia[];
 }
 
 export interface ProductPayload {

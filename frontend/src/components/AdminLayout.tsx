@@ -23,7 +23,8 @@ import {
   CommandLineIcon,
   SwatchIcon,
   Squares2X2Icon,
-  GlobeAltIcon
+  GlobeAltIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import CommandPalette from './admin/CommandPalette';
@@ -40,6 +41,7 @@ const navigation: NavItem[] = [
   { name: 'Products', href: '/admin/products', icon: CubeIcon },
   { name: 'Attributes', href: '/admin/attributes', icon: SwatchIcon },
   { name: 'Variant Options', href: '/admin/variant-options', icon: Squares2X2Icon },
+  { name: 'Media Library', href: '/admin/media', icon: PhotoIcon },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingBagIcon },
   { name: 'Promo Codes', href: '/admin/promo-codes', icon: TagIcon },
   { name: 'CMS', href: '/admin/cms', icon: DocumentTextIcon },

@@ -9,6 +9,7 @@ import { useAutoSave } from '../../hooks/useAutoSave';
 import EditorLayout from '../../components/admin/ProductEditor/EditorLayout';
 import DetailsTab from '../../components/admin/ProductEditor/tabs/DetailsTab';
 import VariantsTab from '../../components/admin/ProductEditor/tabs/VariantsTab';
+import ProductMediaGallery from '../../components/admin/MediaManager/ProductMediaGallery';
 
 export interface ProductForm {
   name: string;
@@ -34,7 +35,7 @@ export interface ProductForm {
   customAttributes?: Record<string, any>;
 }
 
-type TabType = 'details' | 'variants';
+type TabType = 'details' | 'media' | 'variants';
 
 export default function ProductEditor() {
   const { id } = useParams();
@@ -254,6 +255,17 @@ export default function ProductEditor() {
           setImagePreview={setImagePreview}
           attributes={attributes}
         />
+      )}
+      {activeTab === 'media' && !isNewProduct && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="mb-2 text-xl font-bold text-champagne">Product Images</h2>
+            <p className="text-sm text-champagne/60">
+              Manage product images, set featured image, and reorder by dragging
+            </p>
+          </div>
+          <ProductMediaGallery productId={Number(id)} />
+        </div>
       )}
       {activeTab === 'variants' && !isNewProduct && (
         <VariantsTab productId={Number(id)} />

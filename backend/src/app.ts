@@ -17,6 +17,8 @@ import settingsRoutes from './routes/settingsRoutes';
 import attributeRoutes from './routes/attributeRoutes';
 import variantRoutes from './routes/variantRoutes';
 import languageRoutes from './routes/languageRoutes';
+import adminMediaRoutes from './routes/admin/mediaRoutes';
+import adminProductMediaRoutes from './routes/admin/productMediaRoutes';
 
 const app = express();
 
@@ -28,7 +30,9 @@ app.use(morgan('dev'));
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.resolve(__dirname, '../uploads');
 
+// Serve static files at both paths for backwards compatibility
 app.use('/uploads', express.static(uploadsDir));
+app.use('/api/uploads', express.static(uploadsDir));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user/auth', userAuthRoutes);
@@ -44,6 +48,8 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/attributes', attributeRoutes);
 app.use('/api', variantRoutes);
 app.use('/api/languages', languageRoutes);
+app.use('/api/admin/media', adminMediaRoutes);
+app.use('/api/admin', adminProductMediaRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

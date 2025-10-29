@@ -112,6 +112,17 @@ export default function ProductCard({ product, index }: ProductCardProps) {
     setTimeout(() => setShowSuccess(false), 2000);
   };
 
+  // Get display image - prefer featured image from images array
+  const getDisplayImage = () => {
+    if (product.images && product.images.length > 0) {
+      const featuredImage = product.images.find(img => img.isFeatured);
+      return featuredImage?.url || product.images[0].url;
+    }
+    return product.imageUrl;
+  };
+
+  const displayImage = getDisplayImage();
+
   const cardVariants = prefersReducedMotion
     ? {}
     : {
@@ -267,7 +278,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
 
       <Link to={`/${language}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
         <motion.img
-          src={product.imageUrl}
+          src={displayImage}
           alt={product.name}
           className="h-full w-full object-cover"
           loading="lazy"

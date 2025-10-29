@@ -3,13 +3,59 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import { pool } from '../db/client';
-import type { ProductPayload, ProductTranslationPayload } from '../types';
+import type { ProductPayload, ProductTranslationPayload, ProductMedia } from '../types';
+import { getMediaUrl } from '../utils/urlHelper';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadDir = path.resolve(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+/**
+ * Helper function to fetch product images from product_media junction table
+ */
+const getProductImages = async (productId: number): Promise<ProductMedia[]> => {
+  const result = await pool.query(
+    `SELECT
+      pm.id,
+      pm.product_id,
+      pm.media_id,
+      pm.is_featured,
+      pm.display_order,
+      m.filename,
+      m.original_name,
+      m.mime_type,
+      m.size_bytes,
+      m.width,
+      m.height,
+      m.alt_text,
+      m.caption,
+      m.file_path
+    FROM product_media pm
+    JOIN cms_media m ON pm.media_id = m.id
+    WHERE pm.product_id = $1 AND m.is_deleted = FALSE
+    ORDER BY pm.display_order ASC, pm.created_at ASC`,
+    [productId]
+  );
+
+  return result.rows.map(row => ({
+    id: row.id,
+    productId: row.product_id,
+    mediaId: row.media_id,
+    isFeatured: row.is_featured,
+    displayOrder: row.display_order,
+    filename: row.filename,
+    originalName: row.original_name,
+    mimeType: row.mime_type,
+    sizeBytes: row.size_bytes,
+    width: row.width,
+    height: row.height,
+    altText: row.alt_text,
+    caption: row.caption,
+    url: getMediaUrl(row.filename)
+  }));
+};
 
 const mapProduct = (row: any) => ({
   id: row.id,
@@ -32,7 +78,8 @@ const mapProduct = (row: any) => ({
   metaKeywords: row.meta_keywords ?? undefined,
   ogImageUrl: row.og_image_url ?? undefined,
   canonicalUrl: row.canonical_url ?? undefined,
-  customAttributes: row.custom_attributes ?? undefined
+  customAttributes: row.custom_attributes ?? undefined,
+  images: row.images ?? [] // Initialize images array
 });
 
 export const productService = {
@@ -182,6 +229,11 @@ export const productService = {
     const result = await pool.query(query, [language, ...whereParams, limit, offset]);
     const products = result.rows.map(mapProduct);
 
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
     return {
       products,
       total,
@@ -219,7 +271,11 @@ export const productService = {
       WHERE p.id = $1
     `;
     const result = await pool.query(query, [id, language]);
-    return result.rows[0] ? mapProduct(result.rows[0]) : null;
+    if (!result.rows[0]) return null;
+
+    const product = mapProduct(result.rows[0]);
+    product.images = await getProductImages(product.id);
+    return product;
   },
   async create(payload: ProductPayload, imagePath: string) {
     const result = await pool.query(
@@ -470,7 +526,11 @@ export const productService = {
       WHERE p.slug = $1 OR pt.slug = $1
     `;
     const result = await pool.query(query, [slug, language]);
-    return result.rows[0] ? mapProduct(result.rows[0]) : null;
+    if (!result.rows[0]) return null;
+
+    const product = mapProduct(result.rows[0]);
+    product.images = await getProductImages(product.id);
+    return product;
   },
 
   generateSEOMetadata(product: any) {
@@ -491,7 +551,7 @@ export const productService = {
       'SELECT * FROM search_products($1, $2, $3)',
       [query, language, limit]
     );
-    return result.rows.map(row => ({
+    const products = result.rows.map(row => ({
       id: row.id,
       name: row.name,
       shortDescription: row.short_description,
@@ -512,8 +572,16 @@ export const productService = {
       metaKeywords: row.meta_keywords ?? undefined,
       ogImageUrl: row.og_image_url ?? undefined,
       canonicalUrl: row.canonical_url ?? undefined,
-      searchRank: row.search_rank
+      searchRank: row.search_rank,
+      images: [] as ProductMedia[] // Will be populated below
     }));
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
   },
 
   async autocomplete(prefix: string, language: string = 'en', limit: number = 10) {
@@ -521,14 +589,22 @@ export const productService = {
       'SELECT * FROM autocomplete_products($1, $2, $3)',
       [prefix, language, limit]
     );
-    return result.rows.map(row => ({
+    const products = result.rows.map(row => ({
       id: row.id,
       name: row.name,
       slug: row.slug,
       imageUrl: row.image_url,
       price: parseFloat(row.price),
-      salePrice: row.sale_price ? parseFloat(row.sale_price) : null
+      salePrice: row.sale_price ? parseFloat(row.sale_price) : null,
+      images: [] as ProductMedia[] // Will be populated below
     }));
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
   },
 
   async getFilterMetadata(language: string = 'en') {
@@ -655,6 +731,13 @@ export const productService = {
     `;
 
     const result = await pool.query(query, [language, limit]);
-    return result.rows.map(mapProduct);
+    const products = result.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
   }
 };

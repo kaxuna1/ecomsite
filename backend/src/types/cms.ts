@@ -392,6 +392,9 @@ export interface MediaQueryFilters {
   minHeight?: number;
   limit?: number;
   offset?: number;
+  includeDeleted?: boolean;
+  categoryId?: number;
+  search?: string;
 }
 
 // ============================================================================

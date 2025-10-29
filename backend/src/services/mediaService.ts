@@ -12,6 +12,7 @@ import {
   UpdateMediaPayload,
   MediaQueryFilters
 } from '../types/cms';
+import { getMediaUrl as getAbsoluteMediaUrl } from '../utils/urlHelper';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ const ALLOWED_MIME_TYPES = [
   'image/png',
   'image/webp',
   'image/gif',
+  'image/avif',
   'image/svg+xml'
 ];
 
@@ -44,11 +46,26 @@ async function ensureUploadDir() {
  * Get all media with optional filtering
  */
 export async function getAllMedia(filters: MediaQueryFilters = {}): Promise<CMSMedia[]> {
-  const { mimeType, uploadedBy, minWidth, minHeight, limit = 100, offset = 0 } = filters;
+  const {
+    mimeType,
+    uploadedBy,
+    minWidth,
+    minHeight,
+    limit = 100,
+    offset = 0,
+    includeDeleted = false,
+    categoryId,
+    search
+  } = filters;
 
   let query = 'SELECT * FROM cms_media WHERE 1=1';
   const params: any[] = [];
   let paramCount = 1;
+
+  // Exclude deleted by default
+  if (!includeDeleted) {
+    query += ` AND (is_deleted = FALSE OR is_deleted IS NULL)`;
+  }
 
   if (mimeType !== undefined) {
     query += ` AND mime_type = $${paramCount++}`;
@@ -68,6 +85,17 @@ export async function getAllMedia(filters: MediaQueryFilters = {}): Promise<CMSM
   if (minHeight !== undefined) {
     query += ` AND height >= $${paramCount++}`;
     params.push(minHeight);
+  }
+
+  if (categoryId !== undefined) {
+    query += ` AND category_id = $${paramCount++}`;
+    params.push(categoryId);
+  }
+
+  if (search) {
+    query += ` AND (filename ILIKE $${paramCount} OR alt_text ILIKE $${paramCount} OR original_name ILIKE $${paramCount})`;
+    params.push(`%${search}%`);
+    paramCount++;
   }
 
   query += ` ORDER BY created_at DESC LIMIT $${paramCount++} OFFSET $${paramCount++}`;
@@ -171,9 +199,8 @@ export async function uploadMedia(
 
   const media = mapMediaFromDb(result.rows[0]);
 
-  // Generate URL
-  const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
-  const url = `${baseUrl}/uploads/cms/${filename}`;
+  // Generate URL - use absolute URL for cross-port compatibility
+  const url = getAbsoluteMediaUrl(filename);
 
   return { ...media, url };
 }
@@ -217,31 +244,142 @@ export async function updateMedia(
 }
 
 /**
- * Delete a media file
+ * Delete a media file (soft delete if in use, hard delete otherwise)
  */
 export async function deleteMedia(mediaId: number): Promise<boolean> {
   const media = await getMediaById(mediaId);
   if (!media) return false;
 
-  // Delete file from disk
-  try {
-    await fs.unlink(media.filePath);
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    // Continue with database deletion even if file deletion fails
-  }
+  // Check usage count
+  const usageResult = await pool.query(
+    'SELECT usage_count FROM cms_media WHERE id = $1',
+    [mediaId]
+  );
 
-  // Delete from database
-  const result = await pool.query('DELETE FROM cms_media WHERE id = $1', [mediaId]);
+  const usageCount = usageResult.rows[0]?.usage_count || 0;
+
+  if (usageCount > 0) {
+    // Soft delete - mark as deleted but don't remove
+    const result = await pool.query(
+      'UPDATE cms_media SET is_deleted = TRUE, deleted_at = NOW() WHERE id = $1',
+      [mediaId]
+    );
+    return result.rowCount !== null && result.rowCount > 0;
+  } else {
+    // Hard delete - remove file and database record
+    try {
+      await fs.unlink(media.filePath);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+
+    const result = await pool.query('DELETE FROM cms_media WHERE id = $1', [mediaId]);
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+}
+
+/**
+ * Restore soft-deleted media
+ */
+export async function restoreMedia(mediaId: number): Promise<boolean> {
+  const result = await pool.query(
+    'UPDATE cms_media SET is_deleted = FALSE, deleted_at = NULL WHERE id = $1',
+    [mediaId]
+  );
   return result.rowCount !== null && result.rowCount > 0;
 }
 
 /**
- * Get media URL
+ * Get media with usage details
+ */
+export async function getMediaWithUsage(mediaId: number): Promise<{
+  media: CMSMedia | null;
+  usedInProducts: Array<{ id: number; name: string; isFeatured: boolean }>;
+  totalUsage: number;
+} | null> {
+  const media = await getMediaById(mediaId);
+  if (!media) return null;
+
+  // Get products using this media
+  const productsResult = await pool.query(
+    `SELECT p.id, p.name, pm.is_featured
+     FROM product_media pm
+     JOIN products p ON pm.product_id = p.id
+     WHERE pm.media_id = $1
+     ORDER BY p.name ASC`,
+    [mediaId]
+  );
+
+  const usedInProducts = productsResult.rows;
+  const totalUsage = usedInProducts.length;
+
+  return {
+    media,
+    usedInProducts,
+    totalUsage
+  };
+}
+
+/**
+ * Attach tags to media
+ */
+export async function attachTags(mediaId: number, tagIds: number[]): Promise<void> {
+  // Remove existing tags
+  await pool.query('DELETE FROM media_tag_pivot WHERE media_id = $1', [mediaId]);
+
+  // Add new tags
+  if (tagIds.length > 0) {
+    const values = tagIds.map((tagId, index) => `($1, $${index + 2})`).join(', ');
+    const params = [mediaId, ...tagIds];
+    await pool.query(
+      `INSERT INTO media_tag_pivot (media_id, tag_id) VALUES ${values}`,
+      params
+    );
+  }
+}
+
+/**
+ * Get media tags
+ */
+export async function getMediaTags(mediaId: number): Promise<Array<{ id: number; name: string; slug: string }>> {
+  const result = await pool.query(
+    `SELECT t.id, t.name, t.slug
+     FROM media_tags t
+     JOIN media_tag_pivot mtp ON t.id = mtp.tag_id
+     WHERE mtp.media_id = $1
+     ORDER BY t.name ASC`,
+    [mediaId]
+  );
+  return result.rows;
+}
+
+/**
+ * Create or get tag
+ */
+export async function createOrGetTag(name: string): Promise<{ id: number; name: string; slug: string }> {
+  const slug = name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+
+  // Try to get existing
+  let result = await pool.query('SELECT * FROM media_tags WHERE slug = $1', [slug]);
+
+  if (result.rows.length > 0) {
+    return result.rows[0];
+  }
+
+  // Create new
+  result = await pool.query(
+    'INSERT INTO media_tags (name, slug) VALUES ($1, $2) RETURNING *',
+    [name, slug]
+  );
+
+  return result.rows[0];
+}
+
+/**
+ * Get media URL - returns absolute URL for cross-port compatibility
  */
 export function getMediaUrl(filename: string): string {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
-  return `${baseUrl}/uploads/cms/${filename}`;
+  return getAbsoluteMediaUrl(filename);
 }
 
 /**

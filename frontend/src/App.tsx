@@ -50,6 +50,7 @@ const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 const AdminAttributes = lazy(() => import('./pages/admin/AdminAttributes'));
 const AdminVariantOptions = lazy(() => import('./pages/admin/AdminVariantOptions'));
 const AdminLanguages = lazy(() => import('./pages/admin/AdminLanguages'));
+const AdminMedia = lazy(() => import('./pages/admin/AdminMedia'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
@@ -185,6 +186,7 @@ function App() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="attributes" element={<AdminAttributes />} />
           <Route path="variant-options" element={<AdminVariantOptions />} />
+          <Route path="media" element={<AdminMedia />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="promo-codes" element={<AdminPromoCodes />} />
           <Route path="cms" element={<AdminCMS />} />

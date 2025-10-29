@@ -7,7 +7,7 @@ import { fetchProduct } from '../api/products';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
 import { SEOHead } from '../components/SEOHead';
-import ImageZoom from '../components/ImageZoom';
+import ProductImageGallery from '../components/ProductImageGallery';
 import Toast from '../components/Toast';
 import VariantSelector from '../components/VariantSelector';
 import type { ProductVariant } from '../types/product';
@@ -96,7 +96,11 @@ function ProductDetailPage() {
       <motion.div className="grid gap-8 lg:grid-cols-2 lg:gap-12" {...fadeIn}>
         {/* Image Section */}
         <motion.div {...fadeInUp}>
-          <ImageZoom src={product.imageUrl} alt={product.name} />
+          <ProductImageGallery
+            images={product.images}
+            fallbackImageUrl={product.imageUrl}
+            alt={product.name}
+          />
 
           {/* Trust Badges */}
           <motion.div

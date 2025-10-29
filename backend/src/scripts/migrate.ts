@@ -252,6 +252,92 @@ CREATE TABLE IF NOT EXISTS footer_settings_translations (
 
 CREATE INDEX IF NOT EXISTS idx_footer_translations_footer_id ON footer_settings_translations(footer_settings_id);
 CREATE INDEX IF NOT EXISTS idx_footer_translations_language ON footer_settings_translations(language_code);
+
+-- ============================================================================
+-- MEDIA MANAGEMENT SYSTEM
+-- ============================================================================
+
+-- Enhance cms_media table with new columns for media management
+ALTER TABLE cms_media ADD COLUMN IF NOT EXISTS usage_count INTEGER DEFAULT 0;
+ALTER TABLE cms_media ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;
+ALTER TABLE cms_media ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+ALTER TABLE cms_media ADD COLUMN IF NOT EXISTS category_id INTEGER;
+
+-- Product-Media junction table (many-to-many relationship)
+CREATE TABLE IF NOT EXISTS product_media (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  media_id INTEGER NOT NULL REFERENCES cms_media(id) ON DELETE RESTRICT,
+  is_featured BOOLEAN DEFAULT FALSE,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(product_id, media_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_media_product ON product_media(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_media_media ON product_media(media_id);
+CREATE INDEX IF NOT EXISTS idx_product_media_featured ON product_media(is_featured);
+CREATE INDEX IF NOT EXISTS idx_product_media_order ON product_media(product_id, display_order);
+
+-- Media categories for organizing media files
+CREATE TABLE IF NOT EXISTS media_categories (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) UNIQUE NOT NULL,
+  parent_id INTEGER REFERENCES media_categories(id) ON DELETE SET NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_categories_parent ON media_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_media_categories_slug ON media_categories(slug);
+
+-- Insert default media categories
+INSERT INTO media_categories (name, slug)
+VALUES
+  ('Products', 'products'),
+  ('Banners', 'banners'),
+  ('Logos', 'logos'),
+  ('General', 'general')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Media tags for flexible categorization
+CREATE TABLE IF NOT EXISTS media_tags (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  slug VARCHAR(100) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_tags_slug ON media_tags(slug);
+
+-- Media-Tag pivot table (many-to-many)
+CREATE TABLE IF NOT EXISTS media_tag_pivot (
+  media_id INTEGER NOT NULL REFERENCES cms_media(id) ON DELETE CASCADE,
+  tag_id INTEGER NOT NULL REFERENCES media_tags(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (media_id, tag_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_tag_pivot_media ON media_tag_pivot(media_id);
+CREATE INDEX IF NOT EXISTS idx_media_tag_pivot_tag ON media_tag_pivot(tag_id);
+
+-- Add foreign key for category_id after table creation (skip if already exists)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'fk_cms_media_category'
+  ) THEN
+    ALTER TABLE cms_media
+    ADD CONSTRAINT fk_cms_media_category
+    FOREIGN KEY (category_id) REFERENCES media_categories(id) ON DELETE SET NULL;
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_cms_media_category ON cms_media(category_id);
+CREATE INDEX IF NOT EXISTS idx_cms_media_deleted ON cms_media(is_deleted);
+CREATE INDEX IF NOT EXISTS idx_cms_media_usage ON cms_media(usage_count);
 `;
 
 async function migrate() {

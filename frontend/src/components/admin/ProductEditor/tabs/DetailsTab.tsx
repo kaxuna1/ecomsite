@@ -64,11 +64,15 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Set preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Ensure file is set in form (important for file uploads)
+      setValue('image', e.target.files as any, { shouldDirty: true });
     }
   };
 
@@ -239,11 +243,7 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
                 type="file"
                 accept="image/*"
                 className="hidden"
-                {...register('image')}
-                onChange={(e) => {
-                  register('image').onChange(e);
-                  handleImageChange(e);
-                }}
+                onChange={handleImageChange}
                 aria-label="Upload product image"
               />
             </label>
