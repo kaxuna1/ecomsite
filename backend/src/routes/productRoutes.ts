@@ -196,7 +196,7 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
 
     const metaKeywords = req.body.metaKeywords ? parseJsonArray(req.body.metaKeywords, 'Invalid metaKeywords format') : undefined;
 
-    const imageUrl = productService.saveImage(req.file);
+    const imageUrl = await productService.saveImage(req.file);
     const product = await productService.create(
       {
         name: req.body.name,
@@ -236,7 +236,7 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, asyn
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
     const metaKeywords = req.body.metaKeywords ? parseJsonArray(req.body.metaKeywords, 'Invalid metaKeywords format') : undefined;
-    const imageUrl = req.file ? productService.saveImage(req.file) : undefined;
+    const imageUrl = req.file ? await productService.saveImage(req.file) : undefined;
     const product = await productService.update(
       Number(req.params.id),
       {

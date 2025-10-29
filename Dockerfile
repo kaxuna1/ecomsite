@@ -22,7 +22,10 @@ FROM node:20-alpine AS backend-builder
 
 WORKDIR /app/backend
 
-# Copy package files and install dependencies (including tsx for production)
+# Install build dependencies for sharp (required for image optimization)
+RUN apk add --no-cache python3 make g++ vips-dev
+
+# Copy package files and install dependencies (including tsx and sharp for production)
 COPY backend/package*.json ./
 RUN npm ci
 
@@ -35,7 +38,7 @@ FROM ubuntu:22.04
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install required packages
+# Install required packages including libvips for sharp
 RUN apt-get update && apt-get install -y \
     postgresql-14 \
     nginx \
@@ -43,6 +46,7 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     curl \
+    libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade to Node.js 20

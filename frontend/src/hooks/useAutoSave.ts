@@ -7,6 +7,7 @@ interface UseAutoSaveOptions<T> {
   storageKey: string;
   debounceMs?: number;
   enabled?: boolean;
+  isDirty?: boolean; // Only save when form has changes
 }
 
 interface AutoSaveStatus {
@@ -20,7 +21,8 @@ export function useAutoSave<T extends Record<string, any>>({
   getValues,
   storageKey,
   debounceMs = 2000,
-  enabled = true
+  enabled = true,
+  isDirty = false
 }: UseAutoSaveOptions<T>) {
   const [status, setStatus] = useState<AutoSaveStatus>({
     isSaving: false,
@@ -113,6 +115,9 @@ export function useAutoSave<T extends Record<string, any>>({
 
       // Set new timeout for debounced save
       timeoutRef.current = setTimeout(() => {
+        // Only save if form has changes
+        if (!isDirty) return;
+
         const formData = getValues();
         saveDraft(formData);
       }, debounceMs);
@@ -124,7 +129,7 @@ export function useAutoSave<T extends Record<string, any>>({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [watch, getValues, saveDraft, debounceMs, enabled]);
+  }, [watch, getValues, saveDraft, debounceMs, enabled, isDirty]);
 
   return {
     status,

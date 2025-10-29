@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 import { pool } from '../db/client';
 import type { ProductPayload, ProductTranslationPayload } from '../types';
 
@@ -305,11 +306,36 @@ export const productService = {
     }
     return true;
   },
-  saveImage(file: Express.Multer.File) {
-    const filename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+  async saveImage(file: Express.Multer.File) {
+    // Generate unique filename with .webp extension for optimized format
+    const timestamp = Date.now();
+    const originalName = file.originalname.replace(/\s+/g, '-');
+    const nameWithoutExt = path.parse(originalName).name;
+    const filename = `${timestamp}-${nameWithoutExt}.webp`;
     const destination = path.join(uploadDir, filename);
-    fs.writeFileSync(destination, file.buffer);
-    return `/uploads/${filename}`;
+
+    try {
+      // Optimize image: resize if too large, convert to webp, compress
+      await sharp(file.buffer)
+        .resize(1920, 1920, {
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .webp({
+          quality: 85,
+          effort: 4 // Compression effort (0-6, higher = better compression but slower)
+        })
+        .toFile(destination);
+
+      return `/uploads/${filename}`;
+    } catch (error) {
+      console.error('Error optimizing image:', error);
+      // Fallback to original if optimization fails
+      const fallbackFilename = `${timestamp}-${originalName}`;
+      const fallbackDest = path.join(uploadDir, fallbackFilename);
+      fs.writeFileSync(fallbackDest, file.buffer);
+      return `/uploads/${fallbackFilename}`;
+    }
   },
 
   // Translation management methods

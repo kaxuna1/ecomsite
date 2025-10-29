@@ -4,6 +4,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 import { pool } from '../db/client';
 import {
   CMSMedia,
@@ -105,31 +106,48 @@ export async function uploadMedia(
   // Ensure upload directory exists
   await ensureUploadDir();
 
-  // Generate unique filename
+  // Generate unique filename with .webp extension for optimization
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);
-  const ext = path.extname(file.originalname);
-  const filename = `${timestamp}-${randomString}${ext}`;
+  const originalName = path.parse(file.originalname).name;
+  const filename = `${timestamp}-${randomString}-${originalName}.webp`;
   const filePath = path.join(UPLOAD_DIR, filename);
 
-  // Save file to disk
-  await fs.writeFile(filePath, file.buffer);
-
-  // Get image dimensions (if it's an image)
+  // Optimize and save image
   let width: number | null = null;
   let height: number | null = null;
+  let actualMimeType = file.mimetype;
 
   if (file.mimetype.startsWith('image/')) {
     try {
-      // For production, use a proper image library like 'sharp'
-      // For now, we'll store null and let the frontend handle it
-      // const sharp = require('sharp');
-      // const metadata = await sharp(filePath).metadata();
-      // width = metadata.width || null;
-      // height = metadata.height || null;
+      // Optimize image: resize if too large, convert to webp, get dimensions
+      const image = sharp(file.buffer);
+      const metadata = await image.metadata();
+
+      width = metadata.width || null;
+      height = metadata.height || null;
+
+      // Optimize and save
+      await image
+        .resize(2560, 2560, {
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .webp({
+          quality: 90,
+          effort: 4
+        })
+        .toFile(filePath);
+
+      actualMimeType = 'image/webp';
     } catch (error) {
-      console.error('Error getting image dimensions:', error);
+      console.error('Error optimizing image:', error);
+      // Fallback to original if optimization fails
+      await fs.writeFile(filePath, file.buffer);
     }
+  } else {
+    // Non-image files: save as-is
+    await fs.writeFile(filePath, file.buffer);
   }
 
   // Save to database
@@ -140,7 +158,7 @@ export async function uploadMedia(
     [
       filename,
       file.originalname,
-      file.mimetype,
+      actualMimeType,
       file.size,
       width,
       height,

@@ -75,7 +75,8 @@ export default function ProductEditor() {
     getValues,
     storageKey: isNewProduct ? `product-draft-new` : `product-draft-${id}`,
     enabled: true,
-    debounceMs: 2000
+    debounceMs: 2000,
+    isDirty // Only save when form has unsaved changes
   });
 
   // Fetch product data if editing
@@ -144,7 +145,7 @@ export default function ProductEditor() {
         setImagePreview(product.imageUrl);
       }
     }
-  }, [product, isNewProduct, reset, loadDraft, clearDraft, autoSaveStatus.hasDraft, autoSaveStatus.lastSaved]);
+  }, [product, isNewProduct, reset, loadDraft, clearDraft]);
 
   // Unsaved changes protection (browser refresh only)
   useUnsavedChanges({ isDirty });
