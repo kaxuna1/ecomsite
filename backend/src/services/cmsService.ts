@@ -720,22 +720,57 @@ export interface UpdateFooterPayload {
 }
 
 /**
- * Get published footer settings (for public use)
+ * Get published footer settings (for public use) with translations
+ * @param language - Language code for translations (default: 'en')
  */
-export async function getFooterSettings(): Promise<FooterSettings | null> {
+export async function getFooterSettings(language: string = 'en'): Promise<FooterSettings | null> {
   const result = await pool.query(
-    'SELECT * FROM footer_settings WHERE is_published = true ORDER BY id DESC LIMIT 1'
+    `SELECT
+      fs.*,
+      COALESCE(fst.brand_name, fs.brand_name) as brand_name,
+      COALESCE(fst.brand_tagline, fs.brand_tagline) as brand_tagline,
+      COALESCE(fst.footer_columns, fs.footer_columns) as footer_columns,
+      COALESCE(fst.contact_info, fs.contact_info) as contact_info,
+      COALESCE(fst.newsletter_title, fs.newsletter_title) as newsletter_title,
+      COALESCE(fst.newsletter_description, fs.newsletter_description) as newsletter_description,
+      COALESCE(fst.newsletter_placeholder, fs.newsletter_placeholder) as newsletter_placeholder,
+      COALESCE(fst.newsletter_button_text, fs.newsletter_button_text) as newsletter_button_text,
+      COALESCE(fst.copyright_text, fs.copyright_text) as copyright_text,
+      COALESCE(fst.bottom_links, fs.bottom_links) as bottom_links
+     FROM footer_settings fs
+     LEFT JOIN footer_settings_translations fst ON fs.id = fst.footer_settings_id AND fst.language_code = $1
+     WHERE fs.is_published = true
+     ORDER BY fs.id DESC
+     LIMIT 1`,
+    [language]
   );
 
   return result.rows.length > 0 ? mapFooterFromDb(result.rows[0]) : null;
 }
 
 /**
- * Get footer settings for admin (including unpublished)
+ * Get footer settings for admin (including unpublished) with translations
+ * @param language - Language code for translations (default: 'en')
  */
-export async function getFooterSettingsAdmin(): Promise<FooterSettings | null> {
+export async function getFooterSettingsAdmin(language: string = 'en'): Promise<FooterSettings | null> {
   const result = await pool.query(
-    'SELECT * FROM footer_settings ORDER BY id DESC LIMIT 1'
+    `SELECT
+      fs.*,
+      COALESCE(fst.brand_name, fs.brand_name) as brand_name,
+      COALESCE(fst.brand_tagline, fs.brand_tagline) as brand_tagline,
+      COALESCE(fst.footer_columns, fs.footer_columns) as footer_columns,
+      COALESCE(fst.contact_info, fs.contact_info) as contact_info,
+      COALESCE(fst.newsletter_title, fs.newsletter_title) as newsletter_title,
+      COALESCE(fst.newsletter_description, fs.newsletter_description) as newsletter_description,
+      COALESCE(fst.newsletter_placeholder, fs.newsletter_placeholder) as newsletter_placeholder,
+      COALESCE(fst.newsletter_button_text, fs.newsletter_button_text) as newsletter_button_text,
+      COALESCE(fst.copyright_text, fs.copyright_text) as copyright_text,
+      COALESCE(fst.bottom_links, fs.bottom_links) as bottom_links
+     FROM footer_settings fs
+     LEFT JOIN footer_settings_translations fst ON fs.id = fst.footer_settings_id AND fst.language_code = $1
+     ORDER BY fs.id DESC
+     LIMIT 1`,
+    [language]
   );
 
   return result.rows.length > 0 ? mapFooterFromDb(result.rows[0]) : null;
@@ -898,4 +933,150 @@ function mapFooterFromDb(row: any): FooterSettings {
     updatedAt: row.updated_at,
     createdAt: row.created_at
   };
+}
+
+// ============================================================================
+// FOOTER TRANSLATION MANAGEMENT
+// ============================================================================
+
+export interface FooterSettingsTranslation {
+  id: number;
+  footerSettingsId: number;
+  languageCode: string;
+  brandName: string | null;
+  brandTagline: string | null;
+  footerColumns: any[] | null;
+  contactInfo: any | null;
+  newsletterTitle: string | null;
+  newsletterDescription: string | null;
+  newsletterPlaceholder: string | null;
+  newsletterButtonText: string | null;
+  copyrightText: string | null;
+  bottomLinks: any[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFooterTranslationPayload {
+  brandName?: string;
+  brandTagline?: string;
+  footerColumns?: any[];
+  contactInfo?: any;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  newsletterPlaceholder?: string;
+  newsletterButtonText?: string;
+  copyrightText?: string;
+  bottomLinks?: any[];
+}
+
+/**
+ * Map database row to FooterSettingsTranslation object
+ */
+function mapFooterTranslationFromDb(row: any): FooterSettingsTranslation {
+  return {
+    id: row.id,
+    footerSettingsId: row.footer_settings_id,
+    languageCode: row.language_code,
+    brandName: row.brand_name,
+    brandTagline: row.brand_tagline,
+    footerColumns: row.footer_columns,
+    contactInfo: row.contact_info,
+    newsletterTitle: row.newsletter_title,
+    newsletterDescription: row.newsletter_description,
+    newsletterPlaceholder: row.newsletter_placeholder,
+    newsletterButtonText: row.newsletter_button_text,
+    copyrightText: row.copyright_text,
+    bottomLinks: row.bottom_links,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+/**
+ * Create or update a footer translation (upsert)
+ * @param footerSettingsId - Footer settings ID
+ * @param languageCode - Language code
+ * @param data - Translation data
+ * @returns Created or updated translation
+ */
+export async function createFooterTranslation(
+  footerSettingsId: number,
+  languageCode: string,
+  data: CreateFooterTranslationPayload
+): Promise<FooterSettingsTranslation> {
+  const result = await pool.query(
+    `INSERT INTO footer_settings_translations
+     (footer_settings_id, language_code, brand_name, brand_tagline, footer_columns,
+      contact_info, newsletter_title, newsletter_description, newsletter_placeholder,
+      newsletter_button_text, copyright_text, bottom_links)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+     ON CONFLICT (footer_settings_id, language_code)
+     DO UPDATE SET
+       brand_name = EXCLUDED.brand_name,
+       brand_tagline = EXCLUDED.brand_tagline,
+       footer_columns = EXCLUDED.footer_columns,
+       contact_info = EXCLUDED.contact_info,
+       newsletter_title = EXCLUDED.newsletter_title,
+       newsletter_description = EXCLUDED.newsletter_description,
+       newsletter_placeholder = EXCLUDED.newsletter_placeholder,
+       newsletter_button_text = EXCLUDED.newsletter_button_text,
+       copyright_text = EXCLUDED.copyright_text,
+       bottom_links = EXCLUDED.bottom_links,
+       updated_at = CURRENT_TIMESTAMP
+     RETURNING *`,
+    [
+      footerSettingsId,
+      languageCode,
+      data.brandName || null,
+      data.brandTagline || null,
+      data.footerColumns ? JSON.stringify(data.footerColumns) : null,
+      data.contactInfo ? JSON.stringify(data.contactInfo) : null,
+      data.newsletterTitle || null,
+      data.newsletterDescription || null,
+      data.newsletterPlaceholder || null,
+      data.newsletterButtonText || null,
+      data.copyrightText || null,
+      data.bottomLinks ? JSON.stringify(data.bottomLinks) : null
+    ]
+  );
+
+  return mapFooterTranslationFromDb(result.rows[0]);
+}
+
+/**
+ * Get a specific footer translation
+ * @param footerSettingsId - Footer settings ID
+ * @param languageCode - Language code
+ * @returns Translation or null if not found
+ */
+export async function getFooterTranslation(
+  footerSettingsId: number,
+  languageCode: string
+): Promise<FooterSettingsTranslation | null> {
+  const result = await pool.query(
+    `SELECT * FROM footer_settings_translations
+     WHERE footer_settings_id = $1 AND language_code = $2`,
+    [footerSettingsId, languageCode]
+  );
+
+  return result.rows.length > 0 ? mapFooterTranslationFromDb(result.rows[0]) : null;
+}
+
+/**
+ * Get all translations for footer settings
+ * @param footerSettingsId - Footer settings ID
+ * @returns Array of translations
+ */
+export async function getAllFooterTranslations(
+  footerSettingsId: number
+): Promise<FooterSettingsTranslation[]> {
+  const result = await pool.query(
+    `SELECT * FROM footer_settings_translations
+     WHERE footer_settings_id = $1
+     ORDER BY language_code`,
+    [footerSettingsId]
+  );
+
+  return result.rows.map(mapFooterTranslationFromDb);
 }

@@ -41,6 +41,8 @@ const RegularUsers = lazy(() => import('./pages/admin/RegularUsers'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminTranslations = lazy(() => import('./pages/admin/AdminTranslations'));
 const AdminCMSTranslations = lazy(() => import('./pages/admin/AdminCMSTranslations'));
+const AdminNavigation = lazy(() => import('./pages/admin/AdminNavigation'));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
@@ -65,8 +67,11 @@ function LanguageRedirect() {
   const location = useLocation();
   const pathname = location.pathname;
 
+  // Check if path is already language-prefixed (starts with /en or /ka)
+  const isLanguagePrefixed = /^\/(en|ka)/.test(pathname);
+
   // If path doesn't start with /admin and isn't already language-prefixed
-  if (!pathname.startsWith('/admin')) {
+  if (!pathname.startsWith('/admin') && !isLanguagePrefixed) {
     return <Navigate to={`/en${pathname}`} replace />;
   }
 
@@ -148,6 +153,8 @@ function App() {
           <Route path="cms/inline-edit/:id" element={<AdminCMSInlineEditor />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="customers" element={<RegularUsers />} />
+          <Route path="navigation" element={<AdminNavigation />} />
+          <Route path="settings" element={<AdminSettings />} />
           <Route path="translations" element={<AdminTranslations />} />
           <Route path="cms-translations" element={<AdminCMSTranslations />} />
         </Route>

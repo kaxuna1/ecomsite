@@ -59,12 +59,13 @@ const SOCIAL_PLATFORMS = [
 
 interface FooterEditorProps {
   footer: FooterSettings;
+  language: string;
   onChange: (footer: Partial<FooterSettings>) => void;
   onSave: () => void;
   isSaving?: boolean;
 }
 
-export default function FooterEditor({ footer, onChange, onSave, isSaving }: FooterEditorProps) {
+export default function FooterEditor({ footer, language, onChange, onSave, isSaving }: FooterEditorProps) {
   const [formData, setFormData] = useState<FooterSettings>(footer);
   const [showStyleControls, setShowStyleControls] = useState(false);
 

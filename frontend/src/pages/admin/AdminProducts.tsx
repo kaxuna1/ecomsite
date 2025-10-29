@@ -12,10 +12,20 @@ import {
   PhotoIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
-  FunnelIcon
+  FunnelIcon,
+  EllipsisVerticalIcon,
+  ArrowDownTrayIcon,
+  CubeIcon
 } from '@heroicons/react/24/outline';
 import { createProduct, deleteProduct, fetchProducts, updateProduct } from '../../api/products';
 import type { Product } from '../../types/product';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
+import SearchInput from '../../components/admin/SearchInput';
+import Badge from '../../components/admin/Badge';
+import Button from '../../components/admin/Button';
+import Dropdown, { type DropdownItem } from '../../components/admin/Dropdown';
+import DataTable, { type Column } from '../../components/admin/DataTable';
 
 interface ProductForm {
   name: string;
@@ -277,11 +287,110 @@ function AdminProducts() {
     }
   };
 
-  const getStockStatus = (inventory: number) => {
-    if (inventory === 0) return { label: 'Out of Stock', color: 'text-rose-500 bg-rose-500/10' };
-    if (inventory <= 10) return { label: 'Low Stock', color: 'text-amber-500 bg-amber-500/10' };
-    return { label: 'In Stock', color: 'text-emerald-500 bg-emerald-500/10' };
+  const getStockStatus = (inventory: number): { variant: 'success' | 'warning' | 'error'; label: string } => {
+    if (inventory === 0) return { variant: 'error', label: 'Out of Stock' };
+    if (inventory <= 10) return { variant: 'warning', label: 'Low Stock' };
+    return { variant: 'success', label: 'In Stock' };
   };
+
+  const columns: Column<Product>[] = [
+    {
+      key: 'name',
+      label: 'Product',
+      sortable: true,
+      render: (product) => (
+        <div className="flex items-center gap-4">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-12 w-12 rounded-lg object-cover"
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-champagne">{product.name}</p>
+              {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
+              {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
+            </div>
+            <p className="text-sm text-champagne/60">{product.shortDescription}</p>
+            <p className="text-xs text-champagne/40">{product.categories.join(' • ')}</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'price',
+      label: 'Price',
+      sortable: true,
+      render: (product) => (
+        <div className="text-champagne">
+          {product.salePrice ? (
+            <div>
+              <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
+              <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
+            </div>
+          ) : (
+            <p className="font-semibold">${product.price.toFixed(2)}</p>
+          )}
+        </div>
+      )
+    },
+    {
+      key: 'inventory',
+      label: 'Stock',
+      sortable: true,
+      render: (product) => (
+        <p className="text-champagne">{product.inventory} units</p>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: false,
+      render: (product) => {
+        const status = getStockStatus(product.inventory);
+        return <Badge variant={status.variant}>{status.label}</Badge>;
+      }
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      sortable: false,
+      align: 'right',
+      render: (product) => {
+        const dropdownItems: DropdownItem[] = [
+          {
+            label: 'Edit',
+            icon: <PencilIcon />,
+            onClick: () => openEditModal(product)
+          },
+          {
+            label: 'Delete',
+            icon: <TrashIcon />,
+            onClick: () => handleDelete(product.id, product.name),
+            danger: true
+          }
+        ];
+
+        return (
+          <Dropdown
+            trigger={
+              <button
+                type="button"
+                className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+              >
+                <EllipsisVerticalIcon className="h-5 w-5" />
+              </button>
+            }
+            items={dropdownItems}
+          />
+        );
+      }
+    }
+  ];
+
+  if (isLoading) {
+    return <LoadingState message="Loading products..." />;
+  }
 
   return (
     <div className="space-y-6">
@@ -297,30 +406,39 @@ function AdminProducts() {
             {filteredAndSortedProducts.length} of {products.length} products
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreateModal}
-          className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
-        >
-          <PlusIcon className="h-5 w-5" />
-          Add Product
-        </button>
+        <div className="flex gap-3">
+          <Button
+            variant="secondary"
+            size="md"
+            icon={<ArrowDownTrayIcon />}
+            onClick={() => {
+              // Export functionality placeholder
+              alert('Export functionality coming soon!');
+            }}
+          >
+            Export
+          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            icon={<PlusIcon />}
+            onClick={openCreateModal}
+          >
+            Add Product
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Search */}
         <div className="lg:col-span-2">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search products by name, description, or category..."
-              className="w-full rounded-full border border-white/20 bg-midnight px-12 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onClear={() => setSearchQuery('')}
+            placeholder="Search products by name, description, or category..."
+          />
         </div>
 
         {/* Filter */}
@@ -343,139 +461,49 @@ function AdminProducts() {
       </div>
 
       {/* Sort */}
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-champagne/70">Sort by:</span>
-        <select
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value as SortOption)}
-          className="rounded-full border border-white/20 bg-midnight px-4 py-2 text-sm text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="name-asc">Name (A-Z)</option>
-          <option value="name-desc">Name (Z-A)</option>
-          <option value="price-asc">Price (Low to High)</option>
-          <option value="price-desc">Price (High to Low)</option>
-          <option value="stock-asc">Stock (Low to High)</option>
-          <option value="stock-desc">Stock (High to Low)</option>
-        </select>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-champagne/70">Sort by:</span>
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as SortOption)}
+            className="rounded-full border border-white/20 bg-midnight px-4 py-2 text-sm text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="price-asc">Price (Low to High)</option>
+            <option value="price-desc">Price (High to Low)</option>
+            <option value="stock-asc">Stock (Low to High)</option>
+            <option value="stock-desc">Stock (High to Low)</option>
+          </select>
+        </div>
       </div>
 
       {/* Products Table */}
-      <div className="overflow-hidden rounded-3xl bg-white/5">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b border-white/10 bg-white/5">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60">
-                  Product
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60">
-                  Price
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60">
-                  Stock
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-champagne/60">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-champagne/60">
-                    Loading products...
-                  </td>
-                </tr>
-              ) : filteredAndSortedProducts.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-champagne/60">
-                    No products found
-                  </td>
-                </tr>
-              ) : (
-                filteredAndSortedProducts.map((product) => {
-                  const stockStatus = getStockStatus(product.inventory);
-                  return (
-                    <tr key={product.id} className="transition-colors hover:bg-white/5">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <img
-                            src={product.imageUrl}
-                            alt={product.name}
-                            className="h-12 w-12 rounded-lg object-cover"
-                          />
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="font-medium text-champagne">{product.name}</p>
-                              {product.isNew && (
-                                <span className="rounded-full bg-jade/20 px-2 py-0.5 text-xs font-semibold text-jade">
-                                  NEW
-                                </span>
-                              )}
-                              {product.isFeatured && (
-                                <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-semibold text-red-400">
-                                  FEATURED
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-champagne/60">{product.shortDescription}</p>
-                            <p className="text-xs text-champagne/40">{product.categories.join(' • ')}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-champagne">
-                          {product.salePrice ? (
-                            <div>
-                              <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
-                              <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
-                            </div>
-                          ) : (
-                            <p className="font-semibold">${product.price.toFixed(2)}</p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-champagne">{product.inventory} units</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${stockStatus.color}`}>
-                          {stockStatus.label}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openEditModal(product)}
-                            className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
-                            aria-label="Edit product"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(product.id, product.name)}
-                            className="rounded-full p-2 text-rose-400/70 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
-                            aria-label="Delete product"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        data={filteredAndSortedProducts}
+        keyExtractor={(product) => product.id.toString()}
+        emptyState={
+          <EmptyState
+            icon={<CubeIcon className="h-16 w-16" />}
+            title="No products found"
+            description={searchQuery ? "Try adjusting your search or filters" : "Get started by adding your first product"}
+            action={
+              !searchQuery
+                ? {
+                    label: 'Add Product',
+                    onClick: openCreateModal,
+                    icon: <PlusIcon className="h-5 w-5" />
+                  }
+                : undefined
+            }
+          />
+        }
+        sortable={false}
+      />
 
       {/* Product Form Modal */}
       <AnimatePresence>

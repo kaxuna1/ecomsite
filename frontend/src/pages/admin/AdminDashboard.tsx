@@ -25,6 +25,9 @@ import { fetchProducts } from '../../api/products';
 import { fetchOrders, updateOrderStatus } from '../../api/orders';
 import type { Product } from '../../types/product';
 import type { Order } from '../../types/order';
+import StatCard from '../../components/admin/StatCard';
+import LoadingState from '../../components/admin/LoadingState';
+import Badge from '../../components/admin/Badge';
 
 function AdminDashboard() {
   const queryClient = useQueryClient();
@@ -110,6 +113,10 @@ function AdminDashboard() {
 
   const isLoading = productsLoading || ordersLoading;
 
+  if (isLoading) {
+    return <LoadingState message="Loading dashboard..." />;
+  }
+
   return (
     <div className="space-y-8">
       <Helmet>
@@ -137,89 +144,41 @@ function AdminDashboard() {
 
       {/* Key Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Revenue */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-3xl bg-gradient-to-br from-emerald-500/20 to-jade/10 border border-emerald-500/20 p-6 shadow-xl"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-champagne/70">Total Revenue</p>
-              <p className="mt-3 font-display text-3xl text-champagne">${metrics.totalRevenue.toFixed(2)}</p>
-              <p className="mt-2 text-xs text-champagne/60">
-                ${metrics.averageOrderValue.toFixed(2)} avg order
-              </p>
-            </div>
-            <div className="rounded-full bg-emerald-500/20 p-3">
-              <CurrencyDollarIcon className="h-6 w-6 text-emerald-400" />
-            </div>
-          </div>
-        </motion.div>
+        <StatCard
+          title="Total Revenue"
+          value={`$${metrics.totalRevenue.toFixed(2)}`}
+          subtitle={`$${metrics.averageOrderValue.toFixed(2)} avg order`}
+          icon={<CurrencyDollarIcon />}
+          color="emerald"
+          delay={0.1}
+        />
 
-        {/* Total Orders */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="rounded-3xl bg-gradient-to-br from-blue-500/20 to-blush/10 border border-blue-500/20 p-6 shadow-xl"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-champagne/70">Total Orders</p>
-              <p className="mt-3 font-display text-3xl text-champagne">{metrics.totalOrders}</p>
-              <p className="mt-2 text-xs text-champagne/60">
-                {metrics.completedOrders} completed
-              </p>
-            </div>
-            <div className="rounded-full bg-blue-500/20 p-3">
-              <ShoppingBagIcon className="h-6 w-6 text-blue-400" />
-            </div>
-          </div>
-        </motion.div>
+        <StatCard
+          title="Total Orders"
+          value={metrics.totalOrders}
+          subtitle={`${metrics.completedOrders} completed`}
+          icon={<ShoppingBagIcon />}
+          color="blue"
+          delay={0.2}
+        />
 
-        {/* Pending Orders */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="rounded-3xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 border border-amber-500/20 p-6 shadow-xl"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-champagne/70">Pending Orders</p>
-              <p className="mt-3 font-display text-3xl text-champagne">{metrics.pendingOrders}</p>
-              <p className="mt-2 text-xs text-champagne/60">
-                Awaiting confirmation
-              </p>
-            </div>
-            <div className="rounded-full bg-amber-500/20 p-3">
-              <ClockIcon className="h-6 w-6 text-amber-400" />
-            </div>
-          </div>
-        </motion.div>
+        <StatCard
+          title="Pending Orders"
+          value={metrics.pendingOrders}
+          subtitle="Awaiting confirmation"
+          icon={<ClockIcon />}
+          color="amber"
+          delay={0.3}
+        />
 
-        {/* Active Products */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="rounded-3xl bg-gradient-to-br from-purple-500/20 to-purple-500/10 border border-purple-500/20 p-6 shadow-xl"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-champagne/70">Active Products</p>
-              <p className="mt-3 font-display text-3xl text-champagne">{metrics.totalProducts}</p>
-              <p className="mt-2 text-xs text-champagne/60">
-                {metrics.newProducts.length} new arrivals
-              </p>
-            </div>
-            <div className="rounded-full bg-purple-500/20 p-3">
-              <CubeIcon className="h-6 w-6 text-purple-400" />
-            </div>
-          </div>
-        </motion.div>
+        <StatCard
+          title="Active Products"
+          value={metrics.totalProducts}
+          subtitle={`${metrics.newProducts.length} new arrivals`}
+          icon={<CubeIcon />}
+          color="purple"
+          delay={0.4}
+        />
       </div>
 
       {/* Two Column Layout */}
@@ -238,43 +197,54 @@ function AdminDashboard() {
               </Link>
             </div>
 
-            {isLoading ? (
-              <div className="py-12 text-center text-champagne/60">Loading orders...</div>
-            ) : metrics.recentOrders.length === 0 ? (
+            {metrics.recentOrders.length === 0 ? (
               <div className="py-12 text-center text-champagne/60">No orders yet</div>
             ) : (
               <div className="space-y-4">
-                {metrics.recentOrders.map((order) => (
-                  <motion.div
-                    key={order.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center justify-between rounded-2xl bg-white/5 p-4 transition-colors hover:bg-white/10"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <p className="font-semibold text-champagne">Order #{order.id}</p>
-                        <span className={`rounded-full border px-3 py-0.5 text-xs font-semibold ${getOrderStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
+                {metrics.recentOrders.map((order) => {
+                  const badgeVariant =
+                    order.status === 'pending' ? 'warning' :
+                    order.status === 'confirmed' ? 'info' :
+                    order.status === 'completed' ? 'success' :
+                    order.status === 'cancelled' ? 'error' : 'neutral';
+
+                  return (
+                    <motion.div
+                      key={order.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex items-center justify-between rounded-2xl bg-white/5 p-4 transition-colors hover:bg-white/10"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            to={`/admin/orders`}
+                            className="font-semibold text-champagne hover:text-blush"
+                          >
+                            Order #{order.id}
+                          </Link>
+                          <Badge variant={badgeVariant} size="sm">
+                            {order.status}
+                          </Badge>
+                        </div>
+                        <p className="mt-1 text-sm text-champagne/70">{order.customerName}</p>
+                        <p className="mt-1 text-xs text-champagne/50">{formatDate(order.createdAt)}</p>
                       </div>
-                      <p className="mt-1 text-sm text-champagne/70">{order.customerName}</p>
-                      <p className="mt-1 text-xs text-champagne/50">{formatDate(order.createdAt)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-champagne">${order.total.toFixed(2)}</p>
-                      {order.status === 'pending' && (
-                        <button
-                          onClick={() => updateStatusMutation.mutate({ id: order.id, status: 'confirmed' })}
-                          disabled={updateStatusMutation.isPending}
-                          className="mt-2 rounded-full bg-blush px-3 py-1 text-xs font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50"
-                        >
-                          Confirm
-                        </button>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                      <div className="text-right">
+                        <p className="font-semibold text-champagne">${order.total.toFixed(2)}</p>
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={() => updateStatusMutation.mutate({ id: order.id, status: 'confirmed' })}
+                            disabled={updateStatusMutation.isPending}
+                            className="mt-2 rounded-full bg-blush px-3 py-1 text-xs font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50"
+                          >
+                            Confirm
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
           </div>

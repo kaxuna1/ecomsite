@@ -276,17 +276,88 @@ export interface UpdateFooterPayload {
 }
 
 /**
- * Fetch footer settings for admin editing
+ * Fetch footer settings for admin editing with translations
+ * @param language - Language code (default: 'en')
  */
-export async function fetchFooterSettings(): Promise<FooterSettings> {
-  const response = await api.get<FooterSettings>('/cms/admin/footer');
+export async function fetchFooterSettings(language: string = 'en'): Promise<FooterSettings> {
+  const response = await api.get<FooterSettings>('/cms/admin/footer', {
+    params: { lang: language }
+  });
   return response.data;
 }
 
 /**
- * Update footer settings
+ * Update footer settings (base/English values only)
  */
 export async function updateFooterSettings(payload: UpdateFooterPayload): Promise<FooterSettings> {
   const response = await api.put<FooterSettings>('/cms/admin/footer', payload);
+  return response.data;
+}
+
+// ============================================================================
+// FOOTER TRANSLATIONS
+// ============================================================================
+
+export interface FooterTranslation {
+  id: number;
+  footerSettingsId: number;
+  languageCode: string;
+  brandName: string | null;
+  brandTagline: string | null;
+  footerColumns: FooterColumn[] | null;
+  contactInfo: FooterContactInfo | null;
+  newsletterTitle: string | null;
+  newsletterDescription: string | null;
+  newsletterPlaceholder: string | null;
+  newsletterButtonText: string | null;
+  copyrightText: string | null;
+  bottomLinks: Array<{ label: string; url: string }> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFooterTranslationPayload {
+  brandName?: string;
+  brandTagline?: string;
+  footerColumns?: FooterColumn[];
+  contactInfo?: FooterContactInfo;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  newsletterPlaceholder?: string;
+  newsletterButtonText?: string;
+  copyrightText?: string;
+  bottomLinks?: Array<{ label: string; url: string }>;
+}
+
+/**
+ * Fetch all translations for footer settings
+ */
+export async function fetchFooterTranslations(): Promise<FooterTranslation[]> {
+  const response = await api.get<FooterTranslation[]>('/cms/admin/footer/translations');
+  return response.data;
+}
+
+/**
+ * Fetch a specific footer translation
+ * @param languageCode - Language code
+ */
+export async function fetchFooterTranslation(languageCode: string): Promise<FooterTranslation> {
+  const response = await api.get<FooterTranslation>(`/cms/admin/footer/translations/${languageCode}`);
+  return response.data;
+}
+
+/**
+ * Create or update a footer translation
+ * @param languageCode - Language code
+ * @param payload - Translation data
+ */
+export async function createFooterTranslation(
+  languageCode: string,
+  payload: CreateFooterTranslationPayload
+): Promise<FooterTranslation> {
+  const response = await api.post<FooterTranslation>(
+    `/cms/admin/footer/translations/${languageCode}`,
+    payload
+  );
   return response.data;
 }

@@ -114,6 +114,141 @@ CREATE TABLE IF NOT EXISTS cms_block_translations (
 
 CREATE INDEX IF NOT EXISTS idx_cms_block_translations_block_id ON cms_block_translations(block_id);
 CREATE INDEX IF NOT EXISTS idx_cms_block_translations_language_code ON cms_block_translations(language_code);
+
+-- Navigation Menu System
+CREATE TABLE IF NOT EXISTS menu_locations (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO menu_locations (code, name, description)
+VALUES
+  ('header', 'Header Menu', 'Main navigation menu in the header'),
+  ('footer', 'Footer Menu', 'Links in the footer section'),
+  ('mobile', 'Mobile Menu', 'Mobile-specific navigation menu')
+ON CONFLICT (code) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS menu_items (
+  id SERIAL PRIMARY KEY,
+  location_id INTEGER NOT NULL REFERENCES menu_locations(id) ON DELETE CASCADE,
+  parent_id INTEGER REFERENCES menu_items(id) ON DELETE CASCADE,
+  label VARCHAR(255) NOT NULL,
+  link_type VARCHAR(20) NOT NULL CHECK (link_type IN ('internal', 'external', 'cms_page', 'none')),
+  link_url VARCHAR(500),
+  cms_page_id INTEGER REFERENCES cms_pages(id) ON DELETE SET NULL,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  is_enabled BOOLEAN DEFAULT TRUE,
+  open_in_new_tab BOOLEAN DEFAULT FALSE,
+  css_class VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT check_link_type_url CHECK (
+    (link_type = 'internal' AND link_url IS NOT NULL) OR
+    (link_type = 'external' AND link_url IS NOT NULL) OR
+    (link_type = 'cms_page' AND cms_page_id IS NOT NULL) OR
+    (link_type = 'none')
+  )
+);
+
+CREATE TABLE IF NOT EXISTS menu_item_translations (
+  id SERIAL PRIMARY KEY,
+  menu_item_id INTEGER NOT NULL REFERENCES menu_items(id) ON DELETE CASCADE,
+  language_code VARCHAR(10) NOT NULL REFERENCES languages(code) ON DELETE CASCADE,
+  label VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(menu_item_id, language_code)
+);
+
+CREATE INDEX IF NOT EXISTS idx_menu_items_location_id ON menu_items(location_id);
+CREATE INDEX IF NOT EXISTS idx_menu_items_parent_id ON menu_items(parent_id);
+CREATE INDEX IF NOT EXISTS idx_menu_items_display_order ON menu_items(display_order);
+CREATE INDEX IF NOT EXISTS idx_menu_items_location_parent ON menu_items(location_id, parent_id);
+CREATE INDEX IF NOT EXISTS idx_menu_item_translations_menu_item_id ON menu_item_translations(menu_item_id);
+CREATE INDEX IF NOT EXISTS idx_menu_item_translations_language_code ON menu_item_translations(language_code);
+
+-- Function to prevent circular menu item references
+CREATE OR REPLACE FUNCTION check_menu_item_circular_reference()
+RETURNS TRIGGER AS $$
+DECLARE
+  current_parent_id INTEGER;
+  depth INTEGER := 0;
+  max_depth INTEGER := 10;
+BEGIN
+  current_parent_id := NEW.parent_id;
+
+  WHILE current_parent_id IS NOT NULL AND depth < max_depth LOOP
+    IF current_parent_id = NEW.id THEN
+      RAISE EXCEPTION 'Circular reference detected in menu items';
+    END IF;
+
+    SELECT parent_id INTO current_parent_id
+    FROM menu_items
+    WHERE id = current_parent_id;
+
+    depth := depth + 1;
+  END LOOP;
+
+  IF depth >= max_depth THEN
+    RAISE EXCEPTION 'Menu nesting depth exceeds maximum allowed (%))', max_depth;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS prevent_circular_menu_reference ON menu_items;
+
+CREATE TRIGGER prevent_circular_menu_reference
+BEFORE INSERT OR UPDATE ON menu_items
+FOR EACH ROW
+EXECUTE FUNCTION check_menu_item_circular_reference();
+
+-- Site Settings
+CREATE TABLE IF NOT EXISTS site_settings (
+  id SERIAL PRIMARY KEY,
+  setting_key VARCHAR(100) UNIQUE NOT NULL,
+  setting_value TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default site settings
+INSERT INTO site_settings (setting_key, setting_value)
+VALUES
+  ('logo_type', 'text'),
+  ('logo_text', 'LUXIA'),
+  ('logo_image_url', NULL)
+ON CONFLICT (setting_key) DO NOTHING;
+
+CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(setting_key);
+
+-- Footer Settings Translations
+CREATE TABLE IF NOT EXISTS footer_settings_translations (
+  id SERIAL PRIMARY KEY,
+  footer_settings_id INTEGER NOT NULL REFERENCES footer_settings(id) ON DELETE CASCADE,
+  language_code VARCHAR(10) NOT NULL REFERENCES languages(code) ON DELETE CASCADE,
+  brand_name VARCHAR(255),
+  brand_tagline TEXT,
+  footer_columns JSONB,
+  contact_info JSONB,
+  newsletter_title VARCHAR(255),
+  newsletter_description TEXT,
+  newsletter_placeholder VARCHAR(255),
+  newsletter_button_text VARCHAR(100),
+  copyright_text TEXT,
+  bottom_links JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(footer_settings_id, language_code)
+);
+
+CREATE INDEX IF NOT EXISTS idx_footer_translations_footer_id ON footer_settings_translations(footer_settings_id);
+CREATE INDEX IF NOT EXISTS idx_footer_translations_language ON footer_settings_translations(language_code);
 `;
 
 async function migrate() {

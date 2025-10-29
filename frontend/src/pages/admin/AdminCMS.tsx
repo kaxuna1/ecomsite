@@ -11,6 +11,7 @@ import {
   deleteCMSPage,
   fetchFooterSettings,
   updateFooterSettings,
+  createFooterTranslation,
   type CMSPage,
   type CMSBlock,
   type FooterSettings,
@@ -24,6 +25,7 @@ export default function AdminCMS() {
   const navigate = useNavigate();
   const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
   const [showFooterEditor, setShowFooterEditor] = useState(false);
+  const [footerLanguage, setFooterLanguage] = useState('en');
   const [showNewPageModal, setShowNewPageModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate>(PAGE_TEMPLATES[0]);
   const [newPageData, setNewPageData] = useState({
@@ -46,8 +48,8 @@ export default function AdminCMS() {
   });
 
   const { data: footerSettings } = useQuery({
-    queryKey: ['footer-settings'],
-    queryFn: fetchFooterSettings,
+    queryKey: ['footer-settings', footerLanguage],
+    queryFn: () => fetchFooterSettings(footerLanguage),
     enabled: showFooterEditor
   });
 
@@ -69,6 +71,14 @@ export default function AdminCMS() {
 
   const footerMutation = useMutation({
     mutationFn: updateFooterSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['footer-settings'] });
+    }
+  });
+
+  const footerTranslationMutation = useMutation({
+    mutationFn: ({ languageCode, payload }: { languageCode: string; payload: any }) =>
+      createFooterTranslation(languageCode, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['footer-settings'] });
     }
@@ -107,7 +117,32 @@ export default function AdminCMS() {
   };
 
   const handleFooterChange = (updates: Partial<FooterSettings>) => {
-    footerMutation.mutate(updates);
+    if (footerLanguage === 'en') {
+      // Update base footer settings for English
+      footerMutation.mutate(updates);
+    } else {
+      // Extract only translatable fields for non-English languages
+      const translatableFields = {
+        ...(updates.brandName !== undefined && { brandName: updates.brandName }),
+        ...(updates.brandTagline !== undefined && { brandTagline: updates.brandTagline }),
+        ...(updates.footerColumns !== undefined && { footerColumns: updates.footerColumns }),
+        ...(updates.contactInfo !== undefined && { contactInfo: updates.contactInfo }),
+        ...(updates.newsletterTitle !== undefined && { newsletterTitle: updates.newsletterTitle }),
+        ...(updates.newsletterDescription !== undefined && { newsletterDescription: updates.newsletterDescription }),
+        ...(updates.newsletterPlaceholder !== undefined && { newsletterPlaceholder: updates.newsletterPlaceholder }),
+        ...(updates.newsletterButtonText !== undefined && { newsletterButtonText: updates.newsletterButtonText }),
+        ...(updates.copyrightText !== undefined && { copyrightText: updates.copyrightText }),
+        ...(updates.bottomLinks !== undefined && { bottomLinks: updates.bottomLinks })
+      };
+
+      // Only mutate if there are translatable fields
+      if (Object.keys(translatableFields).length > 0) {
+        footerTranslationMutation.mutate({
+          languageCode: footerLanguage,
+          payload: translatableFields
+        });
+      }
+    }
   };
 
   const handleFooterSave = () => {
@@ -352,21 +387,36 @@ export default function AdminCMS() {
                   <h2 className="font-display text-2xl text-champagne">Footer Editor</h2>
                   <p className="text-sm text-champagne/60 mt-1">Customize your site footer</p>
                 </div>
-                <button
-                  onClick={() => setShowFooterEditor(false)}
-                  className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
+                <div className="flex items-center gap-3">
+                  {/* Language Switcher */}
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10">
+                    <GlobeAltIcon className="h-4 w-4 text-champagne/60" />
+                    <select
+                      value={footerLanguage}
+                      onChange={(e) => setFooterLanguage(e.target.value)}
+                      className="bg-transparent text-sm text-champagne border-none focus:outline-none focus:ring-0 cursor-pointer"
+                    >
+                      <option value="en" className="bg-midnight">English</option>
+                      <option value="ka" className="bg-midnight">ქართული</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => setShowFooterEditor(false)}
+                    className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
               </div>
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto px-6 py-6">
                 <FooterEditor
                   footer={footerSettings}
+                  language={footerLanguage}
                   onChange={handleFooterChange}
                   onSave={handleFooterSave}
-                  isSaving={footerMutation.isPending}
+                  isSaving={footerMutation.isPending || footerTranslationMutation.isPending}
                 />
               </div>
             </motion.div>

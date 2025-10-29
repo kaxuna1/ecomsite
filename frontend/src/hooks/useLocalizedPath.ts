@@ -30,14 +30,15 @@ export function useChangeLanguage() {
   const { i18n } = useTranslation();
 
   return (newLanguage: string) => {
-    i18n.changeLanguage(newLanguage);
-
     // Update URL path
     const currentPath = window.location.pathname;
     const pathWithoutLang = currentPath.replace(/^\/(en|ka)/, '');
     const newPath = `/${newLanguage}${pathWithoutLang}`;
 
-    // Navigate to new language path
-    window.history.pushState({}, '', newPath);
+    // Change language in i18n
+    i18n.changeLanguage(newLanguage);
+
+    // Reload the page to ensure all content updates
+    window.location.href = newPath;
   };
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -14,13 +14,17 @@ import {
   TrashIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLocalizedPath } from '../hooks/useLocalizedPath';
 import { getFavorites } from '../api/favorites';
+import { fetchMenu } from '../api/navigation';
+import { fetchPublicSettings } from '../api/settings';
+import type { MenuItemHierarchical } from '../types/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchModal from './SearchModal';
 
@@ -28,12 +32,14 @@ function Navbar() {
   const { items, total, removeItem } = useCart();
   const { user, isAuthenticated, userLogout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const localizedPath = useLocalizedPath();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [cartPreviewOpen, setCartPreviewOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
 
   // CMD+K / CTRL+K keyboard shortcut to open search
   useEffect(() => {
@@ -57,19 +63,176 @@ function Navbar() {
 
   const favoritesCount = favorites?.length || 0;
 
-  const navigation = [
-    { name: t('nav.home'), href: localizedPath('/') },
-    { name: t('nav.products'), href: localizedPath('/products') },
-    { name: 'New Arrivals', href: localizedPath('/new-arrivals') },
-    { name: 'Best Sellers', href: localizedPath('/best-sellers') },
-    { name: 'Sale', href: localizedPath('/sale') }
+  // Fetch dynamic menu from backend
+  const { data: menuData, isLoading: menuLoading } = useQuery({
+    queryKey: ['navigation-menu', 'header', i18n.language],
+    queryFn: () => fetchMenu('header', i18n.language),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+
+  // Fetch logo settings from backend
+  const { data: logoSettings } = useQuery({
+    queryKey: ['public-site-settings'],
+    queryFn: fetchPublicSettings,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1,
+  });
+
+  // Fallback navigation items if menu fetch fails
+  const fallbackNavigation: MenuItemHierarchical[] = [
+    { id: 0, label: t('nav.home'), linkType: 'internal', linkUrl: '/', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 1, label: t('nav.products'), linkType: 'internal', linkUrl: '/products', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 2, label: 'New Arrivals', linkType: 'internal', linkUrl: '/new-arrivals', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 3, label: 'Best Sellers', linkType: 'internal', linkUrl: '/best-sellers', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 4, label: 'Sale', linkType: 'internal', linkUrl: '/sale', cmsPageId: null, openInNewTab: false, children: [] }
   ];
+
+  // Use menu data or fallback
+  const navigation: MenuItemHierarchical[] = menuData?.items || fallbackNavigation;
 
   const userMenuItems = [
     { name: 'Profile', href: localizedPath('/account/profile'), icon: UserCircleIcon },
     { name: 'Orders', href: localizedPath('/account/orders'), icon: ShoppingBagIcon },
     { name: 'Favorites', href: localizedPath('/account/favorites'), icon: HeartIcon }
   ];
+
+  // Helper function to get menu item link
+  const getMenuItemLink = (item: MenuItemHierarchical) => {
+    if (item.linkType === 'cms_page' && item.cmsPageSlug) {
+      return localizedPath(`/${item.cmsPageSlug}`);
+    }
+    if (item.linkType === 'internal' && item.linkUrl) {
+      return localizedPath(item.linkUrl);
+    }
+    if (item.linkType === 'external' && item.linkUrl) {
+      return item.linkUrl;
+    }
+    return '#';
+  };
+
+  // Helper function to handle menu item click
+  const handleMenuItemClick = (item: MenuItemHierarchical, e?: React.MouseEvent) => {
+    if (item.linkType === 'none') {
+      e?.preventDefault();
+      return;
+    }
+    if (item.linkType === 'external' && item.openInNewTab) {
+      return; // Let the default behavior handle it
+    }
+  };
+
+  // Render menu item (desktop)
+  const renderMenuItem = (item: MenuItemHierarchical, index: number) => {
+    const hasChildren = item.children && item.children.length > 0;
+    const link = getMenuItemLink(item);
+    const isExternal = item.linkType === 'external';
+    const openInNewTab = item.openInNewTab;
+
+    if (hasChildren) {
+      return (
+        <div
+          key={index}
+          className="relative"
+          onMouseEnter={() => setActiveDropdown(index)}
+          onMouseLeave={() => setActiveDropdown(null)}
+        >
+          <button
+            className="relative flex items-center gap-1 text-sm font-semibold uppercase tracking-wider text-midnight/70 transition-colors hover:text-jade"
+          >
+            {item.label}
+            <ChevronDownIcon className="h-3 w-3" />
+          </button>
+
+          {/* Dropdown Menu */}
+          <AnimatePresence>
+            {activeDropdown === index && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-0 top-full mt-2 w-56 rounded-2xl border border-champagne/40 bg-white p-2 shadow-2xl"
+              >
+                {item.children.map((child, childIndex) => {
+                  const childLink = getMenuItemLink(child);
+                  const childIsExternal = child.linkType === 'external';
+                  const childOpenInNewTab = child.openInNewTab;
+
+                  if (childIsExternal) {
+                    return (
+                      <a
+                        key={childIndex}
+                        href={childLink}
+                        target={childOpenInNewTab ? '_blank' : undefined}
+                        rel={childOpenInNewTab ? 'noopener noreferrer' : undefined}
+                        className="block rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
+                      >
+                        {child.label}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={childIndex}
+                      to={childLink}
+                      onClick={(e) => handleMenuItemClick(child, e)}
+                      className="block rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
+                    >
+                      {child.label}
+                    </Link>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    if (isExternal) {
+      return (
+        <a
+          key={index}
+          href={link}
+          target={openInNewTab ? '_blank' : undefined}
+          rel={openInNewTab ? 'noopener noreferrer' : undefined}
+          className="relative text-sm font-semibold uppercase tracking-wider text-midnight/70 transition-colors hover:text-jade"
+        >
+          {item.label}
+        </a>
+      );
+    }
+
+    return (
+      <NavLink
+        key={index}
+        to={link}
+        end={link === localizedPath('/')}
+        onClick={(e) => handleMenuItemClick(item, e)}
+        className={({ isActive }) =>
+          `relative text-sm font-semibold uppercase tracking-wider transition-colors ${
+            isActive ? 'text-jade' : 'text-midnight/70 hover:text-jade'
+          }`
+        }
+      >
+        {({ isActive }) => (
+          <>
+            {item.label}
+            {isActive && (
+              <motion.div
+                layoutId="navbar-indicator"
+                className="absolute -bottom-[28px] left-0 right-0 h-0.5 bg-jade"
+                initial={false}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
+          </>
+        )}
+      </NavLink>
+    );
+  };
 
   return (
     <>
@@ -97,43 +260,32 @@ function Navbar() {
 
             {/* Logo */}
             <Link to={localizedPath('/')} className="group flex items-center">
-              <motion.span
-                className="text-2xl font-display uppercase tracking-[0.3em] text-midnight transition-colors group-hover:text-jade lg:text-3xl"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                {t('brand')}
-              </motion.span>
+              {logoSettings?.logoType === 'image' && logoSettings.logoImageUrl ? (
+                <motion.img
+                  src={`http://localhost:4000${logoSettings.logoImageUrl}`}
+                  alt={logoSettings.logoText || 'Logo'}
+                  className="h-8 lg:h-10 object-contain transition-opacity group-hover:opacity-80"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
+                />
+              ) : (
+                <motion.span
+                  className="text-2xl font-display uppercase tracking-[0.3em] text-midnight transition-colors group-hover:text-jade lg:text-3xl"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
+                >
+                  {logoSettings?.logoText || t('brand')}
+                </motion.span>
+              )}
             </Link>
 
             {/* Desktop Navigation - Center */}
             <div className="hidden lg:flex lg:items-center lg:gap-8">
-              {navigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  end={item.href === '/'}
-                  className={({ isActive }) =>
-                    `relative text-sm font-semibold uppercase tracking-wider transition-colors ${
-                      isActive ? 'text-jade' : 'text-midnight/70 hover:text-jade'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {item.name}
-                      {isActive && (
-                        <motion.div
-                          layoutId="navbar-indicator"
-                          className="absolute -bottom-[28px] left-0 right-0 h-0.5 bg-jade"
-                          initial={false}
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
+              {menuLoading ? (
+                <div className="h-5 w-96 animate-pulse rounded bg-champagne/20" />
+              ) : (
+                navigation.map((item, index) => renderMenuItem(item, index))
+              )}
             </div>
 
             {/* Right Side Icons */}
@@ -419,23 +571,86 @@ function Navbar() {
               )}
 
               <div className="space-y-1 p-6">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    end={item.href === '/'}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider transition-colors ${
-                        isActive
-                          ? 'bg-jade/10 text-jade'
-                          : 'text-midnight/70 hover:bg-champagne/30 hover:text-midnight'
-                      }`
-                    }
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
+                {navigation.map((item, index) => {
+                  const link = getMenuItemLink(item);
+                  const hasChildren = item.children && item.children.length > 0;
+                  const isExternal = item.linkType === 'external';
+                  const openInNewTab = item.openInNewTab;
+
+                  if (hasChildren) {
+                    return (
+                      <div key={index} className="space-y-1">
+                        <div className="rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-midnight/70">
+                          {item.label}
+                        </div>
+                        {item.children.map((child, childIndex) => {
+                          const childLink = getMenuItemLink(child);
+                          const childIsExternal = child.linkType === 'external';
+                          const childOpenInNewTab = child.openInNewTab;
+
+                          if (childIsExternal) {
+                            return (
+                              <a
+                                key={childIndex}
+                                href={childLink}
+                                target={childOpenInNewTab ? '_blank' : undefined}
+                                rel={childOpenInNewTab ? 'noopener noreferrer' : undefined}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                              >
+                                {child.label}
+                              </a>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={childIndex}
+                              to={childLink}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                            >
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+
+                  if (isExternal) {
+                    return (
+                      <a
+                        key={index}
+                        href={link}
+                        target={openInNewTab ? '_blank' : undefined}
+                        rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                      >
+                        {item.label}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <NavLink
+                      key={index}
+                      to={link}
+                      end={link === localizedPath('/')}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider transition-colors ${
+                          isActive
+                            ? 'bg-jade/10 text-jade'
+                            : 'text-midnight/70 hover:bg-champagne/30 hover:text-midnight'
+                        }`
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  );
+                })}
 
                 <div className="my-6 border-t border-champagne/40" />
 

@@ -862,43 +862,67 @@ router.delete(
 
 /**
  * GET /api/cms/footer
- * Get published footer settings (public endpoint)
+ * Get published footer settings with translations (public endpoint)
  */
-router.get('/footer', async (req, res) => {
-  try {
-    const footer = await cmsService.getFooterSettings();
-    if (!footer) {
-      return res.status(404).json({ message: 'Footer settings not found' });
+router.get(
+  '/footer',
+  [query('lang').optional().isString()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    res.json(footer);
-  } catch (error) {
-    console.error('Error fetching footer settings:', error);
-    res.status(500).json({ message: 'Error fetching footer settings' });
+    try {
+      const language = (req.query.lang as string) || 'en';
+      const footer = await cmsService.getFooterSettings(language);
+      if (!footer) {
+        return res.status(404).json({ message: 'Footer settings not found' });
+      }
+
+      res.json(footer);
+    } catch (error) {
+      console.error('Error fetching footer settings:', error);
+      res.status(500).json({ message: 'Error fetching footer settings' });
+    }
   }
-});
+);
 
 /**
  * GET /api/cms/admin/footer
- * Get footer settings for admin editing
+ * Get footer settings for admin editing with translations
  */
-router.get('/admin/footer', adminAuth, async (req, res) => {
-  try {
-    const footer = await cmsService.getFooterSettingsAdmin();
-    if (!footer) {
-      return res.status(404).json({ message: 'Footer settings not found' });
+router.get(
+  '/admin/footer',
+  adminAuth,
+  [query('lang').optional().isString()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    res.json(footer);
-  } catch (error) {
-    console.error('Error fetching footer settings for admin:', error);
-    res.status(500).json({ message: 'Error fetching footer settings' });
+    try {
+      let language = 'en';
+      if (req.query.lang) {
+        language = Array.isArray(req.query.lang) ? req.query.lang[0] : req.query.lang;
+      }
+      const footer = await cmsService.getFooterSettingsAdmin(language);
+      if (!footer) {
+        return res.status(404).json({ message: 'Footer settings not found' });
+      }
+
+      res.json(footer);
+    } catch (error) {
+      console.error('Error fetching footer settings for admin:', error);
+      res.status(500).json({ message: 'Error fetching footer settings' });
+    }
   }
-});
+);
 
 /**
  * PUT /api/cms/admin/footer
- * Update footer settings
+ * Update footer settings (base/English values only)
  */
 router.put(
   '/admin/footer',
@@ -941,6 +965,111 @@ router.put(
     } catch (error) {
       console.error('Error updating footer settings:', error);
       res.status(500).json({ message: 'Error updating footer settings' });
+    }
+  }
+);
+
+// ============================================================================
+// FOOTER TRANSLATION ROUTES (Admin only)
+// ============================================================================
+
+/**
+ * GET /api/cms/admin/footer/translations
+ * Get all translations for footer settings
+ */
+router.get('/admin/footer/translations', adminAuth, async (req, res) => {
+  try {
+    const footer = await cmsService.getFooterSettingsAdmin();
+    if (!footer) {
+      return res.status(404).json({ message: 'Footer settings not found' });
+    }
+
+    const translations = await cmsService.getAllFooterTranslations(footer.id);
+    res.json(translations);
+  } catch (error) {
+    console.error('Error fetching footer translations:', error);
+    res.status(500).json({ message: 'Error fetching footer translations' });
+  }
+});
+
+/**
+ * GET /api/cms/admin/footer/translations/:lang
+ * Get a specific translation for footer settings
+ */
+router.get(
+  '/admin/footer/translations/:lang',
+  adminAuth,
+  [param('lang').isString().notEmpty()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const footer = await cmsService.getFooterSettingsAdmin();
+      if (!footer) {
+        return res.status(404).json({ message: 'Footer settings not found' });
+      }
+
+      const translation = await cmsService.getFooterTranslation(footer.id, req.params.lang);
+      if (!translation) {
+        return res.status(404).json({ message: 'Translation not found' });
+      }
+
+      res.json(translation);
+    } catch (error) {
+      console.error('Error fetching footer translation:', error);
+      res.status(500).json({ message: 'Error fetching footer translation' });
+    }
+  }
+);
+
+/**
+ * POST /api/cms/admin/footer/translations/:lang
+ * Create or update a footer translation
+ */
+router.post(
+  '/admin/footer/translations/:lang',
+  adminAuth,
+  [
+    param('lang').isString().notEmpty(),
+    body('brandName').optional().isString(),
+    body('brandTagline').optional().isString(),
+    body('footerColumns').optional().isArray(),
+    body('contactInfo').optional().isObject(),
+    body('newsletterTitle').optional().isString(),
+    body('newsletterDescription').optional().isString(),
+    body('newsletterPlaceholder').optional().isString(),
+    body('newsletterButtonText').optional().isString(),
+    body('copyrightText').optional().isString(),
+    body('bottomLinks').optional().isArray()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const footer = await cmsService.getFooterSettingsAdmin();
+      if (!footer) {
+        return res.status(404).json({ message: 'Footer settings not found' });
+      }
+
+      const translation = await cmsService.createFooterTranslation(
+        footer.id,
+        req.params.lang,
+        req.body
+      );
+
+      res.status(201).json(translation);
+    } catch (error: any) {
+      console.error('Error creating footer translation:', error);
+      if (error.code === '23503') {
+        return res.status(404).json({ message: 'Footer settings or language not found' });
+      }
+      res.status(500).json({ message: 'Error creating footer translation' });
     }
   }
 );
