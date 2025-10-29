@@ -1,0 +1,149 @@
+change_request:
+  id: CR-{number}
+  type: technical_debt
+  title: "{Technical debt item}"
+  priority: medium  # high|medium|low
+  category: code_quality  # code_quality|architecture|security|performance|documentation|testing
+
+  description: |
+    {Description of the technical debt}
+
+    Current State: {What's the current situation}
+
+    Why It's Debt: {Why this is problematic}
+
+    Impact: {How it affects development/operations}
+
+  business_value: |
+    {Why addressing this matters}
+    - Risk reduction: {what risks are mitigated}
+    - Velocity improvement: {how it speeds up development}
+    - Quality improvement: {how it improves product quality}
+    - Cost reduction: {how it reduces operational costs}
+
+  research_findings:
+    - "Identified debt: {description}"
+    - "Accumulated over: {timeframe}"
+    - "Current impact: {metrics}"
+    - "Industry best practice: {recommendation}"
+
+  debt_analysis:
+    origin: "{How did this debt arise}"
+    age: "{How long has this existed}"
+    interest: "{Cost of not addressing it}"
+    growth_rate: "{Is it getting worse}"
+
+  impact_assessment:
+    developer_productivity: medium  # low|medium|high
+    code_maintainability: high
+    system_reliability: medium
+    security_risk: low
+    performance_impact: low
+
+tasks:
+  - id: TASK-{number}
+    title: "Audit and document current state"
+    type: fullstack
+    agent: backend
+    complexity: S
+    priority: high
+    dependencies: []
+
+    description: |
+      Document the current state and impact of the technical debt.
+
+    acceptance_criteria:
+      - "Current implementation documented"
+      - "Impact quantified with metrics"
+      - "Affected areas identified"
+      - "Improvement approach defined"
+
+    technical_notes: |
+      Gather:
+      - Code quality metrics
+      - Performance benchmarks
+      - Test coverage stats
+      - Known issues/workarounds
+
+  - id: TASK-{number}
+    title: "Address {specific debt item}"
+    type: backend
+    agent: backend
+    complexity: L
+    priority: high
+    dependencies: [TASK-{previous}]
+
+    description: |
+      Implement improvements to address the technical debt.
+
+    acceptance_criteria:
+      - "{Debt addressed according to plan}"
+      - "Code quality metrics improved"
+      - "Tests added/updated"
+      - "Documentation updated"
+
+    technical_notes: |
+      Improvements to make:
+      1. {Improvement 1}
+      2. {Improvement 2}
+      3. {Improvement 3}
+
+    validation_checklist:
+      - "[ ] Code quality improved (linting, complexity)"
+      - "[ ] Test coverage increased"
+      - "[ ] All tests passing"
+      - "[ ] Performance maintained or improved"
+      - "[ ] Security vulnerabilities addressed"
+      - "[ ] Documentation updated"
+
+  - id: TASK-{number}
+    title: "Implement preventive measures"
+    type: devops
+    agent: backend
+    complexity: M
+    priority: medium
+    dependencies: [TASK-{previous}]
+
+    description: |
+      Add safeguards to prevent similar debt from accumulating.
+
+    acceptance_criteria:
+      - "Automated checks added"
+      - "Team guidelines updated"
+      - "CI/CD pipeline enhanced"
+      - "Monitoring/alerting configured"
+
+    technical_notes: |
+      Consider:
+      - Linting rules
+      - Code review checklists
+      - Automated testing requirements
+      - Documentation standards
+
+estimated_effort:
+  total_story_points: {sum}
+  estimated_days: {estimate}
+
+success_metrics:
+  before:
+    metric_1: "{current value}"
+    metric_2: "{current value}"
+  after:
+    metric_1: "{target value}"
+    metric_2: "{target value}"
+  targets:
+    - "Code coverage increased to {percentage}"
+    - "Cyclomatic complexity reduced by {percentage}"
+    - "Build time reduced to {time}"
+    - "Zero critical vulnerabilities"
+
+preventive_measures:
+  - "{Measure 1 to prevent recurrence}"
+  - "{Measure 2 to prevent recurrence}"
+  - "{Measure 3 to prevent recurrence}"
+
+roi_analysis:
+  time_invested: "{hours/days}"
+  time_saved_per_sprint: "{hours/days}"
+  payback_period: "{sprints}"
+  ongoing_benefits: "{description}"

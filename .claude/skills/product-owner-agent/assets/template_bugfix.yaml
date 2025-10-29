@@ -1,0 +1,121 @@
+change_request:
+  id: CR-{number}
+  type: bugfix
+  title: "{Bug title}"
+  severity: critical  # critical|high|medium|low
+  priority: high  # high|medium|low
+
+  description: |
+    {Description of the bug}
+
+    Steps to Reproduce:
+    1. {Step 1}
+    2. {Step 2}
+    3. {Step 3}
+
+    Expected Behavior: {What should happen}
+
+    Actual Behavior: {What actually happens}
+
+  impact: |
+    {Who is affected and how}
+    - Affected users: {percentage or description}
+    - Business impact: {description}
+    - Frequency: {how often it occurs}
+
+  research_findings:
+    - "Root cause: {description}"
+    - "{Investigation finding 1}"
+    - "{Investigation finding 2}"
+    - "Related issues: {references}"
+
+  root_cause_analysis:
+    symptom: "{What we observe}"
+    cause: "{Why it happens}"
+    contributing_factors:
+      - "{Factor 1}"
+      - "{Factor 2}"
+
+tasks:
+  - id: TASK-{number}
+    title: "Investigate and identify root cause"
+    type: fullstack
+    agent: backend  # Assign based on where bug lives
+    complexity: S
+    priority: high
+    dependencies: []
+
+    description: |
+      Investigate the bug and identify the root cause.
+
+    acceptance_criteria:
+      - "Root cause identified and documented"
+      - "Reproduction steps verified"
+      - "Affected code areas identified"
+
+    technical_notes: |
+      {Investigation guidance}
+
+  - id: TASK-{number}
+    title: "Implement fix for {bug}"
+    type: backend
+    agent: backend
+    complexity: M
+    priority: high
+    dependencies: [TASK-{previous}]
+
+    description: |
+      Implement the fix for the identified issue.
+
+    acceptance_criteria:
+      - "Bug no longer reproducible"
+      - "Unit tests added for bug scenario"
+      - "Regression tests passing"
+      - "No new bugs introduced"
+
+    technical_notes: |
+      {Fix implementation guidance}
+
+    validation_checklist:
+      - "[ ] Fix verified in development"
+      - "[ ] Original reproduction steps no longer work"
+      - "[ ] Unit tests added"
+      - "[ ] Integration tests passing"
+      - "[ ] Manual testing completed"
+      - "[ ] No performance regression"
+
+  - id: TASK-{number}
+    title: "Add preventive measures"
+    type: backend
+    agent: backend
+    complexity: S
+    priority: medium
+    dependencies: [TASK-{previous}]
+
+    description: |
+      Add tests, validation, or monitoring to prevent recurrence.
+
+    acceptance_criteria:
+      - "Tests added to catch this issue in future"
+      - "Monitoring/alerting added if applicable"
+      - "Documentation updated"
+
+    technical_notes: |
+      Consider:
+      - Additional validation
+      - Error handling improvements
+      - Monitoring/logging enhancements
+
+estimated_effort:
+  total_story_points: {sum}
+  estimated_days: {estimate}
+
+testing_strategy:
+  - "Test original reproduction steps"
+  - "Test edge cases"
+  - "Regression testing"
+  - "Performance testing"
+  - "Security impact assessment"
+
+rollback_plan: |
+  {How to rollback if issues arise}

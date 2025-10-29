@@ -1,0 +1,477 @@
+# Example: User Authentication Feature
+# This is a complete example showing how a filled change request looks
+
+change_request:
+  id: CR-001
+  type: feature
+  title: "Implement JWT-based User Authentication"
+  description: |
+    Add user authentication system with JWT tokens, user registration, login, and password reset functionality.
+
+    Context: The application currently has no authentication system, allowing anyone to access all features.
+    This creates security concerns and prevents user-specific functionality.
+
+    User Story: As a user, I want to create an account and log in securely so that I can access personalized features
+    and my data is protected.
+
+  business_value: |
+    - Security: Protects user data and restricts unauthorized access
+    - Personalization: Enables user-specific features and data
+    - Compliance: Meets security requirements for handling user data
+    - Monetization: Enables user tracking for analytics and premium features
+    - User engagement: Creates foundation for user profiles and preferences
+
+  research_findings:
+    - "JWT is industry standard for stateless authentication in APIs"
+    - "bcrypt with 10-12 salt rounds recommended for password hashing"
+    - "Refresh tokens should be used alongside access tokens for better security"
+    - "Rate limiting required on authentication endpoints to prevent brute force"
+    - "Existing Express template uses similar auth pattern - can leverage that code"
+
+  functional_requirements:
+    - "User registration with email/password"
+    - "User login with JWT token generation"
+    - "Password reset via email"
+    - "Protected routes requiring authentication"
+    - "Token refresh mechanism"
+    - "User profile management"
+
+  non_functional_requirements:
+    performance:
+      - "Login should complete in < 500ms"
+      - "Token validation should add < 50ms to request time"
+    security:
+      - "Passwords must be hashed with bcrypt"
+      - "JWTs must be signed with strong secret (32+ characters)"
+      - "Rate limiting: max 5 login attempts per 15 minutes"
+      - "Refresh tokens stored securely in database"
+    accessibility:
+      - "Forms must be keyboard navigable"
+      - "Error messages must be screen-reader friendly"
+    scalability:
+      - "System should handle 10,000 concurrent sessions"
+
+  technical_dependencies:
+    - "PostgreSQL database for user storage"
+    - "Node.js/Express backend"
+    - "React frontend"
+    - "Email service (SendGrid or similar) for password reset"
+
+  integration_points:
+    - "Integrate with existing Express API structure"
+    - "Connect to PostgreSQL database"
+    - "Integrate with email service for password reset"
+    - "Add auth middleware to existing protected routes"
+
+tasks:
+  - id: TASK-001
+    title: "Create user database schema and migration"
+    type: database
+    agent: backend
+    complexity: S
+    priority: high
+    dependencies: []
+
+    description: |
+      Create PostgreSQL table for users with proper indexes and constraints.
+
+    acceptance_criteria:
+      - "Users table created with id, email, password, created_at, updated_at"
+      - "Email column has unique constraint"
+      - "Indexes created on email and created_at"
+      - "Migration is reversible"
+      - "Timestamps auto-update on modification"
+
+    technical_notes: |
+      Use the migration pattern from express-postgres-api template:
+      - SERIAL PRIMARY KEY for id
+      - VARCHAR(255) UNIQUE NOT NULL for email
+      - VARCHAR(255) NOT NULL for password (hashed)
+      - Add trigger for updated_at auto-update
+
+    edge_cases:
+      - "Handle duplicate email registration attempts"
+      - "Case-insensitive email comparison"
+
+    validation_checklist:
+      - "[ ] Migration runs successfully"
+      - "[ ] Migration rollback works"
+      - "[ ] Indexes created properly"
+      - "[ ] Constraints enforced"
+      - "[ ] Trigger functions working"
+
+  - id: TASK-002
+    title: "Implement backend authentication service"
+    type: backend
+    agent: backend
+    complexity: L
+    priority: high
+    dependencies: [TASK-001]
+
+    description: |
+      Create authentication service with registration, login, token generation, and password hashing.
+
+    acceptance_criteria:
+      - "User can register with email/password"
+      - "Passwords are hashed with bcrypt (10 rounds)"
+      - "Login generates JWT access token and refresh token"
+      - "Tokens are properly signed and include expiration"
+      - "Refresh token endpoint implemented"
+      - "Password validation (min 8 characters)"
+
+    technical_notes: |
+      Follow layered architecture:
+      - auth.service.ts: Business logic
+      - auth.controller.ts: Request handlers
+      - auth.routes.ts: Route definitions
+      - auth.middleware.ts: JWT verification
+
+      Use existing utilities:
+      - Custom error classes (UnauthorizedError, ConflictError)
+      - Response utilities (success, error)
+      - Logger for security events
+
+    edge_cases:
+      - "Duplicate email registration"
+      - "Invalid email format"
+      - "Weak passwords"
+      - "Expired tokens"
+      - "Invalid tokens"
+      - "Account lockout after failed attempts"
+
+    validation_checklist:
+      - "[ ] Registration endpoint working"
+      - "[ ] Login endpoint working"
+      - "[ ] Tokens properly generated"
+      - "[ ] Password hashing verified"
+      - "[ ] Error handling complete"
+      - "[ ] Rate limiting applied"
+      - "[ ] Security logging added"
+
+  - id: TASK-003
+    title: "Create authentication middleware"
+    type: backend
+    agent: backend
+    complexity: M
+    priority: high
+    dependencies: [TASK-002]
+
+    description: |
+      Create middleware to verify JWTs and protect routes.
+
+    acceptance_criteria:
+      - "Middleware verifies JWT from Authorization header"
+      - "Invalid tokens return 401 Unauthorized"
+      - "Expired tokens return 401 with appropriate message"
+      - "User ID extracted and attached to request object"
+      - "Optional authentication middleware available"
+
+    technical_notes: |
+      Create two middleware functions:
+      1. authenticate() - Required auth, fails if no token
+      2. optionalAuth() - Optional auth, continues without token
+
+      Extract user ID and attach to req.userId for use in controllers.
+
+    edge_cases:
+      - "Missing Authorization header"
+      - "Malformed token"
+      - "Token from wrong secret"
+      - "Expired token"
+
+    validation_checklist:
+      - "[ ] Middleware verifies valid tokens"
+      - "[ ] Invalid tokens rejected"
+      - "[ ] User ID correctly extracted"
+      - "[ ] Error responses appropriate"
+      - "[ ] Performance acceptable (<50ms)"
+
+  - id: TASK-004
+    title: "Build React login and registration components"
+    type: frontend
+    agent: frontend
+    complexity: L
+    priority: high
+    dependencies: [TASK-002]
+
+    description: |
+      Create React components for user registration, login, and logout.
+
+    acceptance_criteria:
+      - "Registration form with email/password fields"
+      - "Login form with email/password fields"
+      - "Form validation with error display"
+      - "Loading states during API calls"
+      - "Success/error notifications"
+      - "Responsive design (mobile-friendly)"
+      - "Accessibility compliant (keyboard nav, ARIA labels)"
+
+    technical_notes: |
+      Components to create:
+      - RegisterForm.tsx
+      - LoginForm.tsx
+      - AuthContext.tsx (React Context for auth state)
+      - useAuth.ts (custom hook)
+
+      Use:
+      - React Hook Form for form handling
+      - Zod for client-side validation
+      - React Query for API calls
+      - localStorage for token storage
+
+    edge_cases:
+      - "Network errors during submission"
+      - "Validation errors from backend"
+      - "Token expiration during session"
+      - "Browser refresh with active session"
+
+    validation_checklist:
+      - "[ ] Forms render correctly"
+      - "[ ] Validation works client-side"
+      - "[ ] API integration working"
+      - "[ ] Error handling complete"
+      - "[ ] Loading states display"
+      - "[ ] Accessibility tested"
+      - "[ ] Mobile responsive"
+
+  - id: TASK-005
+    title: "Implement token storage and management"
+    type: frontend
+    agent: frontend
+    complexity: M
+    priority: high
+    dependencies: [TASK-004]
+
+    description: |
+      Implement secure token storage, automatic refresh, and auth state management.
+
+    acceptance_criteria:
+      - "Tokens stored securely in localStorage"
+      - "Auth state managed via React Context"
+      - "Automatic token refresh before expiration"
+      - "Logout clears tokens and redirects"
+      - "Axios interceptor adds token to requests"
+      - "Expired token triggers re-authentication"
+
+    technical_notes: |
+      Create:
+      - AuthProvider component wrapping app
+      - useAuth hook for accessing auth state
+      - Axios interceptor for adding Bearer token
+      - Token refresh logic (refresh 5 min before expiry)
+
+      Handle:
+      - Page refresh preserving session
+      - Token expiration
+      - Logout cleanup
+
+    edge_cases:
+      - "Refresh token also expired"
+      - "Multiple tabs/windows"
+      - "Network disconnection during refresh"
+
+    validation_checklist:
+      - "[ ] Tokens persist across refresh"
+      - "[ ] Auto-refresh working"
+      - "[ ] Logout clears state"
+      - "[ ] Interceptor adds token"
+      - "[ ] Expiration handled gracefully"
+
+  - id: TASK-006
+    title: "Add authentication to existing protected routes"
+    type: fullstack
+    agent: backend
+    complexity: M
+    priority: high
+    dependencies: [TASK-003, TASK-005]
+
+    description: |
+      Apply authentication middleware to existing routes that should be protected.
+
+    acceptance_criteria:
+      - "Protected routes require authentication"
+      - "Unauthenticated requests return 401"
+      - "Frontend handles 401 by redirecting to login"
+      - "User-specific data filtered by authenticated user"
+
+    technical_notes: |
+      Update existing routes:
+      - Add authenticate middleware to protected routes
+      - Update controllers to use req.userId
+      - Add authorization checks (user can only access their own data)
+
+    edge_cases:
+      - "User tries to access another user's data"
+      - "Token expired mid-request"
+
+    validation_checklist:
+      - "[ ] Protected routes require auth"
+      - "[ ] Unauthorized access blocked"
+      - "[ ] User data properly filtered"
+      - "[ ] Authorization checks working"
+
+  - id: TASK-007
+    title: "Implement password reset functionality"
+    type: fullstack
+    agent: backend
+    complexity: L
+    priority: medium
+    dependencies: [TASK-002]
+
+    description: |
+      Add password reset via email with secure reset tokens.
+
+    acceptance_criteria:
+      - "User can request password reset by email"
+      - "Reset email sent with secure token link"
+      - "Reset token expires after 1 hour"
+      - "User can set new password via reset link"
+      - "Old password invalidated after reset"
+
+    technical_notes: |
+      Backend:
+      - Generate secure reset token (crypto.randomBytes)
+      - Store token hash in database with expiration
+      - Send email via SendGrid/similar
+      - Verify token on reset
+
+      Frontend:
+      - Password reset request form
+      - Password reset form (with token from URL)
+
+    edge_cases:
+      - "Token expired"
+      - "Token already used"
+      - "Email doesn't exist"
+      - "Multiple reset requests"
+
+    validation_checklist:
+      - "[ ] Reset email sent"
+      - "[ ] Token validated correctly"
+      - "[ ] Password updated"
+      - "[ ] Old password doesn't work"
+      - "[ ] Token expires properly"
+
+  - id: TASK-008
+    title: "Add rate limiting to authentication endpoints"
+    type: devops
+    agent: backend
+    complexity: S
+    priority: high
+    dependencies: [TASK-002]
+
+    description: |
+      Implement rate limiting on login and registration to prevent brute force attacks.
+
+    acceptance_criteria:
+      - "Max 5 login attempts per IP per 15 minutes"
+      - "Max 3 registration attempts per IP per hour"
+      - "Rate limit headers returned in response"
+      - "Clear error message when rate limited"
+
+    technical_notes: |
+      Use express-rate-limit:
+      - Stricter limits on auth endpoints
+      - Track by IP address
+      - Consider account lockout after failures
+
+    edge_cases:
+      - "Legitimate user behind shared IP"
+      - "Distributed brute force attack"
+
+    validation_checklist:
+      - "[ ] Rate limiting active"
+      - "[ ] Limits enforced correctly"
+      - "[ ] Headers present"
+      - "[ ] Error messages clear"
+
+  - id: TASK-009
+    title: "Write comprehensive tests for authentication"
+    type: fullstack
+    agent: backend
+    complexity: L
+    priority: high
+    dependencies: [TASK-002, TASK-003, TASK-004]
+
+    description: |
+      Create unit and integration tests for authentication system.
+
+    acceptance_criteria:
+      - "Unit tests for auth service (registration, login, token generation)"
+      - "Integration tests for auth endpoints"
+      - "Middleware tests (token verification)"
+      - "Frontend component tests (forms, auth context)"
+      - "E2E tests for complete auth flows"
+      - "Test coverage > 80%"
+
+    technical_notes: |
+      Backend tests (Jest):
+      - Auth service unit tests
+      - API endpoint integration tests
+      - Middleware tests
+
+      Frontend tests (Jest + React Testing Library):
+      - Component rendering tests
+      - Form validation tests
+      - Auth context tests
+      - Mock API integration
+
+    edge_cases:
+      - "All edge cases from previous tasks"
+
+    validation_checklist:
+      - "[ ] All tests passing"
+      - "[ ] Coverage > 80%"
+      - "[ ] Edge cases covered"
+      - "[ ] CI/CD integrated"
+
+  - id: TASK-010
+    title: "Create authentication documentation"
+    type: fullstack
+    agent: frontend
+    complexity: S
+    priority: medium
+    dependencies: [TASK-009]
+
+    description: |
+      Document authentication system for developers and end users.
+
+    acceptance_criteria:
+      - "API documentation updated with auth endpoints"
+      - "Frontend component usage documented"
+      - "Setup guide for developers"
+      - "User guide for authentication features"
+      - "Security best practices documented"
+
+    technical_notes: |
+      Create:
+      - API.md with auth endpoint specs
+      - AUTHENTICATION.md with implementation guide
+      - Update README with setup instructions
+      - Inline code comments
+
+    validation_checklist:
+      - "[ ] API endpoints documented"
+      - "[ ] Implementation guide complete"
+      - "[ ] Setup instructions clear"
+      - "[ ] Code comments added"
+
+estimated_effort:
+  total_story_points: 49  # 4S + 4M + 4L = 8 + 16 + 32 = 56 (conservative estimate)
+  estimated_days: 10-15
+
+risks:
+  - risk: "Security vulnerabilities in authentication implementation"
+    mitigation: "Security review, penetration testing, follow OWASP guidelines"
+    probability: medium
+    impact: critical
+
+  - risk: "Performance degradation from token verification on every request"
+    mitigation: "Use lightweight JWT library, optimize middleware, add caching if needed"
+    probability: low
+    impact: medium
+
+  - risk: "Email delivery issues for password reset"
+    mitigation: "Use reliable email service (SendGrid), implement retry logic, monitor delivery"
+    probability: low
+    impact: medium
