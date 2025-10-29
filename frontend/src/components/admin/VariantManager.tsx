@@ -29,6 +29,12 @@ import EmptyState from './EmptyState';
 interface VariantManagerProps {
   productId: number;
   productName: string;
+  baseProduct?: {
+    price: number;
+    salePrice?: number | null;
+    inventory: number;
+    imageUrl: string;
+  };
 }
 
 interface VariantForm {
@@ -46,7 +52,7 @@ interface VariantForm {
   selectedOptions: Record<number, number>; // optionId -> valueId
 }
 
-export default function VariantManager({ productId, productName }: VariantManagerProps) {
+export default function VariantManager({ productId, productName, baseProduct }: VariantManagerProps) {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
@@ -76,7 +82,6 @@ export default function VariantManager({ productId, productName }: VariantManage
   } = useForm<VariantForm>({
     defaultValues: {
       sku: '',
-      inventory: 0,
       isActive: true,
       isDefault: false,
       selectedOptions: {}
@@ -171,20 +176,42 @@ export default function VariantManager({ productId, productName }: VariantManage
       return;
     }
 
-    const payload = {
+    // Only include fields that have values (for inheritance)
+    const payload: any = {
       sku: data.sku,
-      price: data.price,
-      salePrice: data.salePrice,
-      inventory: data.inventory,
-      weight: data.weight,
-      dimensionsLength: data.dimensionsLength,
-      dimensionsWidth: data.dimensionsWidth,
-      dimensionsHeight: data.dimensionsHeight,
       isActive: data.isActive,
       isDefault: data.isDefault,
-      imageUrl: data.imageUrl,
       optionValueIds
     };
+
+    // Only include optional fields if they have values
+    if (data.price !== undefined && data.price !== null && !isNaN(data.price)) {
+      payload.price = data.price;
+    }
+    if (data.salePrice !== undefined && data.salePrice !== null && !isNaN(data.salePrice)) {
+      payload.salePrice = data.salePrice;
+    }
+    if (data.inventory !== undefined && data.inventory !== null && !isNaN(data.inventory)) {
+      payload.inventory = data.inventory;
+    } else {
+      // Default to 0 if not specified
+      payload.inventory = 0;
+    }
+    if (data.weight !== undefined && data.weight !== null && !isNaN(data.weight)) {
+      payload.weight = data.weight;
+    }
+    if (data.dimensionsLength !== undefined && data.dimensionsLength !== null && !isNaN(data.dimensionsLength)) {
+      payload.dimensionsLength = data.dimensionsLength;
+    }
+    if (data.dimensionsWidth !== undefined && data.dimensionsWidth !== null && !isNaN(data.dimensionsWidth)) {
+      payload.dimensionsWidth = data.dimensionsWidth;
+    }
+    if (data.dimensionsHeight !== undefined && data.dimensionsHeight !== null && !isNaN(data.dimensionsHeight)) {
+      payload.dimensionsHeight = data.dimensionsHeight;
+    }
+    if (data.imageUrl) {
+      payload.imageUrl = data.imageUrl;
+    }
 
     if (editingVariant) {
       updateVariantMutation.mutate({ id: editingVariant.id, data: payload });
@@ -382,23 +409,43 @@ export default function VariantManager({ productId, productName }: VariantManage
               </div>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Info Box */}
+                {baseProduct && (
+                  <div className="rounded-xl border-2 border-jade/30 bg-jade/10 p-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircleIcon className="h-5 w-5 text-jade mt-0.5 flex-shrink-0" />
+                      <div className="text-sm">
+                        <p className="font-semibold text-jade mb-1">Smart Inheritance</p>
+                        <p className="text-champagne/80">
+                          Leave fields empty to automatically inherit values from the base product.
+                          Only SKU and at least one variant option are required.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Variant Options */}
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-champagne">
-                    Variant Options *
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-champagne">
+                      Variant Options
+                    </label>
+                    <span className="text-xs text-champagne/60 italic">At least one option required</span>
+                  </div>
+                  <p className="text-xs text-champagne/60 mb-4">
+                    Select one or more options to differentiate this variant (e.g., just Color, or Size + Color)
+                  </p>
                   {variantOptions.map(option => (
                     <div key={option.id}>
                       <label className="block text-sm text-champagne/80 mb-2">
-                        {option.name}
+                        {option.name} <span className="text-champagne/40 text-xs">(optional)</span>
                       </label>
                       <select
-                        {...register(`selectedOptions.${option.id}` as const, {
-                          required: 'Please select an option'
-                        })}
+                        {...register(`selectedOptions.${option.id}` as const)}
                         className="w-full px-4 py-2 bg-midnight/50 border border-white/10 rounded-lg text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
                       >
-                        <option value="">Select {option.name}</option>
+                        <option value="">None - Skip this option</option>
                         {(optionValuesMap[option.id] || []).map(value => (
                           <option key={value.id} value={value.id}>
                             {value.value}
@@ -429,45 +476,59 @@ export default function VariantManager({ productId, productName }: VariantManage
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-champagne mb-2">
-                      Price
+                      Price <span className="text-champagne/40 text-xs">(optional)</span>
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       {...register('price', { min: 0, valueAsNumber: true })}
                       className="w-full px-4 py-2 bg-midnight/50 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-blush"
-                      placeholder="0.00"
+                      placeholder={baseProduct ? `${baseProduct.price.toFixed(2)} (from product)` : "0.00"}
                     />
+                    {baseProduct && (
+                      <p className="mt-1 text-xs text-champagne/50">
+                        Leave empty to use product price: ${baseProduct.price.toFixed(2)}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-champagne mb-2">
-                      Sale Price
+                      Sale Price <span className="text-champagne/40 text-xs">(optional)</span>
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       {...register('salePrice', { min: 0, valueAsNumber: true })}
                       className="w-full px-4 py-2 bg-midnight/50 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-blush"
-                      placeholder="0.00"
+                      placeholder={baseProduct?.salePrice ? `${baseProduct.salePrice.toFixed(2)} (from product)` : "None"}
                     />
+                    {baseProduct?.salePrice && (
+                      <p className="mt-1 text-xs text-champagne/50">
+                        Leave empty to use product sale price: ${baseProduct.salePrice.toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Inventory */}
                 <div>
                   <label className="block text-sm font-medium text-champagne mb-2">
-                    Inventory *
+                    Inventory <span className="text-champagne/40 text-xs">(optional)</span>
                   </label>
                   <input
                     type="number"
                     {...register('inventory', {
-                      required: 'Inventory is required',
                       min: 0,
                       valueAsNumber: true
                     })}
                     className="w-full px-4 py-2 bg-midnight/50 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-blush"
-                    placeholder="0"
+                    placeholder={baseProduct ? `${baseProduct.inventory} (from product)` : "0"}
                   />
+                  {baseProduct && (
+                    <p className="mt-1 text-xs text-champagne/50">
+                      Leave empty to use product inventory: {baseProduct.inventory} units
+                    </p>
+                  )}
                   {errors.inventory && (
                     <p className="mt-1 text-sm text-rose-400">{errors.inventory.message}</p>
                   )}
@@ -530,14 +591,19 @@ export default function VariantManager({ productId, productName }: VariantManage
                 {/* Image URL */}
                 <div>
                   <label className="block text-sm font-medium text-champagne mb-2">
-                    Image URL
+                    Image URL <span className="text-champagne/40 text-xs">(optional)</span>
                   </label>
                   <input
                     type="text"
                     {...register('imageUrl')}
                     className="w-full px-4 py-2 bg-midnight/50 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-blush"
-                    placeholder="https://..."
+                    placeholder={baseProduct ? "Leave empty to use product image" : "https://..."}
                   />
+                  {baseProduct && (
+                    <p className="mt-1 text-xs text-champagne/50">
+                      Leave empty to use product image
+                    </p>
+                  )}
                 </div>
 
                 {/* Flags */}

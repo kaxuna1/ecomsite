@@ -93,7 +93,11 @@ function CheckoutPage() {
     if (!items.length) return;
     mutation.mutate({
       customer: data,
-      items: items.map(({ product, quantity }) => ({ productId: product.id, quantity })),
+      items: items.map(({ product, quantity, variant }) => ({
+        productId: product.id,
+        quantity,
+        variantId: variant?.id
+      })),
       total: finalTotal,
       promoCode: promoCode?.code,
       addressId: selectedAddress?.id
@@ -331,20 +335,39 @@ function CheckoutPage() {
                 Order Items ({itemCount})
               </h2>
               <div className="space-y-4">
-                {items.map(({ product, quantity }) => (
-                  <div key={product.id} className="flex gap-3 border-b border-champagne/30 pb-4 last:border-0 last:pb-0">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="h-16 w-16 rounded-lg object-cover"
-                    />
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-midnight line-clamp-1">{product.name}</h3>
-                      <p className="mt-1 text-xs text-midnight/60">Qty: {quantity}</p>
-                      <p className="mt-1 text-sm font-bold text-jade">${(product.price * quantity).toFixed(2)}</p>
+                {items.map(({ product, quantity, variant }) => {
+                  const itemPrice = variant?.price ?? product.price;
+                  const uniqueKey = variant ? `${product.id}-${variant.id}` : `${product.id}`;
+                  return (
+                    <div key={uniqueKey} className="flex gap-3 border-b border-champagne/30 pb-4 last:border-0 last:pb-0">
+                      <img
+                        src={variant?.imageUrl || product.imageUrl}
+                        alt={product.name}
+                        className="h-16 w-16 rounded-lg object-cover"
+                      />
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-midnight line-clamp-1">{product.name}</h3>
+
+                        {/* Variant Information */}
+                        {variant && variant.options && variant.options.length > 0 && (
+                          <div className="mt-1 flex flex-wrap items-center gap-1">
+                            {variant.options.map((opt) => (
+                              <span
+                                key={`${opt.optionId}-${opt.valueId}`}
+                                className="inline-flex items-center gap-1 rounded-full bg-blush/10 px-2 py-0.5 text-xs font-medium text-blush"
+                              >
+                                <span className="font-semibold">{opt.optionName}:</span> {opt.value}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <p className="mt-1 text-xs text-midnight/60">Qty: {quantity}</p>
+                        <p className="mt-1 text-sm font-bold text-jade">${(itemPrice * quantity).toFixed(2)}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
 

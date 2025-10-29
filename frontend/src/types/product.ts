@@ -42,7 +42,7 @@ export interface ProductFilters {
 }
 
 export interface OrderPayload {
-  items: Array<{ productId: number; quantity: number }>;
+  items: Array<{ productId: number; quantity: number; variantId?: number }>;
   customer: {
     name: string;
     email: string;

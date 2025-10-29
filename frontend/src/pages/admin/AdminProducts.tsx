@@ -1,22 +1,17 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MagnifyingGlassIcon,
   PlusIcon,
-  PencilIcon,
-  TrashIcon,
   XMarkIcon,
   PhotoIcon,
-  CheckCircleIcon,
-  ExclamationCircleIcon,
   FunnelIcon,
-  EllipsisVerticalIcon,
   ArrowDownTrayIcon,
-  CubeIcon,
-  Squares2X2Icon
+  CubeIcon
 } from '@heroicons/react/24/outline';
 import { createProduct, deleteProduct, fetchAllProducts, updateProduct } from '../../api/products';
 import { getAllAttributes } from '../../api/attributes';
@@ -24,10 +19,9 @@ import type { Product } from '../../types/product';
 import LoadingState from '../../components/admin/LoadingState';
 import EmptyState from '../../components/admin/EmptyState';
 import SearchInput from '../../components/admin/SearchInput';
-import Badge from '../../components/admin/Badge';
 import Button from '../../components/admin/Button';
-import Dropdown, { type DropdownItem } from '../../components/admin/Dropdown';
-import DataTable, { type Column } from '../../components/admin/DataTable';
+import ProductTable from '../../components/admin/ProductTable';
+import BulkActionsBar from '../../components/admin/BulkActionsBar';
 import VariantManager from '../../components/admin/VariantManager';
 
 interface ProductForm {
@@ -56,6 +50,7 @@ type FilterOption = 'all' | 'in-stock' | 'low-stock' | 'out-of-stock' | 'new' | 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'stock-asc' | 'stock-desc' | 'newest' | 'oldest';
 
 function AdminProducts() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: products = [], isLoading } = useQuery({ queryKey: ['admin-products'], queryFn: fetchAllProducts });
   const { data: attributes = [] } = useQuery({
@@ -72,6 +67,7 @@ function AdminProducts() {
   const [categoryInput, setCategoryInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
   const [variantProduct, setVariantProduct] = useState<Product | null>(null);
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
   const {
     register,
@@ -175,7 +171,7 @@ function AdminProducts() {
   const createMutation = useMutation({
     mutationFn: (data: FormData) => createProduct(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       closeModal();
     }
   });
@@ -183,15 +179,144 @@ function AdminProducts() {
   const updateMutation = useMutation({
     mutationFn: ({ id, formData }: { id: number; formData: FormData }) => updateProduct(id, formData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       closeModal();
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] })
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-products'] })
   });
+
+  // Handle inline field update
+  const handleUpdateField = async (productId: number, field: string, value: any) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('shortDescription', product.shortDescription);
+    formData.append('description', product.description);
+    formData.append('price', field === 'price' ? String(value) : String(product.price));
+    if (product.salePrice) formData.append('salePrice', String(product.salePrice));
+    formData.append('inventory', field === 'inventory' ? String(value) : String(product.inventory));
+    formData.append('categories', JSON.stringify(product.categories));
+    if (product.highlights && product.highlights.length > 0) {
+      formData.append('highlights', JSON.stringify(product.highlights));
+    }
+    if (product.usage) formData.append('usage', product.usage);
+    formData.append('isNew', String(product.isNew || false));
+    formData.append('isFeatured', String(product.isFeatured || false));
+
+    await updateMutation.mutateAsync({ id: productId, formData });
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = async () => {
+    const count = selectedProductIds.length;
+    if (!window.confirm(`Are you sure you want to delete ${count} product${count > 1 ? 's' : ''}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await Promise.all(selectedProductIds.map(id => deleteMutation.mutateAsync(id)));
+      setSelectedProductIds([]);
+    } catch (error) {
+      console.error('Failed to delete products:', error);
+      alert('Failed to delete some products. Please try again.');
+    }
+  };
+
+  // Handle bulk set new
+  const handleBulkSetNew = async (value: boolean) => {
+    try {
+      await Promise.all(
+        selectedProductIds.map(async (id) => {
+          const product = products.find(p => p.id === id);
+          if (!product) return;
+
+          const formData = new FormData();
+          formData.append('name', product.name);
+          formData.append('shortDescription', product.shortDescription);
+          formData.append('description', product.description);
+          formData.append('price', String(product.price));
+          if (product.salePrice) formData.append('salePrice', String(product.salePrice));
+          formData.append('inventory', String(product.inventory));
+          formData.append('categories', JSON.stringify(product.categories));
+          if (product.highlights && product.highlights.length > 0) {
+            formData.append('highlights', JSON.stringify(product.highlights));
+          }
+          if (product.usage) formData.append('usage', product.usage);
+          formData.append('isNew', String(value));
+          formData.append('isFeatured', String(product.isFeatured || false));
+
+          await updateMutation.mutateAsync({ id, formData });
+        })
+      );
+      setSelectedProductIds([]);
+    } catch (error) {
+      console.error('Failed to update products:', error);
+      alert('Failed to update some products. Please try again.');
+    }
+  };
+
+  // Handle bulk set featured
+  const handleBulkSetFeatured = async (value: boolean) => {
+    try {
+      await Promise.all(
+        selectedProductIds.map(async (id) => {
+          const product = products.find(p => p.id === id);
+          if (!product) return;
+
+          const formData = new FormData();
+          formData.append('name', product.name);
+          formData.append('shortDescription', product.shortDescription);
+          formData.append('description', product.description);
+          formData.append('price', String(product.price));
+          if (product.salePrice) formData.append('salePrice', String(product.salePrice));
+          formData.append('inventory', String(product.inventory));
+          formData.append('categories', JSON.stringify(product.categories));
+          if (product.highlights && product.highlights.length > 0) {
+            formData.append('highlights', JSON.stringify(product.highlights));
+          }
+          if (product.usage) formData.append('usage', product.usage);
+          formData.append('isNew', String(product.isNew || false));
+          formData.append('isFeatured', String(value));
+
+          await updateMutation.mutateAsync({ id, formData });
+        })
+      );
+      setSelectedProductIds([]);
+    } catch (error) {
+      console.error('Failed to update products:', error);
+      alert('Failed to update some products. Please try again.');
+    }
+  };
+
+  // Handle bulk set active (placeholder - would need backend support)
+  const handleBulkSetActive = async (value: boolean) => {
+    alert(`Bulk ${value ? 'activate' : 'deactivate'} functionality coming soon!`);
+  };
+
+  // Handle duplicate product
+  const handleDuplicate = (product: Product) => {
+    openCreateModal();
+    reset({
+      name: `${product.name} (Copy)`,
+      shortDescription: product.shortDescription,
+      description: product.description,
+      price: product.price,
+      salePrice: product.salePrice || undefined,
+      inventory: product.inventory,
+      categories: product.categories,
+      highlights: product.highlights || [],
+      usage: product.usage || '',
+      isNew: false,
+      isFeatured: false,
+      customAttributes: product.customAttributes || {}
+    });
+  };
 
   const onSubmit = (form: ProductForm) => {
     const formData = new FormData();
@@ -236,43 +361,11 @@ function AdminProducts() {
   };
 
   const openCreateModal = () => {
-    setEditingProduct(null);
-    setImagePreview(null);
-    reset({
-      name: '',
-      shortDescription: '',
-      description: '',
-      price: 0,
-      salePrice: undefined,
-      inventory: 0,
-      categories: [],
-      highlights: [],
-      usage: '',
-      isNew: false,
-      isFeatured: false,
-      customAttributes: {}
-    });
-    setIsModalOpen(true);
+    navigate('/admin/products/new');
   };
 
   const openEditModal = (product: Product) => {
-    setEditingProduct(product);
-    setImagePreview(product.imageUrl);
-    reset({
-      name: product.name,
-      shortDescription: product.shortDescription,
-      description: product.description,
-      price: product.price,
-      salePrice: product.salePrice || undefined,
-      inventory: product.inventory,
-      categories: product.categories,
-      highlights: product.highlights || [],
-      usage: product.usage || '',
-      isNew: product.isNew || false,
-      isFeatured: product.isFeatured || false,
-      customAttributes: product.customAttributes || {}
-    });
-    setIsModalOpen(true);
+    navigate(`/admin/products/${product.id}/edit`);
   };
 
   const closeModal = () => {
@@ -326,106 +419,6 @@ function AdminProducts() {
     if (inventory <= 10) return { variant: 'warning', label: 'Low Stock' };
     return { variant: 'success', label: 'In Stock' };
   };
-
-  const columns: Column<Product>[] = [
-    {
-      key: 'name',
-      label: 'Product',
-      sortable: true,
-      render: (product) => (
-        <div className="flex items-center gap-4">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="h-12 w-12 rounded-lg object-cover"
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="font-medium text-champagne">{product.name}</p>
-              {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
-              {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
-            </div>
-            <p className="text-sm text-champagne/60">{product.shortDescription}</p>
-            <p className="text-xs text-champagne/40">{product.categories.join(' • ')}</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'price',
-      label: 'Price',
-      sortable: true,
-      render: (product) => (
-        <div className="text-champagne">
-          {product.salePrice ? (
-            <div>
-              <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
-              <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
-            </div>
-          ) : (
-            <p className="font-semibold">${product.price.toFixed(2)}</p>
-          )}
-        </div>
-      )
-    },
-    {
-      key: 'inventory',
-      label: 'Stock',
-      sortable: true,
-      render: (product) => (
-        <p className="text-champagne">{product.inventory} units</p>
-      )
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      sortable: false,
-      render: (product) => {
-        const status = getStockStatus(product.inventory);
-        return <Badge variant={status.variant}>{status.label}</Badge>;
-      }
-    },
-    {
-      key: 'actions',
-      label: 'Actions',
-      sortable: false,
-      align: 'right',
-      render: (product) => {
-        const dropdownItems: DropdownItem[] = [
-          {
-            label: 'Edit',
-            icon: <PencilIcon />,
-            onClick: () => openEditModal(product)
-          },
-          {
-            label: 'Manage Variants',
-            icon: <Squares2X2Icon />,
-            onClick: () => setVariantProduct(product)
-          },
-          {
-            label: 'Delete',
-            icon: <TrashIcon />,
-            onClick: () => handleDelete(product.id, product.name),
-            danger: true
-          }
-        ];
-
-        return (
-          <Dropdown
-            trigger={
-              <button
-                type="button"
-                className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
-              >
-                <EllipsisVerticalIcon className="h-5 w-5" />
-              </button>
-            }
-            items={dropdownItems}
-          />
-        );
-      }
-    }
-  ];
 
   if (isLoading) {
     return <LoadingState message="Loading products..." />;
@@ -521,27 +514,43 @@ function AdminProducts() {
       </div>
 
       {/* Products Table */}
-      <DataTable
-        columns={columns}
-        data={filteredAndSortedProducts}
-        keyExtractor={(product) => product.id.toString()}
-        emptyState={
-          <EmptyState
-            icon={<CubeIcon className="h-16 w-16" />}
-            title="No products found"
-            description={searchQuery ? "Try adjusting your search or filters" : "Get started by adding your first product"}
-            action={
-              !searchQuery
-                ? {
-                    label: 'Add Product',
-                    onClick: openCreateModal,
-                    icon: <PlusIcon className="h-5 w-5" />
-                  }
-                : undefined
-            }
-          />
-        }
-        sortable={false}
+      {filteredAndSortedProducts.length > 0 ? (
+        <ProductTable
+          products={filteredAndSortedProducts}
+          isLoading={isLoading}
+          onEdit={openEditModal}
+          onDelete={(product) => handleDelete(product.id, product.name)}
+          onManageVariants={setVariantProduct}
+          onDuplicate={handleDuplicate}
+          onUpdateField={handleUpdateField}
+          selectedIds={selectedProductIds}
+          onSelectionChange={setSelectedProductIds}
+        />
+      ) : (
+        <EmptyState
+          icon={<CubeIcon className="h-16 w-16" />}
+          title="No products found"
+          description={searchQuery ? "Try adjusting your search or filters" : "Get started by adding your first product"}
+          action={
+            !searchQuery
+              ? {
+                  label: 'Add Product',
+                  onClick: openCreateModal,
+                  icon: <PlusIcon className="h-5 w-5" />
+                }
+              : undefined
+          }
+        />
+      )}
+
+      {/* Bulk Actions Bar */}
+      <BulkActionsBar
+        selectedCount={selectedProductIds.length}
+        onClearSelection={() => setSelectedProductIds([])}
+        onBulkDelete={handleBulkDelete}
+        onBulkSetNew={handleBulkSetNew}
+        onBulkSetFeatured={handleBulkSetFeatured}
+        onBulkSetActive={handleBulkSetActive}
       />
 
       {/* Product Form Modal */}
@@ -1074,6 +1083,12 @@ function AdminProducts() {
               <VariantManager
                 productId={variantProduct.id}
                 productName={variantProduct.name}
+                baseProduct={{
+                  price: variantProduct.price,
+                  salePrice: variantProduct.salePrice,
+                  inventory: variantProduct.inventory,
+                  imageUrl: variantProduct.imageUrl
+                }}
               />
             </motion.div>
           </motion.div>

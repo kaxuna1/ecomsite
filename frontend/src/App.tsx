@@ -32,6 +32,7 @@ const FavoritesPage = lazy(() => import('./pages/account/FavoritesPage'));
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
+const ProductEditor = lazy(() => import('./pages/admin/ProductEditor'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
 const AdminPromoCodes = lazy(() => import('./pages/admin/AdminPromoCodes'));
 const AdminCMS = lazy(() => import('./pages/admin/AdminCMS'));
@@ -149,6 +150,8 @@ function App() {
           }
         >
           <Route index element={<AdminDashboard />} />
+          <Route path="products/new" element={<ProductEditor />} />
+          <Route path="products/:id/edit" element={<ProductEditor />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="attributes" element={<AdminAttributes />} />
           <Route path="variant-options" element={<AdminVariantOptions />} />

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ShoppingBagIcon, CheckIcon, SparklesIcon, FireIcon, TagIcon, HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon, CheckIcon, SparklesIcon, FireIcon, TagIcon, HeartIcon as HeartOutlineIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import type { Product } from '../types/product';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { addFavorite, removeFavorite, getFavorites } from '../api/favorites';
+import { getProductVariants } from '../api/variants';
 
 interface ProductCardProps {
   product: Product;
@@ -33,6 +34,24 @@ export default function ProductCard({ product, index }: ProductCardProps) {
   });
 
   const isFavorited = favorites?.some(fav => fav.productId === product.id) || false;
+
+  // Fetch variants for this product
+  const { data: variants = [] } = useQuery({
+    queryKey: ['product-variants', product.id],
+    queryFn: () => getProductVariants(product.id),
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
+  // Calculate variant info
+  const hasVariants = variants.length > 0;
+  const variantCount = variants.length;
+  const priceRange = hasVariants
+    ? {
+        min: Math.min(...variants.map(v => v.price ?? product.price)),
+        max: Math.max(...variants.map(v => v.price ?? product.price))
+      }
+    : null;
+  const showPriceRange = priceRange && priceRange.min !== priceRange.max;
 
   // Add to favorites mutation
   const addFavoriteMutation = useMutation({
@@ -225,6 +244,19 @@ export default function ProductCard({ product, index }: ProductCardProps) {
             Out of Stock
           </motion.div>
         )}
+
+        {/* Variant Options Badge */}
+        {hasVariants && (
+          <motion.div
+            className="flex items-center gap-1.5 rounded-full bg-blush/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.4 + index * 0.1, type: 'spring' }}
+          >
+            <Squares2X2Icon className="h-3.5 w-3.5" />
+            {variantCount} {variantCount === 1 ? 'Option' : 'Options'}
+          </motion.div>
+        )}
       </div>
 
       <Link to={`/${language}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
@@ -298,7 +330,16 @@ export default function ProductCard({ product, index }: ProductCardProps) {
             {product.name}
           </h2>
           <div className="flex flex-col items-end gap-1 shrink-0">
-            {product.salePrice ? (
+            {showPriceRange ? (
+              <motion.div
+                className="rounded-full bg-jade/10 px-3 py-1 text-sm font-bold text-jade"
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+                title={`Price range from variant options`}
+              >
+                ${priceRange!.min.toFixed(2)} - ${priceRange!.max.toFixed(2)}
+              </motion.div>
+            ) : product.salePrice ? (
               <>
                 <motion.div
                   className="rounded-full bg-rose-500/10 px-3 py-1 text-sm font-bold text-rose-600"

@@ -44,14 +44,8 @@ function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     setIsAdding(true);
-    // If a variant is selected, add variant info to the product
-    const itemToAdd = selectedVariant
-      ? { ...product, selectedVariant }
-      : product;
-
-    for (let i = 0; i < quantity; i++) {
-      addItem(itemToAdd);
-    }
+    // Add product with variant and quantity
+    addItem(product, quantity, selectedVariant || undefined);
     await new Promise(resolve => setTimeout(resolve, 600));
     setIsAdding(false);
     setShowToast(true);

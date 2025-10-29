@@ -35,19 +35,19 @@ function CartPage() {
   const tax = discountedSubtotal * 0.1; // 10% tax
   const finalTotal = discountedSubtotal + shipping + tax;
 
-  const handleRemove = (productId: number, productName: string) => {
+  const handleRemove = (productId: number, productName: string, variantId?: number) => {
     setRemovingId(productId);
     setTimeout(() => {
-      removeItem(productId);
+      removeItem(productId, variantId);
       setRemovingId(null);
       setToastMessage(`${productName} removed from cart`);
       setShowToast(true);
     }, 300);
   };
 
-  const handleQuantityChange = (productId: number, newQuantity: number) => {
+  const handleQuantityChange = (productId: number, newQuantity: number, variantId?: number) => {
     if (newQuantity < 1) return;
-    updateQuantity(productId, newQuantity);
+    updateQuantity(productId, newQuantity, variantId);
   };
 
   const handlePromoCodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,9 +182,14 @@ function CartPage() {
             <div className="lg:col-span-2">
               <motion.ul className="space-y-4" aria-label={t('cart.title')} {...fadeInUp}>
                 <AnimatePresence mode="popLayout">
-                  {items.map(({ product, quantity }, index) => (
+                  {items.map(({ product, quantity, variant }, index) => {
+                    const itemPrice = variant?.price ?? product.price;
+                    const itemInventory = variant?.inventory ?? product.inventory;
+                    const uniqueKey = variant ? `${product.id}-${variant.id}` : `${product.id}`;
+
+                    return (
                     <motion.li
-                      key={product.id}
+                      key={uniqueKey}
                       layout
                       className={`group relative overflow-hidden rounded-3xl border-2 bg-white p-6 shadow-md transition-all ${
                         removingId === product.id
@@ -195,14 +200,14 @@ function CartPage() {
                       transition={{ delay: index * 0.05 }}
                     >
                       {/* Stock Warning */}
-                      {product.inventory < quantity && (
+                      {itemInventory < quantity && (
                         <motion.div
                           className="mb-4 flex items-center gap-2 rounded-lg bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-700"
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                         >
                           <ExclamationTriangleIcon className="h-5 w-5" />
-                          Only {product.inventory} left in stock
+                          Only {itemInventory} left in stock
                         </motion.div>
                       )}
 
@@ -233,6 +238,28 @@ function CartPage() {
                             <p className="mt-1 text-sm text-midnight/60 line-clamp-2">
                               {product.shortDescription}
                             </p>
+
+                            {/* Variant Information */}
+                            {variant && (
+                              <div className="mt-2 space-y-1">
+                                {variant.options && variant.options.length > 0 && (
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    {variant.options.map((opt) => (
+                                      <span
+                                        key={`${opt.optionId}-${opt.valueId}`}
+                                        className="inline-flex items-center gap-1 rounded-full bg-blush/10 px-2.5 py-0.5 text-xs font-medium text-blush"
+                                      >
+                                        <span className="font-semibold">{opt.optionName}:</span> {opt.value}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                                <p className="text-xs text-midnight/50">
+                                  SKU: <span className="font-mono">{variant.sku}</span>
+                                </p>
+                              </div>
+                            )}
+
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               {product.categories.slice(0, 2).map((category) => (
                                 <span
@@ -249,7 +276,7 @@ function CartPage() {
                           <div className="mt-4 flex items-end justify-between">
                             <div>
                               <p className="text-xs text-midnight/50">Price</p>
-                              <p className="text-2xl font-bold text-jade">${product.price.toFixed(2)}</p>
+                              <p className="text-2xl font-bold text-jade">${itemPrice.toFixed(2)}</p>
                             </div>
 
                             {/* Quantity Selector */}
@@ -257,7 +284,7 @@ function CartPage() {
                               <div className="flex items-center gap-2 rounded-full border-2 border-champagne/60 bg-champagne/30 p-1">
                                 <motion.button
                                   type="button"
-                                  onClick={() => handleQuantityChange(product.id, quantity - 1)}
+                                  onClick={() => handleQuantityChange(product.id, quantity - 1, variant?.id)}
                                   disabled={quantity <= 1}
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-midnight transition-colors hover:bg-jade hover:text-white disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-midnight"
                                   whileHover={{ scale: 1.1 }}
@@ -270,8 +297,8 @@ function CartPage() {
                                 </span>
                                 <motion.button
                                   type="button"
-                                  onClick={() => handleQuantityChange(product.id, quantity + 1)}
-                                  disabled={quantity >= product.inventory}
+                                  onClick={() => handleQuantityChange(product.id, quantity + 1, variant?.id)}
+                                  disabled={quantity >= itemInventory}
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-midnight transition-colors hover:bg-jade hover:text-white disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-midnight"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
@@ -283,7 +310,7 @@ function CartPage() {
                               {/* Remove Button */}
                               <motion.button
                                 type="button"
-                                onClick={() => handleRemove(product.id, product.name)}
+                                onClick={() => handleRemove(product.id, product.name, variant?.id)}
                                 className="flex items-center gap-2 rounded-full border-2 border-champagne/60 bg-white px-4 py-2 text-sm font-medium text-midnight/70 transition-all hover:border-red-500 hover:bg-red-50 hover:text-red-600"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -300,11 +327,12 @@ function CartPage() {
                       <div className="mt-4 flex items-center justify-between border-t border-champagne/40 pt-4">
                         <span className="text-sm text-midnight/60">Item total:</span>
                         <span className="text-xl font-bold text-midnight">
-                          ${(product.price * quantity).toFixed(2)}
+                          ${(itemPrice * quantity).toFixed(2)}
                         </span>
                       </div>
                     </motion.li>
-                  ))}
+                    );
+                  })}
                 </AnimatePresence>
               </motion.ul>
             </div>
