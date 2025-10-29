@@ -384,7 +384,15 @@ function CheckoutPage() {
                   return (
                     <div key={uniqueKey} className="flex gap-3 border-b border-champagne/30 pb-4 last:border-0 last:pb-0">
                       <img
-                        src={variant?.imageUrl || product.imageUrl}
+                        src={(() => {
+                          // Prioritize variant image, then media library images, then legacy imageUrl
+                          if (variant?.imageUrl) return variant.imageUrl;
+                          if (product.images && product.images.length > 0) {
+                            const featuredImage = product.images.find(img => img.isFeatured);
+                            return featuredImage?.url || product.images[0].url;
+                          }
+                          return product.imageUrl;
+                        })()}
                         alt={product.name}
                         className="h-16 w-16 rounded-lg object-cover"
                       />

@@ -9,10 +9,34 @@ import {
   ChevronUpDownIcon,
   DocumentDuplicateIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  PhotoIcon,
+  EllipsisVerticalIcon,
+  CurrencyDollarIcon,
+  CubeIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
+import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import type { Product } from '../../types/product';
 import Badge from './Badge';
+
+// Helper function to get the display image for a product
+// Prioritizes: Featured media image > First media image > Legacy imageUrl
+const getProductDisplayImage = (product: Product): string | null => {
+  if (product.images && product.images.length > 0) {
+    // Find featured image
+    const featuredImage = product.images.find(img => img.isFeatured);
+    if (featuredImage?.url) {
+      return featuredImage.url;
+    }
+    // Return first image
+    if (product.images[0]?.url) {
+      return product.images[0].url;
+    }
+  }
+  // Fallback to legacy imageUrl
+  return product.imageUrl || null;
+};
 
 interface ProductTableProps {
   products: Product[];
@@ -166,51 +190,56 @@ export default function ProductTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-midnight/50">
-      {/* Table Header */}
-      <div className="grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 border-b border-white/10 bg-white/5 px-6 py-4 text-xs font-semibold uppercase tracking-wider text-champagne/70">
-        {onSelectionChange && (
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedIds.length === products.length && products.length > 0}
-              onChange={toggleSelectAll}
-              className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
-            />
-          </div>
-        )}
+    <div>
+      {/* Desktop: Sort & Selection Controls */}
+      <div className="hidden md:flex items-center justify-between mb-4 px-2">
+        <div className="flex items-center gap-4">
+          {onSelectionChange && selectedIds.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="checkbox"
+                checked={selectedIds.length === products.length}
+                onChange={toggleSelectAll}
+                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+              />
+              <span className="text-sm text-champagne/70">
+                {selectedIds.length} selected
+              </span>
+            </motion.div>
+          )}
+        </div>
 
-        <button
-          onClick={() => handleSort('name')}
-          className="flex items-center gap-2 text-left hover:text-champagne transition-colors"
-        >
-          Product
-          <ChevronUpDownIcon className="h-4 w-4" />
-        </button>
-
-        <button
-          onClick={() => handleSort('price')}
-          className="flex items-center gap-2 hover:text-champagne transition-colors"
-        >
-          Price
-          <ChevronUpDownIcon className="h-4 w-4" />
-        </button>
-
-        <button
-          onClick={() => handleSort('inventory')}
-          className="flex items-center gap-2 hover:text-champagne transition-colors"
-        >
-          Stock
-          <ChevronUpDownIcon className="h-4 w-4" />
-        </button>
-
-        <div>Status</div>
-
-        <div className="text-right">Actions</div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleSort('name')}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+          >
+            Name
+            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => handleSort('price')}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+          >
+            Price
+            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => handleSort('inventory')}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+          >
+            Stock
+            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
-      {/* Table Body */}
-      <div className="divide-y divide-white/5">
+      {/* Product Grid/List */}
+      <div className="space-y-3">
         <AnimatePresence>
           {sortedProducts.map((product, index) => {
             const status = getStockStatus(product.inventory);
@@ -223,192 +252,291 @@ export default function ProductTable({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2, delay: index * 0.03 }}
-                onMouseEnter={() => setHoveredRow(product.id)}
-                onMouseLeave={() => setHoveredRow(null)}
-                className={`grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 px-6 py-4 transition-colors ${
-                  isSelected ? 'bg-blush/10' : 'hover:bg-white/5'
-                }`}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                layout
               >
-                {/* Checkbox */}
-                {onSelectionChange && (
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleSelect(product.id)}
-                      className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                {/* Desktop Card Layout */}
+                <div
+                  className="hidden md:block"
+                  onMouseEnter={() => setHoveredRow(product.id)}
+                  onMouseLeave={() => setHoveredRow(null)}
+                >
+                  <motion.div
+                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+                      isSelected
+                        ? 'border-blush/50 bg-blush/5 shadow-lg shadow-blush/10'
+                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl'
+                    }`}
+                    whileHover={{ y: -2 }}
+                  >
+                    {/* Status Indicator Strip */}
+                    <div
+                      className={`absolute left-0 top-0 bottom-0 w-1 ${
+                        status.variant === 'success'
+                          ? 'bg-jade'
+                          : status.variant === 'warning'
+                          ? 'bg-yellow-400'
+                          : 'bg-rose-400'
+                      }`}
                     />
-                  </div>
-                )}
 
-                {/* Product Info */}
-                <div className="flex items-center gap-4">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-12 w-12 rounded-lg object-cover ring-1 ring-white/10"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate font-medium text-champagne">{product.name}</p>
-                      {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
-                      {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
-                    </div>
-                    <p className="truncate text-sm text-champagne/60">{product.shortDescription}</p>
-                    <p className="truncate text-xs text-champagne/40">{product.categories.join(' • ')}</p>
-                  </div>
-                </div>
-
-                {/* Price - Inline Editable */}
-                <div className="flex items-center">
-                  {isEditing(product.id, 'price') ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={editValue}
-                        onChange={(e) => setEditValue(parseFloat(e.target.value))}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                        className="w-24 rounded-lg border border-blush bg-white/10 px-2 py-1 text-sm text-champagne focus:outline-none focus:ring-2 focus:ring-blush/20"
-                      />
-                      <button
-                        onClick={saveEdit}
-                        className="rounded-full p-1 text-jade hover:bg-jade/10"
-                      >
-                        <CheckIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={cancelEditing}
-                        className="rounded-full p-1 text-rose-400 hover:bg-rose-500/10"
-                      >
-                        <XMarkIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => startEditing(product.id, 'price', product.price)}
-                      className="group flex items-center gap-2 text-left"
-                      disabled={!onUpdateField}
-                    >
-                      <div>
-                        {product.salePrice ? (
-                          <>
-                            <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
-                            <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
-                          </>
-                        ) : (
-                          <p className="font-semibold text-champagne">${product.price.toFixed(2)}</p>
+                    <div className="p-5 pl-7">
+                      <div className="flex items-center gap-5">
+                        {/* Checkbox */}
+                        {onSelectionChange && (
+                          <div className="flex-shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelect(product.id)}
+                              className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-blush transition-all focus:ring-2 focus:ring-blush/20"
+                            />
+                          </div>
                         )}
-                      </div>
-                      {onUpdateField && (isHovered || isEditing(product.id, 'price')) && (
-                        <PencilIcon className="h-3.5 w-3.5 text-champagne/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                      )}
-                    </button>
-                  )}
-                </div>
 
-                {/* Inventory - Inline Editable */}
-                <div className="flex items-center">
-                  {isEditing(product.id, 'inventory') ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={editValue}
-                        onChange={(e) => setEditValue(parseInt(e.target.value))}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                        className="w-20 rounded-lg border border-blush bg-white/10 px-2 py-1 text-sm text-champagne focus:outline-none focus:ring-2 focus:ring-blush/20"
-                      />
-                      <button
-                        onClick={saveEdit}
-                        className="rounded-full p-1 text-jade hover:bg-jade/10"
-                      >
-                        <CheckIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={cancelEditing}
-                        className="rounded-full p-1 text-rose-400 hover:bg-rose-500/10"
-                      >
-                        <XMarkIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => startEditing(product.id, 'inventory', product.inventory)}
-                      className="group flex items-center gap-2"
-                      disabled={!onUpdateField}
-                    >
-                      <p className="text-champagne">{product.inventory} units</p>
-                      {onUpdateField && (isHovered || isEditing(product.id, 'inventory')) && (
-                        <PencilIcon className="h-3.5 w-3.5 text-champagne/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                      )}
-                    </button>
-                  )}
-                </div>
+                        {/* Product Image */}
+                        <div className="flex-shrink-0">
+                          {getProductDisplayImage(product) ? (
+                            <div className="relative overflow-hidden rounded-xl ring-1 ring-white/10">
+                              <img
+                                src={getProductDisplayImage(product)!}
+                                alt={product.name}
+                                className="h-20 w-20 object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10">
+                              <PhotoIcon className="h-8 w-8 text-champagne/20" />
+                            </div>
+                          )}
+                        </div>
 
-                {/* Status */}
-                <div className="flex items-center">
-                  <Badge variant={status.variant}>{status.label}</Badge>
-                </div>
+                        {/* Product Info */}
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-2 flex items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                              <h3 className="mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors">
+                                {product.name}
+                              </h3>
+                              <p className="truncate text-sm text-champagne/60">
+                                {product.shortDescription}
+                              </p>
+                            </div>
 
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-1">
-                  <AnimatePresence>
-                    {isHovered && (
-                      <>
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          onClick={() => onEdit(product)}
-                          title="Edit Product"
-                          className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blush/10 hover:text-blush"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </motion.button>
+                            {/* Badges */}
+                            <div className="flex flex-wrap gap-1.5 flex-shrink-0">
+                              {product.isNew && (
+                                <span className="flex items-center gap-1 rounded-full bg-jade/20 px-2.5 py-1 text-xs font-semibold text-jade">
+                                  <StarSolidIcon className="h-3 w-3" />
+                                  NEW
+                                </span>
+                              )}
+                              {product.isFeatured && (
+                                <span className="flex items-center gap-1 rounded-full bg-blush/20 px-2.5 py-1 text-xs font-semibold text-blush">
+                                  <TagIcon className="h-3 w-3" />
+                                  FEATURED
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{ delay: 0.05 }}
-                          onClick={() => onManageVariants(product)}
-                          title="Manage Variants"
-                          className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-jade/10 hover:text-jade"
-                        >
-                          <Squares2X2Icon className="h-4 w-4" />
-                        </motion.button>
+                          {/* Categories */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {product.categories.map((cat, i) => (
+                              <span
+                                key={i}
+                                className="rounded-md bg-white/5 px-2 py-0.5 text-xs text-champagne/60"
+                              >
+                                {cat}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
 
-                        {onDuplicate && (
-                          <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ delay: 0.1 }}
-                            onClick={() => onDuplicate(product)}
-                            title="Duplicate Product"
-                            className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blue-500/10 hover:text-blue-400"
+                        {/* Stats Grid */}
+                        <div className="flex flex-shrink-0 items-center gap-6">
+                          {/* Price */}
+                          <div className="text-center">
+                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-champagne/50">
+                              <CurrencyDollarIcon className="h-3.5 w-3.5" />
+                              Price
+                            </div>
+                            {product.salePrice ? (
+                              <div className="text-center">
+                                <p className="text-lg font-bold text-rose-400">
+                                  ${product.salePrice.toFixed(2)}
+                                </p>
+                                <p className="text-xs text-champagne/40 line-through">
+                                  ${product.price.toFixed(2)}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="text-lg font-bold text-champagne">
+                                ${product.price.toFixed(2)}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Stock */}
+                          <div className="text-center">
+                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-champagne/50">
+                              <CubeIcon className="h-3.5 w-3.5" />
+                              Stock
+                            </div>
+                            <p className="text-lg font-bold text-champagne">
+                              {product.inventory}
+                            </p>
+                            <p className="text-xs text-champagne/50">units</p>
+                          </div>
+
+                          {/* Status */}
+                          <div className="text-center">
+                            <div className="mb-1 text-xs text-champagne/50">Status</div>
+                            <Badge variant={status.variant} size="sm">
+                              {status.label}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Actions - Always Visible */}
+                        <div className="flex flex-shrink-0 items-center gap-1.5 pl-4 border-l border-white/10">
+                          <button
+                            onClick={() => onEdit(product)}
+                            className="group/btn flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-blush/20 hover:text-blush hover:scale-110"
+                            title="Edit Product"
                           >
-                            <DocumentDuplicateIcon className="h-4 w-4" />
-                          </motion.button>
-                        )}
+                            <PencilIcon className="h-5 w-5" />
+                          </button>
 
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{ delay: 0.15 }}
-                          onClick={() => onDelete(product)}
-                          title="Delete Product"
-                          className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </motion.button>
-                      </>
+                          <button
+                            onClick={() => onManageVariants(product)}
+                            className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-jade/20 hover:text-jade hover:scale-110"
+                            title="Manage Variants"
+                          >
+                            <Squares2X2Icon className="h-5 w-5" />
+                          </button>
+
+                          {onDuplicate && (
+                            <button
+                              onClick={() => onDuplicate(product)}
+                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-blue-400/20 hover:text-blue-400 hover:scale-110"
+                              title="Duplicate"
+                            >
+                              <DocumentDuplicateIcon className="h-5 w-5" />
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => onDelete(product)}
+                            className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-rose-500/20 hover:text-rose-400 hover:scale-110"
+                            title="Delete"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Mobile Card Layout */}
+                <div className="md:hidden rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div className="space-y-4">
+                    {/* Header with Image and Selection */}
+                    <div className="flex items-start gap-3">
+                    {onSelectionChange && (
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelect(product.id)}
+                        className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                      />
                     )}
-                  </AnimatePresence>
+                    
+                    {getProductDisplayImage(product) ? (
+                      <img
+                        src={getProductDisplayImage(product)!}
+                        alt={product.name}
+                        className="h-20 w-20 rounded-lg object-cover ring-1 ring-white/10"
+                      />
+                    ) : (
+                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10">
+                        <PhotoIcon className="h-8 w-8 text-champagne/20" />
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-medium text-champagne line-clamp-2">{product.name}</p>
+                        <Badge variant={status.variant} size="sm">{status.label}</Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-1">
+                        {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
+                        {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
+                      </div>
+                      <p className="text-xs text-champagne/40 line-clamp-1">{product.categories.join(' • ')}</p>
+                    </div>
+                  </div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {/* Price */}
+                    <div>
+                      <p className="text-xs text-champagne/60 mb-1">Price</p>
+                      {product.salePrice ? (
+                        <div>
+                          <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
+                          <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
+                        </div>
+                      ) : (
+                        <p className="font-semibold text-champagne">${product.price.toFixed(2)}</p>
+                      )}
+                    </div>
+
+                    {/* Stock */}
+                    <div>
+                      <p className="text-xs text-champagne/60 mb-1">Stock</p>
+                      <p className="font-semibold text-champagne">{product.inventory} units</p>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                    <button
+                      onClick={() => onEdit(product)}
+                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blush/10 hover:text-blush"
+                      title="Edit Product"
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+
+                    <button
+                      onClick={() => onManageVariants(product)}
+                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-jade/10 hover:text-jade"
+                      title="Manage Variants"
+                    >
+                      <Squares2X2Icon className="h-5 w-5" />
+                    </button>
+
+                    {onDuplicate && (
+                      <button
+                        onClick={() => onDuplicate(product)}
+                        className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blue-500/10 hover:text-blue-400"
+                        title="Duplicate Product"
+                      >
+                        <DocumentDuplicateIcon className="h-5 w-5" />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => onDelete(product)}
+                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
+                      title="Delete Product"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                  </div>
                 </div>
               </motion.div>
             );

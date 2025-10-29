@@ -219,7 +219,14 @@ function CartPage() {
                           className="group/img relative flex-shrink-0 overflow-hidden rounded-2xl"
                         >
                           <motion.img
-                            src={product.imageUrl}
+                            src={(() => {
+                              // Get display image - prefer featured image from media library
+                              if (product.images && product.images.length > 0) {
+                                const featuredImage = product.images.find(img => img.isFeatured);
+                                return featuredImage?.url || product.images[0].url;
+                              }
+                              return product.imageUrl;
+                            })()}
                             alt={product.name}
                             className="h-32 w-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
                             loading="lazy"

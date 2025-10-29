@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
-  PhotoIcon,
   XMarkIcon,
   ChevronDownIcon,
-  CheckCircleIcon,
   InformationCircleIcon,
-  PencilIcon
 } from '@heroicons/react/24/outline';
 import type { ProductForm } from '../../../../pages/admin/ProductEditor';
 import type { AttributeDefinition } from '../../../../api/attributes';
-import ImageEditor from '../../ImageEditor';
 
 interface DetailsTabProps {
   form: UseFormReturn<ProductForm>;
-  imagePreview: string | null;
-  setImagePreview: (preview: string | null) => void;
   attributes: AttributeDefinition[];
 }
 
@@ -29,17 +23,13 @@ const generateSlug = (text: string): string => {
     .trim();
 };
 
-export default function DetailsTab({ form, imagePreview, setImagePreview, attributes }: DetailsTabProps) {
+export default function DetailsTab({ form, attributes }: DetailsTabProps) {
   const { register, formState: { errors }, watch, setValue } = form;
 
   const [categoryInput, setCategoryInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
   const [metaKeywordInput, setMetaKeywordInput] = useState('');
   const [showSEO, setShowSEO] = useState(false);
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
-  const [showImageEditor, setShowImageEditor] = useState(false);
-  const [imageToEdit, setImageToEdit] = useState<string | null>(null);
 
   const categories = watch('categories') || [];
   const highlights = watch('highlights') || [];
@@ -60,21 +50,6 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
       setValue('slug', generateSlug(productName), { shouldDirty: true });
     }
   }, [productName, slug, setValue]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Set preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      // Ensure file is set in form (important for file uploads)
-      setValue('image', e.target.files as any, { shouldDirty: true });
-    }
-  };
 
   const addCategory = () => {
     if (categoryInput.trim() && !categories.includes(categoryInput.trim())) {
@@ -109,65 +84,6 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
     setValue('metaKeywords', metaKeywords.filter((k) => k !== keyword), { shouldDirty: true });
   };
 
-  // Drag and drop handlers
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-
-        // Manually set the file in the form
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        setValue('image', dataTransfer.files as any, { shouldDirty: true });
-      }
-    }
-  };
-
-  // Handle editing existing image
-  const handleEditImage = () => {
-    if (imagePreview) {
-      setImageToEdit(imagePreview);
-      setShowImageEditor(true);
-    }
-  };
-
-  // Handle saving edited image
-  const handleSaveEditedImage = (croppedImage: Blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(croppedImage);
-
-    // Convert blob to file and set in form
-    const file = new File([croppedImage], 'edited-image.jpg', { type: 'image/jpeg' });
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    setValue('image', dataTransfer.files as any, { shouldDirty: true });
-
-    setShowImageEditor(false);
-    setImageToEdit(null);
-  };
-
   // Character counter helper
   const CharCounter = ({ current, max, warn = 0.8 }: { current: number; max: number; warn?: number }) => {
     const isWarning = current > max * warn;
@@ -181,82 +97,6 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
 
   return (
     <div className="space-y-8">
-      {/* Image Upload Section */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
-            Product Image
-          </h3>
-          {imagePreview && (
-            <CheckCircleIcon className="h-5 w-5 text-green-400" aria-label="Image uploaded" />
-          )}
-        </div>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-          {imagePreview && (
-            <div className="relative">
-              <img
-                src={imagePreview}
-                alt="Product preview"
-                className="h-32 w-32 rounded-xl object-cover ring-2 ring-white/10"
-              />
-              <div className="absolute -right-2 -top-2 flex gap-1">
-                <button
-                  type="button"
-                  onClick={handleEditImage}
-                  className="rounded-full bg-blush p-1 text-white shadow-lg transition-transform hover:scale-110"
-                  aria-label="Edit image"
-                >
-                  <PencilIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImagePreview(null);
-                    setValue('image', undefined, { shouldDirty: true });
-                  }}
-                  className="rounded-full bg-rose-500 p-1 text-white shadow-lg transition-transform hover:scale-110"
-                  aria-label="Remove image"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )}
-          <div
-            className={`flex flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 transition-all ${
-              dragActive
-                ? 'border-blush bg-blush/10 scale-[1.02]'
-                : 'border-white/20 bg-white/5 hover:border-blush hover:bg-white/10'
-            }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            <label className="flex w-full cursor-pointer flex-col items-center">
-              <PhotoIcon className={`h-12 w-12 transition-colors ${dragActive ? 'text-blush' : 'text-champagne/40'}`} />
-              <p className="mt-2 text-sm font-medium text-champagne/70">
-                {dragActive ? 'Drop image here' : 'Click to upload or drag and drop'}
-              </p>
-              <p className="mt-1 text-xs text-champagne/40">PNG, JPG, WebP up to 10MB • Recommended: 800x800px</p>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-                aria-label="Upload product image"
-              />
-            </label>
-          </div>
-        </div>
-        {errors.image && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg bg-rose-500/10 px-3 py-2">
-            <InformationCircleIcon className="h-4 w-4 text-rose-400" />
-            <p className="text-xs text-rose-400">{errors.image.message}</p>
-          </div>
-        )}
-      </section>
-
       {/* Basic Information */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
@@ -936,18 +776,6 @@ export default function DetailsTab({ form, imagePreview, setImagePreview, attrib
             ))}
           </div>
         </section>
-      )}
-
-      {/* Image Editor Modal */}
-      {showImageEditor && imageToEdit && (
-        <ImageEditor
-          image={imageToEdit}
-          onSave={handleSaveEditedImage}
-          onCancel={() => {
-            setShowImageEditor(false);
-            setImageToEdit(null);
-          }}
-        />
       )}
     </div>
   );

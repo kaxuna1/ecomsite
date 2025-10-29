@@ -288,18 +288,25 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     >
                       {/* Product Image */}
                       <div className="flex-shrink-0 w-12 h-12 bg-champagne/20 rounded-lg overflow-hidden">
-                        {product.imageUrl ? (
-                          <img
-                            src={product.imageUrl}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <MagnifyingGlassIcon className="h-6 w-6 text-midnight/20" />
-                          </div>
-                        )}
+                        {(() => {
+                          // Get display image - prefer featured image from media library
+                          const displayImage = product.images && product.images.length > 0
+                            ? (product.images.find(img => img.isFeatured)?.url || product.images[0].url)
+                            : product.imageUrl;
+                          
+                          return displayImage ? (
+                            <img
+                              src={displayImage}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <MagnifyingGlassIcon className="h-6 w-6 text-midnight/20" />
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Product Info */}

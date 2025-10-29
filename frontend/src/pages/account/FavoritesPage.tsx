@@ -172,7 +172,14 @@ export default function FavoritesPage() {
                       {/* Product Image */}
                       <Link to={`/${lang}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
                         <img
-                          src={product.imageUrl}
+                          src={(() => {
+                            // Get display image - prefer featured image from media library
+                            if (product.images && product.images.length > 0) {
+                              const featuredImage = product.images.find(img => img.isFeatured);
+                              return featuredImage?.url || product.images[0].url;
+                            }
+                            return product.imageUrl;
+                          })()}
                           alt={product.name}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />

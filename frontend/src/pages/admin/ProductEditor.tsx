@@ -44,7 +44,6 @@ export default function ProductEditor() {
   const isNewProduct = !id;
 
   const [activeTab, setActiveTab] = useState<TabType>('details');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const hasShownDraftDialog = useRef(false);
 
   // Reset draft dialog flag when product ID changes
@@ -110,10 +109,6 @@ export default function ProductEditor() {
 
         if (restoreDraft) {
           reset(draft);
-          // Restore image preview if it exists in the draft
-          if (product.imageUrl) {
-            setImagePreview(product.imageUrl);
-          }
           return;
         } else {
           clearDraft();
@@ -141,10 +136,6 @@ export default function ProductEditor() {
         canonicalUrl: product.canonicalUrl || '',
         customAttributes: product.customAttributes || {}
       });
-
-      if (product.imageUrl) {
-        setImagePreview(product.imageUrl);
-      }
     }
   }, [product, isNewProduct, reset, loadDraft, clearDraft]);
 
@@ -251,8 +242,6 @@ export default function ProductEditor() {
       {activeTab === 'details' && (
         <DetailsTab
           form={form}
-          imagePreview={imagePreview}
-          setImagePreview={setImagePreview}
           attributes={attributes}
         />
       )}
