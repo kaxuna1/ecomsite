@@ -4,6 +4,7 @@ import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { fetchCMSPages, fetchPageBlocks } from '../../api/cmsAdmin';
 import type { CMSPage, CMSBlock } from '../../api/cmsAdmin';
+import { fetchLanguages } from '../../api/languages';
 
 interface PageTranslation {
   id: number;
@@ -32,7 +33,7 @@ export default function AdminCMSTranslations() {
 
   // Page translations state
   const [selectedPage, setSelectedPage] = useState<CMSPage | null>(null);
-  const [pageLanguage, setPageLanguage] = useState('ka');
+  const [pageLanguage, setPageLanguage] = useState('');
   const [pageFormData, setPageFormData] = useState({
     title: '',
     slug: '',
@@ -43,8 +44,24 @@ export default function AdminCMSTranslations() {
   // Block translations state
   const [selectedBlockPage, setSelectedBlockPage] = useState<CMSPage | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<CMSBlock | null>(null);
-  const [blockLanguage, setBlockLanguage] = useState('ka');
+  const [blockLanguage, setBlockLanguage] = useState('');
   const [blockContent, setBlockContent] = useState('');
+
+  // Fetch all enabled languages
+  const { data: languages = [], isLoading: languagesLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false)
+  });
+
+  // Set default language when languages are loaded
+  useEffect(() => {
+    if (languages.length > 0 && !pageLanguage) {
+      const nonDefaultLang = languages.find(lang => !lang.isDefault);
+      const defaultLangCode = nonDefaultLang?.code || languages[0].code;
+      setPageLanguage(defaultLangCode);
+      setBlockLanguage(defaultLangCode);
+    }
+  }, [languages, pageLanguage]);
 
   // Fetch all CMS pages
   const { data: pages, isLoading: pagesLoading } = useQuery({
@@ -239,14 +256,21 @@ export default function AdminCMSTranslations() {
                   <label className="font-semibold text-sm text-champagne">
                     Target Language:
                   </label>
-                  <select
-                    value={pageLanguage}
-                    onChange={(e) => setPageLanguage(e.target.value)}
-                    className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
-                  >
-                    <option value="ka" className="bg-midnight">Georgian (ქართული)</option>
-                    <option value="en" className="bg-midnight">English</option>
-                  </select>
+                  {languagesLoading ? (
+                    <p className="text-champagne/60">Loading languages...</p>
+                  ) : (
+                    <select
+                      value={pageLanguage}
+                      onChange={(e) => setPageLanguage(e.target.value)}
+                      className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                    >
+                      {languages.map((lang) => (
+                        <option key={lang.code} value={lang.code} className="bg-midnight">
+                          {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 {/* Translation Form */}
@@ -446,14 +470,21 @@ export default function AdminCMSTranslations() {
                   <label className="font-semibold text-sm text-champagne">
                     Target Language:
                   </label>
-                  <select
-                    value={blockLanguage}
-                    onChange={(e) => setBlockLanguage(e.target.value)}
-                    className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
-                  >
-                    <option value="ka" className="bg-midnight">Georgian (ქართული)</option>
-                    <option value="en" className="bg-midnight">English</option>
-                  </select>
+                  {languagesLoading ? (
+                    <p className="text-champagne/60">Loading languages...</p>
+                  ) : (
+                    <select
+                      value={blockLanguage}
+                      onChange={(e) => setBlockLanguage(e.target.value)}
+                      className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                    >
+                      {languages.map((lang) => (
+                        <option key={lang.code} value={lang.code} className="bg-midnight">
+                          {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 {/* Translation Form */}

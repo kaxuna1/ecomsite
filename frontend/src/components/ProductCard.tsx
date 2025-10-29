@@ -94,6 +94,12 @@ export default function ProductCard({ product, index }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
+    // If product has variants, redirect to product detail page
+    if (hasVariants) {
+      navigate(`/${language}/products/${product.id}`);
+      return;
+    }
+
     setIsAdding(true);
     addItem(product);
 
@@ -316,7 +322,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                 className="flex items-center gap-1.5 sm:gap-2"
               >
                 <ShoppingBagIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                <span className="whitespace-nowrap">Add to Cart</span>
+                <span className="whitespace-nowrap">{hasVariants ? 'Select Options' : 'Add to Cart'}</span>
               </motion.div>
             )}
           </AnimatePresence>

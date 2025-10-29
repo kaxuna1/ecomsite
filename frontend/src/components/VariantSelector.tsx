@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { CheckIcon } from '@heroicons/react/24/outline';
@@ -14,6 +14,14 @@ interface VariantSelectorProps {
 export default function VariantSelector({ productId, onVariantChange, className = '' }: VariantSelectorProps) {
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const hasAutoSelectedRef = useRef(false);
+
+  // Reset auto-selection flag when product changes
+  useEffect(() => {
+    hasAutoSelectedRef.current = false;
+    setSelectedOptions({});
+    setSelectedVariant(null);
+  }, [productId]);
 
   const { data: variants = [], isLoading: variantsLoading } = useQuery({
     queryKey: ['product-variants', productId],
@@ -60,16 +68,29 @@ export default function VariantSelector({ productId, onVariantChange, className 
     });
   }, [variantOptions, optionValuesMap, availableOptionValues]);
 
+  // Auto-select default variant on initial load
+  useEffect(() => {
+    if (variants.length > 0 && !hasAutoSelectedRef.current) {
+      hasAutoSelectedRef.current = true;
+      // Select default variant or first variant if no options selected
+      const defaultVariant = variants.find(v => v.isDefault) || variants[0];
+      if (defaultVariant) {
+        // Build selectedOptions from the default variant's options
+        const initialOptions: Record<number, number> = {};
+        defaultVariant.options.forEach(opt => {
+          initialOptions[opt.optionId] = opt.valueId;
+        });
+        setSelectedOptions(initialOptions);
+        setSelectedVariant(defaultVariant);
+        onVariantChange?.(defaultVariant);
+      }
+    }
+  }, [variants, onVariantChange]); // Only run when variants load
+
   // Find matching variant based on selected options
   useEffect(() => {
     if (Object.keys(selectedOptions).length === 0) {
-      // Select default variant if no options selected
-      const defaultVariant = variants.find(v => v.isDefault) || variants[0];
-      setSelectedVariant(defaultVariant || null);
-      if (defaultVariant) {
-        onVariantChange?.(defaultVariant);
-      }
-      return;
+      return; // Let the auto-select effect handle initial selection
     }
 
     const matchingVariant = variants.find(variant => {
@@ -204,21 +225,6 @@ export default function VariantSelector({ productId, onVariantChange, className 
               )}
             </div>
           </div>
-
-          {selectedVariant.price !== null && (
-            <div className="mt-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  ${selectedVariant.salePrice ?? selectedVariant.price}
-                </span>
-                {selectedVariant.salePrice && (
-                  <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
-                    ${selectedVariant.price}
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
         </motion.div>
       )}
     </div>

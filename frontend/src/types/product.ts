@@ -92,7 +92,7 @@ export interface Favorite {
   createdAt: string;
 }
 
-export type DiscountType = 'percentage' | 'fixed';
+export type DiscountType = 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING';
 
 export interface PromoCode {
   id: number;

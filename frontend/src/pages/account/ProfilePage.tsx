@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import {
@@ -20,6 +20,7 @@ interface ProfileFormData {
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
+  const { lang } = useParams<{ lang: string }>();
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +38,9 @@ export default function ProfilePage() {
   });
 
   const tabs = [
-    { name: 'Profile', href: '/account/profile', icon: UserIcon },
-    { name: 'Orders', href: '/account/orders', icon: ShoppingBagIcon },
-    { name: 'Favorites', href: '/account/favorites', icon: HeartIcon }
+    { name: 'Profile', href: `/${lang}/account/profile`, icon: UserIcon },
+    { name: 'Orders', href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
+    { name: 'Favorites', href: `/${lang}/account/favorites`, icon: HeartIcon }
   ];
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -95,7 +96,10 @@ export default function ProfilePage() {
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
-              const isActive = location.pathname === tab.href;
+              // Normalize paths for comparison (remove trailing slashes)
+              const normalizedPathname = location.pathname.replace(/\/$/, '');
+              const normalizedHref = tab.href.replace(/\/$/, '');
+              const isActive = normalizedPathname === normalizedHref;
               const Icon = tab.icon;
               return (
                 <Link

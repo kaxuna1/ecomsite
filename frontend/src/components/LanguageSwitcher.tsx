@@ -2,21 +2,32 @@ import { Listbox, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { useChangeLanguage, useLanguage } from '../hooks/useLocalizedPath';
-
-const availableLanguages = [
-  { code: 'en', label: 'EN', name: 'English' },
-  { code: 'ka', label: 'KA', name: 'ქართული' }
-];
+import { fetchLanguages } from '../api/languages';
 
 function LanguageSwitcher() {
   const { t } = useTranslation('common');
   const currentLanguage = useLanguage();
   const changeLanguage = useChangeLanguage();
 
+  // Fetch enabled languages from API
+  const { data: languages = [], isLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false), // Only fetch enabled languages
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
   const handleLanguageChange = (newLang: string) => {
     changeLanguage(newLang);
   };
+
+  // Show loading state or fallback
+  if (isLoading || languages.length === 0) {
+    return null;
+  }
+
+  const currentLang = languages.find(lang => lang.code === currentLanguage);
 
   return (
     <Listbox value={currentLanguage} onChange={handleLanguageChange}>
@@ -26,7 +37,7 @@ function LanguageSwitcher() {
             className="flex items-center gap-1 rounded-full border border-midnight/20 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-midnight transition hover:border-jade hover:text-jade"
             aria-label={t('language')}
           >
-            <span>{availableLanguages.find(({ code }) => code === currentLanguage)?.label}</span>
+            <span>{currentLang?.code.toUpperCase()}</span>
             <ChevronDownIcon className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
           </Listbox.Button>
           <Transition
@@ -40,15 +51,15 @@ function LanguageSwitcher() {
             leaveTo="transform scale-95 opacity-0"
           >
             <Listbox.Options className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-midnight/10 bg-white p-2 text-sm shadow-lg">
-              {availableLanguages.map(({ code, name }) => (
+              {languages.map((lang) => (
                 <Listbox.Option
-                  key={code}
-                  value={code}
+                  key={lang.code}
+                  value={lang.code}
                   className={({ active }) =>
                     `cursor-pointer rounded-xl px-3 py-2 ${active ? 'bg-champagne text-midnight' : 'text-midnight/80'}`
                   }
                 >
-                  {name}
+                  {lang.nativeName}
                 </Listbox.Option>
               ))}
             </Listbox.Options>

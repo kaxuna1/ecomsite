@@ -16,6 +16,7 @@ import navigationRoutes from './routes/navigationRoutes';
 import settingsRoutes from './routes/settingsRoutes';
 import attributeRoutes from './routes/attributeRoutes';
 import variantRoutes from './routes/variantRoutes';
+import languageRoutes from './routes/languageRoutes';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/navigation', navigationRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/attributes', attributeRoutes);
 app.use('/api', variantRoutes);
+app.use('/api/languages', languageRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

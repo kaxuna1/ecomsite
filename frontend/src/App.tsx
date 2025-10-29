@@ -1,12 +1,14 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { Route, Routes, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 
 import Layout from './components/Layout';
 import LoadingScreen from './components/LoadingScreen';
 import AdminLayout from './components/AdminLayout';
 import AuthGuard from './components/AuthGuard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { fetchLanguages } from './api/languages';
 
 const HomePage = lazy(() => import('./pages/CMSHomePage'));
 const CMSPage = lazy(() => import('./pages/CMSPage'));
@@ -47,6 +49,7 @@ const AdminNavigation = lazy(() => import('./pages/admin/AdminNavigation'));
 const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 const AdminAttributes = lazy(() => import('./pages/admin/AdminAttributes'));
 const AdminVariantOptions = lazy(() => import('./pages/admin/AdminVariantOptions'));
+const AdminLanguages = lazy(() => import('./pages/admin/AdminLanguages'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
@@ -54,14 +57,26 @@ function LanguageWrapper() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
+  // Fetch enabled languages
+  const { data: languages = [], isLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false),
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
   useEffect(() => {
-    if (lang && ['en', 'ka'].includes(lang) && i18n.language !== lang) {
+    if (isLoading || !lang) return;
+
+    const validLanguageCodes = languages.map(l => l.code);
+    const defaultLanguage = languages.find(l => l.isDefault)?.code || 'en';
+
+    if (validLanguageCodes.includes(lang) && i18n.language !== lang) {
       i18n.changeLanguage(lang);
-    } else if (lang && !['en', 'ka'].includes(lang)) {
-      // Invalid language, redirect to English
-      navigate('/en', { replace: true });
+    } else if (!validLanguageCodes.includes(lang)) {
+      // Invalid language, redirect to default language
+      navigate(`/${defaultLanguage}`, { replace: true });
     }
-  }, [lang, i18n, navigate]);
+  }, [lang, i18n, navigate, languages, isLoading]);
 
   return null;
 }
@@ -71,12 +86,27 @@ function LanguageRedirect() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  // Check if path is already language-prefixed (starts with /en or /ka)
-  const isLanguagePrefixed = /^\/(en|ka)/.test(pathname);
+  // Fetch enabled languages
+  const { data: languages = [], isLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false),
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  const validLanguageCodes = languages.map(l => l.code);
+  const defaultLanguage = languages.find(l => l.isDefault)?.code || 'en';
+
+  // Create regex pattern for valid language codes
+  const languagePattern = new RegExp(`^/(${validLanguageCodes.join('|')})`);
+  const isLanguagePrefixed = languagePattern.test(pathname);
 
   // If path doesn't start with /admin and isn't already language-prefixed
   if (!pathname.startsWith('/admin') && !isLanguagePrefixed) {
-    return <Navigate to={`/en${pathname}`} replace />;
+    return <Navigate to={`/${defaultLanguage}${pathname}`} replace />;
   }
 
   return null;
@@ -164,6 +194,7 @@ function App() {
           <Route path="customers" element={<RegularUsers />} />
           <Route path="navigation" element={<AdminNavigation />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="languages" element={<AdminLanguages />} />
           <Route path="translations" element={<AdminTranslations />} />
           <Route path="cms-translations" element={<AdminCMSTranslations />} />
         </Route>

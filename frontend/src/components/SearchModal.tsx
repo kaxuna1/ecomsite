@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, XMarkIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { searchProducts } from '../api/products';
+import { useI18n } from '../context/I18nContext';
 import type { Product } from '../types/product';
 
 interface SearchModalProps {
@@ -39,6 +40,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { lang } = useI18n();
 
   // Debounce search query (300ms - industry standard)
   const debouncedQuery = useDebounce(query, 300);
@@ -153,14 +155,14 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   const handleProductClick = (product: Product) => {
     saveRecentSearch(query);
-    navigate(`/products/${product.id}`);
+    navigate(`/${lang}/products/${product.id}`);
     onClose();
   };
 
   const handleSearchSubmit = (searchTerm: string) => {
     if (searchTerm.trim()) {
       saveRecentSearch(searchTerm);
-      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      navigate(`/${lang}/products?search=${encodeURIComponent(searchTerm.trim())}`);
       onClose();
     }
   };

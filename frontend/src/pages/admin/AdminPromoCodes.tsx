@@ -243,8 +243,10 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
             <div>
               <p className="text-xs uppercase tracking-wider text-champagne/60">Discount</p>
               <p className="mt-1 font-semibold text-champagne">
-                {promo.discountType === 'percentage'
+                {promo.discountType === 'PERCENTAGE'
                   ? `${promo.discountValue}%`
+                  : promo.discountType === 'FREE_SHIPPING'
+                  ? 'Free Shipping'
                   : `$${promo.discountValue.toFixed(2)}`}
               </p>
             </div>
@@ -324,7 +326,7 @@ interface PromoCodeModalProps {
 function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeModalProps) {
   const [formData, setFormData] = useState<CreatePromoCodePayload>({
     code: promo?.code || '',
-    discountType: promo?.discountType || 'percentage',
+    discountType: promo?.discountType || 'PERCENTAGE',
     discountValue: promo?.discountValue || 0,
     minimumPurchase: promo?.minimumPurchase || undefined,
     maxUsageCount: promo?.maxUsageCount || undefined,
@@ -399,8 +401,9 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                 }
                 className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
               >
-                <option value="percentage">Percentage</option>
-                <option value="fixed">Fixed Amount</option>
+                <option value="PERCENTAGE">Percentage</option>
+                <option value="FIXED_AMOUNT">Fixed Amount</option>
+                <option value="FREE_SHIPPING">Free Shipping</option>
               </select>
             </div>
 

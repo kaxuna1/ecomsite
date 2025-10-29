@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { UserPlusIcon, EnvelopeIcon, LockClosedIcon, UserIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
@@ -12,9 +12,16 @@ interface SignupFormData extends RegisterPayload {
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { userRegister } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Support both state-based and query parameter redirects
+  const redirectFromQuery = searchParams.get('redirect');
+  const redirectFromState = (location.state as any)?.from;
+  const from = redirectFromQuery || redirectFromState || '/';
 
   const {
     register,
@@ -35,7 +42,7 @@ export default function SignupPage() {
         email: data.email,
         password: data.password
       });
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create account. Please try again.');
     } finally {

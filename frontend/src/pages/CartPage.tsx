@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   TrashIcon,
@@ -18,6 +18,7 @@ import Toast from '../components/Toast';
 import { validatePromoCode } from '../api/promoCodes';
 
 function CartPage() {
+  const { lang = 'en' } = useParams<{ lang: string }>();
   const { items, removeItem, updateQuantity, subtotal, discount, promoCode, applyPromoCode, removePromoCode } = useCart();
   const { t } = useI18n();
   const prefersReducedMotion = useReducedMotion();
@@ -121,7 +122,7 @@ function CartPage() {
         {/* Header */}
         <motion.div className="mb-8" {...fadeInUp}>
           <Link
-            to="/products"
+            to={`/${lang}/products`}
             className="group mb-4 inline-flex items-center gap-2 text-sm font-medium text-midnight/70 transition-colors hover:text-jade"
           >
             <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -169,7 +170,7 @@ function CartPage() {
             <p className="mb-8 text-sm text-midnight/60">
               Add some items to your cart to get started on your beauty journey
             </p>
-            <Link to="/products" className="btn-primary inline-block">
+            <Link to={`/${lang}/products`} className="btn-primary inline-block">
               <span className="flex items-center gap-2">
                 <ShoppingBagIcon className="h-5 w-5" />
                 {t('cart.browse')}
@@ -214,7 +215,7 @@ function CartPage() {
                       <div className="flex gap-6">
                         {/* Product Image */}
                         <Link
-                          to={`/products/${product.id}`}
+                          to={`/${lang}/products/${product.id}`}
                           className="group/img relative flex-shrink-0 overflow-hidden rounded-2xl"
                         >
                           <motion.img
@@ -230,7 +231,7 @@ function CartPage() {
                         {/* Product Info */}
                         <div className="flex flex-1 flex-col justify-between">
                           <div>
-                            <Link to={`/products/${product.id}`}>
+                            <Link to={`/${lang}/products/${product.id}`}>
                               <h2 className="font-display text-xl text-midnight transition-colors hover:text-jade">
                                 {product.name}
                               </h2>
@@ -500,7 +501,7 @@ function CartPage() {
                   {/* Checkout Button */}
                   <motion.div className="mt-6">
                     <Link
-                      to="/checkout"
+                      to={`/${lang}/checkout`}
                       className="btn-primary block w-full text-center"
                     >
                       <motion.span

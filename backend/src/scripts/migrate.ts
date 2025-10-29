@@ -54,14 +54,17 @@ CREATE TABLE IF NOT EXISTS languages (
   native_name VARCHAR(100) NOT NULL,
   is_enabled BOOLEAN DEFAULT TRUE,
   is_default BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO languages (code, name, native_name, is_enabled, is_default)
+-- Ensure only one default language
+CREATE UNIQUE INDEX IF NOT EXISTS idx_languages_default ON languages(is_default) WHERE is_default = true;
+
+INSERT INTO languages (code, name, native_name, is_enabled, is_default, display_order)
 VALUES
-  ('en', 'English', 'English', TRUE, TRUE),
-  ('ka', 'Georgian', 'ქართული', TRUE, FALSE)
+  ('en', 'English', 'English', TRUE, TRUE, 1),
+  ('ka', 'Georgian', 'ქართული', TRUE, FALSE, 2)
 ON CONFLICT (code) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS product_translations (

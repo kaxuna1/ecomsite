@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -19,6 +19,7 @@ import type { Order } from '../../types/product';
 import OrderStatusTimeline from '../../components/OrderStatusTimeline';
 
 export default function OrdersPage() {
+  const { lang } = useParams<{ lang: string }>();
   const location = useLocation();
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
@@ -29,9 +30,9 @@ export default function OrdersPage() {
   });
 
   const tabs = [
-    { name: 'Profile', href: '/account/profile', icon: UserIcon },
-    { name: 'Orders', href: '/account/orders', icon: ShoppingBagIcon },
-    { name: 'Favorites', href: '/account/favorites', icon: HeartIcon }
+    { name: 'Profile', href: `/${lang}/account/profile`, icon: UserIcon },
+    { name: 'Orders', href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
+    { name: 'Favorites', href: `/${lang}/account/favorites`, icon: HeartIcon }
   ];
 
   const statusFilters = [
@@ -103,7 +104,10 @@ export default function OrdersPage() {
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
-              const isActive = location.pathname === tab.href;
+              // Normalize paths for comparison (remove trailing slashes)
+              const normalizedPathname = location.pathname.replace(/\/$/, '');
+              const normalizedHref = tab.href.replace(/\/$/, '');
+              const isActive = normalizedPathname === normalizedHref;
               const Icon = tab.icon;
               return (
                 <Link
@@ -175,7 +179,7 @@ export default function OrdersPage() {
                 : `No ${selectedStatus} orders found.`}
             </p>
             <Link
-              to="/products"
+              to={`/${lang}/products`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold hover:bg-jade/90 transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />

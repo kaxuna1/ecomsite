@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { ArrowRightOnRectangleIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
@@ -9,11 +9,15 @@ import type { LoginPayload } from '../types/product';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { userLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const from = (location.state as any)?.from || '/';
+  // Support both state-based and query parameter redirects
+  const redirectFromQuery = searchParams.get('redirect');
+  const redirectFromState = (location.state as any)?.from;
+  const from = redirectFromQuery || redirectFromState || '/';
 
   const {
     register,

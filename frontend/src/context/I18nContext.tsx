@@ -9,6 +9,7 @@ interface TranslateOptions {
 
 interface I18nContextValue {
   language: Language;
+  lang: string;
   availableLanguages: { code: Language; label: string }[];
   setLanguage: (language: Language) => void;
   t: (key: string, options?: TranslateOptions) => string;
@@ -76,6 +77,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<I18nContextValue>(() => {
     return {
       language,
+      lang: language,
       availableLanguages: (Object.keys(translations) as Language[]).map((code) => ({
         code,
         label: languageLabels[code]

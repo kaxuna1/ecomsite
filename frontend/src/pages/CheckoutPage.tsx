@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import {
@@ -29,6 +29,7 @@ interface CheckoutForm {
 }
 
 function CheckoutPage() {
+  const { lang = 'en' } = useParams<{ lang: string }>();
   const { items, total, subtotal, discount, promoCode, clear } = useCart();
   const navigate = useNavigate();
   const { t } = useI18n();
@@ -46,9 +47,9 @@ function CheckoutPage() {
   // Redirect if cart is empty
   useEffect(() => {
     if (items.length === 0) {
-      navigate('/cart');
+      navigate(`/${lang}/cart`);
     }
-  }, [items.length, navigate]);
+  }, [items.length, navigate, lang]);
 
   // Auto-fill form when address is selected or set user email for logged-in users
   useEffect(() => {
@@ -85,7 +86,7 @@ function CheckoutPage() {
     mutationFn: createOrder,
     onSuccess: (order) => {
       clear();
-      navigate('/order-success', { state: { order }, replace: true });
+      navigate(`/${lang}/order-success`, { state: { order }, replace: true });
     }
   });
 
@@ -124,7 +125,7 @@ function CheckoutPage() {
 
       {/* Back to Cart Link */}
       <Link
-        to="/cart"
+        to={`/${lang}/cart`}
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-jade transition-colors hover:text-jade/80"
       >
         <ArrowLeftIcon className="h-4 w-4" />
@@ -153,6 +154,48 @@ function CheckoutPage() {
                 <div>
                   <p className="text-sm font-semibold text-midnight">Logged in as {user.name}</p>
                   <p className="text-xs text-midnight/70">{user.email}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Login CTA for Guest Users */}
+            {!isAuthenticated && (
+              <motion.div
+                className="rounded-2xl border-2 border-blush/20 bg-gradient-to-r from-blush/5 to-jade/5 p-6"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="rounded-full bg-blush/10 p-3">
+                    <UserIcon className="h-6 w-6 text-blush" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-midnight mb-2">
+                      Have an account?
+                    </h3>
+                    <p className="text-sm text-midnight/70 mb-4">
+                      Log in to enjoy faster checkout, saved addresses, and order tracking.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Link
+                        to={`/${lang}/login?redirect=/${lang}/checkout`}
+                        className="inline-flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blush/90 hover:shadow-md"
+                      >
+                        <UserIcon className="h-4 w-4" />
+                        Log In
+                      </Link>
+                      <Link
+                        to={`/${lang}/signup?redirect=/${lang}/checkout`}
+                        className="inline-flex items-center gap-2 rounded-full border-2 border-blush/30 bg-white px-5 py-2.5 text-sm font-semibold text-blush transition-all hover:border-blush hover:bg-blush/5"
+                      >
+                        Create Account
+                      </Link>
+                    </div>
+                    <p className="mt-3 text-xs text-midnight/50">
+                      Or continue below as a guest
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             )}

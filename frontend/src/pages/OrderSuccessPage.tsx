@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import type { Order } from '../types/product';
 
 export default function OrderSuccessPage() {
+  const { lang = 'en' } = useParams<{ lang: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -21,9 +22,9 @@ export default function OrderSuccessPage() {
   // Redirect to home if no order data
   useEffect(() => {
     if (!order) {
-      navigate('/', { replace: true });
+      navigate(`/${lang}`, { replace: true });
     }
-  }, [order, navigate]);
+  }, [order, navigate, lang]);
 
   if (!order) {
     return null;
@@ -191,7 +192,7 @@ export default function OrderSuccessPage() {
         >
           {isAuthenticated && (
             <Link
-              to="/account/orders"
+              to={`/${lang}/account/orders`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
             >
               <UserIcon className="h-5 w-5" />
@@ -199,14 +200,14 @@ export default function OrderSuccessPage() {
             </Link>
           )}
           <Link
-            to="/products"
+            to={`/${lang}/products`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-midnight border-2 border-jade/30 rounded-xl font-semibold hover:bg-champagne/30 transition-all"
           >
             <ShoppingBagIcon className="h-5 w-5" />
             Continue Shopping
           </Link>
           <Link
-            to="/"
+            to={`/${lang}`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-champagne/50 text-midnight rounded-xl font-semibold hover:bg-champagne/70 transition-all"
           >
             <HomeIcon className="h-5 w-5" />

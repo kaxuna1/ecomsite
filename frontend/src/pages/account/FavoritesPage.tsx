@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -15,6 +15,7 @@ import { useCart } from '../../context/CartContext';
 import type { Favorite } from '../../types/product';
 
 export default function FavoritesPage() {
+  const { lang } = useParams<{ lang: string }>();
   const location = useLocation();
   const { addItem } = useCart();
   const queryClient = useQueryClient();
@@ -32,9 +33,9 @@ export default function FavoritesPage() {
   });
 
   const tabs = [
-    { name: 'Profile', href: '/account/profile', icon: UserIcon },
-    { name: 'Orders', href: '/account/orders', icon: ShoppingBagIcon },
-    { name: 'Favorites', href: '/account/favorites', icon: HeartIcon }
+    { name: 'Profile', href: `/${lang}/account/profile`, icon: UserIcon },
+    { name: 'Orders', href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
+    { name: 'Favorites', href: `/${lang}/account/favorites`, icon: HeartIcon }
   ];
 
   const handleRemoveFavorite = async (productId: number) => {
@@ -67,7 +68,10 @@ export default function FavoritesPage() {
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
-              const isActive = location.pathname === tab.href;
+              // Normalize paths for comparison (remove trailing slashes)
+              const normalizedPathname = location.pathname.replace(/\/$/, '');
+              const normalizedHref = tab.href.replace(/\/$/, '');
+              const isActive = normalizedPathname === normalizedHref;
               const Icon = tab.icon;
               return (
                 <Link
@@ -115,7 +119,7 @@ export default function FavoritesPage() {
               Start adding products to your favorites to see them here
             </p>
             <Link
-              to="/products"
+              to={`/${lang}/products`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold hover:bg-jade/90 transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
@@ -166,7 +170,7 @@ export default function FavoritesPage() {
                       </button>
 
                       {/* Product Image */}
-                      <Link to={`/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
+                      <Link to={`/${lang}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
@@ -191,7 +195,7 @@ export default function FavoritesPage() {
 
                       {/* Product Info */}
                       <div className="flex flex-1 flex-col gap-3 p-6">
-                        <Link to={`/products/${product.id}`}>
+                        <Link to={`/${lang}/products/${product.id}`}>
                           <h2 className="font-display text-lg leading-tight text-midnight line-clamp-2 group-hover:text-jade transition-colors">
                             {product.name}
                           </h2>

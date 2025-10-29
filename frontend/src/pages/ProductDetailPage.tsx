@@ -51,6 +51,11 @@ function ProductDetailPage() {
     setShowToast(true);
   };
 
+  // Calculate the display price based on selected variant
+  const displayPrice = selectedVariant?.price ?? product.price;
+  const displaySalePrice = selectedVariant?.salePrice ?? product.salePrice;
+  const finalPrice = displaySalePrice || displayPrice;
+
   const fadeIn = prefersReducedMotion
     ? {}
     : {
@@ -188,12 +193,16 @@ function ProductDetailPage() {
 
           {/* Price */}
           <motion.div
+            key={finalPrice} // Re-animate when price changes
             className="flex items-baseline gap-3"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
           >
-            <span className="text-3xl font-bold text-jade">${product.price.toFixed(2)}</span>
+            <span className="text-3xl font-bold text-jade">${finalPrice.toFixed(2)}</span>
+            {displaySalePrice && (
+              <span className="text-xl text-midnight/40 line-through">${displayPrice.toFixed(2)}</span>
+            )}
             <span className="text-sm text-midnight/60">Per unit</span>
           </motion.div>
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useDebounce } from '../hooks/useDebounce';
 import { autocompleteProducts } from '../api/products';
+import { useI18n } from '../context/I18nContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AutocompleteResult {
@@ -22,6 +23,7 @@ export function SearchBar() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const debouncedQuery = useDebounce(query, 300);
   const navigate = useNavigate();
+  const { lang } = useI18n();
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,13 +64,13 @@ export function SearchBar() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      navigate(`/${lang}/search?q=${encodeURIComponent(query.trim())}`);
       setIsOpen(false);
     }
   };
 
   const handleSelectSuggestion = (suggestion: AutocompleteResult) => {
-    navigate(`/products/${suggestion.id}`);
+    navigate(`/${lang}/products/${suggestion.id}`);
     setQuery('');
     setIsOpen(false);
   };

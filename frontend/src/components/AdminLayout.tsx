@@ -22,7 +22,8 @@ import {
   MagnifyingGlassIcon,
   CommandLineIcon,
   SwatchIcon,
-  Squares2X2Icon
+  Squares2X2Icon,
+  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import CommandPalette from './admin/CommandPalette';
@@ -43,6 +44,7 @@ const navigation: NavItem[] = [
   { name: 'Promo Codes', href: '/admin/promo-codes', icon: TagIcon },
   { name: 'CMS', href: '/admin/cms', icon: DocumentTextIcon },
   { name: 'Navigation', href: '/admin/navigation', icon: BarsArrowUpIcon },
+  { name: 'Languages', href: '/admin/languages', icon: GlobeAltIcon },
   { name: 'Translations', href: '/admin/translations', icon: LanguageIcon },
   { name: 'CMS Translations', href: '/admin/cms-translations', icon: DocumentDuplicateIcon },
   { name: 'Admin Users', href: '/admin/admin-users', icon: UsersIcon },

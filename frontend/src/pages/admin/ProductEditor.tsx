@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -44,6 +44,12 @@ export default function ProductEditor() {
 
   const [activeTab, setActiveTab] = useState<TabType>('details');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const hasShownDraftDialog = useRef(false);
+
+  // Reset draft dialog flag when product ID changes
+  useEffect(() => {
+    hasShownDraftDialog.current = false;
+  }, [id]);
 
   const form = useForm<ProductForm>({
     defaultValues: {
@@ -91,7 +97,10 @@ export default function ProductEditor() {
       // Check for draft first
       const draft = loadDraft();
 
-      if (draft && autoSaveStatus.hasDraft) {
+      if (draft && autoSaveStatus.hasDraft && !hasShownDraftDialog.current) {
+        // Mark that we've shown the dialog to prevent showing it again
+        hasShownDraftDialog.current = true;
+
         // Ask user if they want to restore the draft
         const restoreDraft = window.confirm(
           `A draft was found from ${autoSaveStatus.lastSaved?.toLocaleString()}. Would you like to restore it?`

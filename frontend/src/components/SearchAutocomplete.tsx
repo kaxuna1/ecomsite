@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { searchProducts } from '../api/products';
+import { useI18n } from '../context/I18nContext';
 import type { Product } from '../types/product';
 
 interface SearchAutocompleteProps {
@@ -40,6 +41,7 @@ export default function SearchAutocomplete({ onClose, className = '', isMobile =
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { lang } = useI18n();
 
   // Debounce search query (300ms - industry standard)
   const debouncedQuery = useDebounce(query, 300);
@@ -98,13 +100,13 @@ export default function SearchAutocomplete({ onClose, className = '', isMobile =
   );
 
   const handleProductClick = (product: Product) => {
-    navigate(`/products/${product.id}`);
+    navigate(`/${lang}/products/${product.id}`);
     handleClose();
   };
 
   const handleSearchSubmit = () => {
     if (query.trim()) {
-      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+      navigate(`/${lang}/products?search=${encodeURIComponent(query.trim())}`);
       handleClose();
     }
   };

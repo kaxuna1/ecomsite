@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
+import { fetchLanguages } from '../../api/languages';
 
 interface Product {
   id: number;
@@ -31,7 +32,7 @@ export default function AdminTranslations() {
   const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState('ka');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     shortDescription: '',
@@ -42,12 +43,28 @@ export default function AdminTranslations() {
     metaDescription: ''
   });
 
+  // Fetch all enabled languages
+  const { data: languages = [], isLoading: languagesLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false)
+  });
+
+  // Set default language when languages are loaded
+  useEffect(() => {
+    if (languages.length > 0 && !selectedLanguage) {
+      // Find first non-default language, or use first available language
+      const nonDefaultLang = languages.find(lang => !lang.isDefault);
+      setSelectedLanguage(nonDefaultLang?.code || languages[0].code);
+    }
+  }, [languages, selectedLanguage]);
+
   // Fetch all products in English
   const { data: products, isLoading: productsLoading } = useQuery({
     queryKey: ['products', 'en'],
     queryFn: async () => {
-      const res = await api.get('/products?lang=en');
-      return res.data as Product[];
+      const res = await api.get('/products?lang=en&limit=1000');
+      // The API returns { products: [], total, page, limit, hasMore }
+      return (res.data.products || []) as Product[];
     }
   });
 
@@ -179,14 +196,21 @@ export default function AdminTranslations() {
                 <label className="font-semibold text-sm text-champagne">
                   Target Language:
                 </label>
-                <select
-                  value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
-                  className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
-                >
-                  <option value="ka" className="bg-midnight">Georgian (ქართული)</option>
-                  <option value="en" className="bg-midnight">English</option>
-                </select>
+                {languagesLoading ? (
+                  <p className="text-champagne/60">Loading languages...</p>
+                ) : (
+                  <select
+                    value={selectedLanguage}
+                    onChange={(e) => setSelectedLanguage(e.target.value)}
+                    className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                  >
+                    {languages.map((lang) => (
+                      <option key={lang.code} value={lang.code} className="bg-midnight">
+                        {lang.name} ({lang.nativeName})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {/* Translation Form */}
