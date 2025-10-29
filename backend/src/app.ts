@@ -19,6 +19,7 @@ import variantRoutes from './routes/variantRoutes';
 import languageRoutes from './routes/languageRoutes';
 import adminMediaRoutes from './routes/admin/mediaRoutes';
 import adminProductMediaRoutes from './routes/admin/productMediaRoutes';
+import apiKeysRoutes from './routes/apiKeysRoutes';
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use('/api', variantRoutes);
 app.use('/api/languages', languageRoutes);
 app.use('/api/admin/media', adminMediaRoutes);
 app.use('/api/admin', adminProductMediaRoutes);
+app.use('/api/admin/api-keys', apiKeysRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
