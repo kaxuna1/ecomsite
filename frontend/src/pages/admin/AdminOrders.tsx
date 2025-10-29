@@ -520,47 +520,50 @@ Total: $${order.total.toFixed(2)}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="max-h-[95vh] w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-midnight shadow-2xl"
+          className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-midnight shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="border-b border-white/10 bg-white/5 px-8 py-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-4">
-                  <h2 className="font-display text-3xl text-champagne">Order #{order.id}</h2>
+          <div className="flex-shrink-0 border-b border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
+                  <h2 className="font-display text-xl text-champagne sm:text-2xl md:text-3xl">
+                    Order #{order.id}
+                  </h2>
                   <Badge variant={getStatusBadgeVariant(order.status)} size="lg">
                     {order.status}
                   </Badge>
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-champagne/60">
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="h-4 w-4" />
-                    {formatDate(order.createdAt)}
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-champagne/60 sm:mt-3 sm:gap-3 sm:text-sm md:gap-4">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <CalendarIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">{formatDate(order.createdAt)}</span>
+                    <span className="sm:hidden">{new Date(order.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <ShoppingBagIcon className="h-4 w-4" />
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <ShoppingBagIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <CreditCardIcon className="h-4 w-4" />
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <CreditCardIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     ${order.total.toFixed(2)}
                   </div>
                 </div>
               </div>
 
               {/* Quick Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
                 <button
                   onClick={handlePrint}
-                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                  className="hidden rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne sm:block"
                   title="Print order"
                 >
                   <PrinterIcon className="h-5 w-5" />
                 </button>
                 <button
                   onClick={handleCopyOrder}
-                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                  className="hidden rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne sm:block"
                   title="Copy order details"
                 >
                   {copied ? (
@@ -574,13 +577,13 @@ Total: $${order.total.toFixed(2)}
                   className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
                   title="Close (Esc)"
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="mt-6 flex gap-1 border-b border-white/10">
+            <div className="mt-4 flex gap-1 border-b border-white/10 sm:mt-6">
               {[
                 { id: 'overview', label: 'Overview', icon: ShoppingBagIcon },
                 { id: 'timeline', label: 'Timeline', icon: ClockIcon },
@@ -591,14 +594,14 @@ Total: $${order.total.toFixed(2)}
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                    className={`relative flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
                       activeTab === tab.id
                         ? 'text-champagne'
                         : 'text-champagne/50 hover:text-champagne/80'
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
-                    {tab.label}
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">{tab.label}</span>
                     {activeTab === tab.id && (
                       <motion.div
                         layoutId="activeTab"
@@ -613,7 +616,7 @@ Total: $${order.total.toFixed(2)}
           </div>
 
           {/* Content */}
-          <div className="max-h-[calc(95vh-240px)] overflow-y-auto p-8">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
             <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
                 <motion.div
@@ -848,11 +851,9 @@ Total: $${order.total.toFixed(2)}
           </div>
 
           {/* Footer Actions */}
-          <div className="border-t border-white/10 bg-white/5 px-8 py-6">
-            <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" onClick={onClose} icon={<XMarkIcon />}>
-                Close
-              </Button>
+          <div className="flex-shrink-0 border-t border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+            {/* Mobile Layout (Stacked) */}
+            <div className="flex flex-col gap-3 sm:hidden">
               {order.status === 'pending' && (
                 <>
                   <Button
@@ -860,6 +861,7 @@ Total: $${order.total.toFixed(2)}
                     onClick={() => setShowConfirmDialog({ action: 'confirm', status: 'confirmed' })}
                     loading={isUpdating}
                     icon={<CheckCircleIcon />}
+                    fullWidth
                   >
                     Confirm Order
                   </Button>
@@ -868,6 +870,7 @@ Total: $${order.total.toFixed(2)}
                     onClick={() => setShowConfirmDialog({ action: 'cancel', status: 'cancelled' })}
                     loading={isUpdating}
                     icon={<XCircleIcon />}
+                    fullWidth
                   >
                     Cancel Order
                   </Button>
@@ -880,6 +883,7 @@ Total: $${order.total.toFixed(2)}
                     onClick={() => setShowConfirmDialog({ action: 'complete', status: 'completed' })}
                     loading={isUpdating}
                     icon={<TruckIcon />}
+                    fullWidth
                   >
                     Mark as Completed
                   </Button>
@@ -888,11 +892,74 @@ Total: $${order.total.toFixed(2)}
                     onClick={() => setShowConfirmDialog({ action: 'cancel', status: 'cancelled' })}
                     loading={isUpdating}
                     icon={<XCircleIcon />}
+                    fullWidth
                   >
                     Cancel Order
                   </Button>
                 </>
               )}
+              <Button 
+                variant="secondary" 
+                onClick={onClose} 
+                icon={<XMarkIcon />}
+                fullWidth
+              >
+                Close
+              </Button>
+            </div>
+
+            {/* Desktop Layout (Horizontal) */}
+            <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-3">
+              <Button 
+                variant="secondary" 
+                onClick={onClose} 
+                icon={<XMarkIcon />}
+              >
+                Close
+              </Button>
+              
+              <div className="flex gap-3">
+                {order.status === 'pending' && (
+                  <>
+                    <Button
+                      variant="primary"
+                      onClick={() => setShowConfirmDialog({ action: 'confirm', status: 'confirmed' })}
+                      loading={isUpdating}
+                      icon={<CheckCircleIcon />}
+                    >
+                      Confirm Order
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => setShowConfirmDialog({ action: 'cancel', status: 'cancelled' })}
+                      loading={isUpdating}
+                      icon={<XCircleIcon />}
+                    >
+                      Cancel Order
+                    </Button>
+                  </>
+                )}
+                {order.status === 'confirmed' && (
+                  <>
+                    <Button
+                      variant="primary"
+                      onClick={() => setShowConfirmDialog({ action: 'complete', status: 'completed' })}
+                      loading={isUpdating}
+                      icon={<TruckIcon />}
+                    >
+                      Mark as Completed
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => setShowConfirmDialog({ action: 'cancel', status: 'cancelled' })}
+                      loading={isUpdating}
+                      icon={<XCircleIcon />}
+                    >
+                      Cancel Order
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -903,27 +970,31 @@ Total: $${order.total.toFixed(2)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center bg-midnight/80 backdrop-blur-sm"
+                className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/90 p-4 backdrop-blur-sm"
                 onClick={() => setShowConfirmDialog(null)}
               >
                 <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.9, opacity: 0 }}
-                  className="mx-4 w-full max-w-md rounded-2xl border border-white/10 bg-midnight p-6 shadow-2xl"
+                  initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                  className="w-full max-w-md rounded-2xl border border-white/20 bg-midnight p-6 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h3 className="mb-2 text-xl font-semibold text-champagne">
+                  <h3 className="mb-2 text-xl font-bold text-champagne">
                     Confirm Action
                   </h3>
-                  <p className="mb-6 text-champagne/70">
-                    Are you sure you want to {showConfirmDialog.action} this order? This action cannot be undone.
+                  <p className="mb-6 text-sm leading-relaxed text-champagne/70">
+                    Are you sure you want to <span className="font-semibold text-champagne">{showConfirmDialog.action}</span> this order? This action cannot be undone.
                   </p>
-                  <div className="flex gap-3">
+                  
+                  {/* Mobile: Stack buttons vertically, Desktop: Side by side */}
+                  <div className="flex flex-col gap-3 sm:flex-row">
                     <Button
                       variant="secondary"
                       onClick={() => setShowConfirmDialog(null)}
                       fullWidth
+                      icon={<XMarkIcon />}
                     >
                       Cancel
                     </Button>
@@ -932,6 +1003,7 @@ Total: $${order.total.toFixed(2)}
                       onClick={handleStatusChangeConfirm}
                       loading={isUpdating}
                       fullWidth
+                      icon={<CheckIcon />}
                     >
                       Confirm
                     </Button>
