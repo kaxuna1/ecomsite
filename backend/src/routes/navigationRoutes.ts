@@ -111,7 +111,7 @@ router.get(
       // Handle lang parameter - can be string or array if sent multiple times
       let language = 'en';
       if (req.query.lang) {
-        language = Array.isArray(req.query.lang) ? req.query.lang[0] : req.query.lang;
+        language = Array.isArray(req.query.lang) ? req.query.lang[0] as string : req.query.lang as string;
       }
       const items = await navigationService.getAllMenuItems(locationId, language);
       res.json(items);

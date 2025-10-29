@@ -37,9 +37,10 @@ const createAdminUsersTable = async () => {
     if (count === 0) {
       console.log('Creating initial super admin user...');
 
-      const initialAdminEmail = 'admin@luxia.local';
-      const initialAdminPassword = 'LuxiaAdmin2024!';
-      const initialAdminName = 'Super Administrator';
+      // Get admin credentials from environment variables or use defaults
+      const initialAdminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@luxia.local';
+      const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD || 'LuxiaAdmin2024!';
+      const initialAdminName = process.env.INITIAL_ADMIN_NAME || 'Super Administrator';
 
       const passwordHash = await bcrypt.hash(initialAdminPassword, 10);
 
@@ -52,10 +53,13 @@ const createAdminUsersTable = async () => {
       console.log('\n✅ Initial admin user created successfully!');
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.log('📧 Email:', initialAdminEmail);
-      console.log('🔑 Password:', initialAdminPassword);
+      console.log('🔑 Password:', process.env.INITIAL_ADMIN_PASSWORD ? '********' : initialAdminPassword);
+      console.log('👤 Name:', initialAdminName);
       console.log('👤 Role: Super Admin');
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('⚠️  Please change this password after first login!');
+      if (!process.env.INITIAL_ADMIN_PASSWORD) {
+        console.log('⚠️  Using default password! Please change it after first login!');
+      }
     } else {
       console.log(`Admin users already exist (${count} users found), skipping initial user creation`);
     }

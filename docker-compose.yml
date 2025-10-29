@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  luxia-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      # Database Configuration
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_NAME=luxia
+      - DB_USER=luxia
+      - DB_PASSWORD=luxia_secure_password
+      - POSTGRES_PASSWORD=luxia_secure_password
+
+      # Backend Configuration
+      - PORT=4000
+      - NODE_ENV=production
+      - JWT_SECRET=your-production-jwt-secret-change-me
+      - ADMIN_EMAIL=admin@luxia.local
+      # Generate with: node -e "console.log(require('bcryptjs').hashSync('YourPassword', 10))"
+      - ADMIN_PASSWORD_HASH=
+
+      # Initial Admin User (created on first run)
+      - INITIAL_ADMIN_EMAIL=admin@luxia.local
+      - INITIAL_ADMIN_PASSWORD=LuxiaAdmin2024!
+      - INITIAL_ADMIN_NAME=Super Administrator
+
+      # Email Notifications (optional)
+      # - SMTP_HOST=smtp.gmail.com
+      # - SMTP_PORT=587
+      # - SMTP_USER=your-email@gmail.com
+      # - SMTP_PASSWORD=your-app-password
+      - NOTIFY_FROM=Luxia Products <no-reply@luxia.local>
+
+      # SMS Notifications (optional)
+      # - SMS_WEBHOOK_URL=
+      # - SMS_API_KEY=
+      # - SMS_FROM=
+    volumes:
+      # Persist PostgreSQL data
+      - postgres_data:/var/lib/postgresql/data
+      # Persist uploaded product images
+      - uploads_data:/app/backend/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local

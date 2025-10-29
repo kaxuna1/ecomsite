@@ -25,5 +25,13 @@ export const env = {
   notifyFrom: process.env.NOTIFY_FROM ?? 'Luxia Products <no-reply@luxia.local>',
   smsFrom: process.env.SMS_FROM,
   smsWebhookUrl: process.env.SMS_WEBHOOK_URL,
-  smsApiKey: process.env.SMS_API_KEY
+  smsApiKey: process.env.SMS_API_KEY,
+  // S3 Configuration (optional)
+  s3Endpoint: process.env.S3_ENDPOINT,
+  s3Region: process.env.S3_REGION ?? 'us-east-1',
+  s3Bucket: process.env.S3_BUCKET ?? '',
+  s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
+  s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  s3PublicUrl: process.env.S3_PUBLIC_URL,
+  s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true'
 };
