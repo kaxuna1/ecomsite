@@ -60,6 +60,13 @@ export interface MediaUsage {
   totalUsage: number;
 }
 
+export interface UpdateMediaPayload {
+  altText?: string;
+  caption?: string;
+  categoryId?: number | null;
+  tags?: string[];
+}
+
 export interface ProductMediaLink {
   id: number;
   productId: number;

@@ -9,6 +9,8 @@ import {
 } from '@heroicons/react/24/outline';
 import MediaGrid from './MediaGrid';
 import MediaUploader from './MediaUploader';
+import MediaPreviewModal from './MediaPreviewModal';
+import MediaEditModal from './MediaEditModal';
 import { getAllMedia, deleteMedia, type MediaFilters, type CMSMedia } from '../../../api/media';
 
 interface MediaLibraryProps {
@@ -34,6 +36,8 @@ export default function MediaLibrary({
   const [showUploader, setShowUploader] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<Set<number>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState<CMSMedia | null>(null);
+  const [editMedia, setEditMedia] = useState<CMSMedia | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -99,13 +103,11 @@ export default function MediaLibrary({
   };
 
   const handleViewMedia = (media: CMSMedia) => {
-    // TODO: Open details panel or modal
-    console.log('View media:', media);
+    setPreviewMedia(media);
   };
 
   const handleEditMedia = (media: CMSMedia) => {
-    // TODO: Open edit modal
-    console.log('Edit media:', media);
+    setEditMedia(media);
   };
 
   return (
@@ -319,6 +321,24 @@ export default function MediaLibrary({
           </div>
         </div>
       )}
+
+      {/* Preview Modal */}
+      <MediaPreviewModal
+        media={previewMedia}
+        isOpen={!!previewMedia}
+        onClose={() => setPreviewMedia(null)}
+        onEdit={(media) => {
+          setPreviewMedia(null);
+          setEditMedia(media);
+        }}
+      />
+
+      {/* Edit Modal */}
+      <MediaEditModal
+        media={editMedia}
+        isOpen={!!editMedia}
+        onClose={() => setEditMedia(null)}
+      />
     </div>
   );
 }
