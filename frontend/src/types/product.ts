@@ -1,3 +1,12 @@
+export interface ProductSEO {
+  slug: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+  ogImageUrl?: string;
+  canonicalUrl?: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -13,12 +22,23 @@ export interface Product {
   isNew?: boolean;
   isFeatured?: boolean;
   salesCount?: number;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+  ogImageUrl?: string;
+  canonicalUrl?: string;
+  seo?: ProductSEO;
+  customAttributes?: Record<string, any>;
 }
 
 export interface ProductFilters {
   isNew?: boolean;
   isFeatured?: boolean;
   onSale?: boolean;
+  category?: string;
+  search?: string;
+  attributes?: Record<string, any>;
 }
 
 export interface OrderPayload {
@@ -124,4 +144,76 @@ export interface UpdatePromoCodePayload {
   isActive?: boolean;
   validFrom?: string;
   validUntil?: string;
+}
+
+// Product Variants
+export interface VariantOption {
+  id: number;
+  name: string;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VariantOptionValue {
+  id: number;
+  optionId: number;
+  value: string;
+  displayOrder: number;
+  createdAt: string;
+}
+
+export interface ProductVariant {
+  id: number;
+  productId: number;
+  sku: string;
+  price: number | null;
+  salePrice: number | null;
+  inventory: number;
+  weight: number | null;
+  dimensionsLength: number | null;
+  dimensionsWidth: number | null;
+  dimensionsHeight: number | null;
+  isActive: boolean;
+  isDefault: boolean;
+  imageUrl: string | null;
+  salesCount: number;
+  options: Array<{
+    optionId: number;
+    optionName: string;
+    valueId: number;
+    value: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateVariantPayload {
+  sku: string;
+  price?: number;
+  salePrice?: number;
+  inventory: number;
+  weight?: number;
+  dimensionsLength?: number;
+  dimensionsWidth?: number;
+  dimensionsHeight?: number;
+  isActive?: boolean;
+  isDefault?: boolean;
+  imageUrl?: string;
+  optionValueIds: number[];
+}
+
+export interface UpdateVariantPayload {
+  sku?: string;
+  price?: number;
+  salePrice?: number;
+  inventory?: number;
+  weight?: number;
+  dimensionsLength?: number;
+  dimensionsWidth?: number;
+  dimensionsHeight?: number;
+  isActive?: boolean;
+  isDefault?: boolean;
+  imageUrl?: string;
+  optionValueIds?: number[];
 }

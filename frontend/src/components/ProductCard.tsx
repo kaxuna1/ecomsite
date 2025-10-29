@@ -20,7 +20,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const { addItem } = useCart();
   const { isAuthenticated } = useAuth();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const prefersReducedMotion = useReducedMotion();
@@ -108,20 +108,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         hover: {
           scale: 1.08,
           transition: { duration: 0.6, ease: 'easeOut' }
-        }
-      };
-
-  const overlayVariants = prefersReducedMotion
-    ? {}
-    : {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { duration: 0.3 }
-        },
-        exit: {
-          opacity: 0,
-          transition: { duration: 0.2 }
         }
       };
 
@@ -241,7 +227,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         )}
       </div>
 
-      <Link to={`/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
+      <Link to={`/${language}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
         <motion.img
           src={product.imageUrl}
           alt={product.name}
@@ -251,23 +237,12 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           whileHover="hover"
         />
 
-        {/* Hover Overlay */}
-        <AnimatePresence>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent opacity-0 group-hover:opacity-100"
-            variants={overlayVariants}
-            initial="hidden"
-            whileHover="visible"
-            exit="exit"
-          />
-        </AnimatePresence>
-
         {/* Quick Add Button */}
         <motion.button
           type="button"
           onClick={handleQuickAdd}
           disabled={isAdding || showSuccess || product.inventory === 0}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-midnight shadow-xl opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-jade px-3 py-2 text-xs font-bold text-white shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-jade/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]"
           variants={buttonVariants}
           initial="rest"
           whileHover={product.inventory > 0 ? "hover" : "rest"}
@@ -280,10 +255,10 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 exit={{ scale: 0, rotate: 180 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1.5 sm:gap-2"
               >
-                <CheckIcon className="h-5 w-5 text-green-600" />
-                <span>Added!</span>
+                <CheckIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                <span className="whitespace-nowrap">Added to Cart!</span>
               </motion.div>
             ) : isAdding ? (
               <motion.div
@@ -291,14 +266,14 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1.5 sm:gap-2"
               >
                 <motion.div
-                  className="h-5 w-5 rounded-full border-2 border-midnight/20 border-t-midnight"
+                  className="h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-white/30 border-t-white flex-shrink-0"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 />
-                <span>Adding...</span>
+                <span className="whitespace-nowrap">Adding...</span>
               </motion.div>
             ) : (
               <motion.div
@@ -306,10 +281,10 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1.5 sm:gap-2"
               >
-                <ShoppingBagIcon className="h-5 w-5" />
-                <span>Quick Add</span>
+                <ShoppingBagIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                <span className="whitespace-nowrap">Add to Cart</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -362,25 +337,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           ))}
         </div>
       </div>
-
-      {/* Shine Effect on Hover */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100"
-        initial={false}
-        animate={{
-          background: [
-            'linear-gradient(90deg, transparent 0%, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%, transparent 100%)',
-            'linear-gradient(90deg, transparent 0%, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%, transparent 100%)'
-          ],
-          backgroundPosition: ['-200%', '200%']
-        }}
-        transition={{
-          duration: 1.5,
-          ease: 'easeInOut',
-          repeat: Infinity,
-          repeatDelay: 1
-        }}
-      />
     </motion.article>
   );
 }

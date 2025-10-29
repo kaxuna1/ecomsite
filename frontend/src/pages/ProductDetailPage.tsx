@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
@@ -7,8 +6,11 @@ import { ShoppingBagIcon, CheckIcon, SparklesIcon, TruckIcon, ShieldCheckIcon } 
 import { fetchProduct } from '../api/products';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
+import { SEOHead } from '../components/SEOHead';
 import ImageZoom from '../components/ImageZoom';
 import Toast from '../components/Toast';
+import VariantSelector from '../components/VariantSelector';
+import type { ProductVariant } from '../types/product';
 
 function ProductDetailPage() {
   const { id } = useParams();
@@ -20,6 +22,7 @@ function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
@@ -41,8 +44,13 @@ function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     setIsAdding(true);
+    // If a variant is selected, add variant info to the product
+    const itemToAdd = selectedVariant
+      ? { ...product, selectedVariant }
+      : product;
+
     for (let i = 0; i < quantity; i++) {
-      addItem(product);
+      addItem(itemToAdd);
     }
     await new Promise(resolve => setTimeout(resolve, 600));
     setIsAdding(false);
@@ -77,11 +85,7 @@ function ProductDetailPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
-      <Helmet>
-        <title>
-          {product.name} — {t('common.brand')}
-        </title>
-      </Helmet>
+      <SEOHead product={product} />
 
       <Toast
         message={`Added ${quantity} ${quantity === 1 ? 'item' : 'items'} to cart!`}
@@ -251,6 +255,19 @@ function ProductDetailPage() {
             </motion.div>
           )}
 
+          {/* Variant Selector */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="pt-6 border-t border-champagne/10"
+          >
+            <VariantSelector
+              productId={product.id}
+              onVariantChange={setSelectedVariant}
+            />
+          </motion.div>
+
           {/* Quantity Selector & Add to Cart */}
           <motion.div
             className="space-y-4 pt-4"
@@ -276,9 +293,9 @@ function ProductDetailPage() {
                 <span className="w-12 text-center text-lg font-semibold text-midnight">{quantity}</span>
                 <motion.button
                   type="button"
-                  onClick={() => setQuantity(Math.min(product.inventory, quantity + 1))}
+                  onClick={() => setQuantity(Math.min(selectedVariant?.inventory ?? product.inventory, quantity + 1))}
                   className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-champagne/60 bg-white text-midnight transition-colors hover:border-jade hover:text-jade disabled:opacity-50"
-                  disabled={quantity >= product.inventory}
+                  disabled={quantity >= (selectedVariant?.inventory ?? product.inventory)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -290,7 +307,7 @@ function ProductDetailPage() {
             <motion.button
               type="button"
               onClick={handleAddToCart}
-              disabled={isAdding || product.inventory === 0}
+              disabled={isAdding || (selectedVariant?.inventory ?? product.inventory) === 0}
               className="w-full rounded-full bg-jade px-8 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={product.inventory > 0 ? { scale: 1.02, y: -2 } : {}}
               whileTap={product.inventory > 0 ? { scale: 0.98 } : {}}

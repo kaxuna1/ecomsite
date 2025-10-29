@@ -14,6 +14,8 @@ import addressRoutes from './routes/addressRoutes';
 import cmsRoutes from './routes/cmsRoutes';
 import navigationRoutes from './routes/navigationRoutes';
 import settingsRoutes from './routes/settingsRoutes';
+import attributeRoutes from './routes/attributeRoutes';
+import variantRoutes from './routes/variantRoutes';
 
 const app = express();
 
@@ -38,6 +40,8 @@ app.use('/api/addresses', addressRoutes);
 app.use('/api/cms', cmsRoutes);
 app.use('/api/navigation', navigationRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/attributes', attributeRoutes);
+app.use('/api', variantRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

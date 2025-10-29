@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 const HomePage = lazy(() => import('./pages/CMSHomePage'));
 const CMSPage = lazy(() => import('./pages/CMSPage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
 const NewArrivalsPage = lazy(() => import('./pages/NewArrivalsPage'));
 const BestSellersPage = lazy(() => import('./pages/BestSellersPage'));
 const SalePage = lazy(() => import('./pages/SalePage'));
@@ -43,6 +44,8 @@ const AdminTranslations = lazy(() => import('./pages/admin/AdminTranslations'));
 const AdminCMSTranslations = lazy(() => import('./pages/admin/AdminCMSTranslations'));
 const AdminNavigation = lazy(() => import('./pages/admin/AdminNavigation'));
 const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
+const AdminAttributes = lazy(() => import('./pages/admin/AdminAttributes'));
+const AdminVariantOptions = lazy(() => import('./pages/admin/AdminVariantOptions'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
@@ -91,6 +94,7 @@ function App() {
           <Route element={<><LanguageWrapper /><Layout /></>}>
             <Route index element={<HomePage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="search" element={<SearchPage />} />
             <Route path="new-arrivals" element={<NewArrivalsPage />} />
             <Route path="best-sellers" element={<BestSellersPage />} />
             <Route path="sale" element={<SalePage />} />
@@ -146,6 +150,8 @@ function App() {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="attributes" element={<AdminAttributes />} />
+          <Route path="variant-options" element={<AdminVariantOptions />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="promo-codes" element={<AdminPromoCodes />} />
           <Route path="cms" element={<AdminCMS />} />

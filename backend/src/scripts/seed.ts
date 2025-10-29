@@ -14,7 +14,21 @@ const sampleProducts = [
       'Infused with adaptogenic botanicals and cold-pressed oils',
       'Glass vessel with refill program compatibility'
     ],
-    usage: 'Warm 3-5 drops between palms and press into the scalp before evening repose. Follow with a silk wrap overnight.'
+    usage: 'Warm 3-5 drops between palms and press into the scalp before evening repose. Follow with a silk wrap overnight.',
+    customAttributes: {
+      volume: '50ml',
+      hair_type: ['normal'],
+      scalp_type: ['sensitive'],
+      scent: 'unscented',
+      ingredients: ['argan-oil', 'tea-tree'],
+      organic: true,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'dropper',
+      texture: 'oil'
+    }
   },
   {
     name: 'Silk Protein Hair Mask',
@@ -29,7 +43,21 @@ const sampleProducts = [
       'Repairs split ends and breakage',
       'Sulfate-free and paraben-free formula'
     ],
-    usage: 'Apply generously to damp hair after shampooing. Leave for 10-15 minutes, then rinse thoroughly.'
+    usage: 'Apply generously to damp hair after shampooing. Leave for 10-15 minutes, then rinse thoroughly.',
+    customAttributes: {
+      volume: '200ml',
+      hair_type: ['damaged'],
+      scalp_type: ['sensitive'],
+      scent: 'lavender',
+      ingredients: ['argan-oil', 'keratin'],
+      organic: false,
+      vegan: false,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'direct',
+      texture: 'cream'
+    }
   },
   {
     name: 'Botanical Scalp Scrub',
@@ -44,7 +72,21 @@ const sampleProducts = [
       'Promotes healthy hair growth',
       'Cooling sensation for refreshed scalp'
     ],
-    usage: 'Apply to wet scalp and massage gently in circular motions for 2-3 minutes. Rinse thoroughly and follow with shampoo.'
+    usage: 'Apply to wet scalp and massage gently in circular motions for 2-3 minutes. Rinse thoroughly and follow with shampoo.',
+    customAttributes: {
+      volume: '100ml',
+      hair_type: ['oily'],
+      scalp_type: ['flaky'],
+      scent: 'mint',
+      ingredients: ['tea-tree'],
+      organic: true,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'direct',
+      texture: 'gel'
+    }
   },
   {
     name: 'Rose Gold Hair Oil',
@@ -59,7 +101,21 @@ const sampleProducts = [
       'Protects against heat styling damage',
       'Signature rose and sandalwood fragrance'
     ],
-    usage: 'Apply 1-2 drops to palms and distribute through mid-lengths to ends on damp or dry hair.'
+    usage: 'Apply 1-2 drops to palms and distribute through mid-lengths to ends on damp or dry hair.',
+    customAttributes: {
+      volume: '50ml',
+      hair_type: ['dry'],
+      scalp_type: ['sensitive'],
+      scent: 'rose',
+      ingredients: ['argan-oil'],
+      organic: false,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'dropper',
+      texture: 'oil'
+    }
   },
   {
     name: 'Volumizing Root Spray',
@@ -74,7 +130,21 @@ const sampleProducts = [
       'Heat protectant properties',
       'Humidity-resistant formula'
     ],
-    usage: 'Spray onto roots of damp hair, section by section. Blow dry with a round brush for maximum lift.'
+    usage: 'Spray onto roots of damp hair, section by section. Blow dry with a round brush for maximum lift.',
+    customAttributes: {
+      volume: '100ml',
+      hair_type: ['normal'],
+      scalp_type: ['sensitive'],
+      scent: 'citrus',
+      ingredients: ['biotin'],
+      organic: false,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'spray',
+      texture: 'liquid'
+    }
   },
   {
     name: 'Midnight Recovery Hair Serum',
@@ -89,7 +159,21 @@ const sampleProducts = [
       'Reduces breakage by up to 80%',
       'Wake up to softer, stronger hair'
     ],
-    usage: 'Apply to dry hair before bed, focusing on ends. Leave in overnight, no rinse required.'
+    usage: 'Apply to dry hair before bed, focusing on ends. Leave in overnight, no rinse required.',
+    customAttributes: {
+      volume: '50ml',
+      hair_type: ['damaged'],
+      scalp_type: ['sensitive'],
+      scent: 'lavender',
+      ingredients: ['keratin', 'collagen'],
+      organic: false,
+      vegan: false,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'pump',
+      texture: 'serum'
+    }
   },
   {
     name: 'Clarifying Charcoal Shampoo',
@@ -104,7 +188,21 @@ const sampleProducts = [
       'Balances oil production',
       'Vegan and cruelty-free'
     ],
-    usage: 'Use once weekly in place of regular shampoo. Massage into wet scalp, lather, and rinse thoroughly.'
+    usage: 'Use once weekly in place of regular shampoo. Massage into wet scalp, lather, and rinse thoroughly.',
+    customAttributes: {
+      volume: '250ml',
+      hair_type: ['oily'],
+      scalp_type: ['oily'],
+      scent: 'mint',
+      ingredients: ['tea-tree'],
+      organic: false,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: false,
+      cruelty_free: true,
+      application_method: 'direct',
+      texture: 'liquid'
+    }
   },
   {
     name: 'Hydrating Cream Conditioner',
@@ -119,7 +217,79 @@ const sampleProducts = [
       'Long-lasting moisture',
       'Color-safe formula'
     ],
-    usage: 'Apply to clean, damp hair after shampooing. Leave for 2-3 minutes, then rinse.'
+    usage: 'Apply to clean, damp hair after shampooing. Leave for 2-3 minutes, then rinse.',
+    customAttributes: {
+      volume: '250ml',
+      hair_type: ['dry'],
+      scalp_type: ['sensitive'],
+      scent: 'unscented',
+      ingredients: ['argan-oil', 'collagen'],
+      organic: true,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'direct',
+      texture: 'cream'
+    }
+  },
+  {
+    name: 'Color Protect Hair Treatment',
+    shortDescription: 'UV protection and color lock for vibrant, long-lasting color.',
+    description: `Specially formulated for color-treated hair, this intensive treatment locks in color while protecting against UV damage and environmental stressors.`,
+    price: 89,
+    imageUrl: 'https://images.unsplash.com/photo-1522338140262-f46f5913618a?auto=format&fit=crop&w=1200&q=80',
+    inventory: 65,
+    categories: ['treatments', 'color-care'],
+    highlights: [
+      'Extends color vibrancy by 50%',
+      'UV protection formula',
+      'Prevents color fade and brassiness'
+    ],
+    usage: 'Apply to damp hair after shampooing, leave for 5 minutes, then rinse.',
+    customAttributes: {
+      volume: '200ml',
+      hair_type: ['color-treated'],
+      scalp_type: ['sensitive'],
+      scent: 'citrus',
+      ingredients: ['argan-oil', 'keratin'],
+      organic: false,
+      vegan: false,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'pump',
+      texture: 'cream'
+    }
+  },
+  {
+    name: 'Tea Tree Scalp Treatment',
+    shortDescription: 'Purifying treatment for itchy, irritated scalp.',
+    description: `Soothe and purify your scalp with this concentrated tea tree oil treatment. Combats dandruff, reduces itchiness, and promotes a healthy scalp environment.`,
+    price: 54,
+    imageUrl: 'https://images.unsplash.com/photo-1556228841-c0e1f86b18dc?auto=format&fit=crop&w=1200&q=80',
+    inventory: 70,
+    categories: ['treatments', 'scalp-care'],
+    highlights: [
+      'Natural antifungal and antibacterial properties',
+      'Reduces dandruff and flaking',
+      'Cooling, tingling sensation'
+    ],
+    usage: 'Apply directly to scalp, massage gently, leave for 10 minutes before shampooing.',
+    customAttributes: {
+      volume: '50ml',
+      hair_type: ['oily'],
+      scalp_type: ['itchy'],
+      scent: 'mint',
+      ingredients: ['tea-tree'],
+      organic: true,
+      vegan: true,
+      paraben_free: true,
+      sulfate_free: true,
+      cruelty_free: true,
+      application_method: 'dropper',
+      texture: 'liquid'
+    }
   }
 ];
 
@@ -136,8 +306,8 @@ const ensureSampleProducts = async () => {
   for (const product of sampleProducts) {
     await pool.query(
       `INSERT INTO products
-        (name, short_description, description, price, image_url, inventory, categories, highlights, usage)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        (name, short_description, description, price, image_url, inventory, categories, highlights, usage, custom_attributes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         product.name,
         product.shortDescription,
@@ -147,7 +317,8 @@ const ensureSampleProducts = async () => {
         product.inventory,
         JSON.stringify(product.categories),
         JSON.stringify(product.highlights),
-        product.usage
+        product.usage,
+        JSON.stringify(product.customAttributes)
       ]
     );
     console.log(`✓ Inserted: ${product.name}`);

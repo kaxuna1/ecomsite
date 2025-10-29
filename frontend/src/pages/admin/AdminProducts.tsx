@@ -15,9 +15,11 @@ import {
   FunnelIcon,
   EllipsisVerticalIcon,
   ArrowDownTrayIcon,
-  CubeIcon
+  CubeIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline';
-import { createProduct, deleteProduct, fetchProducts, updateProduct } from '../../api/products';
+import { createProduct, deleteProduct, fetchAllProducts, updateProduct } from '../../api/products';
+import { getAllAttributes } from '../../api/attributes';
 import type { Product } from '../../types/product';
 import LoadingState from '../../components/admin/LoadingState';
 import EmptyState from '../../components/admin/EmptyState';
@@ -26,6 +28,7 @@ import Badge from '../../components/admin/Badge';
 import Button from '../../components/admin/Button';
 import Dropdown, { type DropdownItem } from '../../components/admin/Dropdown';
 import DataTable, { type Column } from '../../components/admin/DataTable';
+import VariantManager from '../../components/admin/VariantManager';
 
 interface ProductForm {
   name: string;
@@ -40,6 +43,13 @@ interface ProductForm {
   isNew: boolean;
   isFeatured: boolean;
   image?: FileList;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+  ogImageUrl?: string;
+  canonicalUrl?: string;
+  customAttributes?: Record<string, any>;
 }
 
 type FilterOption = 'all' | 'in-stock' | 'low-stock' | 'out-of-stock' | 'new' | 'featured' | 'on-sale';
@@ -47,7 +57,11 @@ type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'stock
 
 function AdminProducts() {
   const queryClient = useQueryClient();
-  const { data: products = [], isLoading } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
+  const { data: products = [], isLoading } = useQuery({ queryKey: ['admin-products'], queryFn: fetchAllProducts });
+  const { data: attributes = [] } = useQuery({
+    queryKey: ['admin-attributes'],
+    queryFn: getAllAttributes
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -57,6 +71,7 @@ function AdminProducts() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [categoryInput, setCategoryInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
+  const [variantProduct, setVariantProduct] = useState<Product | null>(null);
 
   const {
     register,
@@ -78,13 +93,15 @@ function AdminProducts() {
       highlights: [],
       usage: '',
       isNew: false,
-      isFeatured: false
+      isFeatured: false,
+      customAttributes: {}
     }
   });
 
   const categories = watch('categories');
   const highlights = watch('highlights');
   const imageFile = watch('image');
+  const customAttributes = watch('customAttributes') || {};
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
@@ -192,6 +209,21 @@ function AdminProducts() {
     formData.append('isNew', String(form.isNew));
     formData.append('isFeatured', String(form.isFeatured));
 
+    // SEO fields
+    if (form.slug) formData.append('slug', form.slug);
+    if (form.metaTitle) formData.append('metaTitle', form.metaTitle);
+    if (form.metaDescription) formData.append('metaDescription', form.metaDescription);
+    if (form.metaKeywords && form.metaKeywords.length > 0) {
+      formData.append('metaKeywords', JSON.stringify(form.metaKeywords));
+    }
+    if (form.ogImageUrl) formData.append('ogImageUrl', form.ogImageUrl);
+    if (form.canonicalUrl) formData.append('canonicalUrl', form.canonicalUrl);
+
+    // Custom attributes
+    if (form.customAttributes) {
+      formData.append('customAttributes', JSON.stringify(form.customAttributes));
+    }
+
     if (form.image?.[0]) {
       formData.append('image', form.image[0]);
     }
@@ -217,7 +249,8 @@ function AdminProducts() {
       highlights: [],
       usage: '',
       isNew: false,
-      isFeatured: false
+      isFeatured: false,
+      customAttributes: {}
     });
     setIsModalOpen(true);
   };
@@ -236,7 +269,8 @@ function AdminProducts() {
       highlights: product.highlights || [],
       usage: product.usage || '',
       isNew: product.isNew || false,
-      isFeatured: product.isFeatured || false
+      isFeatured: product.isFeatured || false,
+      customAttributes: product.customAttributes || {}
     });
     setIsModalOpen(true);
   };
@@ -362,6 +396,11 @@ function AdminProducts() {
             label: 'Edit',
             icon: <PencilIcon />,
             onClick: () => openEditModal(product)
+          },
+          {
+            label: 'Manage Variants',
+            icon: <Squares2X2Icon />,
+            onClick: () => setVariantProduct(product)
           },
           {
             label: 'Delete',
@@ -750,6 +789,192 @@ function AdminProducts() {
                   />
                 </div>
 
+                {/* SEO Fields */}
+                <div className="space-y-4 rounded-2xl border border-champagne/20 bg-white/5 p-6">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+                    SEO & Metadata (Optional)
+                  </h3>
+                  <p className="text-xs text-champagne/60">
+                    Optimize product for search engines and social media sharing
+                  </p>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* Slug */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                        URL Slug
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        placeholder="auto-generated-from-name"
+                        {...register('slug')}
+                      />
+                      <p className="mt-1 text-xs text-champagne/40">Leave empty to auto-generate</p>
+                    </div>
+
+                    {/* Meta Title */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                        Meta Title
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        placeholder="Custom title for search engines"
+                        {...register('metaTitle')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Meta Description */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                      Meta Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      placeholder="Description shown in search results"
+                      {...register('metaDescription')}
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* OG Image URL */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                        Social Share Image URL
+                      </label>
+                      <input
+                        type="url"
+                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        placeholder="https://example.com/image.jpg"
+                        {...register('ogImageUrl')}
+                      />
+                      <p className="mt-1 text-xs text-champagne/40">Uses product image if empty</p>
+                    </div>
+
+                    {/* Canonical URL */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                        Canonical URL
+                      </label>
+                      <input
+                        type="url"
+                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        placeholder="https://example.com/products/slug"
+                        {...register('canonicalUrl')}
+                      />
+                      <p className="mt-1 text-xs text-champagne/40">Auto-generated if empty</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Custom Attributes */}
+                {attributes.length > 0 && (
+                  <div className="space-y-4 rounded-2xl border border-champagne/20 bg-white/5 p-6">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+                      Custom Attributes
+                    </h3>
+                    <p className="text-xs text-champagne/60">
+                      Additional product properties for filtering and categorization
+                    </p>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {attributes.map((attr) => (
+                        <div key={attr.id}>
+                          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                            {attr.attributeLabel} {attr.isRequired && '*'}
+                          </label>
+
+                          {/* Text input */}
+                          {attr.dataType === 'text' && (
+                            <input
+                              type="text"
+                              value={customAttributes[attr.attributeKey] || ''}
+                              onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
+                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                            />
+                          )}
+
+                          {/* Number input */}
+                          {attr.dataType === 'number' && (
+                            <input
+                              type="number"
+                              value={customAttributes[attr.attributeKey] || ''}
+                              onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: parseFloat(e.target.value) || '' }, { shouldDirty: true })}
+                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                            />
+                          )}
+
+                          {/* Boolean checkbox */}
+                          {attr.dataType === 'boolean' && (
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={customAttributes[attr.attributeKey] || false}
+                                onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.checked }, { shouldDirty: true })}
+                                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                              />
+                              <span className="text-sm text-champagne/80">Enable</span>
+                            </label>
+                          )}
+
+                          {/* Select dropdown */}
+                          {attr.dataType === 'select' && attr.options && (
+                            <select
+                              value={customAttributes[attr.attributeKey] || ''}
+                              onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
+                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                            >
+                              <option value="">Select {attr.attributeLabel}</option>
+                              {attr.options.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+
+                          {/* Multiselect */}
+                          {attr.dataType === 'multiselect' && attr.options && (
+                            <div className="space-y-2">
+                              {attr.options.map((opt) => (
+                                <label key={opt.value} className="flex cursor-pointer items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={(customAttributes[attr.attributeKey] || []).includes(opt.value)}
+                                    onChange={(e) => {
+                                      const currentValues = customAttributes[attr.attributeKey] || [];
+                                      const newValues = e.target.checked
+                                        ? [...currentValues, opt.value]
+                                        : currentValues.filter((v: string) => v !== opt.value);
+                                      setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: newValues }, { shouldDirty: true });
+                                    }}
+                                    className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                                  />
+                                  <span className="text-sm text-champagne/80">{opt.label}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Date input */}
+                          {attr.dataType === 'date' && (
+                            <input
+                              type="date"
+                              value={customAttributes[attr.attributeKey] || ''}
+                              onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
+                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Status Flags */}
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/5 p-4 cursor-pointer transition-colors hover:bg-white/10">
@@ -806,6 +1031,50 @@ function AdminProducts() {
                   </div>
                 )}
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Variant Manager Modal */}
+      <AnimatePresence>
+        {variantProduct && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/90 p-4"
+            onClick={() => setVariantProduct(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-midnight border border-white/10 p-8 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h2 className="font-display text-2xl text-champagne">
+                    Product Variants
+                  </h2>
+                  <p className="mt-1 text-sm text-champagne/70">
+                    Manage variants for {variantProduct.name}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setVariantProduct(null)}
+                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              <VariantManager
+                productId={variantProduct.id}
+                productName={variantProduct.name}
+              />
             </motion.div>
           </motion.div>
         )}

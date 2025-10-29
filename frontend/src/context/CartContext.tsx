@@ -6,10 +6,11 @@ import {
   ReactNode,
   useEffect
 } from 'react';
-import type { Product, PromoCode } from '../types/product';
+import type { Product, PromoCode, ProductVariant } from '../types/product';
 
-type CartItem = {
+export type CartItem = {
   product: Product;
+  variant?: ProductVariant;
   quantity: number;
 };
 
@@ -20,18 +21,18 @@ interface CartState {
 }
 
 type Action =
-  | { type: 'ADD'; product: Product; quantity: number }
-  | { type: 'REMOVE'; productId: number }
-  | { type: 'UPDATE'; productId: number; quantity: number }
+  | { type: 'ADD'; product: Product; variant?: ProductVariant; quantity: number }
+  | { type: 'REMOVE'; productId: number; variantId?: number }
+  | { type: 'UPDATE'; productId: number; variantId?: number; quantity: number }
   | { type: 'CLEAR' }
   | { type: 'APPLY_PROMO'; promoCode: PromoCode; discount: number }
   | { type: 'REMOVE_PROMO' };
 
 const CartContext = createContext<{
   items: CartItem[];
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  addItem: (product: Product, quantity?: number, variant?: ProductVariant) => void;
+  removeItem: (productId: number, variantId?: number) => void;
+  updateQuantity: (productId: number, quantity: number, variantId?: number) => void;
   clear: () => void;
   total: number;
   subtotal: number;
@@ -58,26 +59,43 @@ const CART_STORAGE_KEY = 'luxia-cart';
 const reducer = (state: CartState, action: Action): CartState => {
   switch (action.type) {
     case 'ADD': {
-      const existing = state.items.find((item) => item.product.id === action.product.id);
+      // Find existing item with same product and variant
+      const existing = state.items.find((item) =>
+        item.product.id === action.product.id &&
+        item.variant?.id === action.variant?.id
+      );
+
       if (existing) {
         return {
           ...state,
           items: state.items.map((item) =>
-            item.product.id === action.product.id
+            item.product.id === action.product.id && item.variant?.id === action.variant?.id
               ? { ...item, quantity: item.quantity + action.quantity }
               : item
           )
         };
       }
-      return { ...state, items: [...state.items, { product: action.product, quantity: action.quantity }] };
+      return {
+        ...state,
+        items: [...state.items, {
+          product: action.product,
+          variant: action.variant,
+          quantity: action.quantity
+        }]
+      };
     }
     case 'REMOVE':
-      return { ...state, items: state.items.filter((item) => item.product.id !== action.productId) };
+      return {
+        ...state,
+        items: state.items.filter((item) =>
+          !(item.product.id === action.productId && item.variant?.id === action.variantId)
+        )
+      };
     case 'UPDATE':
       return {
         ...state,
         items: state.items.map((item) =>
-          item.product.id === action.productId
+          item.product.id === action.productId && item.variant?.id === action.variantId
             ? { ...item, quantity: Math.max(action.quantity, 1) }
             : item
         )
@@ -115,14 +133,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state]);
 
-  const addItem = (product: Product, quantity = 1) => {
-    dispatch({ type: 'ADD', product, quantity });
+  const addItem = (product: Product, quantity = 1, variant?: ProductVariant) => {
+    dispatch({ type: 'ADD', product, variant, quantity });
   };
 
-  const removeItem = (productId: number) => dispatch({ type: 'REMOVE', productId });
+  const removeItem = (productId: number, variantId?: number) =>
+    dispatch({ type: 'REMOVE', productId, variantId });
 
-  const updateQuantity = (productId: number, quantity: number) =>
-    dispatch({ type: 'UPDATE', productId, quantity });
+  const updateQuantity = (productId: number, quantity: number, variantId?: number) =>
+    dispatch({ type: 'UPDATE', productId, quantity, variantId });
 
   const clear = () => dispatch({ type: 'CLEAR' });
 
@@ -135,7 +154,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const subtotal = useMemo(
-    () => state.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+    () => state.items.reduce((sum, item) => {
+      // Use variant price if available, otherwise fall back to product price
+      const price = item.variant?.salePrice ?? item.variant?.price ?? item.product.salePrice ?? item.product.price;
+      return sum + price * item.quantity;
+    }, 0),
     [state.items]
   );
 

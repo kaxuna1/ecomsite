@@ -21,7 +21,7 @@ import {
   CubeIcon,
   LanguageIcon
 } from '@heroicons/react/24/outline';
-import { fetchProducts } from '../../api/products';
+import { fetchAllProducts } from '../../api/products';
 import { fetchOrders, updateOrderStatus } from '../../api/orders';
 import type { Product } from '../../types/product';
 import type { Order } from '../../types/order';
@@ -32,8 +32,8 @@ import Badge from '../../components/admin/Badge';
 function AdminDashboard() {
   const queryClient = useQueryClient();
   const { data: products = [], isLoading: productsLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts
+    queryKey: ['admin-products'],
+    queryFn: fetchAllProducts
   });
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['orders'],

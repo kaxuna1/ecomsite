@@ -18,7 +18,8 @@ api.interceptors.request.use((config) => {
     const isInAdminArea = window.location.pathname.startsWith('/admin');
 
     // Check if it's an admin-specific route
-    const isAdminRoute = config.url?.startsWith('/auth/') || config.url?.startsWith('/admin/');
+    const adminRoutes = ['/auth/', '/admin/', '/orders', '/products', '/promo-codes', '/cms', '/navigation', '/settings', '/attributes', '/variant'];
+    const isAdminRoute = adminRoutes.some(route => config.url?.startsWith(route));
 
     if (isInAdminArea || isAdminRoute) {
       // Use admin token for admin area or admin-specific routes
@@ -42,7 +43,8 @@ api.interceptors.response.use(
   (error) => {
     // Handle 401 Unauthorized responses
     if (error.response?.status === 401) {
-      const isAdminRoute = error.config?.url?.startsWith('/auth/') || error.config?.url?.startsWith('/admin/');
+      const adminRoutes = ['/auth/', '/admin/', '/orders', '/products', '/promo-codes', '/cms', '/navigation', '/settings', '/attributes', '/variant'];
+      const isAdminRoute = adminRoutes.some(route => error.config?.url?.startsWith(route));
 
       if (isAdminRoute) {
         // Clear admin token

@@ -21,8 +21,9 @@ import {
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import type { CMSBlock } from '../../types/cms';
 import HeroBlock from './HeroBlock';
-import { fetchProducts } from '../../api/products';
+import { fetchRandomProducts } from '../../api/products';
 import { useCart } from '../../context/CartContext';
+import { useI18n } from '../../context/I18nContext';
 
 interface BlockRendererProps {
   block: CMSBlock;
@@ -138,10 +139,11 @@ function ProductsBlock({ content }: { content: any }) {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const { addItem } = useCart();
+  const { language } = useI18n();
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts
+    queryKey: ['random-products'],
+    queryFn: () => fetchRandomProducts(8)
   });
 
   const featuredProducts = products.slice(0, 4);
@@ -193,7 +195,7 @@ function ProductsBlock({ content }: { content: any }) {
                 whileHover={{ y: -8 }}
               >
                 {/* Product Image */}
-                <Link to={`/products/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-champagne">
+                <Link to={`/${language}/products/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-champagne">
                   <motion.img
                     src={product.imageUrl}
                     alt={product.name}
@@ -240,7 +242,7 @@ function ProductsBlock({ content }: { content: any }) {
                     <span className="ml-2 text-xs text-midnight/60">(245)</span>
                   </div>
 
-                  <Link to={`/products/${product.id}`}>
+                  <Link to={`/${language}/products/${product.id}`}>
                     <h3 className="font-display text-lg leading-tight text-midnight transition-colors hover:text-jade line-clamp-2">
                       {product.name}
                     </h3>
@@ -272,7 +274,7 @@ function ProductsBlock({ content }: { content: any }) {
 
         <motion.div className="mt-12 text-center" {...fadeInUp}>
           <Link
-            to={ctaLink || '/products'}
+            to={ctaLink || `/${language}/products`}
             className="inline-flex items-center gap-2 rounded-full bg-midnight px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <span>{ctaText || 'View All Products'}</span>

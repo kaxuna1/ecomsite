@@ -21,19 +21,142 @@ const parseJsonArray = (value: string | undefined, errorMessage: string) => {
   throw new Error(errorMessage);
 };
 
+// Get filter metadata
+router.get('/filter-metadata', async (req, res) => {
+  try {
+    const language = (req.query.lang as string) || 'en';
+    const metadata = await productService.getFilterMetadata(language);
+    res.json(metadata);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+// Get random products for home page
+router.get('/random', async (req, res) => {
+  try {
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 8;
+
+    const products = await productService.getRandom(limit, language);
+    res.json(products);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
-    const filters = {
+    // Parse basic filters
+    const filters: any = {
       isNew: req.query.isNew === 'true',
       isFeatured: req.query.isFeatured === 'true',
       onSale: req.query.onSale === 'true',
       language: (req.query.lang as string) || 'en'
     };
 
-    const products = await productService.list(filters);
-    res.json(products);
+    // Add category filter if provided
+    if (req.query.category && typeof req.query.category === 'string') {
+      filters.category = req.query.category;
+    }
+
+    // Add search filter if provided
+    if (req.query.search && typeof req.query.search === 'string') {
+      filters.search = req.query.search.trim();
+    }
+
+    // Parse custom attributes filter if provided
+    if (req.query.attributes && typeof req.query.attributes === 'string') {
+      try {
+        const parsedAttributes = JSON.parse(req.query.attributes);
+        if (typeof parsedAttributes === 'object' && !Array.isArray(parsedAttributes)) {
+          filters.attributes = parsedAttributes;
+        }
+      } catch (error) {
+        return res.status(400).json({ message: 'Invalid attributes format. Must be valid JSON object.' });
+      }
+    }
+
+    // Parse pagination parameters
+    if (req.query.page) {
+      const page = Number(req.query.page);
+      if (!isNaN(page) && page > 0) {
+        filters.page = page;
+      }
+    }
+
+    if (req.query.limit) {
+      const limit = Number(req.query.limit);
+      if (!isNaN(limit) && limit > 0 && limit <= 100) { // Max 100 items per page
+        filters.limit = limit;
+      }
+    }
+
+    const result = await productService.list(filters);
+    res.json(result);
   } catch (error: any) {
     res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+// Search endpoint with full-text search and fuzzy matching
+router.get('/search', async (req, res) => {
+  try {
+    const query = req.query.q as string;
+    if (!query || query.trim().length === 0) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 20;
+
+    const results = await productService.search(query, language, limit);
+    res.json(results);
+  } catch (error: any) {
+    console.error('Search error:', error);
+    res.status(500).json({ message: error.message ?? 'Search failed' });
+  }
+});
+
+// Autocomplete endpoint for typeahead suggestions
+router.get('/autocomplete', async (req, res) => {
+  try {
+    const prefix = req.query.q as string;
+    if (!prefix || prefix.trim().length === 0) {
+      return res.json([]);
+    }
+
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    const suggestions = await productService.autocomplete(prefix, language, limit);
+    res.json(suggestions);
+  } catch (error: any) {
+    console.error('Autocomplete error:', error);
+    res.status(500).json({ message: error.message ?? 'Autocomplete failed' });
+  }
+});
+
+router.get('/slug/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const lang = (req.query.lang as string) || 'en';
+
+    const product = await productService.getBySlug(slug, lang);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const seoMetadata = productService.generateSEOMetadata(product);
+
+    res.json({
+      ...product,
+      seo: seoMetadata
+    });
+  } catch (error: any) {
+    console.error('Error fetching product by slug:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch product' });
   }
 });
 
@@ -71,6 +194,8 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
 
+    const metaKeywords = req.body.metaKeywords ? parseJsonArray(req.body.metaKeywords, 'Invalid metaKeywords format') : undefined;
+
     const imageUrl = productService.saveImage(req.file);
     const product = await productService.create(
       {
@@ -84,7 +209,13 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
         highlights,
         usage: req.body.usage,
         isNew: req.body.isNew === 'true',
-        isFeatured: req.body.isFeatured === 'true'
+        isFeatured: req.body.isFeatured === 'true',
+        slug: req.body.slug,
+        metaTitle: req.body.metaTitle,
+        metaDescription: req.body.metaDescription,
+        metaKeywords,
+        ogImageUrl: req.body.ogImageUrl,
+        canonicalUrl: req.body.canonicalUrl
       },
       imageUrl
     );
@@ -104,6 +235,7 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, asyn
   try {
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
     const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
+    const metaKeywords = req.body.metaKeywords ? parseJsonArray(req.body.metaKeywords, 'Invalid metaKeywords format') : undefined;
     const imageUrl = req.file ? productService.saveImage(req.file) : undefined;
     const product = await productService.update(
       Number(req.params.id),
@@ -118,7 +250,13 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, asyn
         highlights,
         usage: req.body.usage,
         isNew: req.body.isNew === 'true',
-        isFeatured: req.body.isFeatured === 'true'
+        isFeatured: req.body.isFeatured === 'true',
+        slug: req.body.slug,
+        metaTitle: req.body.metaTitle,
+        metaDescription: req.body.metaDescription,
+        metaKeywords,
+        ogImageUrl: req.body.ogImageUrl,
+        canonicalUrl: req.body.canonicalUrl
       },
       imageUrl
     );

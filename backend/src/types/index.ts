@@ -13,6 +13,12 @@ export interface Product {
   is_new: boolean;
   is_featured: boolean;
   sales_count: number;
+  slug: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string[];
+  og_image_url?: string;
+  canonical_url?: string;
 }
 
 export interface ProductPayload {
@@ -27,6 +33,21 @@ export interface ProductPayload {
   usage?: string;
   isNew?: boolean;
   isFeatured?: boolean;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+  ogImageUrl?: string;
+  canonicalUrl?: string;
+}
+
+export interface ProductSEO {
+  slug: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+  ogImageUrl?: string;
+  canonicalUrl?: string;
 }
 
 export interface ProductTranslation {
@@ -84,4 +105,76 @@ export interface OrderPayload {
     code: string;
     discount: number;
   };
+}
+
+// Product Variants
+export interface VariantOption {
+  id: number;
+  name: string;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VariantOptionValue {
+  id: number;
+  optionId: number;
+  value: string;
+  displayOrder: number;
+  createdAt: string;
+}
+
+export interface ProductVariant {
+  id: number;
+  productId: number;
+  sku: string;
+  price: number | null;
+  salePrice: number | null;
+  inventory: number;
+  weight: number | null;
+  dimensionsLength: number | null;
+  dimensionsWidth: number | null;
+  dimensionsHeight: number | null;
+  isActive: boolean;
+  isDefault: boolean;
+  imageUrl: string | null;
+  salesCount: number;
+  options: Array<{
+    optionId: number;
+    optionName: string;
+    valueId: number;
+    value: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateVariantPayload {
+  sku: string;
+  price?: number;
+  salePrice?: number;
+  inventory: number;
+  weight?: number;
+  dimensionsLength?: number;
+  dimensionsWidth?: number;
+  dimensionsHeight?: number;
+  isActive?: boolean;
+  isDefault?: boolean;
+  imageUrl?: string;
+  optionValueIds: number[]; // Array of variant_option_value IDs
+}
+
+export interface UpdateVariantPayload {
+  sku?: string;
+  price?: number;
+  salePrice?: number;
+  inventory?: number;
+  weight?: number;
+  dimensionsLength?: number;
+  dimensionsWidth?: number;
+  dimensionsHeight?: number;
+  isActive?: boolean;
+  isDefault?: boolean;
+  imageUrl?: string;
+  optionValueIds?: number[];
 }
