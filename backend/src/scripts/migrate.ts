@@ -254,6 +254,87 @@ CREATE INDEX IF NOT EXISTS idx_footer_translations_footer_id ON footer_settings_
 CREATE INDEX IF NOT EXISTS idx_footer_translations_language ON footer_settings_translations(language_code);
 
 -- ============================================================================
+-- ADMIN USERS SYSTEM
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS admin_users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  role VARCHAR(50) DEFAULT 'admin' CHECK (role IN ('admin', 'super_admin')),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_users_email ON admin_users(email);
+CREATE INDEX IF NOT EXISTS idx_admin_users_is_active ON admin_users(is_active);
+
+-- ============================================================================
+-- API KEYS MANAGEMENT SYSTEM
+-- ============================================================================
+
+-- Stores encrypted API keys and secrets for third-party service integrations
+CREATE TABLE IF NOT EXISTS api_keys (
+  id SERIAL PRIMARY KEY,
+  key_name VARCHAR(255) NOT NULL UNIQUE,
+  key_value TEXT NOT NULL, -- Encrypted value
+  category VARCHAR(100),
+  description TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  created_by INTEGER REFERENCES admin_users(id) ON DELETE SET NULL,
+  updated_by INTEGER REFERENCES admin_users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_keys_key_name ON api_keys(key_name);
+CREATE INDEX IF NOT EXISTS idx_api_keys_category ON api_keys(category);
+CREATE INDEX IF NOT EXISTS idx_api_keys_is_active ON api_keys(is_active);
+
+-- Trigger to update updated_at timestamp for api_keys
+CREATE OR REPLACE FUNCTION update_api_keys_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_update_api_keys_updated_at ON api_keys;
+
+CREATE TRIGGER trigger_update_api_keys_updated_at
+  BEFORE UPDATE ON api_keys
+  FOR EACH ROW
+  EXECUTE FUNCTION update_api_keys_updated_at();
+
+-- ============================================================================
+-- API KEYS AUDIT LOG
+-- ============================================================================
+
+-- Track all access and modifications to API keys for security auditing
+CREATE TABLE IF NOT EXISTS api_keys_audit_log (
+  id SERIAL PRIMARY KEY,
+  key_name VARCHAR(255) NOT NULL,
+  action VARCHAR(50) NOT NULL, -- 'created', 'updated', 'deleted', 'deactivated', 'accessed', 'decrypted'
+  admin_user_id INTEGER REFERENCES admin_users(id) ON DELETE SET NULL,
+  admin_user_email VARCHAR(255),
+  ip_address INET,
+  user_agent TEXT,
+  old_value TEXT, -- For updates, store masked old value
+  new_value TEXT, -- For updates, store masked new value
+  metadata JSONB, -- Additional context (e.g., which fields changed)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_keys_audit_key_name ON api_keys_audit_log(key_name);
+CREATE INDEX IF NOT EXISTS idx_api_keys_audit_action ON api_keys_audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_api_keys_audit_admin_user ON api_keys_audit_log(admin_user_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_audit_created_at ON api_keys_audit_log(created_at DESC);
+
+-- ============================================================================
 -- MEDIA MANAGEMENT SYSTEM
 -- ============================================================================
 

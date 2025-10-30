@@ -1,11 +1,12 @@
 /**
  * API Keys Routes
- * 
+ *
  * Admin-only routes for managing API keys and secrets
  */
 
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { apiKeysRateLimiter } from '../middleware/rateLimiter';
 import {
   getAllAPIKeys,
   getAPIKey,
@@ -13,13 +14,30 @@ import {
   setMultipleAPIKeys,
   deleteAPIKey,
   deactivateAPIKey,
-  validateAPIKeysForFeature
+  validateAPIKeysForFeature,
+  getAuditLog
 } from '../services/apiKeysService';
 
 const router = Router();
 
 // All routes require admin authentication
 router.use(authMiddleware);
+
+// Apply rate limiting to all API keys routes (30 requests per 15 minutes)
+router.use(apiKeysRateLimiter);
+
+/**
+ * Helper function to extract audit context from request
+ */
+function getAuditContext(req: Request) {
+  const user = (req as any).user;
+  return {
+    adminUserId: user?.id,
+    adminUserEmail: user?.email,
+    ipAddress: (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress,
+    userAgent: req.headers['user-agent']
+  };
+}
 
 /**
  * GET /api/admin/api-keys
@@ -48,15 +66,16 @@ router.get('/:keyName', async (req: Request, res: Response) => {
   try {
     const { keyName } = req.params;
     const { decrypt: shouldDecrypt } = req.query;
-    
-    const value = await getAPIKey(keyName, shouldDecrypt === 'true');
-    
+    const auditContext = getAuditContext(req);
+
+    const value = await getAPIKey(keyName, shouldDecrypt === 'true', auditContext);
+
     if (value === null) {
       return res.status(404).json({
         message: 'API key not found'
       });
     }
-    
+
     res.json({ value });
   } catch (error: any) {
     console.error('Error fetching API key:', error);
@@ -104,7 +123,7 @@ router.put('/', async (req: Request, res: Response) => {
 /**
  * POST /api/admin/api-keys
  * Create or update a single API key
- * 
+ *
  * Body: {
  *   keyName: string,
  *   keyValue: string,
@@ -116,23 +135,24 @@ router.put('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { keyName, keyValue, category, description, isActive } = req.body;
-    
+
     if (!keyName || !keyValue) {
       return res.status(400).json({
         message: 'keyName and keyValue are required'
       });
     }
-    
-    // Get admin user ID from auth middleware
+
     const adminUserId = (req as any).user?.id;
-    
+    const auditContext = getAuditContext(req);
+
     const result = await setAPIKey(
       keyName,
       keyValue,
       { category, description, isActive },
-      adminUserId
+      adminUserId,
+      auditContext
     );
-    
+
     res.json({
       message: 'API key saved successfully',
       key: {
@@ -158,15 +178,16 @@ router.post('/', async (req: Request, res: Response) => {
 router.delete('/:keyName', async (req: Request, res: Response) => {
   try {
     const { keyName } = req.params;
-    
-    const deleted = await deleteAPIKey(keyName);
-    
+    const auditContext = getAuditContext(req);
+
+    const deleted = await deleteAPIKey(keyName, auditContext);
+
     if (!deleted) {
       return res.status(404).json({
         message: 'API key not found'
       });
     }
-    
+
     res.json({
       message: 'API key deleted successfully'
     });
@@ -186,15 +207,16 @@ router.delete('/:keyName', async (req: Request, res: Response) => {
 router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
   try {
     const { keyName } = req.params;
-    
-    const deactivated = await deactivateAPIKey(keyName);
-    
+    const auditContext = getAuditContext(req);
+
+    const deactivated = await deactivateAPIKey(keyName, auditContext);
+
     if (!deactivated) {
       return res.status(404).json({
         message: 'API key not found'
       });
     }
-    
+
     res.json({
       message: 'API key deactivated successfully'
     });
@@ -208,15 +230,38 @@ router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/admin/api-keys/audit-log
+ * Get audit log entries for API key access and modifications
+ */
+router.get('/audit-log', async (req: Request, res: Response) => {
+  try {
+    const { keyName, limit } = req.query;
+
+    const entries = await getAuditLog(
+      keyName as string | undefined,
+      limit ? parseInt(limit as string) : 100
+    );
+
+    res.json(entries);
+  } catch (error: any) {
+    console.error('Error fetching audit log:', error);
+    res.status(500).json({
+      message: 'Failed to fetch audit log',
+      error: error.message
+    });
+  }
+});
+
+/**
  * POST /api/admin/api-keys/validate/:feature
  * Validate if required API keys are configured for a specific feature
  */
 router.post('/validate/:feature', async (req: Request, res: Response) => {
   try {
     const { feature } = req.params;
-    
+
     const validation = await validateAPIKeysForFeature(feature);
-    
+
     res.json(validation);
   } catch (error: any) {
     console.error('Error validating API keys:', error);
