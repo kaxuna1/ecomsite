@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
     const isInAdminArea = window.location.pathname.startsWith('/admin');
 
     // Check if it's an admin-specific route
-    const adminRoutes = ['/auth/', '/admin/', '/orders', '/products', '/promo-codes', '/cms', '/navigation', '/settings', '/attributes', '/variant'];
+    const adminRoutes = ['/auth/', '/admin/'];
     const isAdminRoute = adminRoutes.some(route => config.url?.startsWith(route));
 
     if (isInAdminArea || isAdminRoute) {
@@ -43,7 +43,7 @@ api.interceptors.response.use(
   (error) => {
     // Handle 401 Unauthorized responses
     if (error.response?.status === 401) {
-      const adminRoutes = ['/auth/', '/admin/', '/orders', '/products', '/promo-codes', '/cms', '/navigation', '/settings', '/attributes', '/variant'];
+      const adminRoutes = ['/auth/', '/admin/'];
       const isAdminRoute = adminRoutes.some(route => error.config?.url?.startsWith(route));
 
       if (isAdminRoute) {

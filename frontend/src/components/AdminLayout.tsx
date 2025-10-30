@@ -24,7 +24,9 @@ import {
   SwatchIcon,
   Squares2X2Icon,
   GlobeAltIcon,
-  PhotoIcon
+  PhotoIcon,
+  EnvelopeIcon,
+  StarIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import CommandPalette from './admin/CommandPalette';
@@ -43,12 +45,15 @@ const navigation: NavItem[] = [
   { name: 'Variant Options', href: '/admin/variant-options', icon: Squares2X2Icon },
   { name: 'Media Library', href: '/admin/media', icon: PhotoIcon },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingBagIcon },
+  { name: 'Reviews', href: '/admin/reviews', icon: StarIcon },
   { name: 'Promo Codes', href: '/admin/promo-codes', icon: TagIcon },
+  { name: 'Newsletter', href: '/admin/newsletter', icon: EnvelopeIcon },
   { name: 'CMS', href: '/admin/cms', icon: DocumentTextIcon },
   { name: 'Navigation', href: '/admin/navigation', icon: BarsArrowUpIcon },
   { name: 'Languages', href: '/admin/languages', icon: GlobeAltIcon },
   { name: 'Translations', href: '/admin/translations', icon: LanguageIcon },
   { name: 'CMS Translations', href: '/admin/cms-translations', icon: DocumentDuplicateIcon },
+  { name: 'Static Translations', href: '/admin/static-translations', icon: CommandLineIcon },
   { name: 'Admin Users', href: '/admin/admin-users', icon: UsersIcon },
   { name: 'Customers', href: '/admin/customers', icon: UserGroupIcon },
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon }
@@ -65,7 +70,8 @@ function AdminLayout() {
     if (item.href === '/admin') {
       return location.pathname === '/admin';
     }
-    return location.pathname.startsWith(item.href);
+    // Exact match or match with trailing slash or path separator
+    return location.pathname === item.href || location.pathname.startsWith(item.href + '/');
   });
 
   // Command Palette keyboard shortcut (Cmd+K or Ctrl+K)
@@ -143,7 +149,7 @@ function AdminLayout() {
                           {navigation.map((item) => {
                             const isActive = item.href === '/admin'
                               ? location.pathname === '/admin'
-                              : location.pathname.startsWith(item.href);
+                              : location.pathname === item.href || location.pathname.startsWith(item.href + '/');
 
                             return (
                               <li key={item.name}>
@@ -225,7 +231,7 @@ function AdminLayout() {
                   {navigation.map((item) => {
                     const isActive = item.href === '/admin'
                       ? location.pathname === '/admin'
-                      : location.pathname.startsWith(item.href);
+                      : location.pathname === item.href || location.pathname.startsWith(item.href + '/');
 
                     return (
                       <li key={item.name}>

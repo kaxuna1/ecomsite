@@ -48,9 +48,20 @@ interface Translation {
 
 interface TranslationStatus {
   productId: number;
+  productName: string;
   languageCode: string;
-  isComplete: boolean;
-  lastUpdated?: string;
+  completionPercentage: number;
+  hasTranslation: boolean;
+  fields: {
+    name: boolean;
+    shortDescription: boolean;
+    description: boolean;
+    highlights: boolean;
+    usage: boolean;
+    slug: boolean;
+    metaTitle: boolean;
+    metaDescription: boolean;
+  };
 }
 
 export default function AdminTranslations() {
@@ -313,12 +324,12 @@ export default function AdminTranslations() {
     return translationStatuses.find(s => s.productId === productId);
   }, [translationStatuses]);
 
-  // Calculate completion percentage
-  const completionPercentage = useMemo(() => {
-    if (!products?.length) return 0;
-    const completed = translationStatuses.filter(s => s.isComplete).length;
-    return Math.round((completed / products.length) * 100);
-  }, [products, translationStatuses]);
+  // Calculate overall completion percentage (average of all products)
+  const overallCompletionPercentage = useMemo(() => {
+    if (!translationStatuses?.length) return 0;
+    const total = translationStatuses.reduce((sum, s) => sum + s.completionPercentage, 0);
+    return Math.round(total / translationStatuses.length);
+  }, [translationStatuses]);
 
   // Character count helpers
   const getCharCount = (text: string) => text.length;
@@ -368,10 +379,10 @@ export default function AdminTranslations() {
               <div className="flex items-center gap-2 text-sm">
                 <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5">
                   <CheckCircleSolidIcon className="h-4 w-4 text-emerald-400" />
-                  <span className="text-champagne/80">{completionPercentage}% Complete</span>
+                  <span className="text-champagne/80">{overallCompletionPercentage}% Complete</span>
                 </div>
                 <div className="rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-champagne/80">
-                  {translationStatuses.filter(s => s.isComplete).length} / {products.length}
+                  {translationStatuses.filter(s => s.completionPercentage === 100).length} / {products.length}
                 </div>
               </div>
             )}
@@ -477,12 +488,22 @@ export default function AdminTranslations() {
                               <span className="line-clamp-2 text-sm font-medium">
                                 {product.name}
                               </span>
-                              {status?.isComplete && (
-                                <CheckCircleSolidIcon 
-                                  className={`h-4 w-4 flex-shrink-0 ${
-                                    isSelected ? 'text-midnight' : 'text-emerald-400'
-                                  }`}
-                                />
+                              {status && status.completionPercentage > 0 && (
+                                <div className="flex items-center gap-1">
+                                  <span className={`text-xs font-medium ${
+                                    isSelected ? 'text-midnight' :
+                                    status.completionPercentage === 100 ? 'text-emerald-400' : 'text-yellow-400'
+                                  }`}>
+                                    {status.completionPercentage}%
+                                  </span>
+                                  {status.completionPercentage === 100 && (
+                                    <CheckCircleSolidIcon
+                                      className={`h-4 w-4 flex-shrink-0 ${
+                                        isSelected ? 'text-midnight' : 'text-emerald-400'
+                                      }`}
+                                    />
+                                  )}
+                                </div>
                               )}
                             </div>
                           </motion.button>

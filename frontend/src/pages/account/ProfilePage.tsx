@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   UserIcon,
   EnvelopeIcon,
@@ -19,6 +20,7 @@ interface ProfileFormData {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
   const { lang } = useParams<{ lang: string }>();
   const location = useLocation();
@@ -38,9 +40,9 @@ export default function ProfilePage() {
   });
 
   const tabs = [
-    { name: 'Profile', href: `/${lang}/account/profile`, icon: UserIcon },
-    { name: 'Orders', href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
-    { name: 'Favorites', href: `/${lang}/account/favorites`, icon: HeartIcon }
+    { name: t('account.profile'), href: `/${lang}/account/profile`, icon: UserIcon },
+    { name: t('account.orders'), href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
+    { name: t('account.favorites'), href: `/${lang}/account/favorites`, icon: HeartIcon }
   ];
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -51,10 +53,10 @@ export default function ProfilePage() {
       // TODO: Implement update profile API
       // await updateProfile(data);
       await refreshUser();
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      setMessage({ type: 'success', text: t('profile.updateSuccess') });
       setIsEditing(false);
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
+      setMessage({ type: 'error', text: t('profile.updateError') });
     } finally {
       setIsLoading(false);
     }
@@ -83,8 +85,8 @@ export default function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-midnight mb-2">My Account</h1>
-          <p className="text-midnight/60">Manage your profile and preferences</p>
+          <h1 className="font-display text-4xl text-midnight mb-2">{t('profile.title')}</h1>
+          <p className="text-midnight/60">{t('profile.subtitle')}</p>
         </motion.div>
 
         {/* Tabs */}
@@ -138,7 +140,7 @@ export default function ProfilePage() {
                 <h2 className="text-3xl font-display mb-2">{user.name}</h2>
                 <div className="flex items-center gap-2 text-white/80">
                   <CalendarIcon className="h-4 w-4" />
-                  <span className="text-sm">Member since {memberSince}</span>
+                  <span className="text-sm">{t('profile.memberSince')} {memberSince}</span>
                 </div>
               </div>
             </div>
@@ -165,7 +167,7 @@ export default function ProfilePage() {
               {/* Name Field */}
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-2">
-                  Full Name
+                  {t('signup.fullName')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -173,8 +175,8 @@ export default function ProfilePage() {
                   </div>
                   <input
                     {...register('name', {
-                      required: 'Name is required',
-                      minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                      required: t('signup.nameRequired'),
+                      minLength: { value: 2, message: t('signup.nameMinLength') }
                     })}
                     type="text"
                     disabled={!isEditing}
@@ -201,7 +203,7 @@ export default function ProfilePage() {
               {/* Email Field (Read-only) */}
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-2">
-                  Email Address
+                  {t('profile.emailAddress')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -214,7 +216,7 @@ export default function ProfilePage() {
                     className="block w-full pl-12 pr-4 py-3 border border-champagne/40 rounded-xl bg-champagne/5 text-midnight/60 cursor-not-allowed"
                   />
                 </div>
-                <p className="mt-1 text-xs text-midnight/40">Email cannot be changed</p>
+                <p className="mt-1 text-xs text-midnight/40">{t('profile.emailCannotChange')}</p>
               </div>
 
               {/* Action Buttons */}
@@ -228,7 +230,7 @@ export default function ProfilePage() {
                     className="flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
                   >
                     <PencilIcon className="h-5 w-5" />
-                    Edit Profile
+                    {t('profile.editProfile')}
                   </motion.button>
                 ) : (
                   <>
@@ -246,12 +248,12 @@ export default function ProfilePage() {
                             animate={{ rotate: 360 }}
                             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                           />
-                          <span>Saving...</span>
+                          <span>{t('profile.saving')}</span>
                         </>
                       ) : (
                         <>
                           <CheckIcon className="h-5 w-5" />
-                          <span>Save Changes</span>
+                          <span>{t('profile.saveChanges')}</span>
                         </>
                       )}
                     </motion.button>
@@ -263,7 +265,7 @@ export default function ProfilePage() {
                       className="flex items-center gap-2 px-6 py-3 bg-midnight/10 text-midnight rounded-xl font-semibold hover:bg-midnight/20 transition-all"
                     >
                       <XMarkIcon className="h-5 w-5" />
-                      Cancel
+                      {t('profile.cancel')}
                     </motion.button>
                   </>
                 )}

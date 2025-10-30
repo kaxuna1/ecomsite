@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { UserPlusIcon, EnvelopeIcon, LockClosedIcon, UserIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +12,7 @@ interface SignupFormData extends RegisterPayload {
 }
 
 export default function SignupPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -44,7 +46,7 @@ export default function SignupPage() {
       });
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create account. Please try again.');
+      setError(err.response?.data?.message || t('signup.error'));
     } finally {
       setIsLoading(false);
     }
@@ -68,8 +70,8 @@ export default function SignupPage() {
           >
             <UserPlusIcon className="h-8 w-8 text-jade" />
           </motion.div>
-          <h2 className="font-display text-4xl text-midnight mb-2">Create Account</h2>
-          <p className="text-midnight/60">Join us and start shopping</p>
+          <h2 className="font-display text-4xl text-midnight mb-2">{t('signup.title')}</h2>
+          <p className="text-midnight/60">{t('signup.subtitle')}</p>
         </div>
 
         {/* Form Card */}
@@ -94,7 +96,7 @@ export default function SignupPage() {
             {/* Name Field */}
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-midnight mb-2">
-                Full Name
+                {t('signup.fullName')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -102,15 +104,15 @@ export default function SignupPage() {
                 </div>
                 <input
                   {...register('name', {
-                    required: 'Name is required',
-                    minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                    required: t('signup.nameRequired'),
+                    minLength: { value: 2, message: t('signup.nameMinLength') }
                   })}
                   type="text"
                   id="name"
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="John Doe"
+                  placeholder={t('signup.namePlaceholder')}
                 />
               </div>
               {errors.name && (
@@ -127,7 +129,7 @@ export default function SignupPage() {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-midnight mb-2">
-                Email Address
+                {t('login.email')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -135,10 +137,10 @@ export default function SignupPage() {
                 </div>
                 <input
                   {...register('email', {
-                    required: 'Email is required',
+                    required: t('login.emailRequired'),
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
+                      message: t('login.emailInvalid')
                     }
                   })}
                   type="email"
@@ -146,7 +148,7 @@ export default function SignupPage() {
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="you@example.com"
+                  placeholder={t('login.emailPlaceholder')}
                 />
               </div>
               {errors.email && (
@@ -163,7 +165,7 @@ export default function SignupPage() {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-midnight mb-2">
-                Password
+                {t('login.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -171,15 +173,15 @@ export default function SignupPage() {
                 </div>
                 <input
                   {...register('password', {
-                    required: 'Password is required',
-                    minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                    required: t('login.passwordRequired'),
+                    minLength: { value: 6, message: t('login.passwordMinLength') }
                   })}
                   type="password"
                   id="password"
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.password ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="••••••••"
+                  placeholder={t('login.passwordPlaceholder')}
                 />
               </div>
               {errors.password && (
@@ -196,7 +198,7 @@ export default function SignupPage() {
             {/* Confirm Password Field */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-semibold text-midnight mb-2">
-                Confirm Password
+                {t('signup.confirmPassword')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -204,15 +206,15 @@ export default function SignupPage() {
                 </div>
                 <input
                   {...register('confirmPassword', {
-                    required: 'Please confirm your password',
-                    validate: (value) => value === password || 'Passwords do not match'
+                    required: t('signup.confirmPasswordRequired'),
+                    validate: (value) => value === password || t('signup.passwordsNoMatch')
                   })}
                   type="password"
                   id="confirmPassword"
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="••••••••"
+                  placeholder={t('signup.confirmPasswordPlaceholder')}
                 />
               </div>
               {errors.confirmPassword && (
@@ -241,12 +243,12 @@ export default function SignupPage() {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   />
-                  <span>Creating Account...</span>
+                  <span>{t('signup.creatingAccount')}</span>
                 </>
               ) : (
                 <>
                   <UserPlusIcon className="h-5 w-5" />
-                  <span>Create Account</span>
+                  <span>{t('signup.createAccount')}</span>
                 </>
               )}
             </motion.button>
@@ -255,12 +257,12 @@ export default function SignupPage() {
           {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-midnight/60">
-              Already have an account?{' '}
+              {t('signup.haveAccount')}{' '}
               <Link
                 to="/login"
                 className="font-semibold text-jade hover:text-jade/80 transition-colors"
               >
-                Sign in
+                {t('signup.signIn')}
               </Link>
             </p>
           </div>
@@ -277,7 +279,7 @@ export default function SignupPage() {
             to="/"
             className="text-sm text-midnight/60 hover:text-midnight transition-colors"
           >
-            Back to Home
+            {t('signup.backToHome')}
           </Link>
         </motion.div>
       </motion.div>

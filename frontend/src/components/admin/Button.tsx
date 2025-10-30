@@ -1,4 +1,4 @@
-import { ReactNode, ButtonHTMLAttributes } from 'react';
+import { ReactNode, ButtonHTMLAttributes, ComponentType } from 'react';
 import { motion } from 'framer-motion';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
@@ -8,7 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  icon?: ReactNode;
+  icon?: ComponentType<{ className?: string }> | ReactNode;
   loading?: boolean;
   fullWidth?: boolean;
 }
@@ -41,6 +41,20 @@ export default function Button({
 }: ButtonProps) {
   const MotionButton = motion.button as any;
 
+  // Render icon helper
+  const renderIcon = () => {
+    if (!icon) return null;
+
+    // If icon is a function/component, create element
+    if (typeof icon === 'function') {
+      const IconComponent = icon as ComponentType<{ className?: string }>;
+      return <IconComponent className="h-5 w-5" />;
+    }
+
+    // Otherwise render as-is
+    return icon;
+  };
+
   return (
     <MotionButton
       type={type}
@@ -60,7 +74,7 @@ export default function Button({
         </>
       ) : (
         <>
-          {icon && <span className="h-5 w-5">{icon}</span>}
+          {renderIcon()}
           {children}
         </>
       )}

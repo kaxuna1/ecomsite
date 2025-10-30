@@ -290,7 +290,17 @@ router.get(
       );
 
       if (!translation) {
-        return res.status(404).json({ message: 'Translation not found' });
+        // Return empty translation object instead of 404
+        return res.json({
+          pageId: parseInt(req.params.id),
+          languageCode: req.params.lang,
+          title: '',
+          slug: '',
+          metaTitle: '',
+          metaDescription: '',
+          createdAt: null,
+          updatedAt: null
+        });
       }
 
       res.json(translation);
@@ -313,8 +323,8 @@ router.post(
     param('lang').isString().notEmpty(),
     body('title').isString().notEmpty(),
     body('slug').isString().notEmpty().matches(/^[a-z0-9-]+$/),
-    body('metaTitle').optional().isString(),
-    body('metaDescription').optional().isString()
+    body('metaTitle').optional({ nullable: true }).custom((value) => value === null || typeof value === 'string'),
+    body('metaDescription').optional({ nullable: true }).custom((value) => value === null || typeof value === 'string')
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -656,7 +666,14 @@ router.get(
       );
 
       if (!translation) {
-        return res.status(404).json({ message: 'Translation not found' });
+        // Return empty translation object instead of 404
+        return res.json({
+          blockId: parseInt(req.params.id),
+          languageCode: req.params.lang,
+          content: {},
+          createdAt: null,
+          updatedAt: null
+        });
       }
 
       res.json(translation);
@@ -1014,7 +1031,23 @@ router.get(
 
       const translation = await cmsService.getFooterTranslation(footer.id, req.params.lang);
       if (!translation) {
-        return res.status(404).json({ message: 'Translation not found' });
+        // Return empty translation object instead of 404
+        return res.json({
+          footerSettingsId: footer.id,
+          languageCode: req.params.lang,
+          brandName: '',
+          brandTagline: '',
+          footerColumns: [],
+          contactInfo: {},
+          newsletterTitle: '',
+          newsletterDescription: '',
+          newsletterPlaceholder: '',
+          newsletterButtonText: '',
+          copyrightText: '',
+          bottomLinks: [],
+          createdAt: null,
+          updatedAt: null
+        });
       }
 
       res.json(translation);

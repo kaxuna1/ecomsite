@@ -101,3 +101,8 @@ export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: Nex
     next();
   }
 };
+
+// Export aliases for convenience
+export const optionalAuthMiddleware = optionalAuth;
+export const authMiddleware = userAuth;
+export const adminAuthMiddleware = authenticate;

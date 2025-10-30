@@ -15,7 +15,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { createOrder } from '../api/orders';
 import { useCart } from '../context/CartContext';
-import { useI18n } from '../context/I18nContext';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import AddressSelector from '../components/AddressSelector';
 import type { UserAddress } from '../types/address';
@@ -32,7 +32,7 @@ function CheckoutPage() {
   const { lang = 'en' } = useParams<{ lang: string }>();
   const { items, total, subtotal, discount, promoCode, clear } = useCart();
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const prefersReducedMotion = useReducedMotion();
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
@@ -129,7 +129,7 @@ function CheckoutPage() {
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-jade transition-colors hover:text-jade/80"
       >
         <ArrowLeftIcon className="h-4 w-4" />
-        Back to Cart
+        {t('checkout.backToCart')}
       </Link>
 
       <motion.div {...fadeIn} className="mb-8">
@@ -152,7 +152,7 @@ function CheckoutPage() {
               >
                 <UserIcon className="h-5 w-5 text-jade" />
                 <div>
-                  <p className="text-sm font-semibold text-midnight">Logged in as {user.name}</p>
+                  <p className="text-sm font-semibold text-midnight">{t('checkout.loggedInAs', { name: user.name })}</p>
                   <p className="text-xs text-midnight/70">{user.email}</p>
                 </div>
               </motion.div>
@@ -172,10 +172,10 @@ function CheckoutPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-midnight mb-2">
-                      Have an account?
+                      {t('checkout.haveAccount')}
                     </h3>
                     <p className="text-sm text-midnight/70 mb-4">
-                      Log in to enjoy faster checkout, saved addresses, and order tracking.
+                      {t('checkout.loginBenefit')}
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <Link
@@ -183,17 +183,17 @@ function CheckoutPage() {
                         className="inline-flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blush/90 hover:shadow-md"
                       >
                         <UserIcon className="h-4 w-4" />
-                        Log In
+                        {t('checkout.logIn')}
                       </Link>
                       <Link
                         to={`/${lang}/signup?redirect=/${lang}/checkout`}
                         className="inline-flex items-center gap-2 rounded-full border-2 border-blush/30 bg-white px-5 py-2.5 text-sm font-semibold text-blush transition-all hover:border-blush hover:bg-blush/5"
                       >
-                        Create Account
+                        {t('checkout.createAccount')}
                       </Link>
                     </div>
                     <p className="mt-3 text-xs text-midnight/50">
-                      Or continue below as a guest
+                      {t('checkout.continueAsGuest')}
                     </p>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ function CheckoutPage() {
               <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-midnight/60 px-2">
                 <div className="flex items-center gap-2">
                   <TruckIcon className="h-4 w-4" />
-                  {t('checkout.contactLegend')} & Delivery
+                  {t('checkout.contactLegend')} {t('checkout.deliveryInfo')}
                 </div>
               </legend>
               <div>
@@ -226,7 +226,7 @@ function CheckoutPage() {
                     className={`mt-2 w-full rounded-full border-2 ${
                       errors.name ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
                     } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none`}
-                    placeholder="Enter your full name"
+                    placeholder={t('checkout.namePlaceholder')}
                     {...register('name', { required: t('checkout.nameError') })}
                   />
                 </label>
@@ -249,12 +249,12 @@ function CheckoutPage() {
                     className={`mt-2 w-full rounded-full border-2 ${
                       errors.email ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
                     } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none`}
-                    placeholder="your@email.com"
+                    placeholder={t('checkout.emailPlaceholder')}
                     {...register('email', {
                       required: t('checkout.emailError'),
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
+                        message: t('checkout.emailInvalid')
                       }
                     })}
                   />
@@ -276,7 +276,7 @@ function CheckoutPage() {
                   <input
                     type="tel"
                     className="mt-2 w-full rounded-full border-2 border-jade/30 bg-champagne/50 px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder={t('checkout.phonePlaceholder')}
                     {...register('phone')}
                   />
                 </label>
@@ -289,7 +289,7 @@ function CheckoutPage() {
                     className={`mt-2 w-full rounded-3xl border-2 ${
                       errors.address ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
                     } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none resize-none`}
-                    placeholder="Street address, city, state, postal code"
+                    placeholder={t('checkout.addressPlaceholder')}
                     {...register('address', { required: t('checkout.addressError') })}
                   />
                 </label>
@@ -310,7 +310,7 @@ function CheckoutPage() {
                   <textarea
                     rows={3}
                     className="mt-2 w-full rounded-3xl border-2 border-jade/30 bg-champagne/50 px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none resize-none"
-                    placeholder="Delivery instructions, gift message, etc."
+                    placeholder={t('checkout.notesPlaceholder')}
                     {...register('notes')}
                   />
                 </label>
@@ -375,7 +375,7 @@ function CheckoutPage() {
             >
               <h2 className="mb-4 flex items-center gap-2 font-display text-xl text-midnight">
                 <ShoppingBagIcon className="h-5 w-5" />
-                Order Items ({itemCount})
+                {t('checkout.orderItems')} ({itemCount})
               </h2>
               <div className="space-y-4">
                 {items.map(({ product, quantity, variant }) => {
@@ -413,7 +413,7 @@ function CheckoutPage() {
                           </div>
                         )}
 
-                        <p className="mt-1 text-xs text-midnight/60">Qty: {quantity}</p>
+                        <p className="mt-1 text-xs text-midnight/60">{t('checkout.qty')}: {quantity}</p>
                         <p className="mt-1 text-sm font-bold text-jade">${(itemPrice * quantity).toFixed(2)}</p>
                       </div>
                     </div>
@@ -433,7 +433,7 @@ function CheckoutPage() {
 
               <div className="space-y-3 border-t border-champagne/20 pt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-champagne/70">Subtotal</span>
+                  <span className="text-champagne/70">{t('checkout.subtotal')}</span>
                   <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
 
@@ -447,7 +447,7 @@ function CheckoutPage() {
                       <div className="flex items-center gap-2">
                         <TagIcon className="h-4 w-4 text-jade" />
                         <div>
-                          <p className="font-medium text-jade">Promo Applied</p>
+                          <p className="font-medium text-jade">{t('cart.promoApplied')}</p>
                           <p className="text-xs text-champagne/70">{promoCode.code}</p>
                         </div>
                       </div>
@@ -459,26 +459,26 @@ function CheckoutPage() {
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-1">
                     <TruckIcon className="h-4 w-4" />
-                    <span className="text-champagne/70">Shipping</span>
+                    <span className="text-champagne/70">{t('cart.shipping')}</span>
                   </div>
                   <span className={`font-semibold ${shipping === 0 ? 'text-jade' : ''}`}>
-                    {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? t('cart.free') : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
 
                 {shipping > 0 && (
                   <div className="text-xs text-champagne/60 italic">
-                    Add ${(50 - (subtotal - discount)).toFixed(2)} more for free shipping
+                    {t('checkout.addMoreForFreeShipping', { amount: (50 - (subtotal - discount)).toFixed(2) })}
                   </div>
                 )}
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-champagne/70">Tax (10%)</span>
+                  <span className="text-champagne/70">{t('checkout.tax')}</span>
                   <span className="font-semibold">${tax.toFixed(2)}</span>
                 </div>
 
                 <div className="flex items-center justify-between border-t border-champagne/40 pt-3 text-xl font-bold">
-                  <span>Total</span>
+                  <span>{t('cart.total')}</span>
                   <span className="text-jade">${finalTotal.toFixed(2)}</span>
                 </div>
               </div>

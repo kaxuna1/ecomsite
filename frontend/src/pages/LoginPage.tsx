@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowRightOnRectangleIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import type { LoginPayload } from '../types/product';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -33,7 +35,7 @@ export default function LoginPage() {
       await userLogin(data);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+      setError(err.response?.data?.message || t('login.error'));
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +59,8 @@ export default function LoginPage() {
           >
             <ArrowRightOnRectangleIcon className="h-8 w-8 text-jade" />
           </motion.div>
-          <h2 className="font-display text-4xl text-midnight mb-2">Welcome Back</h2>
-          <p className="text-midnight/60">Sign in to your account</p>
+          <h2 className="font-display text-4xl text-midnight mb-2">{t('login.title')}</h2>
+          <p className="text-midnight/60">{t('login.subtitle')}</p>
         </div>
 
         {/* Form Card */}
@@ -83,7 +85,7 @@ export default function LoginPage() {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-midnight mb-2">
-                Email Address
+                {t('login.email')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -91,10 +93,10 @@ export default function LoginPage() {
                 </div>
                 <input
                   {...register('email', {
-                    required: 'Email is required',
+                    required: t('login.emailRequired'),
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
+                      message: t('login.emailInvalid')
                     }
                   })}
                   type="email"
@@ -102,7 +104,7 @@ export default function LoginPage() {
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="you@example.com"
+                  placeholder={t('login.emailPlaceholder')}
                   autoComplete="email"
                 />
               </div>
@@ -120,7 +122,7 @@ export default function LoginPage() {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-midnight mb-2">
-                Password
+                {t('login.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -128,15 +130,15 @@ export default function LoginPage() {
                 </div>
                 <input
                   {...register('password', {
-                    required: 'Password is required',
-                    minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                    required: t('login.passwordRequired'),
+                    minLength: { value: 6, message: t('login.passwordMinLength') }
                   })}
                   type="password"
                   id="password"
                   className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
                     errors.password ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
                   }`}
-                  placeholder="••••••••"
+                  placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
                 />
               </div>
@@ -161,12 +163,12 @@ export default function LoginPage() {
                   className="h-4 w-4 text-jade focus:ring-jade border-champagne/60 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-midnight/60">
-                  Remember me
+                  {t('login.rememberMe')}
                 </label>
               </div>
               <div className="text-sm">
                 <a href="#" className="font-semibold text-jade hover:text-jade/80 transition-colors">
-                  Forgot password?
+                  {t('login.forgotPassword')}
                 </a>
               </div>
             </div>
@@ -186,12 +188,12 @@ export default function LoginPage() {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   />
-                  <span>Signing in...</span>
+                  <span>{t('login.signingIn')}</span>
                 </>
               ) : (
                 <>
                   <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                  <span>Sign In</span>
+                  <span>{t('login.signIn')}</span>
                 </>
               )}
             </motion.button>
@@ -200,12 +202,12 @@ export default function LoginPage() {
           {/* Signup Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-midnight/60">
-              Don't have an account?{' '}
+              {t('login.noAccount')}{' '}
               <Link
                 to="/signup"
                 className="font-semibold text-jade hover:text-jade/80 transition-colors"
               >
-                Create one now
+                {t('login.createAccount')}
               </Link>
             </p>
           </div>
@@ -222,7 +224,7 @@ export default function LoginPage() {
             to="/"
             className="text-sm text-midnight/60 hover:text-midnight transition-colors"
           >
-            Back to Home
+            {t('login.backToHome')}
           </Link>
         </motion.div>
       </motion.div>

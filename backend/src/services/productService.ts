@@ -795,5 +795,614 @@ export const productService = {
     }
 
     return products;
+  },
+
+  // ========================================================================
+  // PRODUCT WIDGET ENHANCEMENT - NEW METHODS
+  // ========================================================================
+
+  /**
+   * Fetch products based on rules (new arrivals, bestsellers, on sale, etc.)
+   * @param rules - Rules object defining selection criteria
+   * @param options - Pagination, language, limit, sort options
+   */
+  async fetchProductsByRules(
+    rules: {
+      showNewArrivals?: boolean;
+      showBestsellers?: boolean;
+      showOnSale?: boolean;
+      showFeatured?: boolean;
+      showLowStock?: boolean;
+      excludeOutOfStock?: boolean;
+      minRating?: number;
+      minReviews?: number;
+    },
+    options: {
+      language?: string;
+      limit?: number;
+      sortBy?: string;
+    } = {}
+  ) {
+    const language = options.language || 'en';
+    const limit = options.limit || 12;
+    const sortBy = options.sortBy || 'default';
+
+    let whereConditions: string[] = [];
+    const params: any[] = [language];
+    let paramIndex = 2;
+
+    // Apply rules
+    if (rules.showNewArrivals) {
+      whereConditions.push(`p.is_new = true`);
+    }
+
+    if (rules.showBestsellers) {
+      whereConditions.push(`p.sales_count >= 10`);
+    }
+
+    if (rules.showOnSale) {
+      whereConditions.push(`p.sale_price IS NOT NULL`);
+    }
+
+    if (rules.showFeatured) {
+      whereConditions.push(`p.is_featured = true`);
+    }
+
+    if (rules.showLowStock) {
+      whereConditions.push(`p.inventory > 0 AND p.inventory <= 10`);
+    }
+
+    if (rules.excludeOutOfStock) {
+      whereConditions.push(`p.inventory > 0`);
+    }
+
+    // Note: Rating/reviews would require a reviews table
+    // For now, we'll skip these filters but keep them in the interface
+
+    const whereClause = whereConditions.length > 0
+      ? `WHERE ${whereConditions.join(' AND ')}`
+      : '';
+
+    // Determine ORDER BY clause based on sortBy
+    let orderByClause = '';
+    switch (sortBy) {
+      case 'price_asc':
+        orderByClause = 'ORDER BY p.price ASC';
+        break;
+      case 'price_desc':
+        orderByClause = 'ORDER BY p.price DESC';
+        break;
+      case 'date_desc':
+        orderByClause = 'ORDER BY p.created_at DESC';
+        break;
+      case 'date_asc':
+        orderByClause = 'ORDER BY p.created_at ASC';
+        break;
+      case 'popularity':
+        orderByClause = 'ORDER BY p.sales_count DESC';
+        break;
+      case 'name_asc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) ASC';
+        break;
+      case 'name_desc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) DESC';
+        break;
+      default:
+        // Default: featured first, then by sales, then by date
+        orderByClause = 'ORDER BY p.is_featured DESC, p.sales_count DESC, p.created_at DESC';
+    }
+
+    const query = `
+      SELECT
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description
+      FROM products p
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      ${whereClause}
+      ${orderByClause}
+      LIMIT $${paramIndex}
+    `;
+
+    params.push(limit);
+
+    const result = await pool.query(query, params);
+    const products = result.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
+  },
+
+  /**
+   * Fetch products by category filter
+   * @param categories - Array of category names
+   * @param options - Pagination, language, limit, sort options
+   */
+  async fetchProductsByCategory(
+    categories: string[],
+    options: {
+      language?: string;
+      limit?: number;
+      sortBy?: string;
+    } = {}
+  ) {
+    const language = options.language || 'en';
+    const limit = options.limit || 12;
+    const sortBy = options.sortBy || 'default';
+
+    // Build category filter - product must have at least one of the specified categories
+    let categoryCondition = '';
+    if (categories && categories.length > 0) {
+      // Use JSONB operators to check if any category matches
+      const categoryChecks = categories.map((_, idx) => `p.categories @> $${idx + 2}::jsonb`).join(' OR ');
+      categoryCondition = `WHERE (${categoryChecks})`;
+    }
+
+    // Determine ORDER BY clause
+    let orderByClause = '';
+    switch (sortBy) {
+      case 'price_asc':
+        orderByClause = 'ORDER BY p.price ASC';
+        break;
+      case 'price_desc':
+        orderByClause = 'ORDER BY p.price DESC';
+        break;
+      case 'date_desc':
+        orderByClause = 'ORDER BY p.created_at DESC';
+        break;
+      case 'date_asc':
+        orderByClause = 'ORDER BY p.created_at ASC';
+        break;
+      case 'popularity':
+        orderByClause = 'ORDER BY p.sales_count DESC';
+        break;
+      case 'name_asc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) ASC';
+        break;
+      case 'name_desc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) DESC';
+        break;
+      default:
+        orderByClause = 'ORDER BY p.is_featured DESC, p.sales_count DESC, p.created_at DESC';
+    }
+
+    const query = `
+      SELECT
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description
+      FROM products p
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      ${categoryCondition}
+      ${orderByClause}
+      LIMIT $${categories.length + 2}
+    `;
+
+    const params = [language, ...categories.map(cat => JSON.stringify([cat])), limit];
+
+    const result = await pool.query(query, params);
+    const products = result.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
+  },
+
+  /**
+   * Fetch products by custom attribute filters
+   * @param attributeFilters - Object mapping attribute keys to values
+   * @param options - Pagination, language, limit, sort options
+   */
+  async fetchProductsByAttributes(
+    attributeFilters: { [key: string]: string[] },
+    options: {
+      language?: string;
+      limit?: number;
+      sortBy?: string;
+    } = {}
+  ) {
+    const language = options.language || 'en';
+    const limit = options.limit || 12;
+    const sortBy = options.sortBy || 'default';
+
+    let whereConditions: string[] = [];
+    const params: any[] = [language];
+    let paramIndex = 2;
+
+    // Build attribute filters
+    for (const [key, values] of Object.entries(attributeFilters)) {
+      if (!values || values.length === 0) continue;
+
+      if (values.length === 1) {
+        // Single value filter
+        whereConditions.push(`p.custom_attributes->>'${key}' = $${paramIndex}`);
+        params.push(values[0]);
+        paramIndex++;
+      } else {
+        // Multiple values - product should match at least one
+        const valueChecks = values.map(() => {
+          const check = `p.custom_attributes->>'${key}' = $${paramIndex}`;
+          params.push(values[paramIndex - 2]);
+          paramIndex++;
+          return check;
+        });
+        whereConditions.push(`(${valueChecks.join(' OR ')})`);
+      }
+    }
+
+    const whereClause = whereConditions.length > 0
+      ? `WHERE ${whereConditions.join(' AND ')}`
+      : '';
+
+    // Determine ORDER BY clause
+    let orderByClause = '';
+    switch (sortBy) {
+      case 'price_asc':
+        orderByClause = 'ORDER BY p.price ASC';
+        break;
+      case 'price_desc':
+        orderByClause = 'ORDER BY p.price DESC';
+        break;
+      case 'date_desc':
+        orderByClause = 'ORDER BY p.created_at DESC';
+        break;
+      case 'date_asc':
+        orderByClause = 'ORDER BY p.created_at ASC';
+        break;
+      case 'popularity':
+        orderByClause = 'ORDER BY p.sales_count DESC';
+        break;
+      case 'name_asc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) ASC';
+        break;
+      case 'name_desc':
+        orderByClause = 'ORDER BY COALESCE(pt.name, p.name) DESC';
+        break;
+      default:
+        orderByClause = 'ORDER BY p.is_featured DESC, p.sales_count DESC, p.created_at DESC';
+    }
+
+    const query = `
+      SELECT
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description
+      FROM products p
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      ${whereClause}
+      ${orderByClause}
+      LIMIT $${paramIndex}
+    `;
+
+    params.push(limit);
+
+    const result = await pool.query(query, params);
+    const products = result.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
+  },
+
+  /**
+   * Track a product view for analytics and recommendations
+   * @param productId - Product ID
+   * @param userId - User ID (optional, null for guests)
+   * @param sessionId - Session ID for guest tracking
+   */
+  async trackProductView(productId: number, userId: number | null, sessionId: string) {
+    await pool.query(
+      `INSERT INTO product_views (product_id, user_id, session_id, viewed_at)
+       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
+      [productId, userId, sessionId]
+    );
+  },
+
+  /**
+   * Get recently viewed products for a user or session
+   * @param userId - User ID (optional)
+   * @param sessionId - Session ID (optional)
+   * @param options - Language and limit options
+   */
+  async getRecentlyViewedProducts(
+    userId: number | null,
+    sessionId: string | null,
+    options: {
+      language?: string;
+      limit?: number;
+    } = {}
+  ) {
+    const language = options.language || 'en';
+    const limit = options.limit || 8;
+
+    if (!userId && !sessionId) {
+      return [];
+    }
+
+    let whereClause = '';
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (userId) {
+      whereClause = `WHERE pv.user_id = $${paramIndex}`;
+      params.push(userId);
+      paramIndex++;
+    } else if (sessionId) {
+      whereClause = `WHERE pv.session_id = $${paramIndex}`;
+      params.push(sessionId);
+      paramIndex++;
+    }
+
+    params.push(language);
+    const languageParamIndex = paramIndex;
+    paramIndex++;
+
+    params.push(limit);
+    const limitParamIndex = paramIndex;
+
+    const query = `
+      SELECT DISTINCT ON (p.id)
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        pv.viewed_at
+      FROM product_views pv
+      JOIN products p ON pv.product_id = p.id
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $${languageParamIndex}
+      ${whereClause}
+      ORDER BY p.id, pv.viewed_at DESC
+      LIMIT $${limitParamIndex}
+    `;
+
+    const result = await pool.query(query, params);
+    const products = result.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
+  },
+
+  /**
+   * Fetch recommended products based on a source product
+   * @param sourceProductId - Source product ID
+   * @param recommendationType - Type of recommendation ('related', 'similar', 'frequently_bought')
+   * @param options - Language and limit options
+   */
+  async fetchRecommendedProducts(
+    sourceProductId: number,
+    recommendationType: 'related' | 'similar' | 'frequently_bought' = 'related',
+    options: {
+      language?: string;
+      limit?: number;
+    } = {}
+  ) {
+    const language = options.language || 'en';
+    const limit = options.limit || 6;
+
+    // First, check if there are manual recommendations
+    const query = `
+      SELECT
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        pr.score
+      FROM product_recommendations pr
+      JOIN products p ON pr.recommended_product_id = p.id
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $2
+      WHERE pr.source_product_id = $1
+        AND pr.recommendation_type = $3
+      ORDER BY pr.score DESC, p.sales_count DESC
+      LIMIT $4
+    `;
+
+    const result = await pool.query(query, [sourceProductId, language, recommendationType, limit]);
+
+    if (result.rows.length > 0) {
+      const products = result.rows.map(mapProduct);
+
+      // Fetch images for all products
+      for (const product of products) {
+        product.images = await getProductImages(product.id);
+      }
+
+      return products;
+    }
+
+    // If no manual recommendations, fall back to algorithm-based recommendations
+    // For 'similar', find products in same categories
+    // For 'related', find products frequently viewed together (simplified: same categories)
+    // For 'frequently_bought', find products with similar sales patterns
+
+    const sourceProduct = await this.get(sourceProductId, language);
+    if (!sourceProduct || !sourceProduct.categories || sourceProduct.categories.length === 0) {
+      return [];
+    }
+
+    // Find products with overlapping categories, excluding the source product
+    const fallbackQuery = `
+      SELECT
+        p.id,
+        p.price,
+        p.sale_price,
+        p.image_url,
+        p.inventory,
+        p.categories,
+        p.is_new,
+        p.is_featured,
+        p.sales_count,
+        p.created_at,
+        p.updated_at,
+        p.meta_keywords,
+        p.og_image_url,
+        p.canonical_url,
+        p.custom_attributes,
+        COALESCE(pt.name, p.name) as name,
+        COALESCE(pt.short_description, p.short_description) as short_description,
+        COALESCE(pt.description, p.description) as description,
+        COALESCE(pt.highlights, p.highlights) as highlights,
+        COALESCE(pt.usage, p.usage) as usage,
+        COALESCE(pt.slug, p.slug) as slug,
+        COALESCE(pt.meta_title, p.meta_title) as meta_title,
+        COALESCE(pt.meta_description, p.meta_description) as meta_description
+      FROM products p
+      LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $2
+      WHERE p.id != $1
+        AND p.categories && $3::jsonb
+      ORDER BY p.sales_count DESC, p.created_at DESC
+      LIMIT $4
+    `;
+
+    const fallbackResult = await pool.query(fallbackQuery, [
+      sourceProductId,
+      language,
+      JSON.stringify(sourceProduct.categories),
+      limit
+    ]);
+
+    const products = fallbackResult.rows.map(mapProduct);
+
+    // Fetch images for all products
+    for (const product of products) {
+      product.images = await getProductImages(product.id);
+    }
+
+    return products;
+  },
+
+  async getAllProductsTranslationStatus(languageCode: string) {
+    // Get all products
+    const productsResult = await pool.query(`
+      SELECT id, name
+      FROM products
+      ORDER BY name
+    `);
+
+    const products = productsResult.rows;
+    const statuses = [];
+
+    // Get translation status for each product
+    for (const product of products) {
+      const status = await this.getTranslationStatus(product.id, languageCode);
+      statuses.push({
+        productId: product.id,
+        productName: product.name,
+        ...status
+      });
+    }
+
+    return statuses;
   }
 };

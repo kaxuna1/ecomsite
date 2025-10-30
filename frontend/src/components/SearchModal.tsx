@@ -3,12 +3,12 @@
 // instant autocomplete, keyboard navigation, focus trap, accessibility (ARIA)
 
 import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, XMarkIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { searchProducts } from '../api/products';
-import { useI18n } from '../context/I18nContext';
 import type { Product } from '../types/product';
 
 interface SearchModalProps {
@@ -34,13 +34,14 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const { t } = useTranslation();
+  const { lang = 'en' } = useParams<{ lang: string }>();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { lang } = useI18n();
 
   // Debounce search query (300ms - industry standard)
   const debouncedQuery = useDebounce(query, 300);
@@ -239,16 +240,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Search products..."
+                  placeholder={t('search.placeholder')}
                   className="flex-1 text-base text-midnight placeholder-midnight/40 bg-transparent border-none outline-none"
                   autoComplete="off"
-                  aria-label="Search products"
+                  aria-label={t('search.placeholder')}
                 />
                 {query && (
                   <button
                     onClick={() => setQuery('')}
                     className="p-1.5 text-midnight/50 hover:text-midnight hover:bg-champagne/30 rounded-lg transition-colors"
-                    aria-label="Clear search"
+                    aria-label={t('search.clearSearch')}
                   >
                     <XMarkIcon className="h-4 w-4" />
                   </button>
@@ -270,7 +271,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="py-2">
                   <div className="px-4 py-2">
                     <p className="text-xs font-semibold text-midnight/60 uppercase tracking-wide">
-                      Products
+                      {t('search.products')}
                     </p>
                   </div>
                   {displayProducts.map((product, index) => (
@@ -316,7 +317,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         </p>
                         {product.category && (
                           <p className="text-xs text-midnight/50 mt-0.5">
-                            in {product.category}
+                            {t('search.inCategory')} {product.category}
                           </p>
                         )}
                       </div>
@@ -348,7 +349,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         onClick={() => handleSearchSubmit(query)}
                         className="w-full px-4 py-3 text-sm font-semibold text-jade hover:bg-jade/10 transition-colors text-center"
                       >
-                        View all {products.length} results →
+                        {t('search.viewAllResults', { count: products.length })} →
                       </button>
                     </div>
                   )}
@@ -360,10 +361,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="px-4 py-12 text-center">
                   <MagnifyingGlassIcon className="h-12 w-12 mx-auto text-midnight/20 mb-3" />
                   <p className="text-midnight/60 text-sm">
-                    No products found for "{query}"
+                    {t('search.noResults', { query })}
                   </p>
                   <p className="text-midnight/40 text-xs mt-1">
-                    Try different keywords
+                    {t('search.tryDifferentKeywords')}
                   </p>
                 </div>
               )}
@@ -373,13 +374,13 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="py-2">
                   <div className="px-4 py-2 flex items-center justify-between">
                     <p className="text-xs font-semibold text-midnight/60 uppercase tracking-wide">
-                      Recent Searches
+                      {t('search.recentSearches')}
                     </p>
                     <button
                       onClick={clearRecentSearches}
                       className="text-xs text-midnight/40 hover:text-midnight transition-colors"
                     >
-                      Clear
+                      {t('search.clear')}
                     </button>
                   </div>
                   {recentSearches.map((searchTerm, index) => (
@@ -404,10 +405,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="px-4 py-12 text-center">
                   <MagnifyingGlassIcon className="h-12 w-12 mx-auto text-midnight/20 mb-3" />
                   <p className="text-midnight/60 text-sm mb-1">
-                    Search for products
+                    {t('search.searchForProducts')}
                   </p>
                   <p className="text-midnight/40 text-xs">
-                    Start typing to see suggestions
+                    {t('search.startTyping')}
                   </p>
                 </div>
               )}
@@ -420,16 +421,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   <span className="flex items-center gap-1.5">
                     <kbd className="px-2 py-1 bg-white rounded border border-midnight/10 font-mono text-[10px]">↑</kbd>
                     <kbd className="px-2 py-1 bg-white rounded border border-midnight/10 font-mono text-[10px]">↓</kbd>
-                    navigate
+                    {t('search.navigate')}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <kbd className="px-2 py-1 bg-white rounded border border-midnight/10 font-mono text-[10px]">Enter</kbd>
-                    select
+                    {t('search.select')}
                   </span>
                 </div>
                 <span className="flex items-center gap-1.5">
                   <kbd className="px-2 py-1 bg-white rounded border border-midnight/10 font-mono text-[10px]">Esc</kbd>
-                  close
+                  {t('search.close')}
                 </span>
               </div>
             </div>

@@ -138,17 +138,84 @@ export interface FeaturesContent {
   columns?: 2 | 3 | 4;
 }
 
-// Product Showcase Block - Featured products section
+// Product Showcase Block - Enhanced with multiple selection methods and layouts
 export interface ProductShowcaseContent {
   type: 'products';
   title: string;
   subtitle?: string;
-  productIds: number[]; // References to products table
-  displayStyle?: 'grid' | 'carousel' | 'featured';
-  showPrices?: boolean;
-  showAddToCart?: boolean;
+
+  // Selection Method
+  selectionMethod: 'manual' | 'category' | 'rules' | 'featured' | 'recent' | 'recommended';
+  productIds?: number[]; // Manual selection
+  categoryFilter?: string[]; // Category-based
+  attributeFilters?: { [key: string]: string[] }; // Attribute-based
+  sourceProductId?: number; // For recommendations
+
+  // Rules-based selection
+  rules?: {
+    showNewArrivals?: boolean;
+    showBestsellers?: boolean;
+    showOnSale?: boolean;
+    showFeatured?: boolean;
+    showLowStock?: boolean;
+    excludeOutOfStock?: boolean;
+    minRating?: number;
+    minReviews?: number;
+  };
+
+  // Display options
+  displayStyle: 'grid' | 'carousel' | 'list' | 'masonry' | 'featured';
+  columns?: 2 | 3 | 4 | 5 | 6;
+  maxProducts?: number;
+
+  // Product card elements
+  showElements?: {
+    image?: boolean;
+    title?: boolean;
+    description?: boolean;
+    shortDescription?: boolean;
+    price?: boolean;
+    comparePrice?: boolean;
+    rating?: boolean;
+    reviewCount?: boolean;
+    addToCart?: boolean;
+    quickView?: boolean;
+    wishlist?: boolean;
+    categories?: boolean;
+    badges?: boolean;
+    stock?: boolean;
+  };
+
+  // Sorting
+  sortBy?: 'default' | 'price_asc' | 'price_desc' | 'date_desc' | 'date_asc' | 'popularity' | 'rating' | 'name_asc' | 'name_desc';
+
+  // CTA
   ctaText?: string;
   ctaLink?: string;
+  showCta?: boolean;
+
+  // Styling
+  style?: {
+    cardStyle?: 'elevated' | 'flat' | 'outlined' | 'minimal';
+    imageAspectRatio?: '1:1' | '4:5' | '3:4' | '16:9';
+    hoverEffect?: 'zoom' | 'lift' | 'fade' | 'slide' | 'none';
+    gap?: 'none' | 'small' | 'medium' | 'large';
+    borderRadius?: 'none' | 'small' | 'medium' | 'large' | 'full';
+  };
+
+  // Carousel settings (when displayStyle = 'carousel')
+  carouselSettings?: {
+    autoPlay?: boolean;
+    autoPlayInterval?: number;
+    loop?: boolean;
+    showArrows?: boolean;
+    showDots?: boolean;
+    slidesPerView?: number;
+  };
+
+  // Legacy fields (deprecated but kept for backwards compatibility)
+  showPrices?: boolean;
+  showAddToCart?: boolean;
 }
 
 // Testimonials Block - Customer reviews

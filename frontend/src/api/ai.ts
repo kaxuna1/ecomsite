@@ -150,6 +150,57 @@ export async function translateProduct(
 }
 
 // ============================================================================
+// CMS Page Translation
+// ============================================================================
+
+export interface TranslateCMSPageRequest {
+  title: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  blocks: Array<{
+    id: number;
+    type: string;
+    content: any;
+  }>;
+  targetLanguage: string;
+  sourceLanguage?: string;
+}
+
+export interface TranslateCMSPageResponse {
+  translatedFields: {
+    title: string;
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+  translatedBlocks: Array<{
+    id: number;
+    content: any;
+  }>;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function translateCMSPage(
+  data: TranslateCMSPageRequest
+): Promise<TranslateCMSPageResponse> {
+  const response = await api.post<{ success: boolean; data: TranslateCMSPageResponse }>(
+    '/admin/ai/translate-cms-page',
+    {
+      fields: {
+        title: data.title,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription
+      },
+      blocks: data.blocks,
+      sourceLanguage: data.sourceLanguage || 'en',
+      targetLanguage: data.targetLanguage
+    }
+  );
+  return response.data.data;
+}
+
+// ============================================================================
 // FAQ Generator
 // ============================================================================
 
@@ -270,6 +321,44 @@ export async function generateTestimonials(
 ): Promise<GenerateTestimonialsResponse> {
   const response = await api.post<{ success: boolean; data: GenerateTestimonialsResponse }>(
     '/admin/ai/generate-testimonials',
+    data
+  );
+  return response.data.data;
+}
+
+// ============================================================================
+// Features Generator
+// ============================================================================
+
+export interface GenerateFeaturesRequest {
+  productOrService: string;
+  industry?: string;
+  targetAudience?: string;
+  numberOfFeatures: number; // 3-8
+  focusArea?: 'benefits' | 'technical' | 'competitive' | 'user-experience' | 'mixed';
+  tone?: 'professional' | 'friendly' | 'technical' | 'persuasive';
+  includeSpecificFeatures?: string[];
+  language?: string;
+}
+
+export interface GeneratedFeature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface GenerateFeaturesResponse {
+  features: GeneratedFeature[];
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function generateFeatures(
+  data: GenerateFeaturesRequest
+): Promise<GenerateFeaturesResponse> {
+  const response = await api.post<{ success: boolean; data: GenerateFeaturesResponse }>(
+    '/admin/ai/generate-features',
     data
   );
   return response.data.data;

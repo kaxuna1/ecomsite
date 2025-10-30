@@ -30,6 +30,7 @@ const SignupPage = lazy(() => import('./pages/SignupPage'));
 const ProfilePage = lazy(() => import('./pages/account/ProfilePage'));
 const OrdersPage = lazy(() => import('./pages/account/OrdersPage'));
 const FavoritesPage = lazy(() => import('./pages/account/FavoritesPage'));
+const MyReviews = lazy(() => import('./pages/account/MyReviews'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
@@ -51,12 +52,16 @@ const AdminAttributes = lazy(() => import('./pages/admin/AdminAttributes'));
 const AdminVariantOptions = lazy(() => import('./pages/admin/AdminVariantOptions'));
 const AdminLanguages = lazy(() => import('./pages/admin/AdminLanguages'));
 const AdminMedia = lazy(() => import('./pages/admin/AdminMedia'));
+const AdminNewsletter = lazy(() => import('./pages/admin/AdminNewsletter'));
+const AdminReviews = lazy(() => import('./pages/admin/AdminReviews'));
+const AdminStaticTranslations = lazy(() => import('./pages/admin/AdminStaticTranslations'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
   const { lang } = useParams<{ lang: string }>();
   const { i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch enabled languages
   const { data: languages = [], isLoading } = useQuery({
@@ -71,13 +76,27 @@ function LanguageWrapper() {
     const validLanguageCodes = languages.map(l => l.code);
     const defaultLanguage = languages.find(l => l.isDefault)?.code || 'en';
 
-    if (validLanguageCodes.includes(lang) && i18n.language !== lang) {
-      i18n.changeLanguage(lang);
-    } else if (!validLanguageCodes.includes(lang)) {
-      // Invalid language, redirect to default language
-      navigate(`/${defaultLanguage}`, { replace: true });
+    if (validLanguageCodes.includes(lang)) {
+      // Valid language - sync with i18n and store in localStorage
+      if (i18n.language !== lang) {
+        i18n.changeLanguage(lang);
+      }
+      // Store the selected language in localStorage
+      localStorage.setItem('preferredLanguage', lang);
+    } else {
+      // Invalid language detected - this means the first segment is not a language code
+      // Get preferred language from localStorage, fallback to default
+      const preferredLanguage = localStorage.getItem('preferredLanguage') || defaultLanguage;
+
+      // Validate that preferred language is still enabled
+      const languageToUse = validLanguageCodes.includes(preferredLanguage)
+        ? preferredLanguage
+        : defaultLanguage;
+
+      console.log('[LanguageWrapper] Invalid language detected:', lang, '- Redirecting to', languageToUse);
+      navigate(`/${languageToUse}${location.pathname}`, { replace: true });
     }
-  }, [lang, i18n, navigate, languages, isLoading]);
+  }, [lang, i18n, navigate, location.pathname, languages, isLoading]);
 
   return null;
 }
@@ -101,16 +120,59 @@ function LanguageRedirect() {
   const validLanguageCodes = languages.map(l => l.code);
   const defaultLanguage = languages.find(l => l.isDefault)?.code || 'en';
 
-  // Create regex pattern for valid language codes
-  const languagePattern = new RegExp(`^/(${validLanguageCodes.join('|')})`);
-  const isLanguagePrefixed = languagePattern.test(pathname);
-
-  // If path doesn't start with /admin and isn't already language-prefixed
-  if (!pathname.startsWith('/admin') && !isLanguagePrefixed) {
-    return <Navigate to={`/${defaultLanguage}${pathname}`} replace />;
+  // Don't redirect admin paths
+  if (pathname.startsWith('/admin')) {
+    return null;
   }
 
+  // Create regex pattern for valid language codes (must match full segment)
+  const languagePattern = new RegExp(`^/(${validLanguageCodes.join('|')})(/|$)`);
+  const isLanguagePrefixed = languagePattern.test(pathname);
+
+  // If not already language-prefixed, add the preferred/default language prefix
+  if (!isLanguagePrefixed) {
+    // Get preferred language from localStorage, fallback to default
+    const preferredLanguage = localStorage.getItem('preferredLanguage') || defaultLanguage;
+
+    // Validate that preferred language is still enabled
+    const languageToUse = validLanguageCodes.includes(preferredLanguage)
+      ? preferredLanguage
+      : defaultLanguage;
+
+    console.log('[LanguageRedirect] Redirecting:', pathname, '→', `/${languageToUse}${pathname}`);
+    return <Navigate to={`/${languageToUse}${pathname}`} replace />;
+  }
+
+  console.log('[LanguageRedirect] Already has language prefix:', pathname);
   return null;
+}
+
+// Component to handle root redirect with default language
+function RootRedirect() {
+  // Fetch enabled languages
+  const { data: languages = [], isLoading } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false),
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  const validLanguageCodes = languages.map(l => l.code);
+  const defaultLanguage = languages.find(l => l.isDefault)?.code || 'en';
+
+  // Get preferred language from localStorage, fallback to default
+  const preferredLanguage = localStorage.getItem('preferredLanguage') || defaultLanguage;
+
+  // Validate that preferred language is still enabled
+  const languageToUse = validLanguageCodes.includes(preferredLanguage)
+    ? preferredLanguage
+    : defaultLanguage;
+
+  console.log('[RootRedirect] Redirecting to:', `/${languageToUse}`);
+  return <Navigate to={`/${languageToUse}`} replace />;
 }
 
 function App() {
@@ -118,7 +180,7 @@ function App() {
     <Suspense fallback={<LoadingScreen />}>
       <Routes>
         {/* Redirect root to default language */}
-        <Route path="/" element={<Navigate to="/en" replace />} />
+        <Route path="/" element={<RootRedirect />} />
 
         {/* Language-prefixed routes */}
         <Route path="/:lang">
@@ -160,6 +222,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="account/reviews"
+              element={
+                <ProtectedRoute>
+                  <MyReviews />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Dynamic CMS pages - must be last to avoid conflicts */}
             <Route path=":slug" element={<CMSPage />} />
@@ -188,6 +258,7 @@ function App() {
           <Route path="variant-options" element={<AdminVariantOptions />} />
           <Route path="media" element={<AdminMedia />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="reviews" element={<AdminReviews />} />
           <Route path="promo-codes" element={<AdminPromoCodes />} />
           <Route path="cms" element={<AdminCMS />} />
           <Route path="cms/edit/:id" element={<AdminCMSPageEditor />} />
@@ -199,6 +270,8 @@ function App() {
           <Route path="languages" element={<AdminLanguages />} />
           <Route path="translations" element={<AdminTranslations />} />
           <Route path="cms-translations" element={<AdminCMSTranslations />} />
+          <Route path="static-translations" element={<AdminStaticTranslations />} />
+          <Route path="newsletter" element={<AdminNewsletter />} />
         </Route>
 
         {/* Catch-all: redirect any non-language-prefixed paths to /en/{path} */}

@@ -48,6 +48,121 @@ export const fetchNewArrivals = async (): Promise<Product[]> => {
   return result.products;
 };
 
+// ========================================================================
+// PRODUCT WIDGET ENHANCEMENT - NEW API FUNCTIONS
+// ========================================================================
+
+export interface ProductRules {
+  showNewArrivals?: boolean;
+  showBestsellers?: boolean;
+  showOnSale?: boolean;
+  showFeatured?: boolean;
+  showLowStock?: boolean;
+  excludeOutOfStock?: boolean;
+  minRating?: number;
+  minReviews?: number;
+}
+
+export const fetchProductsByRules = async (
+  rules: ProductRules,
+  options: {
+    limit?: number;
+    sortBy?: string;
+  } = {}
+): Promise<Product[]> => {
+  const params = new URLSearchParams();
+
+  if (rules.showNewArrivals) params.append('showNewArrivals', 'true');
+  if (rules.showBestsellers) params.append('showBestsellers', 'true');
+  if (rules.showOnSale) params.append('showOnSale', 'true');
+  if (rules.showFeatured) params.append('showFeatured', 'true');
+  if (rules.showLowStock) params.append('showLowStock', 'true');
+  if (rules.excludeOutOfStock) params.append('excludeOutOfStock', 'true');
+  if (rules.minRating) params.append('minRating', rules.minRating.toString());
+  if (rules.minReviews) params.append('minReviews', rules.minReviews.toString());
+
+  if (options.limit) params.append('limit', options.limit.toString());
+  if (options.sortBy) params.append('sortBy', options.sortBy);
+
+  const response = await api.get<Product[]>(`/products/by-rules?${params.toString()}`);
+  return response.data;
+};
+
+export const fetchProductsByCategory = async (
+  categories: string[],
+  options: {
+    limit?: number;
+    sortBy?: string;
+  } = {}
+): Promise<Product[]> => {
+  const params = new URLSearchParams();
+
+  params.append('categories', JSON.stringify(categories));
+  if (options.limit) params.append('limit', options.limit.toString());
+  if (options.sortBy) params.append('sortBy', options.sortBy);
+
+  const response = await api.get<Product[]>(`/products/by-category?${params.toString()}`);
+  return response.data;
+};
+
+export const fetchProductsByAttributes = async (
+  attributeFilters: { [key: string]: string[] },
+  options: {
+    limit?: number;
+    sortBy?: string;
+  } = {}
+): Promise<Product[]> => {
+  const params = new URLSearchParams();
+
+  params.append('attributes', JSON.stringify(attributeFilters));
+  if (options.limit) params.append('limit', options.limit.toString());
+  if (options.sortBy) params.append('sortBy', options.sortBy);
+
+  const response = await api.get<Product[]>(`/products/by-attributes?${params.toString()}`);
+  return response.data;
+};
+
+export const fetchRecommendedProducts = async (
+  productId: number,
+  recommendationType: 'related' | 'similar' | 'frequently_bought' = 'related',
+  limit: number = 6
+): Promise<Product[]> => {
+  const params = new URLSearchParams();
+
+  params.append('type', recommendationType);
+  params.append('limit', limit.toString());
+
+  const response = await api.get<Product[]>(`/products/recommended/${productId}?${params.toString()}`);
+  return response.data;
+};
+
+export const fetchRecentlyViewedProducts = async (
+  userId: number | null,
+  sessionId: string | null,
+  limit: number = 8
+): Promise<Product[]> => {
+  const params = new URLSearchParams();
+
+  if (userId) params.append('userId', userId.toString());
+  if (sessionId) params.append('sessionId', sessionId);
+  params.append('limit', limit.toString());
+
+  const response = await api.get<Product[]>(`/products/recently-viewed?${params.toString()}`);
+  return response.data;
+};
+
+export const trackProductView = async (
+  productId: number,
+  userId: number | null,
+  sessionId: string
+): Promise<void> => {
+  await api.post('/products/track-view', {
+    productId,
+    userId,
+    sessionId
+  });
+};
+
 export const fetchBestSellers = async (): Promise<Product[]> => {
   const result = await fetchProducts({ isFeatured: true });
   return result.products;

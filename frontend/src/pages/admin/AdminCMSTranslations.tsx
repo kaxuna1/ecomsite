@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { SparklesIcon } from '@heroicons/react/24/outline';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { fetchCMSPages, fetchPageBlocks } from '../../api/cmsAdmin';
 import type { CMSPage, CMSBlock } from '../../api/cmsAdmin';
 import { fetchLanguages } from '../../api/languages';
+import { translateCMSPage } from '../../api/ai';
+import BlockTranslationEditor from '../../components/admin/BlockTranslationEditor';
+import SaveButton from '../../components/admin/SaveButton';
 
 interface PageTranslation {
   id: number;
@@ -45,7 +50,7 @@ export default function AdminCMSTranslations() {
   const [selectedBlockPage, setSelectedBlockPage] = useState<CMSPage | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<CMSBlock | null>(null);
   const [blockLanguage, setBlockLanguage] = useState('');
-  const [blockContent, setBlockContent] = useState('');
+  const [blockContent, setBlockContent] = useState<any>({});
 
   // Fetch all enabled languages
   const { data: languages = [], isLoading: languagesLoading } = useQuery({
@@ -80,6 +85,13 @@ export default function AdminCMSTranslations() {
     retry: false
   });
 
+  // Fetch blocks for selected page (for AI translation on pages tab)
+  const { data: pageBlocks } = useQuery({
+    queryKey: ['cms-blocks-for-translation', selectedPage?.id],
+    queryFn: () => fetchPageBlocks(selectedPage!.id),
+    enabled: !!selectedPage && activeTab === 'pages'
+  });
+
   // Fetch blocks for selected page (block tab)
   const { data: blocks, isLoading: blocksLoading } = useQuery({
     queryKey: ['cms-blocks', selectedBlockPage?.id],
@@ -104,8 +116,8 @@ export default function AdminCMSTranslations() {
       setPageFormData({
         title: pageTranslation.title || '',
         slug: pageTranslation.slug || '',
-        metaTitle: pageTranslation.meta_title || '',
-        metaDescription: pageTranslation.meta_description || ''
+        metaTitle: pageTranslation.metaTitle || pageTranslation.meta_title || '',
+        metaDescription: pageTranslation.metaDescription || pageTranslation.meta_description || ''
       });
     } else if (selectedPage) {
       // No translation exists, start with empty form
@@ -121,10 +133,10 @@ export default function AdminCMSTranslations() {
   // Update block content when translation loads
   useEffect(() => {
     if (blockTranslation) {
-      setBlockContent(JSON.stringify(blockTranslation.content, null, 2));
+      setBlockContent(blockTranslation.content || {});
     } else if (selectedBlock) {
       // No translation exists, start with empty content
-      setBlockContent('{}');
+      setBlockContent({});
     }
   }, [blockTranslation, selectedBlock]);
 
@@ -164,6 +176,100 @@ export default function AdminCMSTranslations() {
     }
   });
 
+  // AI Translation mutation for pages
+  const translatePageMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedPage) throw new Error('No page selected');
+      if (!pageBlocks) throw new Error('No blocks loaded');
+
+      const result = await translateCMSPage({
+        title: selectedPage.title,
+        metaTitle: undefined,
+        metaDescription: selectedPage.metaDescription || undefined,
+        blocks: pageBlocks.map(block => ({
+          id: block.id,
+          type: block.blockType,
+          content: block.content
+        })),
+        targetLanguage: pageLanguage,
+        sourceLanguage: 'en'
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      // Update the page form with translated data
+      setPageFormData({
+        title: data.translatedFields.title,
+        slug: selectedPage?.slug || '',
+        metaTitle: data.translatedFields.metaTitle || '',
+        metaDescription: data.translatedFields.metaDescription || ''
+      });
+
+      // Show success message with cost information
+      const costDisplay = data.cost < 0.01
+        ? `$${data.cost.toFixed(4)}`
+        : `$${data.cost.toFixed(2)}`;
+
+      toast.success(
+        `Translation completed! Cost: ${costDisplay} (${data.tokensUsed.toLocaleString()} tokens)`,
+        { duration: 5000 }
+      );
+    },
+    onError: (error: any) => {
+      console.error('Translation error:', error);
+      toast.error(
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to translate page. Please check your API keys in Settings.'
+      );
+    }
+  });
+
+  // AI Translation mutation for individual blocks
+  const translateBlockMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedBlock) throw new Error('No block selected');
+
+      const result = await translateCMSPage({
+        title: '', // Not needed for single block
+        blocks: [{
+          id: selectedBlock.id,
+          type: selectedBlock.blockType,
+          content: selectedBlock.content
+        }],
+        targetLanguage: blockLanguage,
+        sourceLanguage: 'en'
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      // Update the block content with translated data
+      if (data.translatedBlocks && data.translatedBlocks.length > 0) {
+        setBlockContent(data.translatedBlocks[0].content);
+      }
+
+      // Show success message with cost information
+      const costDisplay = data.cost < 0.01
+        ? `$${data.cost.toFixed(4)}`
+        : `$${data.cost.toFixed(2)}`;
+
+      toast.success(
+        `Block translated! Cost: ${costDisplay} (${data.tokensUsed.toLocaleString()} tokens)`,
+        { duration: 5000 }
+      );
+    },
+    onError: (error: any) => {
+      console.error('Translation error:', error);
+      toast.error(
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to translate block. Please check your API keys in Settings.'
+      );
+    }
+  });
+
   const handlePageSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     savePageMutation.mutate({
@@ -176,13 +282,31 @@ export default function AdminCMSTranslations() {
 
   const handleBlockSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const parsedContent = JSON.parse(blockContent);
-      saveBlockMutation.mutate({ content: parsedContent });
-    } catch (err) {
-      toast.error('Invalid JSON format. Please check your content.');
-    }
+    saveBlockMutation.mutate({ content: blockContent });
   };
+
+  const handleAITranslate = () => {
+    if (!selectedPage) {
+      toast.error('Please select a page first');
+      return;
+    }
+    if (!pageBlocks || pageBlocks.length === 0) {
+      toast.error('No content to translate');
+      return;
+    }
+    translatePageMutation.mutate();
+  };
+
+  const handleBlockAITranslate = () => {
+    if (!selectedBlock) {
+      toast.error('Please select a block first');
+      return;
+    }
+    translateBlockMutation.mutate();
+  };
+
+  // Check if AI translation is available (page selected with source content)
+  const canTranslate = !!selectedPage && !!pageBlocks && pageBlocks.length > 0;
 
   return (
     <div className="space-y-8">
@@ -251,26 +375,57 @@ export default function AdminCMSTranslations() {
           <main className="col-span-9">
             {selectedPage ? (
               <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-                {/* Language Selector */}
-                <div className="mb-6 flex items-center gap-4">
-                  <label className="font-semibold text-sm text-champagne">
-                    Target Language:
-                  </label>
-                  {languagesLoading ? (
-                    <p className="text-champagne/60">Loading languages...</p>
-                  ) : (
-                    <select
-                      value={pageLanguage}
-                      onChange={(e) => setPageLanguage(e.target.value)}
-                      className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
-                    >
-                      {languages.map((lang) => (
-                        <option key={lang.code} value={lang.code} className="bg-midnight">
-                          {lang.name} ({lang.nativeName})
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                {/* Language Selector & AI Translate Button */}
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <label className="font-semibold text-sm text-champagne">
+                      Target Language:
+                    </label>
+                    {languagesLoading ? (
+                      <p className="text-champagne/60">Loading languages...</p>
+                    ) : (
+                      <select
+                        value={pageLanguage}
+                        onChange={(e) => setPageLanguage(e.target.value)}
+                        className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                      >
+                        {languages.map((lang) => (
+                          <option key={lang.code} value={lang.code} className="bg-midnight">
+                            {lang.name} ({lang.nativeName})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  {/* AI Translate Button */}
+                  <motion.button
+                    type="button"
+                    onClick={handleAITranslate}
+                    disabled={!canTranslate || translatePageMutation.isPending}
+                    whileHover={canTranslate && !translatePageMutation.isPending ? { scale: 1.02 } : {}}
+                    whileTap={canTranslate && !translatePageMutation.isPending ? { scale: 0.98 } : {}}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm transition-all ${
+                      canTranslate && !translatePageMutation.isPending
+                        ? 'bg-gradient-to-r from-blush to-champagne text-midnight hover:shadow-lg hover:shadow-blush/20'
+                        : 'bg-white/10 text-champagne/40 cursor-not-allowed'
+                    }`}
+                  >
+                    {translatePageMutation.isPending ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Translating...
+                      </>
+                    ) : (
+                      <>
+                        <SparklesIcon className="w-4 h-4" />
+                        Translate with AI
+                      </>
+                    )}
+                  </motion.button>
                 </div>
 
                 {/* Translation Form */}
@@ -378,13 +533,15 @@ export default function AdminCMSTranslations() {
                     >
                       Cancel
                     </button>
-                    <button
+                    <SaveButton
                       type="submit"
-                      disabled={savePageMutation.isPending}
-                      className="px-6 py-2.5 rounded-full bg-blush text-midnight font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      isLoading={savePageMutation.isPending}
+                      isSuccess={savePageMutation.isSuccess}
+                      loadingText="Saving..."
+                      successText="Saved!"
                     >
-                      {savePageMutation.isPending ? 'Saving...' : 'Save Translation'}
-                    </button>
+                      Save Translation
+                    </SaveButton>
                   </div>
                 </form>
               </div>
@@ -489,45 +646,16 @@ export default function AdminCMSTranslations() {
 
                 {/* Translation Form */}
                 <form onSubmit={handleBlockSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-6">
-                    {/* Original Column */}
-                    <div>
-                      <h3 className="font-display text-lg mb-4 text-champagne">
-                        Original Content (English)
-                      </h3>
-                      <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
-                          Block: {selectedBlock.blockKey} ({selectedBlock.blockType})
-                        </label>
-                        <pre className="p-4 bg-white/5 rounded-xl border border-white/10 text-champagne text-xs overflow-auto max-h-96 font-mono">
-                          {JSON.stringify(selectedBlock.content, null, 2)}
-                        </pre>
-                      </div>
-                    </div>
-
-                    {/* Translation Column */}
-                    <div>
-                      <h3 className="font-display text-lg mb-4 text-champagne">
-                        Translation ({blockLanguage.toUpperCase()})
-                      </h3>
-                      <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
-                          Translated Content (JSON) *
-                        </label>
-                        <textarea
-                          value={blockContent}
-                          onChange={(e) => setBlockContent(e.target.value)}
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-champagne text-xs focus:outline-none focus:ring-2 focus:ring-blush font-mono"
-                          rows={16}
-                          required
-                          placeholder='{"key": "translated value"}'
-                        />
-                        <p className="text-xs text-champagne/50">
-                          Provide the translated content as valid JSON. You can copy the original structure and translate the values.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <BlockTranslationEditor
+                    blockType={selectedBlock.blockType}
+                    sourceContent={selectedBlock.content}
+                    translationContent={blockContent}
+                    sourceLanguage="en"
+                    targetLanguage={blockLanguage}
+                    onChange={setBlockContent}
+                    onAITranslate={handleBlockAITranslate}
+                    isTranslating={translateBlockMutation.isPending}
+                  />
 
                   {/* Submit Button */}
                   <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
@@ -538,13 +666,15 @@ export default function AdminCMSTranslations() {
                     >
                       Cancel
                     </button>
-                    <button
+                    <SaveButton
                       type="submit"
-                      disabled={saveBlockMutation.isPending}
-                      className="px-6 py-2.5 rounded-full bg-blush text-midnight font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      isLoading={saveBlockMutation.isPending}
+                      isSuccess={saveBlockMutation.isSuccess}
+                      loadingText="Saving..."
+                      successText="Saved!"
                     >
-                      {saveBlockMutation.isPending ? 'Saving...' : 'Save Translation'}
-                    </button>
+                      Save Translation
+                    </SaveButton>
                   </div>
                 </form>
               </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   TrashIcon,
   ShoppingBagIcon,
@@ -13,14 +14,13 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useCart } from '../context/CartContext';
-import { useI18n } from '../context/I18nContext';
 import Toast from '../components/Toast';
 import { validatePromoCode } from '../api/promoCodes';
 
 function CartPage() {
   const { lang = 'en' } = useParams<{ lang: string }>();
   const { items, removeItem, updateQuantity, subtotal, discount, promoCode, applyPromoCode, removePromoCode } = useCart();
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
   const [removingId, setRemovingId] = useState<number | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -41,7 +41,7 @@ function CartPage() {
     setTimeout(() => {
       removeItem(productId, variantId);
       setRemovingId(null);
-      setToastMessage(`${productName} removed from cart`);
+      setToastMessage(t('cart.removedFromCart', { productName }));
       setShowToast(true);
     }, 300);
   };
@@ -62,7 +62,7 @@ function CartPage() {
         const result = await validatePromoCode(code, subtotal);
         if (result.valid && result.promoCode && result.discount !== undefined) {
           applyPromoCode(result.promoCode, result.discount);
-          setToastMessage(`Promo code applied! You saved $${result.discount.toFixed(2)}`);
+          setToastMessage(t('cart.promoCodeAppliedSuccess', { discount: result.discount.toFixed(2) }));
           setShowToast(true);
           setPromoError('');
         } else {
@@ -70,7 +70,7 @@ function CartPage() {
           removePromoCode();
         }
       } catch (error) {
-        setPromoError('Invalid promo code');
+        setPromoError(t('cart.invalidPromoCode'));
         removePromoCode();
       } finally {
         setIsValidating(false);
@@ -84,7 +84,7 @@ function CartPage() {
     removePromoCode();
     setPromoInput('');
     setPromoError('');
-    setToastMessage('Promo code removed');
+    setToastMessage(t('cart.promoCodeRemoved'));
     setShowToast(true);
   };
 
@@ -126,14 +126,14 @@ function CartPage() {
             className="group mb-4 inline-flex items-center gap-2 text-sm font-medium text-midnight/70 transition-colors hover:text-jade"
           >
             <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Continue Shopping
+            {t('cart.continueShopping')}
           </Link>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="font-display text-3xl text-midnight md:text-4xl">{t('cart.title')}</h1>
               {items.length > 0 && (
                 <p className="mt-2 text-sm text-midnight/60">
-                  {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
+                  {itemCount} {itemCount === 1 ? t('cart.item') : t('cart.items')} {t('cart.itemsInCart')}
                 </p>
               )}
             </div>
@@ -168,7 +168,7 @@ function CartPage() {
             </motion.div>
             <h2 className="mb-3 font-display text-2xl text-midnight">{t('cart.empty')}</h2>
             <p className="mb-8 text-sm text-midnight/60">
-              Add some items to your cart to get started on your beauty journey
+              {t('cart.emptyMessage')}
             </p>
             <Link to={`/${lang}/products`} className="btn-primary inline-block">
               <span className="flex items-center gap-2">
@@ -208,7 +208,7 @@ function CartPage() {
                           animate={{ opacity: 1, height: 'auto' }}
                         >
                           <ExclamationTriangleIcon className="h-5 w-5" />
-                          Only {itemInventory} left in stock
+                          {t('cart.onlyLeftInStock', { count: itemInventory })}
                         </motion.div>
                       )}
 
@@ -263,7 +263,7 @@ function CartPage() {
                                   </div>
                                 )}
                                 <p className="text-xs text-midnight/50">
-                                  SKU: <span className="font-mono">{variant.sku}</span>
+                                  {t('cart.sku')}: <span className="font-mono">{variant.sku}</span>
                                 </p>
                               </div>
                             )}
@@ -283,7 +283,7 @@ function CartPage() {
                           {/* Price & Quantity Controls */}
                           <div className="mt-4 flex items-end justify-between">
                             <div>
-                              <p className="text-xs text-midnight/50">Price</p>
+                              <p className="text-xs text-midnight/50">{t('cart.price')}</p>
                               <p className="text-2xl font-bold text-jade">${itemPrice.toFixed(2)}</p>
                             </div>
 
@@ -324,7 +324,7 @@ function CartPage() {
                                 whileTap={{ scale: 0.95 }}
                               >
                                 <TrashIcon className="h-4 w-4" />
-                                <span className="hidden sm:inline">Remove</span>
+                                <span className="hidden sm:inline">{t('cart.remove')}</span>
                               </motion.button>
                             </div>
                           </div>
@@ -333,7 +333,7 @@ function CartPage() {
 
                       {/* Item Total */}
                       <div className="mt-4 flex items-center justify-between border-t border-champagne/40 pt-4">
-                        <span className="text-sm text-midnight/60">Item total:</span>
+                        <span className="text-sm text-midnight/60">{t('cart.itemTotal')}:</span>
                         <span className="text-xl font-bold text-midnight">
                           ${(itemPrice * quantity).toFixed(2)}
                         </span>
@@ -350,12 +350,12 @@ function CartPage() {
               <div className="sticky top-24 space-y-6">
                 {/* Summary Card */}
                 <div className="rounded-3xl border-2 border-jade/20 bg-white p-6 shadow-lg">
-                  <h2 className="mb-6 font-display text-2xl text-midnight">Order Summary</h2>
+                  <h2 className="mb-6 font-display text-2xl text-midnight">{t('cart.orderSummary')}</h2>
 
                   <div className="space-y-4">
                     {/* Subtotal */}
                     <div className="flex justify-between text-sm">
-                      <span className="text-midnight/60">Subtotal ({itemCount} items)</span>
+                      <span className="text-midnight/60">{t('cart.subtotal')} ({itemCount} {itemCount === 1 ? t('cart.item') : t('cart.items')})</span>
                       <span className="font-semibold text-midnight">${subtotal.toFixed(2)}</span>
                     </div>
 
@@ -374,7 +374,7 @@ function CartPage() {
                             whileHover={{ x: 2 }}
                           >
                             <TagIcon className="h-4 w-4" />
-                            Have a promo code?
+                            {t('cart.havePromoCode')}
                           </motion.button>
                         ) : (
                           <motion.div
@@ -387,7 +387,7 @@ function CartPage() {
                                 type="text"
                                 value={promoInput}
                                 onChange={handlePromoCodeChange}
-                                placeholder="Enter promo code"
+                                placeholder={t('cart.enterPromoCode')}
                                 className="w-full rounded-full border-2 border-jade/30 bg-champagne/30 px-4 py-2 pr-10 text-sm font-medium uppercase text-midnight placeholder:normal-case placeholder:text-midnight/40 focus:border-jade focus:outline-none"
                               />
                               {isValidating && (
@@ -414,7 +414,7 @@ function CartPage() {
                               }}
                               className="text-xs text-midnight/60 hover:text-midnight"
                             >
-                              Cancel
+                              {t('cart.cancel')}
                             </button>
                           </motion.div>
                         )}
@@ -432,7 +432,7 @@ function CartPage() {
                           <div className="flex items-center gap-2">
                             <CheckCircleIcon className="h-5 w-5 text-jade" />
                             <div>
-                              <p className="text-xs font-semibold text-jade">Promo Applied</p>
+                              <p className="text-xs font-semibold text-jade">{t('cart.promoApplied')}</p>
                               <p className="text-xs text-midnight/70">{promoCode.code}</p>
                             </div>
                           </div>
@@ -454,16 +454,16 @@ function CartPage() {
                         animate={{ opacity: 1, height: 'auto' }}
                         className="flex justify-between text-sm"
                       >
-                        <span className="text-jade">Discount</span>
+                        <span className="text-jade">{t('cart.discount')}</span>
                         <span className="font-semibold text-jade">-${discount.toFixed(2)}</span>
                       </motion.div>
                     )}
 
                     {/* Shipping */}
                     <div className="flex justify-between text-sm">
-                      <span className="text-midnight/60">Shipping</span>
+                      <span className="text-midnight/60">{t('cart.shipping')}</span>
                       <span className={`font-semibold ${shipping === 0 ? 'text-jade' : 'text-midnight'}`}>
-                        {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+                        {shipping === 0 ? t('cart.free') : `$${shipping.toFixed(2)}`}
                       </span>
                     </div>
 
@@ -476,7 +476,7 @@ function CartPage() {
                       >
                         <div className="mb-2 flex items-center gap-2 text-xs font-medium text-jade">
                           <TruckIcon className="h-4 w-4" />
-                          Add ${(50 - discountedSubtotal).toFixed(2)} more for FREE shipping!
+                          {t('cart.freeShippingProgress', { amount: (50 - discountedSubtotal).toFixed(2) })}
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-jade/20">
                           <motion.div
@@ -491,7 +491,7 @@ function CartPage() {
 
                     {/* Tax */}
                     <div className="flex justify-between text-sm">
-                      <span className="text-midnight/60">Estimated Tax</span>
+                      <span className="text-midnight/60">{t('cart.estimatedTax')}</span>
                       <span className="font-semibold text-midnight">${tax.toFixed(2)}</span>
                     </div>
 
@@ -500,7 +500,7 @@ function CartPage() {
 
                     {/* Total */}
                     <div className="flex justify-between text-lg">
-                      <span className="font-semibold text-midnight">Total</span>
+                      <span className="font-semibold text-midnight">{t('cart.total')}</span>
                       <span className="font-bold text-jade">${finalTotal.toFixed(2)}</span>
                     </div>
                   </div>
@@ -517,7 +517,7 @@ function CartPage() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <CheckCircleIcon className="h-5 w-5" />
-                        Proceed to Checkout
+                        {t('cart.proceedToCheckout')}
                       </motion.span>
                     </Link>
                   </motion.div>
@@ -526,11 +526,11 @@ function CartPage() {
                   <div className="mt-6 space-y-3 border-t border-champagne/40 pt-6">
                     <div className="flex items-center gap-3 text-sm text-midnight/70">
                       <TruckIcon className="h-5 w-5 text-jade" />
-                      <span>Free shipping on orders over $50</span>
+                      <span>{t('cart.freeShippingOver50')}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-midnight/70">
                       <TagIcon className="h-5 w-5 text-jade" />
-                      <span>Best price guarantee</span>
+                      <span>{t('cart.bestPriceGuarantee')}</span>
                     </div>
                   </div>
                 </div>

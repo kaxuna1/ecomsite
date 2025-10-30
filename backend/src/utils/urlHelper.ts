@@ -32,8 +32,9 @@ export function getAbsoluteMediaUrl(relativePath: string): string {
 /**
  * Get media URL for a filename
  * @param filename - Just the filename like '1234567890-abc-image.webp'
+ * @param subdirectory - Subdirectory within uploads (default: 'cms')
  * @returns Full URL to the media file
  */
-export function getMediaUrl(filename: string): string {
-  return getAbsoluteMediaUrl(`api/uploads/cms/${filename}`);
+export function getMediaUrl(filename: string, subdirectory: string = 'cms'): string {
+  return getAbsoluteMediaUrl(`api/uploads/${subdirectory}/${filename}`);
 }

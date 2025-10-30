@@ -25,6 +25,55 @@ const STATIC_ROUTES = [
   { type: 'static' as const, label: 'Checkout', url: '/checkout' },
 ];
 
+// Default header menu configuration
+const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
+  {
+    id: -1,
+    label: 'Home',
+    linkType: 'internal',
+    linkUrl: '/',
+    cmsPageId: null,
+    openInNewTab: false,
+    children: []
+  },
+  {
+    id: -2,
+    label: 'Products',
+    linkType: 'internal',
+    linkUrl: '/products',
+    cmsPageId: null,
+    openInNewTab: false,
+    children: []
+  },
+  {
+    id: -3,
+    label: 'New Arrivals',
+    linkType: 'internal',
+    linkUrl: '/new-arrivals',
+    cmsPageId: null,
+    openInNewTab: false,
+    children: []
+  },
+  {
+    id: -4,
+    label: 'Best Sellers',
+    linkType: 'internal',
+    linkUrl: '/best-sellers',
+    cmsPageId: null,
+    openInNewTab: false,
+    children: []
+  },
+  {
+    id: -5,
+    label: 'Sale',
+    linkType: 'internal',
+    linkUrl: '/sale',
+    cmsPageId: null,
+    openInNewTab: false,
+    children: []
+  }
+];
+
 // ============================================================================
 // PUBLIC MENU ACCESS
 // ============================================================================
@@ -90,7 +139,14 @@ export async function getMenuByLocation(
       [locationCode, language]
     );
 
+    // If no menu items found for header location, return default menu
     if (result.rows.length === 0) {
+      if (locationCode === 'header') {
+        return {
+          location: locationCode,
+          items: DEFAULT_HEADER_MENU
+        };
+      }
       return null;
     }
 

@@ -1,33 +1,51 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { ShoppingBagIcon, CheckIcon, SparklesIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon, CheckIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, StarIcon } from '@heroicons/react/24/outline';
 import { fetchProduct } from '../api/products';
+import { canUserReviewProduct } from '../api/reviews';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
+import { useLocalizedPath } from '../hooks/useLocalizedPath';
 import { SEOHead } from '../components/SEOHead';
 import ProductImageGallery from '../components/ProductImageGallery';
 import Toast from '../components/Toast';
 import VariantSelector from '../components/VariantSelector';
+import ReviewList from '../components/reviews/ReviewList';
+import ReviewForm from '../components/reviews/ReviewForm';
+import RatingStars from '../components/reviews/RatingStars';
 import type { ProductVariant } from '../types/product';
 
 function ProductDetailPage() {
   const { id } = useParams();
   const productId = Number(id);
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const localizedPath = useLocalizedPath();
   const prefersReducedMotion = useReducedMotion();
 
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => fetchProduct(productId),
     enabled: Number.isFinite(productId)
+  });
+
+  // Check if user can review this product
+  const { data: canReviewData } = useQuery({
+    queryKey: ['can-review', productId],
+    queryFn: () => canUserReviewProduct(productId),
+    enabled: isAuthenticated && Number.isFinite(productId)
   });
 
   if (!productId || Number.isNaN(productId)) {
@@ -185,6 +203,25 @@ function ProductDetailPage() {
             >
               {product.name}
             </motion.h1>
+
+            {/* Rating Display */}
+            {product.averageRating && product.reviewCount && product.reviewCount > 0 && (
+              <motion.div
+                className="mt-3 flex items-center gap-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.25 }}
+              >
+                <RatingStars rating={product.averageRating} size="md" showValue />
+                <a
+                  href="#reviews"
+                  className="text-sm text-jade hover:underline"
+                >
+                  ({product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'})
+                </a>
+              </motion.div>
+            )}
+
             <motion.p
               className="mt-3 text-base text-midnight/70 lg:text-lg"
               initial={{ opacity: 0 }}
@@ -351,6 +388,122 @@ function ProductDetailPage() {
             </motion.button>
           </motion.div>
         </motion.div>
+      </motion.div>
+
+      {/* Reviews Section */}
+      <motion.div
+        id="reviews"
+        className="mt-16 pt-16 border-t border-champagne/20"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0 }}
+      >
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-midnight mb-2">
+              Customer Reviews
+            </h2>
+            {product.reviewCount && product.reviewCount > 0 && (
+              <p className="text-sm text-midnight/60">
+                Based on {product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'}
+              </p>
+            )}
+          </div>
+          {/* Show button only if user hasn't reviewed yet or not authenticated */}
+          {(!isAuthenticated || (canReviewData && canReviewData.canReview)) && (
+            <motion.button
+              onClick={() => {
+                if (isAuthenticated) {
+                  setShowReviewForm(!showReviewForm);
+                } else {
+                  navigate(localizedPath('/login'), { state: { from: location.pathname } });
+                }
+              }}
+              className="px-6 py-3 bg-jade text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <StarIcon className="w-5 h-5" />
+              Write a Review
+            </motion.button>
+          )}
+        </div>
+
+        {/* Message when user already reviewed */}
+        {isAuthenticated && canReviewData && !canReviewData.canReview && canReviewData.existingReview && (
+          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="flex items-start gap-3">
+              <CheckIcon className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-blue-900 mb-1">
+                  You've already reviewed this product
+                </p>
+                <p className="text-sm text-blue-700">
+                  {canReviewData.existingReview.status === 'pending' &&
+                    'Your review is currently under moderation and will be visible once approved.'}
+                  {canReviewData.existingReview.status === 'approved' &&
+                    'Your review has been published and is visible to other customers.'}
+                  {canReviewData.existingReview.status === 'rejected' &&
+                    'Your review was not approved. Please contact support if you have questions.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Login Prompt for non-authenticated users */}
+        {!isAuthenticated && showReviewForm && (
+          <div className="mb-8 bg-amber-50 border border-amber-200 rounded-lg p-6">
+            <p className="text-center text-gray-700 mb-4">
+              Please log in to write a review
+            </p>
+            <div className="flex justify-center gap-4">
+              <motion.button
+                onClick={() => navigate(localizedPath('/login'), { state: { from: location.pathname } })}
+                className="px-6 py-2 bg-jade text-white rounded-full font-semibold hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Log In
+              </motion.button>
+              <motion.button
+                onClick={() => navigate(localizedPath('/signup'), { state: { from: location.pathname } })}
+                className="px-6 py-2 bg-white text-jade border-2 border-jade rounded-full font-semibold hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Sign Up
+              </motion.button>
+            </div>
+          </div>
+        )}
+
+        {/* Review Form (conditionally shown for authenticated users only) */}
+        <AnimatePresence>
+          {showReviewForm && isAuthenticated && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-8"
+            >
+              <ReviewForm
+                productId={product.id}
+                productName={product.name}
+                isAuthenticated={isAuthenticated}
+                onSuccess={() => {
+                  setShowReviewForm(false);
+                  setShowToast(true);
+                }}
+                onCancel={() => setShowReviewForm(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Reviews List */}
+        <ReviewList productId={product.id} showDistribution={true} />
       </motion.div>
     </div>
   );

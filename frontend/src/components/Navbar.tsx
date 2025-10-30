@@ -83,18 +83,18 @@ function Navbar() {
   const fallbackNavigation: MenuItemHierarchical[] = [
     { id: 0, label: t('nav.home'), linkType: 'internal', linkUrl: '/', cmsPageId: null, openInNewTab: false, children: [] },
     { id: 1, label: t('nav.products'), linkType: 'internal', linkUrl: '/products', cmsPageId: null, openInNewTab: false, children: [] },
-    { id: 2, label: 'New Arrivals', linkType: 'internal', linkUrl: '/new-arrivals', cmsPageId: null, openInNewTab: false, children: [] },
-    { id: 3, label: 'Best Sellers', linkType: 'internal', linkUrl: '/best-sellers', cmsPageId: null, openInNewTab: false, children: [] },
-    { id: 4, label: 'Sale', linkType: 'internal', linkUrl: '/sale', cmsPageId: null, openInNewTab: false, children: [] }
+    { id: 2, label: t('nav.newArrivals'), linkType: 'internal', linkUrl: '/new-arrivals', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 3, label: t('nav.bestSellers'), linkType: 'internal', linkUrl: '/best-sellers', cmsPageId: null, openInNewTab: false, children: [] },
+    { id: 4, label: t('nav.sale'), linkType: 'internal', linkUrl: '/sale', cmsPageId: null, openInNewTab: false, children: [] }
   ];
 
   // Use menu data or fallback
   const navigation: MenuItemHierarchical[] = menuData?.items || fallbackNavigation;
 
   const userMenuItems = [
-    { name: 'Profile', href: localizedPath('/account/profile'), icon: UserCircleIcon },
-    { name: 'Orders', href: localizedPath('/account/orders'), icon: ShoppingBagIcon },
-    { name: 'Favorites', href: localizedPath('/account/favorites'), icon: HeartIcon }
+    { nameKey: 'account.profile', href: localizedPath('/account/profile'), icon: UserCircleIcon },
+    { nameKey: 'account.orders', href: localizedPath('/account/orders'), icon: ShoppingBagIcon },
+    { nameKey: 'account.favorites', href: localizedPath('/account/favorites'), icon: HeartIcon }
   ];
 
   // Helper function to get menu item link
@@ -240,7 +240,7 @@ function Navbar() {
       <div className="bg-midnight py-2 text-center text-xs font-medium text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
           <TruckIcon className="h-4 w-4" />
-          <span>FREE SHIPPING OVER $50 | NEW CUSTOMER? GET 10% OFF WITH CODE: WELCOME10</span>
+          <span>{t('header.announcement')}</span>
         </div>
       </div>
 
@@ -339,12 +339,12 @@ function Navbar() {
                           const Icon = item.icon;
                           return (
                             <Link
-                              key={item.name}
+                              key={item.nameKey}
                               to={item.href}
                               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
                             >
                               <Icon className="h-5 w-5" />
-                              {item.name}
+                              {t(item.nameKey)}
                             </Link>
                           );
                         })}
@@ -359,7 +359,7 @@ function Navbar() {
                           className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
                         >
                           <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                          Logout
+                          {t('nav.logout')}
                         </button>
                       </motion.div>
                     )}
@@ -372,7 +372,7 @@ function Navbar() {
                   aria-label="Login"
                 >
                   <UserIcon className="h-6 w-6" />
-                  <span className="hidden lg:inline">Login</span>
+                  <span className="hidden lg:inline">{t('nav.login')}</span>
                 </Link>
               )}
 
@@ -460,8 +460,8 @@ function Navbar() {
                       className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-champagne/40 bg-white p-4 shadow-2xl"
                     >
                       <div className="mb-3 flex items-center justify-between border-b border-champagne/40 pb-3">
-                        <h3 className="font-display text-lg text-midnight">Your Cart</h3>
-                        <span className="text-sm text-midnight/60">{itemCount} items</span>
+                        <h3 className="font-display text-lg text-midnight">{t('cart.yourCart')}</h3>
+                        <span className="text-sm text-midnight/60">{itemCount} {t('cart.items')}</span>
                       </div>
 
                       <div className="max-h-64 space-y-3 overflow-y-auto">
@@ -475,7 +475,7 @@ function Navbar() {
                             <div className="flex-1">
                               <h4 className="text-sm font-medium text-midnight line-clamp-1">{product.name}</h4>
                               <p className="mt-1 text-xs text-midnight/60">
-                                Qty: {quantity} × ${product.price.toFixed(2)}
+                                {t('cart.qty')} {quantity} × ${product.price.toFixed(2)}
                               </p>
                             </div>
                             <button
@@ -492,21 +492,21 @@ function Navbar() {
                         ))}
                         {items.length > 3 && (
                           <p className="text-center text-xs text-midnight/60">
-                            +{items.length - 3} more items
+                            +{items.length - 3} {t('cart.moreItems')}
                           </p>
                         )}
                       </div>
 
                       <div className="mt-4 space-y-3 border-t border-champagne/40 pt-3">
                         <div className="flex justify-between text-sm">
-                          <span className="font-medium text-midnight">Subtotal:</span>
+                          <span className="font-medium text-midnight">{t('cart.subtotal')}</span>
                           <span className="font-bold text-jade">${total.toFixed(2)}</span>
                         </div>
                         <Link
                           to={localizedPath('/cart')}
                           className="block w-full rounded-full bg-jade py-3 text-center text-sm font-semibold text-white transition-all hover:bg-jade/90 hover:shadow-lg"
                         >
-                          View Cart
+                          {t('cart.viewCart')}
                         </Link>
                       </div>
                     </motion.div>
@@ -660,13 +660,13 @@ function Navbar() {
                       const Icon = item.icon;
                       return (
                         <Link
-                          key={item.name}
+                          key={item.nameKey}
                           to={item.href}
                           onClick={() => setMobileMenuOpen(false)}
                           className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
                         >
                           <Icon className="h-5 w-5" />
-                          <span>{item.name}</span>
+                          <span>{t(item.nameKey)}</span>
                         </Link>
                       );
                     })}
@@ -679,7 +679,7 @@ function Navbar() {
                       className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50"
                     >
                       <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                      <span>Logout</span>
+                      <span>{t('nav.logout')}</span>
                     </button>
                   </>
                 ) : (
@@ -690,7 +690,7 @@ function Navbar() {
                       className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
                     >
                       <UserIcon className="h-5 w-5" />
-                      <span>Login</span>
+                      <span>{t('nav.login')}</span>
                     </Link>
                     <Link
                       to={localizedPath('/signup')}
@@ -698,7 +698,7 @@ function Navbar() {
                       className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-jade/10 text-jade hover:bg-jade/20"
                     >
                       <UserIcon className="h-5 w-5" />
-                      <span>Sign Up</span>
+                      <span>{t('nav.signup')}</span>
                     </Link>
                   </>
                 )}

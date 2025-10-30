@@ -2,14 +2,14 @@
 // Dynamically renders CMS blocks based on type
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   TruckIcon,
   ShieldCheckIcon,
   SparklesIcon,
-  HeartIcon,
+  HeartIcon as HeartOutlineIcon,
   ChatBubbleLeftRightIcon,
   LockClosedIcon,
   CheckBadgeIcon,
@@ -18,12 +18,25 @@ import {
   ChevronUpIcon,
   MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+import { StarIcon as StarIconSolid, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import type { CMSBlock } from '../../types/cms';
 import HeroBlock from './HeroBlock';
-import { fetchRandomProducts } from '../../api/products';
+import ProductCarousel from './ProductCarousel';
+import ProductList from './ProductList';
+import QuickViewModal from './QuickViewModal';
+import {
+  fetchRandomProducts,
+  fetchProductsByRules,
+  fetchProductsByCategory,
+  fetchProductsByAttributes,
+  fetchRecommendedProducts,
+  fetchRecentlyViewedProducts,
+  type ProductRules
+} from '../../api/products';
+import { addFavorite, removeFavorite, getFavorites } from '../../api/favorites';
 import { useCart } from '../../context/CartContext';
 import { useI18n } from '../../context/I18nContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface BlockRendererProps {
   block: CMSBlock;
@@ -70,17 +83,62 @@ export default function BlockRenderer({ block }: BlockRendererProps) {
 // Inline Features Block Component
 function FeaturesBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
-  const { title, subtitle, features, columns = 3 } = content;
+  const { title, subtitle, features, columns = 3, style = {} } = content;
 
-  // Icon mapping
+  // Extract style values with defaults
+  const bgColor = style?.backgroundColor || '#fef9f3';
+  const cardBgColor = style?.cardBackgroundColor || '#ffffff';
+  const textColor = style?.textColor || '#1e293b';
+  const accentColor = style?.accentColor || '#10b981';
+  const iconBgColor = style?.iconBackgroundColor || 'rgba(16, 185, 129, 0.1)';
+  const layout = style?.layout || 'classic';
+  const iconStyle = style?.iconStyle || 'circle';
+  const cardHover = style?.cardHover !== false;
+  const centerAlign = style?.centerAlign === true;
+
+  // Icon mapping - extended set
   const iconMap: any = {
     truck: TruckIcon,
     shield: ShieldCheckIcon,
     sparkles: SparklesIcon,
-    heart: HeartIcon,
+    heart: HeartOutlineIcon,
     chat: ChatBubbleLeftRightIcon,
     lock: LockClosedIcon,
     check: CheckBadgeIcon
+  };
+
+  // Icon style mapping
+  const iconStyleMap = {
+    circle: 'rounded-full',
+    square: 'rounded-none',
+    rounded: 'rounded-2xl',
+    none: ''
+  };
+
+  // Layout mapping
+  const layoutMap = {
+    classic: 'flex-col',
+    modern: 'flex-row items-start gap-4',
+    minimal: 'flex-col',
+    cards: 'flex-col'
+  };
+
+  // Card styling based on layout
+  const getCardClasses = () => {
+    const base = 'group transition-all duration-300';
+
+    switch (layout) {
+      case 'classic':
+        return `${base} rounded-3xl border-2 p-8 shadow-lg ${cardHover ? 'hover:shadow-2xl' : ''}`;
+      case 'modern':
+        return `${base} rounded-2xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-md ${cardHover ? 'hover:shadow-xl' : ''}`;
+      case 'minimal':
+        return `${base} p-6`;
+      case 'cards':
+        return `${base} rounded-2xl p-8 shadow-xl ${cardHover ? 'hover:shadow-2xl hover:-translate-y-2' : ''}`;
+      default:
+        return base;
+    }
   };
 
   const fadeInUp = prefersReducedMotion
@@ -93,12 +151,14 @@ function FeaturesBlock({ content }: { content: any }) {
       };
 
   return (
-    <section className="bg-champagne/20 py-16 md:py-20">
+    <section style={{ backgroundColor: bgColor }} className="py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-4">
-        <motion.div className="text-center" {...fadeInUp}>
-          <h2 className="font-display text-3xl text-midnight md:text-4xl">{title}</h2>
+        <motion.div className={centerAlign ? 'text-center' : ''} {...fadeInUp}>
+          <h2 className="font-display text-3xl md:text-4xl" style={{ color: textColor }}>
+            {title}
+          </h2>
           {subtitle && (
-            <p className="mx-auto mt-4 max-w-2xl text-base text-midnight/70">
+            <p className="mx-auto mt-4 max-w-2xl text-base" style={{ color: textColor, opacity: 0.7 }}>
               {subtitle}
             </p>
           )}
@@ -107,21 +167,54 @@ function FeaturesBlock({ content }: { content: any }) {
         <div className={`mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-${columns}`}>
           {features.map((feature: any, index: number) => {
             const Icon = iconMap[feature.icon] || SparklesIcon;
+            const cardClasses = getCardClasses();
+            const flexDirection = layoutMap[layout];
+
             return (
               <motion.div
                 key={feature.id}
-                className="group rounded-3xl border-2 border-champagne/40 bg-white p-8 shadow-lg transition-all hover:border-jade/40 hover:shadow-2xl"
+                className={`${cardClasses} ${flexDirection}`}
+                style={{
+                  backgroundColor: cardBgColor,
+                  borderColor: layout === 'classic' ? `${accentColor}40` : 'transparent'
+                }}
                 initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
                 whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
+                whileHover={cardHover ? { y: layout === 'cards' ? -8 : -4 } : {}}
               >
-                <div className="mb-4 inline-flex rounded-full bg-jade/10 p-4">
-                  <Icon className="h-8 w-8 text-jade transition-transform group-hover:scale-110" />
+                {/* Icon */}
+                {iconStyle !== 'none' && (
+                  <div
+                    className={`${layout === 'modern' ? 'flex-shrink-0' : 'mb-4'} inline-flex ${iconStyleMap[iconStyle]} p-4 transition-transform ${cardHover ? 'group-hover:scale-110' : ''}`}
+                    style={{ backgroundColor: iconBgColor }}
+                  >
+                    <Icon className="h-8 w-8" style={{ color: accentColor }} />
+                  </div>
+                )}
+
+                {iconStyle === 'none' && (
+                  <div className={layout === 'modern' ? 'flex-shrink-0' : 'mb-4'}>
+                    <Icon className="h-8 w-8" style={{ color: accentColor }} />
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className={centerAlign && layout !== 'modern' ? 'text-center' : ''}>
+                  <h3
+                    className="font-display text-xl"
+                    style={{ color: textColor }}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p
+                    className="mt-2 text-sm"
+                    style={{ color: textColor, opacity: 0.7 }}
+                  >
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="font-display text-xl text-midnight">{feature.title}</h3>
-                <p className="mt-2 text-sm text-midnight/70">{feature.description}</p>
               </motion.div>
             );
           })}
@@ -134,24 +227,186 @@ function FeaturesBlock({ content }: { content: any }) {
 // Inline Products Block Component
 function ProductsBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
-  const { title, subtitle, ctaText, ctaLink } = content;
+  const {
+    title,
+    subtitle,
+    selectionMethod = 'featured',
+    productIds = [],
+    categoryFilter = [],
+    attributeFilters = {},
+    sourceProductId,
+    rules = {},
+    displayStyle = 'grid',
+    columns = 4,
+    maxProducts = 8,
+    sortBy = 'default',
+    showCta = true,
+    ctaText,
+    ctaLink,
+    showElements = {},
+    style = {},
+    carouselSettings = {}
+  } = content;
+
+  // Extract style properties
+  const cardStyle = style?.cardStyle || 'elevated';
+  const imageAspectRatio = style?.imageAspectRatio || '4:5';
+  const hoverEffect = style?.hoverEffect || 'zoom';
+  const gap = style?.gap || 'medium';
+  const borderRadius = style?.borderRadius || 'large';
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const { addItem } = useCart();
   const { language } = useI18n();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ['random-products'],
-    queryFn: () => fetchRandomProducts(8)
+  // Fetch favorites
+  const { data: favorites } = useQuery({
+    queryKey: ['favorites'],
+    queryFn: getFavorites,
+    enabled: isAuthenticated
   });
 
-  const featuredProducts = products.slice(0, 4);
+  // Mutations
+  const addFavoriteMutation = useMutation({
+    mutationFn: addFavorite,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    }
+  });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: removeFavorite,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    }
+  });
+
+  // Build query key based on selection method
+  const getQueryKey = () => {
+    switch (selectionMethod) {
+      case 'rules':
+        return ['products', 'by-rules', rules, sortBy, maxProducts];
+      case 'category':
+        return ['products', 'by-category', categoryFilter, sortBy, maxProducts];
+      case 'manual':
+        return ['products', 'manual', productIds];
+      case 'recommended':
+        return ['products', 'recommended', sourceProductId];
+      case 'recent':
+        return ['products', 'recent', maxProducts];
+      default:
+        return ['products', 'featured', maxProducts];
+    }
+  };
+
+  // Fetch products based on selection method
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: getQueryKey(),
+    queryFn: async () => {
+      switch (selectionMethod) {
+        case 'rules':
+          return await fetchProductsByRules(rules as ProductRules, { limit: maxProducts, sortBy });
+        case 'category':
+          if (categoryFilter.length > 0) {
+            return await fetchProductsByCategory(categoryFilter, { limit: maxProducts, sortBy });
+          }
+          return await fetchRandomProducts(maxProducts);
+        case 'manual':
+          if (productIds.length > 0) {
+            // Fetch specific products by IDs (would need new API endpoint)
+            // For now, fall back to random
+            return await fetchRandomProducts(maxProducts);
+          }
+          return [];
+        case 'recommended':
+          if (sourceProductId) {
+            return await fetchRecommendedProducts(sourceProductId, 'related', maxProducts);
+          }
+          return await fetchRandomProducts(maxProducts);
+        case 'recent':
+          return await fetchRandomProducts(maxProducts);
+        case 'featured':
+        default:
+          return await fetchRandomProducts(maxProducts);
+      }
+    },
+    enabled: true
+  });
+
+  const displayProducts = products.slice(0, maxProducts);
 
   const handleQuickAdd = (product: any) => {
     addItem(product);
     setToastMessage(`${product.name} added to cart!`);
     setShowToast(true);
+  };
+
+  const handleQuickView = (product: any) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
+  const handleFavoriteClick = async (e: React.MouseEvent, productId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      navigate(`/${language}/login`, { state: { from: window.location.pathname } });
+      return;
+    }
+
+    const isFavorited = favorites?.some(fav => fav.productId === productId);
+
+    if (isFavorited) {
+      await removeFavoriteMutation.mutateAsync(productId);
+    } else {
+      await addFavoriteMutation.mutateAsync(productId);
+    }
+  };
+
+  // Style mappings
+  const columnClasses = {
+    2: 'sm:grid-cols-2',
+    3: 'sm:grid-cols-2 lg:grid-cols-3',
+    4: 'sm:grid-cols-2 lg:grid-cols-4',
+    5: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5',
+    6: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6'
+  };
+
+  const gapClasses = {
+    none: 'gap-0',
+    small: 'gap-3',
+    medium: 'gap-6',
+    large: 'gap-8'
+  };
+
+  const cardStyleClasses = {
+    elevated: 'shadow-lg hover:shadow-2xl',
+    flat: 'shadow-none',
+    outlined: 'shadow-none border-2 border-champagne/40',
+    minimal: 'shadow-none border-0'
+  };
+
+  const borderRadiusClasses = {
+    none: 'rounded-none',
+    small: 'rounded-lg',
+    medium: 'rounded-3xl',
+    large: 'rounded-[2rem]',
+    full: 'rounded-full'
+  };
+
+  const hoverEffectClasses = {
+    zoom: 'hover:scale-105',
+    lift: 'hover:-translate-y-2',
+    fade: 'hover:opacity-90',
+    slide: 'hover:translate-x-1',
+    none: ''
   };
 
   const fadeInUp = prefersReducedMotion
@@ -163,11 +418,40 @@ function ProductsBlock({ content }: { content: any }) {
         transition: { duration: 0.7 }
       };
 
+  const gridClasses = `grid ${columnClasses[columns as keyof typeof columnClasses] || columnClasses[4]} ${gapClasses[gap as keyof typeof gapClasses] || gapClasses.medium}`;
+
+  // Error state
+  if (error) {
+    return (
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 text-center">
+          <p className="text-red-500">Failed to load products. Please try again later.</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Empty state
+  if (!isLoading && displayProducts.length === 0) {
+    return (
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 text-center">
+          <p className="text-midnight/60">No products found.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4">
         <motion.div className="text-center" {...fadeInUp}>
-          <p className="text-xs uppercase tracking-[0.6em] text-jade">Best Sellers</p>
+          <p className="text-xs uppercase tracking-[0.6em] text-jade">
+            {selectionMethod === 'rules' && rules.showNewArrivals ? 'New Arrivals' :
+             selectionMethod === 'rules' && rules.showBestsellers ? 'Best Sellers' :
+             selectionMethod === 'rules' && rules.showOnSale ? 'On Sale' :
+             'Featured Products'}
+          </p>
           <h2 className="mt-2 font-display text-3xl text-midnight md:text-4xl">{title}</h2>
           {subtitle && (
             <p className="mx-auto mt-4 max-w-2xl text-base text-midnight/70">
@@ -177,111 +461,236 @@ function ProductsBlock({ content }: { content: any }) {
         </motion.div>
 
         {isLoading ? (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-96 animate-pulse rounded-3xl bg-champagne/30" />
+          <div className={`mt-12 ${gridClasses}`}>
+            {[...Array(maxProducts)].map((_, i) => (
+              <div key={i} className={`h-96 animate-pulse bg-champagne/30 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]}`} />
             ))}
           </div>
+        ) : displayStyle === 'carousel' ? (
+          <div className="mt-12">
+            <ProductCarousel
+              products={displayProducts}
+              carouselSettings={carouselSettings}
+              showElements={showElements}
+              style={style}
+              onQuickAdd={handleQuickAdd}
+              onQuickView={handleQuickView}
+            />
+          </div>
+        ) : displayStyle === 'list' ? (
+          <div className="mt-12">
+            <ProductList
+              products={displayProducts}
+              showElements={showElements}
+              style={style}
+              onQuickAdd={handleQuickAdd}
+            />
+          </div>
         ) : (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredProducts.map((product: any, index: number) => (
+          <div className={`mt-12 ${gridClasses}`}>
+            {displayProducts.map((product: any, index: number) => (
               <motion.article
                 key={product.id}
-                className="group relative flex flex-col overflow-hidden rounded-3xl border-2 border-champagne/40 bg-white shadow-lg transition-all hover:border-jade/40 hover:shadow-2xl"
+                className={`group relative flex flex-col overflow-hidden border-2 border-champagne/40 bg-white transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]} ${hoverEffectClasses[hoverEffect as keyof typeof hoverEffectClasses]}`}
                 initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
                 whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
               >
                 {/* Product Image */}
-                <Link to={`/${language}/products/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-champagne">
-                  <motion.img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  {/* Quick View Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                {showElements.image !== false && (
+                  <Link to={`/${language}/products/${product.id}`} className={`relative overflow-hidden bg-champagne ${imageAspectRatio === '1:1' ? 'aspect-square' : imageAspectRatio === '4:5' ? 'aspect-[4/5]' : imageAspectRatio === '3:4' ? 'aspect-[3/4]' : 'aspect-[16/9]'}`}>
+                    <motion.img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                      whileHover={hoverEffect === 'zoom' ? { scale: 1.05 } : {}}
+                      transition={{ duration: 0.4 }}
+                    />
+                    {/* Quick View Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-                  {/* Stock Badge */}
-                  {product.inventory < 10 && product.inventory > 0 && (
-                    <div className="absolute left-3 top-3 rounded-full bg-amber-500/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                      Only {product.inventory} left
+                    {/* Badges */}
+                    {showElements.badges !== false && (
+                      <>
+                        {product.isNew && (
+                          <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                            New
+                          </div>
+                        )}
+                        {product.salePrice && (
+                          <div className="absolute right-3 top-3 rounded-full bg-red-500/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                            Sale
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* Stock Badge */}
+                    {showElements.stock !== false && product.inventory < 10 && product.inventory > 0 && (
+                      <div className="absolute left-3 top-12 rounded-full bg-amber-500/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                        Only {product.inventory} left
+                      </div>
+                    )}
+
+                    {/* Wishlist Button - Top Right */}
+                    {showElements.wishlist !== false && (
+                      <motion.button
+                        type="button"
+                        onClick={(e) => handleFavoriteClick(e, product.id)}
+                        className="absolute right-3 top-3 z-10 rounded-full bg-white p-2 shadow-lg transition-all hover:scale-110"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        title={favorites?.some(fav => fav.productId === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                      >
+                        {favorites?.some(fav => fav.productId === product.id) ? (
+                          <HeartSolidIcon className="h-5 w-5 text-rose-500" />
+                        ) : (
+                          <HeartOutlineIcon className="h-5 w-5 text-midnight" />
+                        )}
+                      </motion.button>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      {showElements.quickView !== false && (
+                        <motion.button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleQuickView(product);
+                          }}
+                          className="flex items-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-midnight shadow-xl"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          title="Quick View"
+                        >
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </motion.button>
+                      )}
+                      {showElements.addToCart !== false && (
+                        <motion.button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleQuickAdd(product);
+                          }}
+                          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-midnight shadow-xl"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                          </svg>
+                          <span>Add</span>
+                        </motion.button>
+                      )}
                     </div>
-                  )}
-
-                  {/* Quick Add Button */}
-                  <motion.button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleQuickAdd(product);
-                    }}
-                    className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-midnight shadow-xl opacity-0 transition-opacity group-hover:opacity-100"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <span>Quick Add</span>
-                  </motion.button>
-                </Link>
+                  </Link>
+                )}
 
                 {/* Product Info */}
                 <div className="flex flex-1 flex-col gap-2 p-6">
                   {/* Star Rating */}
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIconSolid key={i} className="h-4 w-4 text-yellow-400" />
-                    ))}
-                    <span className="ml-2 text-xs text-midnight/60">(245)</span>
-                  </div>
+                  {showElements.rating !== false && (
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <StarIconSolid key={i} className="h-4 w-4 text-yellow-400" />
+                      ))}
+                      {showElements.reviewCount !== false && (
+                        <span className="ml-2 text-xs text-midnight/60">(245)</span>
+                      )}
+                    </div>
+                  )}
 
-                  <Link to={`/${language}/products/${product.id}`}>
-                    <h3 className="font-display text-lg leading-tight text-midnight transition-colors hover:text-jade line-clamp-2">
-                      {product.name}
-                    </h3>
-                  </Link>
+                  {/* Product Title */}
+                  {showElements.title !== false && (
+                    <Link to={`/${language}/products/${product.id}`}>
+                      <h3 className="font-display text-lg leading-tight text-midnight transition-colors hover:text-jade line-clamp-2">
+                        {product.name}
+                      </h3>
+                    </Link>
+                  )}
 
-                  <p className="mt-1 text-sm text-midnight/60 line-clamp-2">{product.shortDescription}</p>
+                  {/* Short Description */}
+                  {showElements.shortDescription !== false && product.shortDescription && (
+                    <p className="mt-1 text-sm text-midnight/60 line-clamp-2">{product.shortDescription}</p>
+                  )}
 
-                  <div className="mt-auto flex items-center justify-between">
-                    <span className="text-xl font-bold text-jade">${product.price.toFixed(2)}</span>
-                    <span className="text-xs text-jade">Free Shipping</span>
-                  </div>
+                  {/* Description (full) */}
+                  {showElements.description !== false && showElements.shortDescription === false && product.description && (
+                    <p className="mt-1 text-sm text-midnight/60 line-clamp-3">{product.description}</p>
+                  )}
+
+                  {/* Price */}
+                  {showElements.price !== false && (
+                    <div className="mt-auto flex items-center gap-2">
+                      <span className="text-xl font-bold text-jade">${(product.salePrice || product.price).toFixed(2)}</span>
+                      {showElements.comparePrice !== false && product.salePrice && (
+                        <span className="text-sm text-midnight/40 line-through">${product.price.toFixed(2)}</span>
+                      )}
+                    </div>
+                  )}
 
                   {/* Categories */}
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {product.categories.slice(0, 2).map((category: string) => (
-                      <span
-                        key={category}
-                        className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-jade capitalize"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
+                  {showElements.categories !== false && product.categories && product.categories.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {product.categories.slice(0, 2).map((category: string) => (
+                        <span
+                          key={category}
+                          className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-jade capitalize"
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.article>
             ))}
           </div>
         )}
 
-        <motion.div className="mt-12 text-center" {...fadeInUp}>
-          <Link
-            to={ctaLink || `/${language}/products`}
-            className="inline-flex items-center gap-2 rounded-full bg-midnight px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
-          >
-            <span>{ctaText || 'View All Products'}</span>
-            <ArrowRightIcon className="h-5 w-5" />
-          </Link>
-        </motion.div>
+        {showCta !== false && (
+          <motion.div className="mt-12 text-center" {...fadeInUp}>
+            <Link
+              to={ctaLink || `/${language}/products`}
+              className="inline-flex items-center gap-2 rounded-full bg-midnight px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            >
+              <span>{ctaText || 'View All Products'}</span>
+              <ArrowRightIcon className="h-5 w-5" />
+            </Link>
+          </motion.div>
+        )}
       </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={isQuickViewOpen}
+        onClose={() => setIsQuickViewOpen(false)}
+      />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-4 right-4 z-50 rounded-lg bg-jade px-6 py-4 text-white shadow-2xl"
+            onAnimationComplete={() => {
+              setTimeout(() => setShowToast(false), 2000);
+            }}
+          >
+            <p className="font-semibold">{toastMessage}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -452,15 +861,69 @@ function TestimonialsBlock({ content }: { content: any }) {
   );
 }
 
-// Inline Newsletter Block Component
+// Enhanced Newsletter Block Component with Templates and API Integration
 function NewsletterBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
-  const { title, description, buttonText, placeholderText = 'Enter your email' } = content;
+  const {
+    title,
+    description,
+    buttonText,
+    placeholderText = 'Enter your email',
+    template = 'gradient',
+    style = {}
+  } = content;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Extract style values with defaults
+  const bgColor = style?.backgroundColor || '#10b981';
+  const textColor = style?.textColor || '#ffffff';
+  const buttonColor = style?.buttonColor || '#ffffff';
+  const buttonTextColor = style?.buttonTextColor || '#10b981';
+  const showIcon = style?.showIcon !== false;
+  const centerAlign = style?.centerAlign !== false;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle newsletter signup
-    alert('Thank you for subscribing! Check your email for your discount code.');
+    setIsSubmitting(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          source: 'website_cms_block'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: 'Thank you for subscribing! Check your email for confirmation.'
+        });
+        setEmail('');
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.error || 'Failed to subscribe. Please try again.'
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'Failed to subscribe. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fadeInUp = prefersReducedMotion
@@ -472,66 +935,290 @@ function NewsletterBlock({ content }: { content: any }) {
         transition: { duration: 0.7 }
       };
 
-  return (
-    <section className="bg-gradient-to-br from-jade via-jade/90 to-midnight py-16 text-white md:py-20">
-      <div className="mx-auto max-w-4xl px-4">
-        <motion.div className="text-center" {...fadeInUp}>
-          <SparklesIcon className="mx-auto h-12 w-12 text-white/80" />
-          <h2 className="mt-4 font-display text-3xl md:text-4xl">{title}</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-white/80">
-            {description}
-          </p>
-        </motion.div>
+  // Template-specific rendering
+  if (template === 'gradient') {
+    return (
+      <section
+        style={{ background: `linear-gradient(135deg, ${bgColor}, ${bgColor}e6, #1e293b)` }}
+        className="py-16 text-white md:py-20"
+      >
+        <div className="mx-auto max-w-4xl px-4">
+          <motion.div className={centerAlign ? 'text-center' : ''} {...fadeInUp}>
+            {showIcon && <SparklesIcon className="mx-auto h-12 w-12 text-white/80" />}
+            <h2 className="mt-4 font-display text-3xl md:text-4xl" style={{ color: textColor }}>
+              {title}
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base" style={{ color: textColor, opacity: 0.8 }}>
+              {description}
+            </p>
+          </motion.div>
 
-        <motion.form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-10 max-w-xl"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <input
-              type="email"
-              placeholder={placeholderText}
-              required
-              className="flex-1 rounded-full border-2 border-white/30 bg-white/10 px-6 py-4 text-white placeholder-white/60 backdrop-blur transition-all focus:border-white focus:bg-white/20 focus:outline-none"
-            />
-            <motion.button
-              type="submit"
-              className="rounded-full bg-white px-8 py-4 font-semibold text-jade shadow-xl transition-all hover:bg-champagne hover:shadow-2xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {buttonText}
-            </motion.button>
-          </div>
-          <p className="mt-4 text-center text-xs text-white/60">
-            By subscribing, you agree to our Privacy Policy. Unsubscribe anytime.
-          </p>
-        </motion.form>
+          <motion.form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-10 max-w-xl"
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
+            whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={placeholderText}
+                required
+                disabled={isSubmitting}
+                className="flex-1 rounded-full border-2 border-white/30 bg-white/10 px-6 py-4 text-white placeholder-white/60 backdrop-blur transition-all focus:border-white focus:bg-white/20 focus:outline-none disabled:opacity-50"
+              />
+              <motion.button
+                type="submit"
+                disabled={isSubmitting}
+                style={{ backgroundColor: buttonColor, color: buttonTextColor }}
+                className="rounded-full px-8 py-4 font-semibold shadow-xl transition-all hover:shadow-2xl disabled:opacity-50"
+                whileHover={isSubmitting ? {} : { scale: 1.05 }}
+                whileTap={isSubmitting ? {} : { scale: 0.95 }}
+              >
+                {isSubmitting ? 'Subscribing...' : buttonText}
+              </motion.button>
+            </div>
+            {message && (
+              <p
+                className={`mt-3 text-center text-sm ${
+                  message.type === 'success' ? 'text-green-300' : 'text-red-300'
+                }`}
+              >
+                {message.text}
+              </p>
+            )}
+            <p className="mt-4 text-center text-xs text-white/60">
+              By subscribing, you agree to our Privacy Policy. Unsubscribe anytime.
+            </p>
+          </motion.form>
 
-        {/* Trust Indicators */}
-        <motion.div
-          className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="flex items-center gap-2 text-white/80">
-            <LockClosedIcon className="h-5 w-5" />
-            <span>We protect your privacy</span>
+          <motion.div
+            className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm"
+            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            whileInView={prefersReducedMotion ? {} : { opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="flex items-center gap-2 text-white/80">
+              <LockClosedIcon className="h-5 w-5" />
+              <span>We protect your privacy</span>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <CheckBadgeIcon className="h-5 w-5" />
+              <span>No spam, ever</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  if (template === 'minimal') {
+    return (
+      <section style={{ backgroundColor: bgColor }} className="py-16 md:py-20">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+            <div className={centerAlign ? 'text-center' : ''}>
+              {showIcon && (
+                <svg
+                  className="h-10 w-10 mx-auto"
+                  style={{ color: textColor }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              )}
+              <h2 className="mt-4 font-display text-2xl md:text-3xl" style={{ color: textColor }}>
+                {title}
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm" style={{ color: textColor, opacity: 0.7 }}>
+                {description}
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mx-auto mt-6 max-w-md">
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={placeholderText}
+                  required
+                  disabled={isSubmitting}
+                  className="flex-1 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/50 focus:border-white/40 focus:outline-none disabled:opacity-50"
+                  style={{ color: textColor }}
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{ backgroundColor: buttonColor, color: buttonTextColor }}
+                  className="rounded-lg px-6 py-3 text-sm font-semibold transition-all hover:shadow-lg disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Subscribing...' : buttonText}
+                </button>
+              </div>
+              {message && (
+                <p
+                  className={`mt-2 text-center text-xs ${
+                    message.type === 'success' ? 'text-green-400' : 'text-red-400'
+                  }`}
+                >
+                  {message.text}
+                </p>
+              )}
+            </form>
           </div>
-          <div className="flex items-center gap-2 text-white/80">
-            <CheckBadgeIcon className="h-5 w-5" />
-            <span>24k+ happy subscribers</span>
+        </div>
+      </section>
+    );
+  }
+
+  if (template === 'split') {
+    return (
+      <section style={{ backgroundColor: bgColor }} className="py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="grid md:grid-cols-2">
+              <div className="flex items-center justify-center p-12" style={{ backgroundColor: buttonColor }}>
+                <svg
+                  className="h-32 w-32"
+                  style={{ color: buttonTextColor }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <div className="p-12">
+                <h2 className="font-display text-3xl text-midnight">{title}</h2>
+                <p className="mt-4 text-base text-midnight/70">{description}</p>
+
+                <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={placeholderText}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-midnight focus:border-jade focus:outline-none disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{ backgroundColor: buttonColor, color: buttonTextColor }}
+                    className="w-full rounded-lg px-6 py-3 font-semibold transition-all hover:shadow-lg disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Subscribing...' : buttonText}
+                  </button>
+                  {message && (
+                    <p
+                      className={`text-center text-sm ${
+                        message.type === 'success' ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
+                      {message.text}
+                    </p>
+                  )}
+                  <p className="text-center text-xs text-midnight/50">No spam. Unsubscribe anytime.</p>
+                </form>
+              </div>
+            </div>
           </div>
-        </motion.div>
-      </div>
-    </section>
-  );
+        </div>
+      </section>
+    );
+  }
+
+  if (template === 'card') {
+    return (
+      <section style={{ backgroundColor: bgColor }} className="py-16 md:py-20">
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="rounded-3xl bg-white p-10 shadow-2xl">
+            <div className={centerAlign ? 'text-center' : ''}>
+              {showIcon && (
+                <div
+                  className="mx-auto inline-flex rounded-full p-4"
+                  style={{ backgroundColor: `${buttonColor}20` }}
+                >
+                  <svg
+                    className="h-10 w-10"
+                    style={{ color: buttonColor }}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+              )}
+              <h2 className="mt-4 font-display text-3xl text-midnight">{title}</h2>
+              <p className="mx-auto mt-4 max-w-lg text-base text-midnight/70">{description}</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-8">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={placeholderText}
+                  required
+                  disabled={isSubmitting}
+                  className="flex-1 rounded-full border-2 border-gray-200 px-6 py-4 text-midnight focus:border-jade focus:outline-none disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{ backgroundColor: buttonColor, color: buttonTextColor }}
+                  className="rounded-full px-8 py-4 font-semibold shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Subscribing...' : buttonText}
+                </button>
+              </div>
+              {message && (
+                <p
+                  className={`mt-3 text-center text-sm ${
+                    message.type === 'success' ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {message.text}
+                </p>
+              )}
+              <p className="mt-4 text-center text-xs text-midnight/50">
+                Join 10,000+ subscribers. No spam, ever.
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Default: gradient template
+  return null;
 }
 
 // Inline Text + Image Block Component

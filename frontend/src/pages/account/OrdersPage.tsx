@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   UserIcon,
   ShoppingBagIcon,
@@ -19,6 +20,7 @@ import type { Order } from '../../types/product';
 import OrderStatusTimeline from '../../components/OrderStatusTimeline';
 
 export default function OrdersPage() {
+  const { t } = useTranslation();
   const { lang } = useParams<{ lang: string }>();
   const location = useLocation();
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -30,18 +32,18 @@ export default function OrdersPage() {
   });
 
   const tabs = [
-    { name: 'Profile', href: `/${lang}/account/profile`, icon: UserIcon },
-    { name: 'Orders', href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
-    { name: 'Favorites', href: `/${lang}/account/favorites`, icon: HeartIcon }
+    { name: t('account.profile'), href: `/${lang}/account/profile`, icon: UserIcon },
+    { name: t('account.orders'), href: `/${lang}/account/orders`, icon: ShoppingBagIcon },
+    { name: t('account.favorites'), href: `/${lang}/account/favorites`, icon: HeartIcon }
   ];
 
   const statusFilters = [
-    { value: 'all', label: 'All Orders' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'shipped', label: 'Shipped' },
-    { value: 'delivered', label: 'Delivered' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { value: 'all', label: t('orders.allOrders') },
+    { value: 'pending', label: t('orders.pending') },
+    { value: 'confirmed', label: t('orders.confirmed') },
+    { value: 'shipped', label: t('orders.shipped') },
+    { value: 'delivered', label: t('orders.delivered') },
+    { value: 'cancelled', label: t('orders.cancelled') }
   ];
 
   const getStatusIcon = (status: string) => {
@@ -91,8 +93,8 @@ export default function OrdersPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-midnight mb-2">My Orders</h1>
-          <p className="text-midnight/60">Track and manage your orders</p>
+          <h1 className="font-display text-4xl text-midnight mb-2">{t('orders.title')}</h1>
+          <p className="text-midnight/60">{t('orders.subtitle')}</p>
         </motion.div>
 
         {/* Tabs */}
@@ -157,12 +159,12 @@ export default function OrdersPage() {
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             />
-            <p className="mt-4 text-midnight/60">Loading your orders...</p>
+            <p className="mt-4 text-midnight/60">{t('orders.loading')}</p>
           </div>
         ) : error ? (
           <div className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center">
             <XCircleIcon className="h-12 w-12 mx-auto text-red-500 mb-4" />
-            <p className="text-midnight/60">Failed to load orders. Please try again.</p>
+            <p className="text-midnight/60">{t('orders.loadError')}</p>
           </div>
         ) : !filteredOrders || filteredOrders.length === 0 ? (
           <motion.div
@@ -172,18 +174,18 @@ export default function OrdersPage() {
             className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center"
           >
             <ShoppingCartIcon className="h-16 w-16 mx-auto text-midnight/20 mb-4" />
-            <h3 className="font-display text-2xl text-midnight mb-2">No Orders Yet</h3>
+            <h3 className="font-display text-2xl text-midnight mb-2">{t('orders.noOrdersTitle')}</h3>
             <p className="text-midnight/60 mb-6">
               {selectedStatus === 'all'
-                ? "You haven't placed any orders yet."
-                : `No ${selectedStatus} orders found.`}
+                ? t('orders.noOrdersMessage')
+                : t('orders.noFilteredOrders', { status: selectedStatus })}
             </p>
             <Link
               to={`/${lang}/products`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold hover:bg-jade/90 transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
-              Start Shopping
+              {t('orders.startShopping')}
             </Link>
           </motion.div>
         ) : (
@@ -205,7 +207,7 @@ export default function OrdersPage() {
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm text-midnight/60">Order #{order.id}</p>
+                      <p className="text-sm text-midnight/60">{t('orders.orderNumber')}{order.id}</p>
                       <p className="text-xs text-midnight/40 mt-1">
                         {new Date(order.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -230,7 +232,7 @@ export default function OrdersPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-midnight/60">
-                        {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                        {order.items.length} {order.items.length === 1 ? t('orders.item') : t('orders.items')}
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -262,7 +264,7 @@ export default function OrdersPage() {
                       <div className="p-6 space-y-6">
                         {/* Order Status Timeline */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-4">Order Status</h4>
+                          <h4 className="font-semibold text-midnight mb-4">{t('orders.orderStatus')}</h4>
                           <OrderStatusTimeline
                             currentStatus={order.status}
                             createdAt={order.createdAt}
@@ -271,7 +273,7 @@ export default function OrdersPage() {
 
                         {/* Items */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-3">Order Items</h4>
+                          <h4 className="font-semibold text-midnight mb-3">{t('orders.orderItems')}</h4>
                           <div className="space-y-2">
                             {order.items.map((item, idx) => (
                               <div
@@ -280,7 +282,7 @@ export default function OrdersPage() {
                               >
                                 <div>
                                   <p className="font-medium text-midnight">{item.name || 'Product'}</p>
-                                  <p className="text-sm text-midnight/60">Qty: {item.quantity}</p>
+                                  <p className="text-sm text-midnight/60">{t('orders.quantity')} {item.quantity}</p>
                                 </div>
                                 <p className="font-semibold text-midnight">
                                   ${((item.price || 0) * item.quantity).toFixed(2)}
@@ -292,14 +294,14 @@ export default function OrdersPage() {
 
                         {/* Customer Info */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-2">Delivery Information</h4>
+                          <h4 className="font-semibold text-midnight mb-2">{t('orders.deliveryInfo')}</h4>
                           <div className="space-y-1 text-sm text-midnight/60">
                             <p>{order.customer.name}</p>
                             <p>{order.customer.email}</p>
                             {order.customer.phone && <p>{order.customer.phone}</p>}
                             <p className="mt-2">{order.customer.address}</p>
                             {order.customer.notes && (
-                              <p className="mt-2 italic">Note: {order.customer.notes}</p>
+                              <p className="mt-2 italic">{t('orders.note')} {order.customer.notes}</p>
                             )}
                           </div>
                         </div>

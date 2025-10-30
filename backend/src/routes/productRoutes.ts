@@ -32,6 +32,22 @@ router.get('/filter-metadata', async (req, res) => {
   }
 });
 
+// Get translation status for all products (admin only)
+router.get('/translations/status', authenticate, async (req, res) => {
+  try {
+    const languageCode = req.query.lang as string;
+
+    if (!languageCode) {
+      return res.status(400).json({ message: 'Language code is required' });
+    }
+
+    const statuses = await productService.getAllProductsTranslationStatus(languageCode);
+    res.json(statuses);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
 // Get random products for home page
 router.get('/random', async (req, res) => {
   try {
@@ -42,6 +58,204 @@ router.get('/random', async (req, res) => {
     res.json(products);
   } catch (error: any) {
     res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
+// ========================================================================
+// PRODUCT WIDGET ENHANCEMENT - NEW ENDPOINTS
+// ========================================================================
+
+/**
+ * Track product view for analytics and recommendations
+ * POST /api/products/track-view
+ * Body: { productId: number, userId?: number, sessionId: string }
+ */
+router.post('/track-view', async (req, res) => {
+  try {
+    const { productId, userId, sessionId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ message: 'Product ID is required' });
+    }
+
+    if (!sessionId) {
+      return res.status(400).json({ message: 'Session ID is required' });
+    }
+
+    await productService.trackProductView(
+      Number(productId),
+      userId ? Number(userId) : null,
+      sessionId
+    );
+
+    res.json({ success: true, message: 'Product view tracked' });
+  } catch (error: any) {
+    console.error('Error tracking product view:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to track product view' });
+  }
+});
+
+/**
+ * Get recently viewed products
+ * GET /api/products/recently-viewed?userId=123&sessionId=abc&lang=en&limit=8
+ */
+router.get('/recently-viewed', async (req, res) => {
+  try {
+    const userId = req.query.userId ? Number(req.query.userId) : null;
+    const sessionId = (req.query.sessionId as string) || null;
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 8;
+
+    if (!userId && !sessionId) {
+      return res.status(400).json({ message: 'Either userId or sessionId is required' });
+    }
+
+    const products = await productService.getRecentlyViewedProducts(
+      userId,
+      sessionId,
+      { language, limit }
+    );
+
+    res.json(products);
+  } catch (error: any) {
+    console.error('Error fetching recently viewed products:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch recently viewed products' });
+  }
+});
+
+/**
+ * Get recommended products based on a source product
+ * GET /api/products/recommended/:productId?type=related&lang=en&limit=6
+ */
+router.get('/recommended/:productId', async (req, res) => {
+  try {
+    const productId = Number(req.params.productId);
+    const recommendationType = (req.query.type as 'related' | 'similar' | 'frequently_bought') || 'related';
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 6;
+
+    const products = await productService.fetchRecommendedProducts(
+      productId,
+      recommendationType,
+      { language, limit }
+    );
+
+    res.json(products);
+  } catch (error: any) {
+    console.error('Error fetching recommended products:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch recommended products' });
+  }
+});
+
+/**
+ * Get products by rules (new arrivals, bestsellers, on sale, etc.)
+ * GET /api/products/by-rules?showNewArrivals=true&showBestsellers=true&lang=en&limit=12&sortBy=popularity
+ */
+router.get('/by-rules', async (req, res) => {
+  try {
+    const rules = {
+      showNewArrivals: req.query.showNewArrivals === 'true',
+      showBestsellers: req.query.showBestsellers === 'true',
+      showOnSale: req.query.showOnSale === 'true',
+      showFeatured: req.query.showFeatured === 'true',
+      showLowStock: req.query.showLowStock === 'true',
+      excludeOutOfStock: req.query.excludeOutOfStock === 'true',
+      minRating: req.query.minRating ? Number(req.query.minRating) : undefined,
+      minReviews: req.query.minReviews ? Number(req.query.minReviews) : undefined
+    };
+
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 12;
+    const sortBy = (req.query.sortBy as string) || 'default';
+
+    const products = await productService.fetchProductsByRules(rules, {
+      language,
+      limit,
+      sortBy
+    });
+
+    res.json(products);
+  } catch (error: any) {
+    console.error('Error fetching products by rules:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch products by rules' });
+  }
+});
+
+/**
+ * Get products by category filter
+ * GET /api/products/by-category?categories=["Serums","Treatments"]&lang=en&limit=12&sortBy=popularity
+ */
+router.get('/by-category', async (req, res) => {
+  try {
+    const categoriesParam = req.query.categories as string;
+
+    if (!categoriesParam) {
+      return res.status(400).json({ message: 'Categories parameter is required' });
+    }
+
+    let categories: string[];
+    try {
+      categories = JSON.parse(categoriesParam);
+      if (!Array.isArray(categories)) {
+        return res.status(400).json({ message: 'Categories must be an array' });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid categories format. Must be valid JSON array.' });
+    }
+
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 12;
+    const sortBy = (req.query.sortBy as string) || 'default';
+
+    const products = await productService.fetchProductsByCategory(categories, {
+      language,
+      limit,
+      sortBy
+    });
+
+    res.json(products);
+  } catch (error: any) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch products by category' });
+  }
+});
+
+/**
+ * Get products by attribute filters
+ * GET /api/products/by-attributes?attributes={"brand":["BrandA"],"scent":["Lavender"]}&lang=en&limit=12&sortBy=popularity
+ */
+router.get('/by-attributes', async (req, res) => {
+  try {
+    const attributesParam = req.query.attributes as string;
+
+    if (!attributesParam) {
+      return res.status(400).json({ message: 'Attributes parameter is required' });
+    }
+
+    let attributeFilters: { [key: string]: string[] };
+    try {
+      attributeFilters = JSON.parse(attributesParam);
+      if (typeof attributeFilters !== 'object' || Array.isArray(attributeFilters)) {
+        return res.status(400).json({ message: 'Attributes must be an object mapping attribute keys to value arrays' });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid attributes format. Must be valid JSON object.' });
+    }
+
+    const language = (req.query.lang as string) || 'en';
+    const limit = req.query.limit ? Number(req.query.limit) : 12;
+    const sortBy = (req.query.sortBy as string) || 'default';
+
+    const products = await productService.fetchProductsByAttributes(attributeFilters, {
+      language,
+      limit,
+      sortBy
+    });
+
+    res.json(products);
+  } catch (error: any) {
+    console.error('Error fetching products by attributes:', error);
+    res.status(500).json({ message: error.message ?? 'Failed to fetch products by attributes' });
   }
 });
 
@@ -333,7 +547,21 @@ router.get('/:id/translations/:lang', async (req, res) => {
 
     const translation = await productService.getTranslation(productId, languageCode);
     if (!translation) {
-      return res.status(404).json({ message: 'Translation not found' });
+      // Return empty translation object instead of 404
+      return res.json({
+        productId,
+        languageCode,
+        name: '',
+        shortDescription: '',
+        description: '',
+        highlights: null,
+        usage: '',
+        slug: '',
+        metaTitle: '',
+        metaDescription: '',
+        createdAt: null,
+        updatedAt: null
+      });
     }
 
     res.json(translation);

@@ -48,6 +48,8 @@ export interface Product {
   seo?: ProductSEO;
   customAttributes?: Record<string, any>;
   images?: ProductMedia[];
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 export interface ProductFilters {

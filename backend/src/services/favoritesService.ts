@@ -1,4 +1,5 @@
 import { pool } from '../db/client';
+import { getMediaUrl } from '../utils/urlHelper';
 
 // Map product row to response format
 const mapProduct = (row: any) => ({
@@ -35,6 +36,40 @@ export const favoritesService = {
        ORDER BY f.created_at DESC`,
       [userId]
     );
+
+    // Fetch media library images for all products
+    const productIds = result.rows.map(row => row.p_id);
+    let productMediaMap = new Map();
+
+    if (productIds.length > 0) {
+      const mediaResult = await pool.query(
+        `SELECT
+          pm.product_id,
+          pm.is_featured,
+          pm.display_order,
+          m.filename,
+          m.alt_text
+         FROM product_media pm
+         JOIN cms_media m ON pm.media_id = m.id
+         WHERE pm.product_id = ANY($1) AND m.is_deleted = FALSE
+         ORDER BY pm.product_id, pm.display_order ASC`,
+        [productIds]
+      );
+
+      // Group images by product_id
+      mediaResult.rows.forEach(media => {
+        if (!productMediaMap.has(media.product_id)) {
+          productMediaMap.set(media.product_id, []);
+        }
+        productMediaMap.get(media.product_id).push({
+          url: getMediaUrl(media.filename),
+          altText: media.alt_text,
+          isFeatured: media.is_featured,
+          displayOrder: media.display_order
+        });
+      });
+    }
+
     return result.rows.map(row => ({
       id: row.id,
       userId: row.user_id,
@@ -48,6 +83,7 @@ export const favoritesService = {
         price: parseFloat(row.price),
         salePrice: row.sale_price ? parseFloat(row.sale_price) : null,
         imageUrl: row.image_url,
+        images: productMediaMap.get(row.p_id) || [],
         inventory: row.inventory,
         categories: row.categories,
         highlights: row.highlights ?? undefined,

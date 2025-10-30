@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   MapPinIcon,
   PlusIcon,
@@ -19,6 +20,7 @@ interface AddressSelectorProps {
 }
 
 export default function AddressSelector({ onSelect, selectedAddressId }: AddressSelectorProps) {
+  const { t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState<CreateAddressPayload>({
     name: '',
@@ -40,7 +42,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
     mutationFn: createAddress,
     onSuccess: (newAddress) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      toast.success('Address added successfully');
+      toast.success(t('address.addedSuccess'));
       setShowAddForm(false);
       onSelect(newAddress);
       setFormData({
@@ -53,7 +55,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
       });
     },
     onError: () => {
-      toast.error('Failed to add address');
+      toast.error(t('address.addedError'));
     }
   });
 
@@ -61,10 +63,10 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
     mutationFn: deleteAddress,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      toast.success('Address deleted');
+      toast.success(t('address.deletedSuccess'));
     },
     onError: () => {
-      toast.error('Failed to delete address');
+      toast.error(t('address.deletedError'));
     }
   });
 
@@ -72,10 +74,10 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
     mutationFn: setDefaultAddress,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      toast.success('Default address updated');
+      toast.success(t('address.defaultUpdated'));
     },
     onError: () => {
-      toast.error('Failed to update default address');
+      toast.error(t('address.defaultUpdateError'));
     }
   });
 
@@ -95,7 +97,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-jade"></div>
-        <p className="text-midnight/70 mt-2 text-sm">Loading addresses...</p>
+        <p className="text-midnight/70 mt-2 text-sm">{t('address.loadingAddresses')}</p>
       </div>
     );
   }
@@ -105,14 +107,14 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-midnight flex items-center gap-2">
           <MapPinIcon className="h-5 w-5" />
-          Saved Addresses
+          {t('address.savedAddresses')}
         </h3>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="flex items-center gap-2 text-sm font-medium text-jade hover:text-jade/80 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
-          Add New
+          {t('address.addNew')}
         </button>
       </div>
 
@@ -127,21 +129,21 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
             <div className="grid grid-cols-2 gap-3">
               <div className="col-span-2">
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Label
+                  {t('address.label')}
                 </label>
                 <select
                   value={formData.label}
                   onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                   className="w-full rounded-lg border-2 border-jade/30 bg-white px-3 py-2 text-midnight transition-colors focus:border-jade focus:outline-none"
                 >
-                  <option value="Home">Home</option>
-                  <option value="Work">Work</option>
-                  <option value="Other">Other</option>
+                  <option value="Home">{t('address.labelHome')}</option>
+                  <option value="Work">{t('address.labelWork')}</option>
+                  <option value="Other">{t('address.labelOther')}</option>
                 </select>
               </div>
               <div className="col-span-2">
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Full Name *
+                  {t('address.fullName')} *
                 </label>
                 <input
                   type="text"
@@ -154,7 +156,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div className="col-span-2">
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Street Address *
+                  {t('address.streetAddress')} *
                 </label>
                 <input
                   type="text"
@@ -167,7 +169,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div className="col-span-2">
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Apt, Suite (Optional)
+                  {t('address.aptSuite')}
                 </label>
                 <input
                   type="text"
@@ -179,7 +181,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  City *
+                  {t('address.city')} *
                 </label>
                 <input
                   type="text"
@@ -192,7 +194,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  State
+                  {t('address.state')}
                 </label>
                 <input
                   type="text"
@@ -204,7 +206,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Postal Code *
+                  {t('address.postalCode')} *
                 </label>
                 <input
                   type="text"
@@ -217,7 +219,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
               </div>
               <div>
                 <label className="block text-sm font-semibold text-midnight mb-1">
-                  Phone
+                  {t('address.phone')}
                 </label>
                 <input
                   type="tel"
@@ -234,7 +236,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
                 onClick={() => setShowAddForm(false)}
                 className="flex-1 rounded-lg border-2 border-champagne/30 bg-white px-4 py-2 text-sm font-medium text-midnight transition-colors hover:bg-champagne/20"
               >
-                Cancel
+                {t('address.cancel')}
               </button>
               <button
                 type="button"
@@ -246,7 +248,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
                 disabled={createMutation.isPending}
                 className="flex-1 rounded-lg bg-jade px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-jade/90 disabled:opacity-50"
               >
-                {createMutation.isPending ? 'Saving...' : 'Save Address'}
+                {createMutation.isPending ? t('address.saving') : t('address.saveAddress')}
               </button>
             </div>
           </motion.div>
@@ -257,8 +259,8 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
         {addresses.length === 0 ? (
           <div className="text-center py-8 rounded-2xl border-2 border-champagne/20 bg-champagne/10">
             <MapPinIcon className="mx-auto h-12 w-12 text-midnight/30" />
-            <p className="text-midnight/70 mt-2">No saved addresses yet</p>
-            <p className="text-sm text-midnight/50">Add one to save time on future orders</p>
+            <p className="text-midnight/70 mt-2">{t('address.noSavedYet')}</p>
+            <p className="text-sm text-midnight/50">{t('address.addOneToSaveTime')}</p>
           </div>
         ) : (
           addresses.map((address) => (
@@ -289,7 +291,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
                     )}
                     {address.isDefault && (
                       <span className="inline-block rounded-full bg-blush/20 px-2 py-0.5 text-xs font-semibold text-blush">
-                        Default
+                        {t('address.default')}
                       </span>
                     )}
                   </div>
@@ -307,19 +309,19 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
                     }}
                     className="text-xs text-jade hover:text-jade/80 transition-colors"
                   >
-                    Set as default
+                    {t('address.setAsDefault')}
                   </button>
                 )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm(`Delete address for ${address.name}?`)) {
+                    if (confirm(t('address.deleteConfirm', { name: address.name }))) {
                       deleteMutation.mutate(address.id);
                     }
                   }}
                   className="text-xs text-blush hover:text-blush/80 transition-colors"
                 >
-                  Delete
+                  {t('address.delete')}
                 </button>
               </div>
             </motion.div>

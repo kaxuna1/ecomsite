@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { addFavorite, removeFavorite, getFavorites } from '../api/favorites';
 import { getProductVariants } from '../api/variants';
+import RatingStars from './reviews/RatingStars';
 
 interface ProductCardProps {
   product: Product;
@@ -382,6 +383,16 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         </div>
 
         <p className="text-sm text-midnight/70 line-clamp-2">{product.shortDescription}</p>
+
+        {/* Rating */}
+        {product.averageRating && product.reviewCount && product.reviewCount > 0 && (
+          <div className="flex items-center gap-2">
+            <RatingStars rating={product.averageRating} size="sm" />
+            <span className="text-xs text-midnight/60">
+              ({product.reviewCount})
+            </span>
+          </div>
+        )}
 
         {/* Categories */}
         <div className="mt-auto flex flex-wrap gap-1.5 pt-2">

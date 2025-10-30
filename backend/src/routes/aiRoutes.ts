@@ -16,6 +16,8 @@ import { EmailCampaignGenerator } from '../ai/features/EmailCampaignGenerator';
 import { FAQGenerator } from '../ai/features/FAQGenerator';
 import { HeroGenerator } from '../ai/features/HeroGenerator';
 import { TestimonialGenerator } from '../ai/features/TestimonialGenerator';
+import { FeaturesGenerator } from '../ai/features/FeaturesGenerator';
+import { CMSPageTranslator } from '../ai/features/CMSPageTranslator';
 import { aiServiceConfig } from '../ai/config';
 
 const router = Router();
@@ -56,7 +58,13 @@ async function getAIServiceManager(): Promise<AIServiceManager> {
     const testimonialGenerator = new TestimonialGenerator(aiServiceManager);
     aiServiceManager.registerFeature(testimonialGenerator);
 
-    console.log('AI Service Manager created with 8 features');
+    const featuresGenerator = new FeaturesGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(featuresGenerator);
+
+    const cmsPageTranslator = new CMSPageTranslator(aiServiceManager);
+    aiServiceManager.registerFeature(cmsPageTranslator);
+
+    console.log('AI Service Manager created with 10 features');
   }
 
   // IMPORTANT: Re-initialize on every request to pick up updated provider/model settings
@@ -1013,6 +1021,324 @@ router.post('/generate-testimonials', authenticate, async (req: AuthenticatedReq
     return res.status(500).json({
       success: false,
       error: error.message || 'Failed to generate testimonials'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/generate-features
+ *
+ * Generate AI-powered feature blocks for CMS
+ *
+ * Body:
+ * - productOrService: string (required) - Product or service name
+ * - industry?: string - Industry context
+ * - targetAudience?: string - Target audience description
+ * - numberOfFeatures: number (3-8) - Number of features to generate
+ * - focusArea?: 'benefits' | 'technical' | 'competitive' | 'user-experience' | 'mixed'
+ * - tone?: 'professional' | 'friendly' | 'technical' | 'persuasive'
+ * - includeSpecificFeatures?: string[] - Specific features to include
+ * - language?: string - Target language (default: 'en')
+ *
+ * Returns:
+ * - features: Array of generated features with icon, title, description
+ * - cost: Generation cost in USD
+ * - tokensUsed: Token count
+ * - provider: AI provider used
+ */
+router.post('/generate-features', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      productOrService,
+      industry,
+      targetAudience,
+      numberOfFeatures = 4,
+      focusArea,
+      tone,
+      includeSpecificFeatures,
+      language
+    } = req.body;
+
+    // Validation
+    if (!productOrService || typeof productOrService !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Product or service name is required'
+      });
+    }
+
+    if (numberOfFeatures < 3 || numberOfFeatures > 8) {
+      return res.status(400).json({
+        success: false,
+        error: 'Number of features must be between 3 and 8'
+      });
+    }
+
+    const aiService = await getAIServiceManager();
+
+    const result = await aiService.executeFeature(
+      'features_generator',
+      {
+        productOrService,
+        industry,
+        targetAudience,
+        numberOfFeatures,
+        focusArea: focusArea || 'mixed',
+        tone: tone || 'professional',
+        includeSpecificFeatures: Array.isArray(includeSpecificFeatures) ? includeSpecificFeatures : [],
+        language: language || 'en'
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'features_generator'
+        }
+      }
+    );
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error generating features:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate features'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/translate-cms-page
+ *
+ * Translate CMS page content including page fields and all blocks
+ *
+ * Body:
+ * - fields: { title?, metaTitle?, metaDescription? } (required)
+ * - blocks: Array<{ id, type, content }> (required)
+ * - sourceLanguage: string (optional, default: 'en')
+ * - targetLanguage: string (required)
+ * - preserveTerms: string[] (optional) - Brand names/terms to not translate
+ * - tone: 'luxury' | 'professional' | 'casual' | 'friendly' (optional)
+ *
+ * Response:
+ * - success: boolean
+ * - data: {
+ *     translatedFields: { title?, metaTitle?, metaDescription? }
+ *     translatedBlocks: Array<{ id, content }>
+ *     cost: number
+ *     tokensUsed: number
+ *     provider: string
+ *   }
+ */
+router.post('/translate-cms-page', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      fields,
+      blocks,
+      sourceLanguage,
+      targetLanguage,
+      preserveTerms,
+      tone
+    } = req.body;
+
+    // Validate required fields
+    if (!fields || typeof fields !== 'object') {
+      return res.status(400).json({
+        success: false,
+        error: 'fields object is required'
+      });
+    }
+
+    if (!blocks || !Array.isArray(blocks)) {
+      return res.status(400).json({
+        success: false,
+        error: 'blocks array is required'
+      });
+    }
+
+    if (!targetLanguage || typeof targetLanguage !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'targetLanguage is required and must be a string (ISO code)'
+      });
+    }
+
+    // Validate at least one field or block is provided
+    const hasFields = Object.keys(fields).some(key => fields[key]);
+    if (!hasFields && blocks.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'At least one field or block must be provided for translation'
+      });
+    }
+
+    // Validate blocks structure
+    for (const block of blocks) {
+      if (!block.id || !block.type || !block.content) {
+        return res.status(400).json({
+          success: false,
+          error: 'Each block must have id, type, and content'
+        });
+      }
+    }
+
+    // Validate tone if provided
+    const validTones = ['luxury', 'professional', 'casual', 'friendly'];
+    if (tone && !validTones.includes(tone)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid tone. Must be one of: ${validTones.join(', ')}`
+      });
+    }
+
+    // Get AI Service Manager
+    const aiService = await getAIServiceManager();
+
+    // Execute CMS page translation
+    const result = await aiService.executeFeature(
+      'cms_page_translator',
+      {
+        fields,
+        blocks,
+        sourceLanguage: sourceLanguage || 'en',
+        targetLanguage,
+        preserveTerms: Array.isArray(preserveTerms) ? preserveTerms : [],
+        tone: tone || 'professional'
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'cms_page_translator'
+        }
+      }
+    );
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error translating CMS page:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to translate CMS page'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/translate-static-text
+ *
+ * Translate static UI text (single key or bulk)
+ *
+ * Body:
+ * - text: string (required) - Text to translate
+ * - key: string (optional) - Translation key for context
+ * - namespace: string (optional) - Namespace for context (e.g., 'common', 'products')
+ * - sourceLanguage: string (optional, default: 'en')
+ * - targetLanguage: string (required)
+ * - preserveTerms: string[] (optional) - Brand names/terms to not translate
+ * - context: string (optional) - Additional context about usage
+ *
+ * Response:
+ * - success: boolean
+ * - data: {
+ *     translatedText: string
+ *     cost: number
+ *     tokensUsed: number
+ *     provider: string
+ *   }
+ */
+router.post('/translate-static-text', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      text,
+      key,
+      namespace,
+      sourceLanguage,
+      targetLanguage,
+      preserveTerms,
+      context
+    } = req.body;
+
+    // Validate required fields
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'text is required and must be a string'
+      });
+    }
+
+    if (!targetLanguage || typeof targetLanguage !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'targetLanguage is required and must be a string (ISO code)'
+      });
+    }
+
+    // Get AI Service Manager
+    const aiService = await getAIServiceManager();
+
+    // Build context-aware prompt
+    const contextInfo = [
+      key ? `Translation key: ${key}` : null,
+      namespace ? `Context: ${namespace} UI section` : null,
+      context ? `Usage: ${context}` : null
+    ].filter(Boolean).join('\n');
+
+    const fullPrompt = `Translate the following UI text from ${sourceLanguage || 'en'} to ${targetLanguage}.
+
+${contextInfo ? contextInfo + '\n\n' : ''}Text to translate:
+"${text}"
+
+Requirements:
+- Maintain the same tone and formality level
+- Keep any placeholders intact (e.g., {{variable}}, \${{amount}})
+- Preserve HTML tags if present
+- Maintain special characters and punctuation appropriately
+${preserveTerms && preserveTerms.length > 0 ? `- DO NOT translate these terms: ${preserveTerms.join(', ')}` : ''}
+- Ensure the translation sounds natural for native speakers
+- For UI text, keep it concise and clear
+
+Return ONLY the translated text, without quotes or explanations.`;
+
+    // Use the AI service to generate translation
+    const result = await aiService.generateText({
+      prompt: fullPrompt,
+      maxTokens: 500,
+      temperature: 0.3, // Lower temperature for more consistent translations
+      metadata: {
+        adminUserId: req.adminId,
+        feature: 'static_text_translator',
+        sourceLanguage: sourceLanguage || 'en',
+        targetLanguage
+      }
+    });
+
+    // Validate that we got a valid response
+    if (!result || typeof result.content !== 'string' || !result.content.trim()) {
+      throw new Error('AI service returned an invalid or empty translation');
+    }
+
+    // Extract translated text (remove any quotes if AI added them)
+    const translatedText = result.content.trim().replace(/^["']|["']$/g, '');
+
+    return res.json({
+      success: true,
+      data: {
+        translatedText,
+        cost: result.cost,
+        tokensUsed: result.usage.totalTokens,
+        provider: result.provider
+      }
+    });
+  } catch (error: any) {
+    console.error('Error translating static text:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to translate static text'
     });
   }
 });

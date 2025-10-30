@@ -21,6 +21,7 @@ import api from '../../api/client';
 import { OPENAI_MODELS, ANTHROPIC_MODELS, AIModel, getBadgeColor } from '../../data/aiModels';
 import MediaSelector from '../../components/admin/MediaManager/MediaSelector';
 import type { CMSMedia } from '../../api/media';
+import SaveButton from '../../components/admin/SaveButton';
 
 type TabType = 'general' | 'api-keys' | 'ai-settings';
 
@@ -509,9 +510,13 @@ export default function AdminSettings() {
 
   // Handle save API keys
   const handleSaveAPIKeys = () => {
-    // Filter out empty keys
+    // Filter out empty keys AND masked keys (containing • bullet character)
     const keysToSave = Object.entries(apiKeys).reduce((acc, [key, value]) => {
-      if (value && value.trim()) {
+      // Only include keys that:
+      // 1. Have a value
+      // 2. Are not empty/whitespace
+      // 3. Do NOT contain masked bullet characters (•)
+      if (value && value.trim() && !value.includes('•')) {
         acc[key] = value;
       }
       return acc;
@@ -737,13 +742,16 @@ export default function AdminSettings() {
 
                 {/* Save Button */}
                 <div className="pt-4 border-t border-white/10">
-                  <button
+                  <SaveButton
+                    fullWidth
                     onClick={handleSave}
-                    disabled={updateMutation.isPending}
-                    className="w-full px-6 py-3 bg-blush text-midnight rounded-full font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    isLoading={updateMutation.isPending}
+                    isSuccess={updateMutation.isSuccess}
+                    loadingText="Saving..."
+                    successText="Settings Saved!"
                   >
-                    {updateMutation.isPending ? 'Saving...' : 'Save Settings'}
-                  </button>
+                    Save Settings
+                  </SaveButton>
                 </div>
               </div>
             </motion.div>
@@ -878,23 +886,18 @@ export default function AdminSettings() {
                           </motion.div>
                         )}
                       </div>
-                      <button
+                      <SaveButton
                         onClick={handleSaveAPIKeys}
-                        disabled={saveApiKeysMutation.isPending}
-                        className="flex items-center gap-2 px-6 py-3 bg-blush text-midnight rounded-full font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        isLoading={saveApiKeysMutation.isPending}
+                        isSuccess={apiKeysSaved}
+                        loadingText="Saving..."
+                        successText="Keys Saved!"
                       >
-                        {saveApiKeysMutation.isPending ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight"></div>
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <ShieldCheckIcon className="h-5 w-5" />
-                            Save API Keys
-                          </>
-                        )}
-                      </button>
+                        <>
+                          <ShieldCheckIcon className="h-5 w-5" />
+                          Save API Keys
+                        </>
+                      </SaveButton>
                     </div>
                   </div>
                 </div>
@@ -1122,23 +1125,19 @@ export default function AdminSettings() {
 
                 {/* Save Button */}
                 <div className="mt-6 pt-6 border-t border-white/10">
-                  <button
+                  <SaveButton
+                    fullWidth
                     onClick={handleSaveAISettings}
-                    disabled={updateMutation.isPending}
-                    className="w-full px-6 py-3 bg-blush text-midnight rounded-full font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    isLoading={updateMutation.isPending}
+                    isSuccess={updateMutation.isSuccess}
+                    loadingText="Saving..."
+                    successText="AI Settings Saved!"
                   >
-                    {updateMutation.isPending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight"></div>
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <SparklesIcon className="h-5 w-5" />
-                        Save AI Configuration
-                      </>
-                    )}
-                  </button>
+                    <>
+                      <SparklesIcon className="h-5 w-5" />
+                      Save AI Configuration
+                    </>
+                  </SaveButton>
                 </div>
               </div>
             </motion.div>

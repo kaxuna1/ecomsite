@@ -25,8 +25,54 @@ i18n
     },
 
     backend: {
-      // Path to load translation files
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Load translation files from API (database-driven)
+      // Falls back to static JSON files if API is unavailable
+      loadPath: (lngs: string[], namespaces: string[]) => {
+        const lng = lngs[0];
+        const ns = namespaces[0];
+
+        // Get API base URL from environment or use default
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+
+        // Try API first (database-driven translations)
+        return `${apiBaseUrl}/static-translations/${lng}/${ns}`;
+      },
+
+      // Fallback to static files on error
+      // This ensures app still works if database is unavailable
+      parse: (data: string) => {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          console.error('Failed to parse translation data:', e);
+          return {};
+        }
+      },
+
+      // Add error handling
+      request: (options: any, url: string, payload: any, callback: any) => {
+        fetch(url)
+          .then((response) => {
+            if (!response.ok) {
+              // If API fails, try static files as fallback
+              const [, , , lng, ns] = url.split('/');
+              const fallbackUrl = `/locales/${lng}/${ns}.json`;
+
+              console.warn(`API translation failed for ${lng}/${ns}, trying fallback:`, fallbackUrl);
+
+              return fetch(fallbackUrl);
+            }
+            return response;
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            callback(null, { status: 200, data });
+          })
+          .catch((error) => {
+            console.error('Translation loading error:', error);
+            callback(error, { status: 500 });
+          });
+      },
     },
 
     detection: {
