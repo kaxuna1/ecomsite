@@ -7,6 +7,9 @@ export interface SiteSettings {
   logoType: 'text' | 'image';
   logoText: string | null;
   logoImageUrl: string | null;
+  aiProvider: 'openai' | 'anthropic';
+  openaiModel?: string | null; // Selected OpenAI model
+  anthropicModel?: string | null; // Selected Anthropic model
 }
 
 /**
@@ -94,7 +97,10 @@ export async function getPublicLogoSettings(): Promise<SiteSettings> {
   return {
     logoType: (settings.logoType as 'text' | 'image') || 'text',
     logoText: settings.logoText || null,
-    logoImageUrl: settings.logoImageUrl || null
+    logoImageUrl: settings.logoImageUrl || null,
+    aiProvider: (settings.aiProvider as 'openai' | 'anthropic') || 'openai',
+    openaiModel: settings.openaiModel || null,
+    anthropicModel: settings.anthropicModel || null
   };
 }
 
@@ -103,6 +109,44 @@ export async function getPublicLogoSettings(): Promise<SiteSettings> {
  */
 export function isValidLogoType(type: string): type is 'text' | 'image' {
   return type === 'text' || type === 'image';
+}
+
+/**
+ * Validate AI provider
+ */
+export function isValidAiProvider(provider: string): provider is 'openai' | 'anthropic' {
+  return provider === 'openai' || provider === 'anthropic';
+}
+
+/**
+ * Validate AI model for a given provider
+ */
+export function isValidAiModel(provider: 'openai' | 'anthropic', model: string): boolean {
+  const validModels = {
+    openai: [
+      'gpt-4o',
+      'gpt-4o-2024-11-20',
+      'gpt-4o-mini',
+      'gpt-4o-mini-2024-07-18',
+      'gpt-4-turbo',
+      'gpt-4-turbo-2024-04-09',
+      'gpt-4-turbo-preview',
+      'gpt-4-0125-preview',
+      'gpt-3.5-turbo',
+      'gpt-3.5-turbo-0125'
+    ],
+    anthropic: [
+      'claude-sonnet-4-5-20250929',
+      'claude-haiku-4-5-20251015',
+      'claude-3-5-sonnet-20241022',
+      'claude-3-5-sonnet-20240620',
+      'claude-3-opus-20240229',
+      'claude-3-sonnet-20240229',
+      'claude-3-haiku-20240307'
+    ]
+  };
+
+  return validModels[provider]?.includes(model) || false;
 }
 
 // ============================================================================

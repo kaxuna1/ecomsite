@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeftIcon, CheckCircleIcon, CloudIcon } from '@heroicons/react/24/outline';
 
-type TabType = 'details' | 'media' | 'variants';
+type TabType = 'details' | 'media' | 'variants' | 'translations';
 
 interface Tab {
   id: TabType;
@@ -32,6 +32,7 @@ const tabs: Tab[] = [
   { id: 'details', label: 'Product Details' },
   { id: 'media', label: 'Media Gallery' },
   { id: 'variants', label: 'Variants & SKUs' },
+  { id: 'translations', label: 'Translations' },
 ];
 
 export default function EditorLayout({

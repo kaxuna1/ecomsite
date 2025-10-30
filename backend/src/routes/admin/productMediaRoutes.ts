@@ -20,7 +20,7 @@ router.get('/products/:productId/media', async (req, res) => {
     // Add URLs to media - use absolute URLs for cross-port compatibility
     const mediaWithUrls = media.map(m => ({
       ...m,
-      url: getMediaUrl(m.filename)
+      url: m.filename ? getMediaUrl(m.filename) : null
     }));
 
     res.json(mediaWithUrls);

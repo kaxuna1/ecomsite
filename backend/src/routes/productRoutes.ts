@@ -284,6 +284,27 @@ router.delete('/:id', authenticate, async (req, res) => {
 });
 
 // Translation routes
+router.get('/:id/translations/status', async (req, res) => {
+  try {
+    const productId = Number(req.params.id);
+    const languageCode = req.query.lang as string;
+
+    if (!languageCode) {
+      return res.status(400).json({ message: 'Language code is required' });
+    }
+
+    const product = await productService.get(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const status = await productService.getTranslationStatus(productId, languageCode);
+    res.json(status);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? 'Internal server error' });
+  }
+});
+
 router.get('/:id/translations', async (req, res) => {
   try {
     const productId = Number(req.params.id);
@@ -342,7 +363,10 @@ router.post('/:id/translations/:lang', authenticate, translationValidators, asyn
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    const highlights = req.body.highlights ? parseJsonArray(req.body.highlights, 'Invalid highlights format') : undefined;
+    // Handle both array (from JSON body) and string (from form-data)
+    const highlights = req.body.highlights
+      ? (Array.isArray(req.body.highlights) ? req.body.highlights : parseJsonArray(req.body.highlights, 'Invalid highlights format'))
+      : undefined;
 
     const translation = await productService.createTranslation(productId, languageCode, {
       name: req.body.name,

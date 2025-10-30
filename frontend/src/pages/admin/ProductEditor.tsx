@@ -9,6 +9,7 @@ import { useAutoSave } from '../../hooks/useAutoSave';
 import EditorLayout from '../../components/admin/ProductEditor/EditorLayout';
 import DetailsTab from '../../components/admin/ProductEditor/tabs/DetailsTab';
 import VariantsTab from '../../components/admin/ProductEditor/tabs/VariantsTab';
+import TranslationsTab from '../../components/admin/ProductEditor/tabs/TranslationsTab';
 import ProductMediaGallery from '../../components/admin/MediaManager/ProductMediaGallery';
 
 export interface ProductForm {
@@ -35,7 +36,7 @@ export interface ProductForm {
   customAttributes?: Record<string, any>;
 }
 
-type TabType = 'details' | 'media' | 'variants';
+type TabType = 'details' | 'media' | 'variants' | 'translations';
 
 export default function ProductEditor() {
   const { id } = useParams();
@@ -258,6 +259,9 @@ export default function ProductEditor() {
       )}
       {activeTab === 'variants' && !isNewProduct && (
         <VariantsTab productId={Number(id)} />
+      )}
+      {activeTab === 'translations' && !isNewProduct && (
+        <TranslationsTab productId={Number(id)} />
       )}
     </EditorLayout>
   );

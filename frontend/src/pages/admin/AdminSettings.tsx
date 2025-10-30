@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,13 +11,18 @@ import {
   ExclamationTriangleIcon,
   ShieldCheckIcon,
   DocumentDuplicateIcon,
-  TrashIcon
+  TrashIcon,
+  SparklesIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import { fetchSettings, updateSettings, uploadLogo, SiteSettings } from '../../api/settings';
 import api from '../../api/client';
+import { OPENAI_MODELS, ANTHROPIC_MODELS, AIModel, getBadgeColor } from '../../data/aiModels';
+import MediaSelector from '../../components/admin/MediaManager/MediaSelector';
+import type { CMSMedia } from '../../api/media';
 
-type TabType = 'general' | 'api-keys';
+type TabType = 'general' | 'api-keys' | 'ai-settings';
 
 interface APIKey {
   id: string;
@@ -399,24 +404,36 @@ export default function AdminSettings() {
   const [logoText, setLogoText] = useState('');
   const [logoImageUrl, setLogoImageUrl] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [showMediaSelector, setShowMediaSelector] = useState(false);
 
   // API Keys state
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [apiKeysSaved, setApiKeysSaved] = useState(false);
 
+  // AI Settings state
+  const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai');
+  const [openaiModel, setOpenaiModel] = useState<string>('gpt-4o');
+  const [anthropicModel, setAnthropicModel] = useState<string>('claude-sonnet-4-5-20250929');
+
   // Fetch current settings
-  const { isLoading } = useQuery({
+  const { data: settingsData, isLoading } = useQuery({
     queryKey: ['site-settings'],
-    queryFn: fetchSettings,
-    onSuccess: (data: any) => {
-      setLogoType((data.logoType || 'text') as 'text' | 'image');
-      setLogoText(data.logoText || '');
-      setLogoImageUrl(data.logoImageUrl || null);
-      setPreviewImage(data.logoImageUrl || null);
-    }
+    queryFn: fetchSettings
   });
+
+  // Update state when settings data changes
+  React.useEffect(() => {
+    if (settingsData) {
+      setLogoType((settingsData.logoType || 'text') as 'text' | 'image');
+      setLogoText(settingsData.logoText || '');
+      setLogoImageUrl(settingsData.logoImageUrl || null);
+      setPreviewImage(settingsData.logoImageUrl || null);
+      setAiProvider((settingsData.aiProvider || 'openai') as 'openai' | 'anthropic');
+      setOpenaiModel(settingsData.openaiModel || 'gpt-4o');
+      setAnthropicModel(settingsData.anthropicModel || 'claude-sonnet-4-5-20250929');
+    }
+  }, [settingsData]);
 
   // Fetch API keys
   const { data: apiKeysData, isLoading: apiKeysLoading } = useQuery({
@@ -426,11 +443,15 @@ export default function AdminSettings() {
       return response.data;
     },
     enabled: activeTab === 'api-keys',
-    retry: false,
-    onSuccess: (data: any) => {
-      setApiKeys(data || {});
-    }
+    retry: false
   });
+
+  // Update API keys state when data changes
+  React.useEffect(() => {
+    if (apiKeysData) {
+      setApiKeys(apiKeysData || {});
+    }
+  }, [apiKeysData]);
 
   // Update settings mutation
   const updateMutation = useMutation({
@@ -463,41 +484,12 @@ export default function AdminSettings() {
   });
 
   // Handle file selection
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Only image files are allowed');
-      return;
-    }
-
-    // Show preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-
-    // Upload to server
-    setIsUploading(true);
-    try {
-      const response = await uploadLogo(file);
-      setLogoImageUrl(response.url);
-      toast.success('Logo uploaded successfully!');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to upload logo');
-      setPreviewImage(logoImageUrl); // Revert preview
-    } finally {
-      setIsUploading(false);
-    }
+  // Handle media selection from library
+  const handleSelectLogoFromLibrary = (media: CMSMedia | CMSMedia[]) => {
+    const selectedMedia = Array.isArray(media) ? media[0] : media;
+    setLogoImageUrl(selectedMedia.url);
+    setPreviewImage(selectedMedia.url);
+    toast.success('Logo selected successfully!');
   };
 
   // Handle save general settings
@@ -526,6 +518,15 @@ export default function AdminSettings() {
     }, {} as Record<string, string>);
 
     saveApiKeysMutation.mutate(keysToSave);
+  };
+
+  // Handle save AI settings
+  const handleSaveAISettings = () => {
+    updateMutation.mutate({
+      aiProvider,
+      openaiModel,
+      anthropicModel
+    });
   };
 
   // Toggle key visibility
@@ -589,7 +590,8 @@ export default function AdminSettings() {
         <div className="flex gap-2 border-b border-white/10">
           {[
             { id: 'general', label: 'General', icon: Cog6ToothIcon },
-            { id: 'api-keys', label: 'API Keys', icon: KeyIcon }
+            { id: 'api-keys', label: 'API Keys', icon: KeyIcon },
+            { id: 'ai-settings', label: 'AI Settings', icon: SparklesIcon }
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -716,32 +718,18 @@ export default function AdminSettings() {
                       </div>
                     )}
 
-                    {/* Upload Button */}
+                    {/* Select from Media Library Button */}
                     <div>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        className="hidden"
-                      />
                       <button
                         type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
-                        className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-champagne hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => setShowMediaSelector(true)}
+                        className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-champagne hover:bg-white/20 transition-colors flex items-center gap-2"
                       >
-                        {isUploading ? (
-                          <span className="flex items-center gap-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-champagne"></div>
-                            Uploading...
-                          </span>
-                        ) : (
-                          <span>{previewImage ? 'Change Logo' : 'Upload Logo'}</span>
-                        )}
+                        <PhotoIcon className="h-5 w-5" />
+                        <span>{previewImage ? 'Change Logo' : 'Select Logo from Media Library'}</span>
                       </button>
                       <p className="text-champagne/60 text-sm mt-2">
-                        Recommended: PNG or SVG with transparent background. Max size: 5MB
+                        Select an image from your media library to use as your site logo
                       </p>
                     </div>
                   </motion.div>
@@ -913,8 +901,260 @@ export default function AdminSettings() {
               )}
             </motion.div>
           )}
+
+          {/* AI Settings */}
+          {activeTab === 'ai-settings' && (
+            <motion.div
+              key="ai-settings"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="max-w-4xl space-y-6"
+            >
+              {/* AI Provider Configuration */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-display text-champagne mb-2">AI Provider & Model Configuration</h2>
+                  <p className="text-sm text-champagne/60">
+                    Choose your preferred AI provider and specific model for generating product descriptions, SEO metadata, and other AI-powered features.
+                  </p>
+                </div>
+
+                {/* Provider Selection */}
+                <div className="space-y-6">
+                  {/* OpenAI Provider Card */}
+                  <div
+                    className={`rounded-2xl border-2 transition-all ${
+                      aiProvider === 'openai'
+                        ? 'border-blush bg-blush/10'
+                        : 'border-white/20 bg-white/5'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setAiProvider('openai')}
+                      className="w-full text-left p-6"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="text-4xl">🤖</div>
+                          <div>
+                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                              OpenAI
+                              {aiProvider === 'openai' && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                  <CheckCircleIcon className="h-4 w-4" />
+                                  Active
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-sm text-champagne/60">Industry-leading language models</p>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Model Selector for OpenAI */}
+                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                      aiProvider !== 'openai' ? 'opacity-50 pointer-events-none' : ''
+                    }`}>
+                      <label className="block text-sm font-semibold text-champagne mb-2">
+                        Select Model:
+                      </label>
+                      <div className="space-y-2">
+                        {OPENAI_MODELS.map((model) => (
+                          <button
+                            key={model.id}
+                            type="button"
+                            onClick={() => aiProvider === 'openai' && setOpenaiModel(model.id)}
+                            disabled={aiProvider !== 'openai'}
+                            className={`w-full text-left rounded-xl border transition-all ${
+                              openaiModel === model.id && aiProvider === 'openai'
+                                ? 'border-blush bg-blush/10'
+                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                            } ${aiProvider !== 'openai' ? 'cursor-not-allowed' : ''}`}
+                          >
+                            <div className="p-4">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    {model.badge && (
+                                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
+                                        {model.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                </div>
+                                {openaiModel === model.id && aiProvider === 'openai' && (
+                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                )}
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 mt-3">
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Input</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Output</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Context</div>
+                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Anthropic Provider Card */}
+                  <div
+                    className={`rounded-2xl border-2 transition-all ${
+                      aiProvider === 'anthropic'
+                        ? 'border-blush bg-blush/10'
+                        : 'border-white/20 bg-white/5'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setAiProvider('anthropic')}
+                      className="w-full text-left p-6"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="text-4xl">🧠</div>
+                          <div>
+                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                              Anthropic Claude
+                              {aiProvider === 'anthropic' && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                  <CheckCircleIcon className="h-4 w-4" />
+                                  Active
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-sm text-champagne/60">Advanced AI with superior reasoning</p>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Model Selector for Anthropic */}
+                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                      aiProvider !== 'anthropic' ? 'opacity-50 pointer-events-none' : ''
+                    }`}>
+                      <label className="block text-sm font-semibold text-champagne mb-2">
+                        Select Model:
+                      </label>
+                      <div className="space-y-2">
+                        {ANTHROPIC_MODELS.map((model) => (
+                          <button
+                            key={model.id}
+                            type="button"
+                            onClick={() => aiProvider === 'anthropic' && setAnthropicModel(model.id)}
+                            disabled={aiProvider !== 'anthropic'}
+                            className={`w-full text-left rounded-xl border transition-all ${
+                              anthropicModel === model.id && aiProvider === 'anthropic'
+                                ? 'border-blush bg-blush/10'
+                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                            } ${aiProvider !== 'anthropic' ? 'cursor-not-allowed' : ''}`}
+                          >
+                            <div className="p-4">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    {model.badge && (
+                                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
+                                        {model.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                </div>
+                                {anthropicModel === model.id && aiProvider === 'anthropic' && (
+                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                )}
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 mt-3">
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Input</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Output</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Context</div>
+                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Info Box */}
+                <div className="mt-6 rounded-xl border border-blue-500/20 bg-blue-500/10 p-4">
+                  <div className="flex items-start gap-3">
+                    <ExclamationTriangleIcon className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-blue-400 mb-1">Important Notes</h4>
+                      <ul className="text-sm text-blue-400/80 space-y-1">
+                        <li>• Configure API keys in the API Keys tab before using AI features</li>
+                        <li>• The active provider and model are used for all AI operations</li>
+                        <li>• Pricing shown is per 1 million tokens (input/output)</li>
+                        <li>• Changes take effect immediately for new AI operations</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <button
+                    onClick={handleSaveAISettings}
+                    disabled={updateMutation.isPending}
+                    className="w-full px-6 py-3 bg-blush text-midnight rounded-full font-semibold hover:bg-champagne transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {updateMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <SparklesIcon className="h-5 w-5" />
+                        Save AI Configuration
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
+
+      {/* Media Selector Modal */}
+      <MediaSelector
+        isOpen={showMediaSelector}
+        onClose={() => setShowMediaSelector(false)}
+        onSelect={handleSelectLogoFromLibrary}
+        multiple={false}
+        title="Select Logo Image"
+        description="Choose an image from your media library to use as your site logo"
+      />
     </>
   );
 }

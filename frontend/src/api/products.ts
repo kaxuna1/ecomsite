@@ -142,3 +142,57 @@ export const fetchRandomProducts = async (limit: number = 8): Promise<Product[]>
   const response = await api.get<Product[]>(`/products/random?limit=${limit}`);
   return response.data;
 };
+
+export interface ProductTranslation {
+  id: number;
+  productId: number;
+  languageCode: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  highlights: string[];
+  usage: string;
+  slug: string;
+  metaTitle: string;
+  metaDescription: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const getProductTranslation = async (
+  productId: number,
+  languageCode: string
+): Promise<ProductTranslation | null> => {
+  try {
+    const response = await api.get<ProductTranslation>(
+      `/products/${productId}/translations/${languageCode}`
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+export const saveProductTranslation = async (
+  productId: number,
+  languageCode: string,
+  data: {
+    name: string;
+    shortDescription: string;
+    description: string;
+    highlights?: string[];
+    usage?: string;
+    slug?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+  }
+): Promise<ProductTranslation> => {
+  const response = await api.post<ProductTranslation>(
+    `/products/${productId}/translations/${languageCode}`,
+    data
+  );
+  return response.data;
+};

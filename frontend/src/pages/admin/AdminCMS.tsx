@@ -198,7 +198,7 @@ export default function AdminCMS() {
   };
 
   const handleViewLive = (slug: string) => {
-    const url = `/${slug}`;
+    const url = `/en/${slug}`;
     window.open(url, '_blank');
   };
 

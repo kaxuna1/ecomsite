@@ -20,6 +20,7 @@ import languageRoutes from './routes/languageRoutes';
 import adminMediaRoutes from './routes/admin/mediaRoutes';
 import adminProductMediaRoutes from './routes/admin/productMediaRoutes';
 import apiKeysRoutes from './routes/apiKeysRoutes';
+import aiRoutes from './routes/aiRoutes';
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/languages', languageRoutes);
 app.use('/api/admin/media', adminMediaRoutes);
 app.use('/api/admin', adminProductMediaRoutes);
 app.use('/api/admin/api-keys', apiKeysRoutes);
+app.use('/api/admin/ai', aiRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

@@ -225,7 +225,10 @@ INSERT INTO site_settings (setting_key, setting_value)
 VALUES
   ('logo_type', 'text'),
   ('logo_text', 'LUXIA'),
-  ('logo_image_url', NULL)
+  ('logo_image_url', NULL),
+  ('ai_provider', 'openai'),
+  ('openai_model', 'gpt-4o'),
+  ('anthropic_model', 'claude-haiku-4-5-20251001')
 ON CONFLICT (setting_key) DO NOTHING;
 
 CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(setting_key);
@@ -419,6 +422,30 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_cms_media_category ON cms_media(category_id);
 CREATE INDEX IF NOT EXISTS idx_cms_media_deleted ON cms_media(is_deleted);
 CREATE INDEX IF NOT EXISTS idx_cms_media_usage ON cms_media(usage_count);
+
+-- AI Usage Log table for tracking AI operations
+CREATE TABLE IF NOT EXISTS ai_usage_log (
+  id BIGSERIAL PRIMARY KEY,
+  provider VARCHAR(50) NOT NULL,
+  feature VARCHAR(100),
+  admin_user_id INTEGER,
+  prompt_tokens INTEGER DEFAULT 0,
+  completion_tokens INTEGER DEFAULT 0,
+  total_tokens INTEGER DEFAULT 0,
+  cost_usd DECIMAL(10,6) DEFAULT 0,
+  latency_ms INTEGER DEFAULT 0,
+  model_id VARCHAR(100),
+  success BOOLEAN DEFAULT TRUE,
+  error_message TEXT,
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_usage_log_provider ON ai_usage_log(provider);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_log_feature ON ai_usage_log(feature);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_log_admin_user ON ai_usage_log(admin_user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_log_created_at ON ai_usage_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_usage_log_success ON ai_usage_log(success);
 `;
 
 async function migrate() {

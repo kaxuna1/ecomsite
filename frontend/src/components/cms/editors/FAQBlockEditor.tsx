@@ -1,7 +1,9 @@
 // Visual Editor for FAQ Block - World-Class Builder
 import { useState, useEffect } from 'react';
-import { PlusIcon, TrashIcon, ChevronUpIcon, ChevronDownIcon, TagIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, ChevronUpIcon, ChevronDownIcon, TagIcon, MagnifyingGlassIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import FormField from './FormField';
+import { generateFAQ, type GenerateFAQRequest } from '../../../api/ai';
+import { toast } from 'react-hot-toast';
 
 interface FAQ {
   id: string;
@@ -27,6 +29,15 @@ interface FAQBlockEditorProps {
 export default function FAQBlockEditor({ content, onChange }: FAQBlockEditorProps) {
   const [formData, setFormData] = useState<FAQContent>(content);
   const [newCategory, setNewCategory] = useState('');
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiFormData, setAIFormData] = useState<GenerateFAQRequest>({
+    productName: '',
+    productDescription: '',
+    productCategory: '',
+    numberOfFAQs: 8,
+    language: 'en'
+  });
 
   useEffect(() => {
     setFormData(content);
@@ -98,6 +109,64 @@ export default function FAQBlockEditor({ content, onChange }: FAQBlockEditorProp
       category: faq.category === category ? undefined : faq.category
     }));
     handleChange('faqs', updatedFAQs);
+  };
+
+  // AI Generation
+  const handleGenerateWithAI = async () => {
+    if (!aiFormData.productName.trim()) {
+      toast.error('Please enter a product name');
+      return;
+    }
+
+    setIsGenerating(true);
+    const loadingToast = toast.loading('Generating FAQs with AI...');
+
+    try {
+      const response = await generateFAQ(aiFormData);
+
+      // Convert AI FAQs to our FAQ format with unique IDs
+      const generatedFAQs: FAQ[] = response.faqs.map((faq, index) => ({
+        id: `faq-${Date.now()}-${index}`,
+        question: faq.question,
+        answer: faq.answer,
+        category: faq.category
+      }));
+
+      // Add generated FAQs to existing FAQs
+      handleChange('faqs', [...formData.faqs, ...generatedFAQs]);
+
+      // Extract unique categories from AI response and add to existing categories
+      const aiCategories = response.faqs
+        .map(faq => faq.category)
+        .filter((cat): cat is string => !!cat && cat !== 'general');
+
+      const uniqueAICategories = [...new Set(aiCategories)];
+      const existingCategories = formData.categories || [];
+      const newCategories = uniqueAICategories.filter(cat => !existingCategories.includes(cat));
+
+      if (newCategories.length > 0) {
+        handleChange('categories', [...existingCategories, ...newCategories]);
+      }
+
+      toast.dismiss(loadingToast);
+      toast.success(`Generated ${response.faqs.length} FAQs! Cost: $${response.cost.toFixed(4)}`);
+      setShowAIModal(false);
+
+      // Reset AI form
+      setAIFormData({
+        productName: '',
+        productDescription: '',
+        productCategory: '',
+        numberOfFAQs: 8,
+        language: 'en'
+      });
+    } catch (error: any) {
+      toast.dismiss(loadingToast);
+      console.error('FAQ generation error:', error);
+      toast.error(error.response?.data?.message || 'Failed to generate FAQs');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -233,14 +302,24 @@ export default function FAQBlockEditor({ content, onChange }: FAQBlockEditorProp
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold text-champagne">FAQ Items ({formData.faqs.length})</h4>
-          <button
-            type="button"
-            onClick={addFAQ}
-            className="flex items-center gap-2 px-4 py-2 bg-jade/20 hover:bg-jade/30 border border-jade/40 text-jade rounded-lg transition-colors"
-          >
-            <PlusIcon className="h-4 w-4" />
-            Add FAQ
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowAIModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-400/40 text-purple-300 rounded-lg transition-all"
+            >
+              <SparklesIcon className="h-4 w-4" />
+              Generate with AI
+            </button>
+            <button
+              type="button"
+              onClick={addFAQ}
+              className="flex items-center gap-2 px-4 py-2 bg-jade/20 hover:bg-jade/30 border border-jade/40 text-jade rounded-lg transition-colors"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add FAQ
+            </button>
+          </div>
         </div>
 
         {formData.faqs.length === 0 ? (
@@ -340,6 +419,154 @@ export default function FAQBlockEditor({ content, onChange }: FAQBlockEditorProp
           ARIA attributes for accessibility, and 44px+ touch targets for mobile.
         </p>
       </div>
+
+      {/* AI Generation Modal */}
+      {showAIModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-midnight border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-b border-white/10 px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
+                  <SparklesIcon className="h-6 w-6 text-purple-300" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg text-champagne">Generate FAQs with AI</h3>
+                  <p className="text-sm text-champagne/60">Create natural, SEO-optimized Q&A pairs</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAIModal(false)}
+                className="text-champagne/50 hover:text-champagne transition-colors"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              <FormField
+                label="Product/Topic Name"
+                helpText="What is this FAQ about?"
+                required
+              >
+                <input
+                  type="text"
+                  value={aiFormData.productName}
+                  onChange={(e) => setAIFormData({ ...aiFormData, productName: e.target.value })}
+                  placeholder="e.g., Luxury Scalp Serum"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-purple-400 transition-colors"
+                />
+              </FormField>
+
+              <FormField
+                label="Description"
+                helpText="Detailed information about the product/topic"
+              >
+                <textarea
+                  value={aiFormData.productDescription || ''}
+                  onChange={(e) => setAIFormData({ ...aiFormData, productDescription: e.target.value })}
+                  placeholder="Provide context about features, benefits, ingredients..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-purple-400 transition-colors resize-none"
+                />
+              </FormField>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField label="Category" helpText="Product category">
+                  <input
+                    type="text"
+                    value={aiFormData.productCategory || ''}
+                    onChange={(e) => setAIFormData({ ...aiFormData, productCategory: e.target.value })}
+                    placeholder="e.g., Hair Care"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-purple-400 transition-colors"
+                  />
+                </FormField>
+
+                <FormField label="Number of FAQs" helpText="How many to generate">
+                  <select
+                    value={aiFormData.numberOfFAQs || 8}
+                    onChange={(e) => setAIFormData({ ...aiFormData, numberOfFAQs: parseInt(e.target.value) })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-purple-400 transition-colors"
+                  >
+                    <option value={5} className="bg-midnight">5 FAQs</option>
+                    <option value={8} className="bg-midnight">8 FAQs</option>
+                    <option value={10} className="bg-midnight">10 FAQs</option>
+                    <option value={12} className="bg-midnight">12 FAQs</option>
+                  </select>
+                </FormField>
+              </div>
+
+              <FormField label="Language" helpText="FAQ language">
+                <select
+                  value={aiFormData.language || 'en'}
+                  onChange={(e) => setAIFormData({ ...aiFormData, language: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-purple-400 transition-colors"
+                >
+                  <option value="en" className="bg-midnight">English</option>
+                  <option value="ka" className="bg-midnight">Georgian</option>
+                  <option value="ru" className="bg-midnight">Russian</option>
+                  <option value="tr" className="bg-midnight">Turkish</option>
+                </select>
+              </FormField>
+
+              <FormField label="Target Audience" helpText="Who are these FAQs for?">
+                <input
+                  type="text"
+                  value={aiFormData.targetAudience || ''}
+                  onChange={(e) => setAIFormData({ ...aiFormData, targetAudience: e.target.value })}
+                  placeholder="e.g., Health-conscious consumers"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-purple-400 transition-colors"
+                />
+              </FormField>
+
+              {/* Info Box */}
+              <div className="p-4 bg-purple-500/10 border border-purple-400/20 rounded-lg">
+                <p className="text-sm text-purple-300 leading-relaxed">
+                  <strong>AI-Powered:</strong> Uses advanced language models to create natural questions customers actually ask,
+                  with helpful answers optimized for SEO and featured snippets. Categories are automatically assigned.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-midnight/95 backdrop-blur-sm border-t border-white/10 px-6 py-4 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setShowAIModal(false)}
+                disabled={isGenerating}
+                className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-champagne rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateWithAI}
+                disabled={isGenerating || !aiFormData.productName.trim()}
+                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                {isGenerating ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <SparklesIcon className="h-4 w-4" />
+                    Generate FAQs
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import multer from 'multer';
-import { authenticate } from '../../middleware/authMiddleware';
+import { authenticate, AuthenticatedRequest } from '../../middleware/authMiddleware';
 import * as mediaService from '../../services/mediaService';
 import { pool } from '../../db/client';
 
@@ -86,7 +86,7 @@ router.get('/:id/usage', async (req, res) => {
  * POST /api/admin/media
  * Upload new media file
  */
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', upload.single('file'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file provided' });
@@ -98,7 +98,7 @@ router.post('/', upload.single('file'), async (req, res) => {
       req.file,
       altText,
       caption,
-      req.user?.id
+      req.adminId
     );
 
     // Update category if provided

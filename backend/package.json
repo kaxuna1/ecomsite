@@ -13,6 +13,7 @@
     "generate-key": "tsx src/scripts/generate-encryption-key.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
     "@types/pg": "^8.15.6",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -23,6 +24,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.12",
+    "openai": "^6.7.0",
     "pg": "^8.16.3",
     "sharp": "^0.34.4"
   },

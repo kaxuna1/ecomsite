@@ -9,15 +9,15 @@ import { encrypt, decrypt, maskValue } from '../utils/encryption';
 
 export interface APIKey {
   id: number;
-  keyName: string;
-  keyValue: string; // Encrypted in database
+  key_name: string;  // snake_case to match PostgreSQL
+  key_value: string; // Encrypted in database
   category?: string;
   description?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy?: number;
-  updatedBy?: number;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+  created_by?: number;
+  updated_by?: number;
 }
 
 export interface APIKeyInput {
@@ -60,19 +60,19 @@ export async function getAllAPIKeys(includeValues: boolean = false): Promise<Rec
       if (includeValues) {
         // Decrypt the value
         try {
-          keys[row.keyName] = decrypt(row.keyValue);
+          keys[row.key_name] = decrypt(row.key_value);
         } catch (error) {
-          console.error(`Failed to decrypt key: ${row.keyName}`, error);
-          keys[row.keyName] = '';
+          console.error(`Failed to decrypt key: ${row.key_name}`, error);
+          keys[row.key_name] = '';
         }
       } else {
         // Return masked value for display
         try {
-          const decrypted = decrypt(row.keyValue);
-          keys[row.keyName] = maskValue(decrypted);
+          const decrypted = decrypt(row.key_value);
+          keys[row.key_name] = maskValue(decrypted);
         } catch (error) {
-          console.error(`Failed to decrypt key: ${row.keyName}`, error);
-          keys[row.keyName] = '••••••••';
+          console.error(`Failed to decrypt key: ${row.key_name}`, error);
+          keys[row.key_name] = '••••••••';
         }
       }
     }
@@ -108,7 +108,7 @@ export async function getAPIKey(
       return null;
     }
 
-    const encryptedValue = result.rows[0].keyValue;
+    const encryptedValue = result.rows[0].key_value;
 
     if (decryptValue) {
       try {

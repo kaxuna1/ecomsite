@@ -321,6 +321,7 @@ export interface UpdateMediaPayload {
   filename?: string;
   altText?: string;
   caption?: string;
+  categoryId?: number;
 }
 
 export interface CreatePageTranslationPayload {

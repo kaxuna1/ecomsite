@@ -289,7 +289,34 @@ function ProductsBlock({ content }: { content: any }) {
 // Inline Testimonials Block Component
 function TestimonialsBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
-  const { title, subtitle, testimonials } = content;
+  const { title, subtitle, testimonials, style = {} } = content;
+
+  // Style values with defaults
+  const bgColor = style?.backgroundColor || '#f5f3e7';
+  const cardBgColor = style?.cardBackgroundColor || '#ffffff';
+  const textColor = style?.textColor || '#0f172a';
+  const accentColor = style?.accentColor || '#10b981';
+  const columns = style?.columns || 3;
+  const cardStyle = style?.cardStyle || 'elevated';
+  const showAvatars = style?.showAvatars !== false;
+  const showCompany = style?.showCompany !== false;
+  const showLocation = style?.showLocation !== false;
+
+  // Column class mapping
+  const columnMap = {
+    1: 'grid-cols-1',
+    2: 'md:grid-cols-2',
+    3: 'md:grid-cols-3',
+    4: 'md:grid-cols-2 lg:grid-cols-4'
+  };
+
+  // Card style mapping
+  const cardStyleMap = {
+    elevated: 'shadow-lg border-2 border-opacity-20',
+    flat: 'shadow-none border-2 border-opacity-20',
+    outlined: 'shadow-none border-2',
+    minimal: 'shadow-none border-0'
+  };
 
   const fadeInUp = prefersReducedMotion
     ? {}
@@ -301,45 +328,121 @@ function TestimonialsBlock({ content }: { content: any }) {
       };
 
   return (
-    <section className="bg-champagne/10 py-16 md:py-24">
+    <section
+      className="py-16 md:py-24"
+      style={{ backgroundColor: bgColor }}
+    >
       <div className="mx-auto max-w-7xl px-4">
         <motion.div className="text-center" {...fadeInUp}>
-          <p className="text-xs uppercase tracking-[0.6em] text-jade">Testimonials</p>
-          <h2 className="mt-2 font-display text-3xl text-midnight md:text-4xl">{title}</h2>
+          <p
+            className="text-xs uppercase tracking-[0.6em]"
+            style={{ color: accentColor }}
+          >
+            Testimonials
+          </p>
+          <h2
+            className="mt-2 font-display text-3xl md:text-4xl"
+            style={{ color: textColor }}
+          >
+            {title}
+          </h2>
           {subtitle && (
-            <p className="mx-auto mt-4 max-w-2xl text-base text-midnight/70">
+            <p
+              className="mx-auto mt-4 max-w-2xl text-base"
+              style={{ color: textColor, opacity: 0.7 }}
+            >
               {subtitle}
             </p>
           )}
         </motion.div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className={`mt-12 grid gap-8 ${columnMap[columns as keyof typeof columnMap]}`}>
           {testimonials.map((testimonial: any, index: number) => (
             <motion.blockquote
               key={testimonial.id}
-              className="flex flex-col gap-6 rounded-3xl border-2 border-champagne/40 bg-white p-8 shadow-lg"
+              className={`flex flex-col gap-6 rounded-3xl p-8 ${cardStyleMap[cardStyle as keyof typeof cardStyleMap]}`}
+              style={{
+                backgroundColor: cardBgColor,
+                borderColor: textColor
+              }}
               initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
               whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              {/* Star Rating */}
-              <div className="flex items-center gap-1">
-                {[...Array(testimonial.rating || 5)].map((_, i) => (
-                  <StarIconSolid key={i} className="h-5 w-5 text-yellow-400" />
-                ))}
+              {/* Avatar + Star Rating Row */}
+              <div className="flex items-center justify-between">
+                {showAvatars && testimonial.avatarUrl ? (
+                  <img
+                    src={testimonial.avatarUrl}
+                    alt={testimonial.name}
+                    className="h-12 w-12 rounded-full object-cover border-2"
+                    style={{ borderColor: accentColor }}
+                  />
+                ) : (
+                  <div className="h-1 w-1" /> /* Spacer if no avatar */
+                )}
+
+                {/* Star Rating */}
+                <div className="flex items-center gap-1">
+                  {[...Array(testimonial.rating || 5)].map((_, i) => (
+                    <StarIconSolid
+                      key={i}
+                      className="h-5 w-5"
+                      style={{ color: accentColor }}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <p className="text-base leading-relaxed text-midnight/80">{testimonial.text}</p>
+              {/* Review Text */}
+              <p
+                className="text-base leading-relaxed flex-1"
+                style={{ color: textColor, opacity: 0.8 }}
+              >
+                {testimonial.text}
+              </p>
 
-              <div className="flex items-center justify-between">
-                <cite className="text-sm font-semibold not-italic text-midnight">{testimonial.name}</cite>
-                {testimonial.verified && (
-                  <span className="flex items-center gap-1 text-xs text-jade">
-                    <CheckBadgeIcon className="h-4 w-4" />
-                    Verified Buyer
-                  </span>
-                )}
+              {/* Customer Info */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <cite
+                      className="text-sm font-semibold not-italic block"
+                      style={{ color: textColor }}
+                    >
+                      {testimonial.name}
+                    </cite>
+                    {showCompany && (testimonial.jobTitle || testimonial.company) && (
+                      <p
+                        className="text-xs mt-0.5"
+                        style={{ color: textColor, opacity: 0.6 }}
+                      >
+                        {testimonial.jobTitle}
+                        {testimonial.jobTitle && testimonial.company && ' at '}
+                        {testimonial.company}
+                      </p>
+                    )}
+                    {showLocation && testimonial.location && (
+                      <p
+                        className="text-xs mt-0.5"
+                        style={{ color: textColor, opacity: 0.5 }}
+                      >
+                        {testimonial.location}
+                      </p>
+                    )}
+                  </div>
+
+                  {testimonial.verified && (
+                    <span
+                      className="flex items-center gap-1 text-xs"
+                      style={{ color: accentColor }}
+                    >
+                      <CheckBadgeIcon className="h-4 w-4" />
+                      Verified
+                    </span>
+                  )}
+                </div>
               </div>
             </motion.blockquote>
           ))}
@@ -585,8 +688,89 @@ function CTABlock({ content }: { content: any }) {
     secondaryButtonText,
     secondaryButtonLink,
     backgroundImage,
-    backgroundImageAlt
+    backgroundImageAlt,
+    style = {}
   } = content;
+
+  // Default style values
+  const bgColor = style?.backgroundColor || '#10b981';
+  const textColor = style?.textColor || '#ffffff';
+  const overlayOpacity = style?.overlayOpacity || 80;
+  const textAlignment = style?.textAlignment || 'center';
+  const padding = style?.padding || 'large';
+
+  // Primary button styles
+  const primaryBtn = style?.primaryButton || {};
+  const primaryBgColor = primaryBtn.backgroundColor || '#ffffff';
+  const primaryTextColor = primaryBtn.textColor || '#0f172a';
+  const primaryHoverBg = primaryBtn.hoverBackgroundColor || '#f5f3e7';
+  const primaryHoverText = primaryBtn.hoverTextColor || '#0f172a';
+  const primarySize = primaryBtn.size || 'medium';
+  const primaryStyle = primaryBtn.style || 'solid';
+  const primaryRadius = primaryBtn.borderRadius || 'full';
+
+  // Secondary button styles
+  const secondaryBtn = style?.secondaryButton || {};
+  const secondaryBgColor = secondaryBtn.backgroundColor || 'rgba(255, 255, 255, 0.1)';
+  const secondaryTextColor = secondaryBtn.textColor || '#ffffff';
+  const secondaryHoverBg = secondaryBtn.hoverBackgroundColor || 'rgba(255, 255, 255, 0.2)';
+  const secondaryHoverText = secondaryBtn.hoverTextColor || '#ffffff';
+  const secondarySize = secondaryBtn.size || 'medium';
+  const secondaryStyle = secondaryBtn.style || 'outline';
+  const secondaryRadius = secondaryBtn.borderRadius || 'full';
+
+  // Padding mapping
+  const paddingMap = {
+    'small': 'py-12',
+    'medium': 'py-16',
+    'large': 'py-20 md:py-32',
+    'extra-large': 'py-32 md:py-40'
+  };
+
+  // Text alignment mapping
+  const alignmentMap = {
+    'left': 'text-left items-start',
+    'center': 'text-center items-center',
+    'right': 'text-right items-end'
+  };
+
+  // Button size mapping
+  const sizeMap = {
+    'small': 'px-6 py-2 text-sm',
+    'medium': 'px-8 py-4 text-base',
+    'large': 'px-10 py-5 text-lg'
+  };
+
+  // Border radius mapping
+  const radiusMap = {
+    'none': 'rounded-none',
+    'small': 'rounded',
+    'medium': 'rounded-lg',
+    'large': 'rounded-xl',
+    'full': 'rounded-full'
+  };
+
+  // Button style helper
+  const getButtonClasses = (
+    btnStyle: string,
+    bgColor: string,
+    textColor: string,
+    hoverBg: string,
+    hoverText: string,
+    size: string,
+    radius: string
+  ) => {
+    const baseClasses = `inline-flex items-center gap-2 font-semibold shadow-2xl transition-all ${sizeMap[size as keyof typeof sizeMap]} ${radiusMap[radius as keyof typeof radiusMap]}`;
+
+    if (btnStyle === 'solid') {
+      return baseClasses;
+    } else if (btnStyle === 'outline') {
+      return `${baseClasses} border-2`;
+    } else {
+      // ghost
+      return baseClasses;
+    }
+  };
 
   const fadeInUp = prefersReducedMotion
     ? {}
@@ -598,7 +782,10 @@ function CTABlock({ content }: { content: any }) {
       };
 
   return (
-    <section className="relative overflow-hidden bg-jade py-20 md:py-32">
+    <section
+      className={`relative overflow-hidden ${paddingMap[padding as keyof typeof paddingMap]}`}
+      style={{ backgroundColor: backgroundImage ? undefined : bgColor }}
+    >
       {/* Background Image */}
       {backgroundImage && (
         <>
@@ -610,7 +797,13 @@ function CTABlock({ content }: { content: any }) {
               loading="lazy"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-jade/90 via-midnight/80 to-midnight/90" />
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-current via-current to-current"
+            style={{
+              color: bgColor,
+              opacity: overlayOpacity / 100
+            }}
+          />
         </>
       )}
 
@@ -634,42 +827,115 @@ function CTABlock({ content }: { content: any }) {
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
+      <div className={`relative z-10 mx-auto max-w-4xl px-4 flex flex-col ${alignmentMap[textAlignment as keyof typeof alignmentMap]}`}>
         <motion.div {...fadeInUp}>
-          <h2 className="font-display text-3xl text-white md:text-4xl lg:text-5xl">
+          <h2
+            className="font-display text-3xl md:text-4xl lg:text-5xl"
+            style={{ color: textColor }}
+          >
             {title}
           </h2>
           {description && (
-            <p className="mx-auto mt-6 max-w-2xl text-base text-white/90 md:text-lg">
+            <p
+              className={`mt-6 max-w-2xl text-base md:text-lg ${textAlignment === 'center' ? 'mx-auto' : ''}`}
+              style={{ color: textColor, opacity: 0.9 }}
+            >
               {description}
             </p>
           )}
         </motion.div>
 
         <motion.div
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          className={`mt-10 flex flex-col gap-4 sm:flex-row ${textAlignment === 'center' ? 'justify-center' : textAlignment === 'right' ? 'justify-end' : 'justify-start'}`}
           initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
           whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
         >
           {primaryButtonText && primaryButtonLink && (
-            <Link
-              to={primaryButtonLink}
-              className="group inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-midnight shadow-2xl transition-all hover:scale-105 hover:bg-champagne"
-            >
-              <span>{primaryButtonText}</span>
-              <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to={primaryButtonLink}
+                className={`group ${getButtonClasses(primaryStyle, primaryBgColor, primaryTextColor, primaryHoverBg, primaryHoverText, primarySize, primaryRadius)}`}
+                style={{
+                  backgroundColor: primaryStyle === 'solid' ? primaryBgColor : primaryStyle === 'outline' ? 'transparent' : 'transparent',
+                  color: primaryTextColor,
+                  borderColor: primaryStyle === 'outline' ? primaryBgColor : 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (primaryStyle === 'solid') {
+                    e.currentTarget.style.backgroundColor = primaryHoverBg;
+                    e.currentTarget.style.color = primaryHoverText;
+                  } else if (primaryStyle === 'outline') {
+                    e.currentTarget.style.backgroundColor = primaryHoverBg;
+                    e.currentTarget.style.color = primaryHoverText;
+                    e.currentTarget.style.borderColor = primaryHoverBg;
+                  } else {
+                    e.currentTarget.style.backgroundColor = primaryHoverBg;
+                    e.currentTarget.style.color = primaryHoverText;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (primaryStyle === 'solid') {
+                    e.currentTarget.style.backgroundColor = primaryBgColor;
+                    e.currentTarget.style.color = primaryTextColor;
+                  } else if (primaryStyle === 'outline') {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = primaryTextColor;
+                    e.currentTarget.style.borderColor = primaryBgColor;
+                  } else {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = primaryTextColor;
+                  }
+                }}
+              >
+                <span>{primaryButtonText}</span>
+                <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </motion.div>
           )}
 
           {secondaryButtonText && secondaryButtonLink && (
-            <Link
-              to={secondaryButtonLink}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur transition-all hover:scale-105 hover:border-white hover:bg-white/20"
-            >
-              <span>{secondaryButtonText}</span>
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to={secondaryButtonLink}
+                className={getButtonClasses(secondaryStyle, secondaryBgColor, secondaryTextColor, secondaryHoverBg, secondaryHoverText, secondarySize, secondaryRadius)}
+                style={{
+                  backgroundColor: secondaryStyle === 'solid' ? secondaryBgColor : secondaryStyle === 'outline' ? 'transparent' : 'transparent',
+                  color: secondaryTextColor,
+                  borderColor: secondaryStyle === 'outline' ? secondaryTextColor : 'transparent',
+                  backdropFilter: secondaryStyle !== 'solid' ? 'blur(8px)' : undefined
+                }}
+                onMouseEnter={(e) => {
+                  if (secondaryStyle === 'solid') {
+                    e.currentTarget.style.backgroundColor = secondaryHoverBg;
+                    e.currentTarget.style.color = secondaryHoverText;
+                  } else if (secondaryStyle === 'outline') {
+                    e.currentTarget.style.backgroundColor = secondaryHoverBg;
+                    e.currentTarget.style.color = secondaryHoverText;
+                    e.currentTarget.style.borderColor = secondaryHoverText;
+                  } else {
+                    e.currentTarget.style.backgroundColor = secondaryHoverBg;
+                    e.currentTarget.style.color = secondaryHoverText;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (secondaryStyle === 'solid') {
+                    e.currentTarget.style.backgroundColor = secondaryBgColor;
+                    e.currentTarget.style.color = secondaryTextColor;
+                  } else if (secondaryStyle === 'outline') {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = secondaryTextColor;
+                    e.currentTarget.style.borderColor = secondaryTextColor;
+                  } else {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = secondaryTextColor;
+                  }
+                }}
+              >
+                <span>{secondaryButtonText}</span>
+              </Link>
+            </motion.div>
           )}
         </motion.div>
       </div>

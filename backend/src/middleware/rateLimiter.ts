@@ -92,7 +92,7 @@ export function createRateLimiter(options: RateLimitOptions) {
       const originalEnd = res.end;
 
       // Override end to conditionally increment
-      res.end = function(this: Response, ...args: any[]) {
+      res.end = function(this: Response, chunk?: any, encoding?: any, cb?: any) {
         const statusCode = res.statusCode;
         const isSuccess = statusCode >= 200 && statusCode < 300;
         const isFailed = statusCode >= 400;
@@ -105,7 +105,7 @@ export function createRateLimiter(options: RateLimitOptions) {
         }
 
         // Call original end
-        return originalEnd.apply(this, args);
+        return originalEnd.call(this, chunk, encoding, cb);
       } as any;
     }
 

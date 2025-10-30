@@ -495,6 +495,62 @@ export const productService = {
     }));
   },
 
+  async getTranslationStatus(productId: number, languageCode: string) {
+    const translation = await this.getTranslation(productId, languageCode);
+
+    if (!translation) {
+      return {
+        languageCode,
+        completionPercentage: 0,
+        hasTranslation: false,
+        fields: {
+          name: false,
+          shortDescription: false,
+          description: false,
+          highlights: false,
+          usage: false,
+          slug: false,
+          metaTitle: false,
+          metaDescription: false
+        }
+      };
+    }
+
+    // Required fields for basic completion
+    const requiredFields = ['name', 'shortDescription', 'description'];
+    const optionalFields = ['highlights', 'usage', 'slug', 'metaTitle', 'metaDescription'];
+
+    const fieldStatus = {
+      name: !!translation.name,
+      shortDescription: !!translation.shortDescription,
+      description: !!translation.description,
+      highlights: !!translation.highlights,
+      usage: !!translation.usage,
+      slug: !!translation.slug,
+      metaTitle: !!translation.metaTitle,
+      metaDescription: !!translation.metaDescription
+    };
+
+    const completedRequired = requiredFields.filter(f => fieldStatus[f as keyof typeof fieldStatus]).length;
+    const completedOptional = optionalFields.filter(f => fieldStatus[f as keyof typeof fieldStatus]).length;
+
+    // Weight: required fields 60%, optional fields 40%
+    const requiredWeight = 0.6;
+    const optionalWeight = 0.4;
+
+    const requiredPercentage = (completedRequired / requiredFields.length) * requiredWeight * 100;
+    const optionalPercentage = (completedOptional / optionalFields.length) * optionalWeight * 100;
+
+    const completionPercentage = Math.round(requiredPercentage + optionalPercentage);
+
+    return {
+      languageCode,
+      completionPercentage,
+      hasTranslation: true,
+      fields: fieldStatus
+    };
+  },
+
   async getBySlug(slug: string, language: string = 'en') {
     const query = `
       SELECT

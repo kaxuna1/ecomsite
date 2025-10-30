@@ -4,9 +4,14 @@ import {
   XMarkIcon,
   ChevronDownIcon,
   InformationCircleIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
+import AIDescriptionGenerator from '../../AIDescriptionGenerator';
+import SEOGenerator from '../../SEOGenerator';
+import Toast, { ToastType } from '../../../Toast';
 import type { ProductForm } from '../../../../pages/admin/ProductEditor';
 import type { AttributeDefinition } from '../../../../api/attributes';
+import type { GenerateDescriptionResponse, GenerateSEOResponse } from '../../../../api/ai';
 
 interface DetailsTabProps {
   form: UseFormReturn<ProductForm>;
@@ -30,6 +35,11 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
   const [highlightInput, setHighlightInput] = useState('');
   const [metaKeywordInput, setMetaKeywordInput] = useState('');
   const [showSEO, setShowSEO] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
+  const [showSEOGenerator, setShowSEOGenerator] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<ToastType>('success');
+  const [showToast, setShowToast] = useState(false);
 
   const categories = watch('categories') || [];
   const highlights = watch('highlights') || [];
@@ -82,6 +92,52 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
 
   const removeMetaKeyword = (keyword: string) => {
     setValue('metaKeywords', metaKeywords.filter((k) => k !== keyword), { shouldDirty: true });
+  };
+
+  const handleAIApply = (generated: GenerateDescriptionResponse) => {
+    // Apply generated content to form
+    setValue('description', generated.description, { shouldDirty: true });
+    setValue('highlights', generated.highlights, { shouldDirty: true });
+    if (generated.usage) {
+      setValue('usage', generated.usage, { shouldDirty: true });
+    }
+    if (generated.metaDescription) {
+      setValue('metaDescription', generated.metaDescription, { shouldDirty: true });
+    }
+
+    // Show success toast
+    setToastMessage('AI-generated content applied successfully!');
+    setToastType('success');
+    setShowToast(true);
+    setShowAIGenerator(false);
+  };
+
+  const showToastNotification = (message: string, type: ToastType = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  const handleSEOApply = (seo: GenerateSEOResponse) => {
+    // Apply SEO content to form
+    setValue('metaTitle', seo.metaTitle, { shouldDirty: true });
+    setValue('metaDescription', seo.metaDescription, { shouldDirty: true });
+
+    // Add focus keyword and secondary keywords
+    const allKeywords = [seo.focusKeyword, ...seo.secondaryKeywords];
+    const uniqueKeywords = [...new Set([...metaKeywords, ...allKeywords])];
+    setValue('metaKeywords', uniqueKeywords, { shouldDirty: true });
+
+    // Close modal
+    setShowSEOGenerator(false);
+
+    // Expand SEO section if collapsed
+    if (!showSEO) {
+      setShowSEO(true);
+    }
+
+    // Show success toast
+    showToastNotification('SEO meta tags generated and applied successfully!', 'success');
   };
 
   // Character counter helper
@@ -221,7 +277,18 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             >
               Full Description *
             </label>
-            <CharCounter current={description.length} max={2000} />
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowAIGenerator(true)}
+                disabled={!productName.trim()}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-xs font-semibold text-white shadow-md transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <SparklesIcon className="h-4 w-4" />
+                Generate with AI
+              </button>
+              <CharCounter current={description.length} max={2000} />
+            </div>
           </div>
           <textarea
             id="description"
@@ -485,21 +552,37 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
 
       {/* SEO & Meta Data */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <button
-          type="button"
-          onClick={() => setShowSEO(!showSEO)}
-          className="flex w-full items-center justify-between transition-colors hover:text-blush"
-        >
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
-            SEO & Meta Data
-          </h3>
-          <ChevronDownIcon
-            className={`h-5 w-5 text-champagne transition-transform ${showSEO ? 'rotate-180' : ''}`}
-          />
-        </button>
-        <p className="mt-2 text-xs text-champagne/60">
-          Optimize your product for search engines and social media
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <button
+            type="button"
+            onClick={() => setShowSEO(!showSEO)}
+            className="flex flex-1 items-center justify-between transition-colors hover:text-blush"
+          >
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+                SEO & Meta Data
+              </h3>
+              <p className="mt-1 text-xs text-champagne/60">
+                Optimize your product for search engines and social media
+              </p>
+            </div>
+            <ChevronDownIcon
+              className={`h-5 w-5 text-champagne transition-transform ${showSEO ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {/* AI Generate Button */}
+          <button
+            type="button"
+            onClick={() => setShowSEOGenerator(true)}
+            disabled={!productName}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+            title={!productName ? 'Enter product name first' : 'Generate SEO with AI'}
+          >
+            <SparklesIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Generate SEO</span>
+          </button>
+        </div>
 
         {showSEO && (
           <div className="mt-6 space-y-6">
@@ -777,6 +860,40 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
           </div>
         </section>
       )}
+
+      {/* AI Description Generator Modal */}
+      <AIDescriptionGenerator
+        productName={productName}
+        shortDescription={shortDescription}
+        categories={categories}
+        currentDescription={description}
+        currentHighlights={highlights}
+        currentUsage={watch('usage')}
+        currentMetaDescription={metaDescription}
+        isOpen={showAIGenerator}
+        onApply={handleAIApply}
+        onClose={() => setShowAIGenerator(false)}
+      />
+
+      {/* SEO Generator Modal */}
+      {showSEOGenerator && (
+        <SEOGenerator
+          productName={productName}
+          shortDescription={shortDescription}
+          description={description}
+          categories={categories}
+          onApply={handleSEOApply}
+          onClose={() => setShowSEOGenerator(false)}
+        />
+      )}
+
+      {/* Toast Notification */}
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

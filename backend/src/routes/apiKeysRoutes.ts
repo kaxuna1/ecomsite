@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { authenticate } from '../middleware/authMiddleware';
 import { apiKeysRateLimiter } from '../middleware/rateLimiter';
 import {
   getAllAPIKeys,
@@ -21,7 +21,7 @@ import {
 const router = Router();
 
 // All routes require admin authentication
-router.use(authMiddleware);
+router.use(authenticate);
 
 // Apply rate limiting to all API keys routes (30 requests per 15 minutes)
 router.use(apiKeysRateLimiter);
@@ -157,9 +157,9 @@ router.post('/', async (req: Request, res: Response) => {
       message: 'API key saved successfully',
       key: {
         id: result.id,
-        keyName: result.keyName,
+        keyName: result.key_name,
         category: result.category,
-        isActive: result.isActive
+        isActive: result.is_active
       }
     });
   } catch (error: any) {

@@ -6,6 +6,9 @@ export interface SiteSettings {
   logoType: 'text' | 'image';
   logoText: string | null;
   logoImageUrl: string | null;
+  aiProvider?: 'openai' | 'anthropic';
+  openaiModel?: string | null; // Selected OpenAI model
+  anthropicModel?: string | null; // Selected Anthropic model
 }
 
 // Public endpoint - no authentication required

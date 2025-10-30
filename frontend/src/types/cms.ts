@@ -10,6 +10,7 @@ export type BlockType =
   | 'cta'
   | 'text_image'
   | 'stats'
+  | 'faq'
   | 'social_proof';
 
 // Page metadata

@@ -7,7 +7,8 @@ import {
   getAllSettings,
   updateSettings,
   getPublicLogoSettings,
-  isValidLogoType
+  isValidLogoType,
+  isValidAiProvider
 } from '../services/settingsService';
 
 const router = Router();
@@ -82,12 +83,19 @@ router.get('/', authenticate, async (req, res) => {
  */
 router.put('/', authenticate, async (req, res) => {
   try {
-    const { logoType, logoText, logoImageUrl } = req.body;
+    const { logoType, logoText, logoImageUrl, aiProvider, openaiModel, anthropicModel } = req.body;
 
     // Validate logo_type if provided
     if (logoType !== undefined && !isValidLogoType(logoType)) {
       return res.status(400).json({
         message: 'Invalid logo type. Must be either "text" or "image"'
+      });
+    }
+
+    // Validate ai_provider if provided
+    if (aiProvider !== undefined && !isValidAiProvider(aiProvider)) {
+      return res.status(400).json({
+        message: 'Invalid AI provider. Must be either "openai" or "anthropic"'
       });
     }
 
@@ -103,6 +111,18 @@ router.put('/', authenticate, async (req, res) => {
 
     if (logoImageUrl !== undefined) {
       updates.logoImageUrl = logoImageUrl;
+    }
+
+    if (aiProvider !== undefined) {
+      updates.aiProvider = aiProvider;
+    }
+
+    if (openaiModel !== undefined) {
+      updates.openaiModel = openaiModel;
+    }
+
+    if (anthropicModel !== undefined) {
+      updates.anthropicModel = anthropicModel;
     }
 
     if (Object.keys(updates).length === 0) {
