@@ -112,9 +112,20 @@ function ProductSlide({
   const getDisplayImage = () => {
     if (product.images && product.images.length > 0) {
       const featuredImage = product.images.find(img => img.isFeatured);
-      return featuredImage?.url || product.images[0].url;
+      const imageUrl = featuredImage?.url || product.images[0].url;
+      console.log('ProductCarousel - Using media library image:', imageUrl, 'for product:', product.id);
+      return imageUrl;
     }
-    return product.imageUrl;
+    // Ensure imageUrl has proper API prefix if it's a relative path
+    const imageUrl = product.imageUrl;
+    if (imageUrl && imageUrl.startsWith('/uploads/') && !imageUrl.startsWith('http')) {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+      const fullUrl = `${apiUrl}${imageUrl}`;
+      console.log('ProductCarousel - Using imageUrl with API prefix:', fullUrl, 'for product:', product.id);
+      return fullUrl;
+    }
+    console.log('ProductCarousel - Using imageUrl as-is:', imageUrl, 'for product:', product.id);
+    return imageUrl;
   };
 
   const displayImage = getDisplayImage();

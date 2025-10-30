@@ -501,7 +501,20 @@ function ProductsBlock({ content }: { content: any }) {
                 {showElements.image !== false && (
                   <Link to={`/${language}/products/${product.id}`} className={`relative overflow-hidden bg-champagne ${imageAspectRatio === '1:1' ? 'aspect-square' : imageAspectRatio === '4:5' ? 'aspect-[4/5]' : imageAspectRatio === '3:4' ? 'aspect-[3/4]' : 'aspect-[16/9]'}`}>
                     <motion.img
-                      src={product.imageUrl}
+                      src={(() => {
+                        // Prefer featured image from media library
+                        if (product.images && product.images.length > 0) {
+                          const featuredImage = product.images.find((img: any) => img.isFeatured);
+                          return featuredImage?.url || product.images[0].url;
+                        }
+                        // Fallback to imageUrl with API prefix if needed
+                        const imageUrl = product.imageUrl;
+                        if (imageUrl && imageUrl.startsWith('/uploads/') && !imageUrl.startsWith('http')) {
+                          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+                          return `${apiUrl}${imageUrl}`;
+                        }
+                        return imageUrl;
+                      })()}
                       alt={product.name}
                       className="h-full w-full object-cover"
                       loading="lazy"

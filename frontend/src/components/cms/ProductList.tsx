@@ -99,7 +99,13 @@ function ProductListItem({
       const featuredImage = product.images.find(img => img.isFeatured);
       return featuredImage?.url || product.images[0].url;
     }
-    return product.imageUrl;
+    // Ensure imageUrl has proper API prefix if it's a relative path
+    const imageUrl = product.imageUrl;
+    if (imageUrl && imageUrl.startsWith('/uploads/') && !imageUrl.startsWith('http')) {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+      return `${apiUrl}${imageUrl}`;
+    }
+    return imageUrl;
   };
 
   return (
