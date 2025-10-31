@@ -10,6 +10,7 @@ import './i18n/config'; // Initialize i18next configuration
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { I18nProvider } from './context/I18nContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const queryClient = new QueryClient();
 
@@ -18,13 +19,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AuthProvider>
-            <CartProvider>
-              <I18nProvider>
-                <App />
-              </I18nProvider>
-            </CartProvider>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <CartProvider>
+                <I18nProvider>
+                  <App />
+                </I18nProvider>
+              </CartProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </HelmetProvider>

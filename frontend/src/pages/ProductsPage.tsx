@@ -223,13 +223,13 @@ function ProductsPage() {
   const FilterContent = () => (
     <div className="h-full flex flex-col">
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 border-b border-champagne/40">
-        <h2 className="text-lg font-semibold text-midnight">Filters</h2>
+      <div className="lg:hidden flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+        <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Filters</h2>
         <button
           onClick={() => setIsFilterDrawerOpen(false)}
-          className="p-2 hover:bg-champagne/30 rounded-full transition-colors"
+          className="p-2 hover:bg-[var(--color-surface-hover)] rounded-full transition-colors"
         >
-          <XMarkIcon className="h-5 w-5 text-midnight" />
+          <XMarkIcon className="h-5 w-5 text-[var(--color-text-primary)]" />
         </button>
       </div>
 
@@ -239,12 +239,12 @@ function ProductsPage() {
         {activeFilterCount > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-midnight/80">
+              <span className="text-sm font-medium text-[var(--color-text-secondary)]">
                 {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} applied
               </span>
               <button
                 onClick={clearAllFilters}
-                className="text-sm text-jade hover:text-jade/80 font-medium transition-colors"
+                className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium transition-colors"
               >
                 Clear all
               </button>
@@ -258,11 +258,11 @@ function ProductsPage() {
             onClick={() => toggleSection('categories')}
             className="w-full flex items-center justify-between text-left group"
           >
-            <h3 className="text-sm font-semibold text-midnight">Categories</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Categories</h3>
             {expandedSections.categories ? (
-              <ChevronUpIcon className="h-4 w-4 text-midnight/60 group-hover:text-midnight transition-colors" />
+              <ChevronUpIcon className="h-4 w-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
             ) : (
-              <ChevronDownIcon className="h-4 w-4 text-midnight/60 group-hover:text-midnight transition-colors" />
+              <ChevronDownIcon className="h-4 w-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
             )}
           </button>
 
@@ -274,9 +274,9 @@ function ProductsPage() {
                     name="category"
                     checked={selectedCategory === 'all'}
                     onChange={() => setSelectedCategory('all')}
-                    className="h-4 w-4 text-jade border-champagne/60 focus:ring-jade"
+                    className="h-4 w-4 text-[var(--color-primary)] border-[var(--color-border)] focus:ring-[var(--color-primary)]"
                   />
-                  <span className="text-sm text-midnight/70 group-hover:text-midnight transition-colors">
+                  <span className="text-sm text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
                     All Products
                   </span>
                 </label>
@@ -288,13 +288,13 @@ function ProductsPage() {
                         name="category"
                         checked={selectedCategory === category.value}
                         onChange={() => setSelectedCategory(category.value)}
-                        className="h-4 w-4 text-jade border-champagne/60 focus:ring-jade"
+                        className="h-4 w-4 text-[var(--color-primary)] border-[var(--color-border)] focus:ring-[var(--color-primary)]"
                       />
-                      <span className="text-sm text-midnight/70 group-hover:text-midnight capitalize transition-colors">
+                      <span className="text-sm text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] capitalize transition-colors">
                         {category.label}
                       </span>
                     </div>
-                    <span className="text-xs text-midnight/40 font-medium">
+                    <span className="text-xs text-[var(--color-text-tertiary)] font-medium">
                       {category.count}
                     </span>
                   </label>
@@ -310,11 +310,11 @@ function ProductsPage() {
               onClick={() => toggleSection('attributes')}
               className="w-full flex items-center justify-between text-left group"
             >
-              <h3 className="text-sm font-semibold text-midnight">Attributes</h3>
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Attributes</h3>
               {expandedSections.attributes ? (
-                <ChevronUpIcon className="h-4 w-4 text-midnight/60 group-hover:text-midnight transition-colors" />
+                <ChevronUpIcon className="h-4 w-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
               ) : (
-                <ChevronDownIcon className="h-4 w-4 text-midnight/60 group-hover:text-midnight transition-colors" />
+                <ChevronDownIcon className="h-4 w-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
               )}
             </button>
 
@@ -322,7 +322,7 @@ function ProductsPage() {
               <div className="space-y-4 mt-3">
                   {filterableAttributes.map((attr) => (
                     <div key={attr.id} className="space-y-2">
-                      <label className="text-sm font-medium text-midnight/80">{attr.attributeLabel}</label>
+                      <label className="text-sm font-medium text-[var(--color-text-secondary)]">{attr.attributeLabel}</label>
 
                       {/* Boolean checkbox */}
                       {attr.dataType === 'boolean' && (
@@ -334,9 +334,9 @@ function ProductsPage() {
                               ...attributeFilters,
                               [attr.attributeKey]: e.target.checked || undefined
                             })}
-                            className="h-4 w-4 rounded border-champagne/60 text-jade focus:ring-jade"
+                            className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                           />
-                          <span className="text-sm text-midnight/70 group-hover:text-midnight transition-colors">Yes</span>
+                          <span className="text-sm text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">Yes</span>
                         </label>
                       )}
 
@@ -348,7 +348,7 @@ function ProductsPage() {
                             ...attributeFilters,
                             [attr.attributeKey]: e.target.value || undefined
                           })}
-                          className="w-full rounded-lg border border-champagne/60 bg-white px-3 py-2 text-sm text-midnight focus:border-jade focus:ring-2 focus:ring-jade/20"
+                          className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20"
                         >
                           <option value="">All</option>
                           {attr.options.map((opt) => (
@@ -378,13 +378,13 @@ function ProductsPage() {
                                       [attr.attributeKey]: newValues.length > 0 ? newValues : undefined
                                     });
                                   }}
-                                  className="h-4 w-4 rounded border-champagne/60 text-jade focus:ring-jade"
+                                  className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                                 />
-                                <span className="text-sm text-midnight/70 group-hover:text-midnight transition-colors">
+                                <span className="text-sm text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
                                   {opt.label}
                                 </span>
                               </div>
-                              <span className="text-xs text-midnight/40 font-medium">
+                              <span className="text-xs text-[var(--color-text-tertiary)] font-medium">
                                 {opt.count}
                               </span>
                             </label>
@@ -400,10 +400,10 @@ function ProductsPage() {
       </div>
 
       {/* Mobile Apply Button */}
-      <div className="lg:hidden border-t border-champagne/40 p-4">
+      <div className="lg:hidden border-t border-[var(--color-border)] p-4">
         <button
           onClick={() => setIsFilterDrawerOpen(false)}
-          className="w-full rounded-full bg-jade px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-shadow"
+          className="w-full rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[var(--color-button-text)] shadow-lg hover:shadow-xl transition-shadow"
         >
           Show {sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''}
         </button>
@@ -425,12 +425,12 @@ function ProductsPage() {
           {/* Mobile Filter Button */}
           <button
             onClick={() => setIsFilterDrawerOpen(true)}
-            className="lg:hidden flex items-center justify-center gap-2 rounded-lg border border-champagne/60 bg-white px-4 py-2.5 shadow-sm hover:shadow-md transition-all flex-shrink-0"
+            className="lg:hidden flex items-center justify-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-2.5 shadow-sm hover:shadow-md transition-all flex-shrink-0"
           >
-            <FunnelIcon className="h-5 w-5 text-midnight/60" />
-            <span className="text-sm font-medium text-midnight">Filters</span>
+            <FunnelIcon className="h-5 w-5 text-[var(--color-text-secondary)]" />
+            <span className="text-sm font-medium text-[var(--color-text-primary)]">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-jade text-xs font-semibold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)] text-xs font-semibold text-[var(--color-button-text)]">
                 {activeFilterCount}
               </span>
             )}
@@ -438,35 +438,35 @@ function ProductsPage() {
 
           {/* Search Bar */}
           <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-midnight/40" />
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
             <input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full rounded-lg border border-champagne/60 bg-white px-11 py-2.5 text-sm text-midnight placeholder-midnight/40 shadow-sm transition-all focus:border-jade focus:ring-2 focus:ring-jade/20 focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-11 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] shadow-sm transition-all focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-champagne/50 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-[var(--color-surface-hover)] transition-colors"
               >
-                <XMarkIcon className="h-4 w-4 text-midnight/60" />
+                <XMarkIcon className="h-4 w-4 text-[var(--color-text-secondary)]" />
               </button>
             )}
           </div>
 
           {/* Sort Dropdown */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <label htmlFor="sort" className="text-sm font-medium text-midnight/60 hidden sm:block">
+            <label htmlFor="sort" className="text-sm font-medium text-[var(--color-text-secondary)] hidden sm:block">
               Sort:
             </label>
             <select
               id="sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="rounded-lg border border-champagne/60 bg-white px-3 py-2.5 text-sm font-medium text-midnight shadow-sm transition-all focus:border-jade focus:ring-2 focus:ring-jade/20 focus:outline-none"
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2.5 text-sm font-medium text-[var(--color-text-primary)] shadow-sm transition-all focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none"
             >
               <option value="newest">Newest</option>
               <option value="name-asc">Name (A-Z)</option>
@@ -483,12 +483,12 @@ function ProductsPage() {
             {activeFilterChips.map((chip) => (
               <div
                 key={chip.id}
-                className="flex items-center gap-2 rounded-full bg-jade/10 px-3 py-1.5 text-sm text-jade border border-jade/20"
+                className="flex items-center gap-2 rounded-full bg-[var(--color-primary)]/10 px-3 py-1.5 text-sm text-[var(--color-primary)] border border-[var(--color-primary)]/20"
               >
                 <span>{chip.label}</span>
                 <button
                   onClick={chip.onRemove}
-                  className="hover:bg-jade/20 rounded-full p-0.5 transition-colors"
+                  className="hover:bg-[var(--color-primary)]/20 rounded-full p-0.5 transition-colors"
                   aria-label={`Remove ${chip.label} filter`}
                 >
                   <XMarkIcon className="h-4 w-4" />
@@ -503,7 +503,7 @@ function ProductsPage() {
       <div className="flex gap-8">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
-          <div className="sticky top-4 rounded-2xl border border-champagne/40 bg-white shadow-sm">
+          <div className="sticky top-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-sm">
             <FilterContent />
           </div>
         </aside>
@@ -518,7 +518,7 @@ function ProductsPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsFilterDrawerOpen(false)}
-                className="fixed inset-0 bg-midnight/50 z-40 lg:hidden"
+                className="fixed inset-0 bg-[var(--color-text-primary)]/50 z-40 lg:hidden"
               />
 
               {/* Drawer */}
@@ -527,7 +527,7 @@ function ProductsPage() {
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="fixed left-0 top-0 bottom-0 w-80 bg-white shadow-2xl z-50 lg:hidden"
+                className="fixed left-0 top-0 bottom-0 w-80 bg-[var(--color-background)] shadow-2xl z-50 lg:hidden"
               >
                 <FilterContent />
               </motion.div>
@@ -539,12 +539,12 @@ function ProductsPage() {
         <div className="flex-1 min-w-0">
           {/* Results Count */}
           <div className="mb-4">
-            <p className="text-sm text-midnight/60">
+            <p className="text-sm text-[var(--color-text-secondary)]">
               {isLoading && currentPage === 1 ? (
                 'Loading products...'
               ) : (
                 <>
-                  Showing <span className="font-semibold text-jade">{sortedProducts.length}</span>{' '}
+                  Showing <span className="font-semibold text-[var(--color-primary)]">{sortedProducts.length}</span>{' '}
                   {totalProducts > 0 && <span>of {totalProducts}</span>}{' '}
                   {totalProducts === 1 ? 'product' : 'products'}
                 </>
@@ -582,13 +582,13 @@ function ProductsPage() {
                   animate={prefersReducedMotion ? {} : { opacity: 1, scale: 1 }}
                   exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
                 >
-                  <FunnelIcon className="mx-auto h-16 w-16 text-midnight/20 mb-4" />
-                  <p className="text-lg text-midnight/60 mb-4">No products found matching your criteria.</p>
+                  <FunnelIcon className="mx-auto h-16 w-16 text-[var(--color-text-tertiary)] mb-4" />
+                  <p className="text-lg text-[var(--color-text-secondary)] mb-4">No products found matching your criteria.</p>
                   {activeFilterCount > 0 && (
                     <motion.button
                       type="button"
                       onClick={clearAllFilters}
-                      className="rounded-full bg-jade px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-shadow"
+                      className="rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[var(--color-button-text)] shadow-lg hover:shadow-xl transition-shadow"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -606,7 +606,7 @@ function ProductsPage() {
               <button
                 onClick={handleLoadMore}
                 disabled={isLoadingMore || isFetching}
-                className="inline-flex items-center gap-2 rounded-lg bg-jade px-8 py-3.5 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:bg-jade/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-primary)] px-8 py-3.5 text-sm font-semibold text-[var(--color-button-text)] shadow-lg hover:shadow-xl hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoadingMore || isFetching ? (
                   <>

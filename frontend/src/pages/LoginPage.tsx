@@ -42,7 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-champagne/30 via-white to-blush/20 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-bg-secondary/30 via-white to-blush/20 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -55,12 +55,12 @@ export default function LoginPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-jade/10 mb-4"
+            className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-primary/10 mb-4"
           >
-            <ArrowRightOnRectangleIcon className="h-8 w-8 text-jade" />
+            <ArrowRightOnRectangleIcon className="h-8 w-8 text-primary" />
           </motion.div>
-          <h2 className="font-display text-4xl text-midnight mb-2">{t('login.title')}</h2>
-          <p className="text-midnight/60">{t('login.subtitle')}</p>
+          <h2 className="font-display text-4xl text-text-primary mb-2">{t('login.title')}</h2>
+          <p className="text-text-primary/60">{t('login.subtitle')}</p>
         </div>
 
         {/* Form Card */}
@@ -68,7 +68,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl shadow-2xl p-8 border border-champagne/40"
+          className="bg-white rounded-3xl shadow-2xl p-8 border border-bg-secondary/40"
         >
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Error Message */}
@@ -84,12 +84,12 @@ export default function LoginPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-midnight mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-text-primary mb-2">
                 {t('login.email')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <EnvelopeIcon className="h-5 w-5 text-midnight/40" />
+                  <EnvelopeIcon className="h-5 w-5 text-text-primary/40" />
                 </div>
                 <input
                   {...register('email', {
@@ -101,8 +101,8 @@ export default function LoginPage() {
                   })}
                   type="email"
                   id="email"
-                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
-                    errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors ${
+                    errors.email ? 'border-red-300 bg-red-50' : 'border-bg-secondary/60 bg-bg-secondary/10'
                   }`}
                   placeholder={t('login.emailPlaceholder')}
                   autoComplete="email"
@@ -121,12 +121,12 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-midnight mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-text-primary mb-2">
                 {t('login.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <LockClosedIcon className="h-5 w-5 text-midnight/40" />
+                  <LockClosedIcon className="h-5 w-5 text-text-primary/40" />
                 </div>
                 <input
                   {...register('password', {
@@ -135,8 +135,8 @@ export default function LoginPage() {
                   })}
                   type="password"
                   id="password"
-                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
-                    errors.password ? 'border-red-300 bg-red-50' : 'border-champagne/60 bg-champagne/10'
+                  className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors ${
+                    errors.password ? 'border-red-300 bg-red-50' : 'border-bg-secondary/60 bg-bg-secondary/10'
                   }`}
                   placeholder={t('login.passwordPlaceholder')}
                   autoComplete="current-password"
@@ -160,14 +160,14 @@ export default function LoginPage() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-jade focus:ring-jade border-champagne/60 rounded"
+                  className="h-4 w-4 text-primary focus:ring-primary border-bg-secondary/60 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-midnight/60">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-text-primary/60">
                   {t('login.rememberMe')}
                 </label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-semibold text-jade hover:text-jade/80 transition-colors">
+                <a href="#" className="font-semibold text-primary hover:text-primary/80 transition-colors">
                   {t('login.forgotPassword')}
                 </a>
               </div>
@@ -179,7 +179,7 @@ export default function LoginPage() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-jade text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-primary text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -201,11 +201,11 @@ export default function LoginPage() {
 
           {/* Signup Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-midnight/60">
+            <p className="text-sm text-text-primary/60">
               {t('login.noAccount')}{' '}
               <Link
                 to="/signup"
-                className="font-semibold text-jade hover:text-jade/80 transition-colors"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors"
               >
                 {t('login.createAccount')}
               </Link>
@@ -222,7 +222,7 @@ export default function LoginPage() {
         >
           <Link
             to="/"
-            className="text-sm text-midnight/60 hover:text-midnight transition-colors"
+            className="text-sm text-text-primary/60 hover:text-text-primary transition-colors"
           >
             {t('login.backToHome')}
           </Link>

@@ -50,9 +50,14 @@ const getMinHeightClass = (height?: string) => {
 
 const getInlineStyles = (style?: HeroContent['style']) => {
   if (!style) return {};
+  // USE CSS VARIABLES FIRST with block style as fallback
   return {
-    backgroundColor: style.backgroundColor,
+    backgroundColor: style.backgroundColor
+      ? `var(--color-background-primary, ${style.backgroundColor})`
+      : undefined,
     color: style.textColor
+      ? `var(--color-text-primary, ${style.textColor})`
+      : undefined
   };
 };
 
@@ -91,8 +96,9 @@ function SplitScreenHero({ content }: HeroTemplateProps) {
   ].filter(Boolean).join(' ');
 
   const inlineStyles = getInlineStyles(style);
-  const accentColor = style?.accentColor || '#8bba9c';
-  const secondaryColor = style?.secondaryColor || '#e8c7c8';
+  // USE CSS VARIABLES FIRST with block style as fallback
+  const accentColor = `var(--color-brand-primary, ${style?.accentColor || '#8bba9c'})`;
+  const secondaryColor = `var(--color-brand-secondary, ${style?.secondaryColor || '#e8c7c8'})`;
 
   return (
     <section className={sectionClasses} style={inlineStyles}>
@@ -184,7 +190,7 @@ function CenteredMinimalHero({ content }: HeroTemplateProps) {
   const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center bg-white text-midnight overflow-hidden">
+    <section className="relative min-h-[90vh] flex items-center justify-center bg-white text-text-primary overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-champagne/20 to-transparent" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
@@ -198,7 +204,7 @@ function CenteredMinimalHero({ content }: HeroTemplateProps) {
         </motion.h1>
 
         <motion.p
-          className="mt-8 text-lg sm:text-xl lg:text-2xl text-midnight/70 max-w-2xl mx-auto"
+          className="mt-8 text-lg sm:text-xl lg:text-2xl text-text-primary/70 max-w-2xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -288,7 +294,7 @@ function FullWidthOverlayHero({ content }: HeroTemplateProps) {
           >
             <Link
               to={ctaLink}
-              className="inline-flex items-center gap-2 rounded-full bg-jade px-8 py-4 text-lg font-semibold text-midnight shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-semibold text-text-primary shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
             >
               <span>{ctaText}</span>
               <ArrowRightIcon className="h-5 w-5" />
@@ -309,7 +315,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
   const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
-    <section className="relative min-h-screen bg-champagne text-midnight overflow-hidden">
+    <section className="relative min-h-screen bg-bg-secondary text-text-primary overflow-hidden">
       {backgroundImage && (
         <div className="absolute top-0 right-0 w-1/2 h-full">
           <img
@@ -324,7 +330,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 lg:py-32">
         <div className="max-w-2xl">
           <motion.div
-            className="inline-block px-4 py-2 bg-jade/20 text-jade rounded-full text-sm font-semibold mb-6"
+            className="inline-block px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-semibold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -341,7 +347,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
           </motion.h1>
 
           <motion.p
-            className="mt-8 text-xl lg:text-2xl text-midnight/70 leading-relaxed"
+            className="mt-8 text-xl lg:text-2xl text-text-primary/70 leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -372,7 +378,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
           >
             <div className="flex -space-x-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-12 h-12 rounded-full bg-jade/20 border-2 border-champagne" />
+                <div key={i} className="w-12 h-12 rounded-full bg-primary/20 border-2 border-champagne" />
               ))}
             </div>
             <div>
@@ -381,7 +387,7 @@ function AsymmetricBoldHero({ content }: HeroTemplateProps) {
                 {[...Array(5)].map((_, i) => (
                   <StarIconSolid key={i} className="h-4 w-4 text-yellow-500" />
                 ))}
-                <span className="ml-2 text-xs text-midnight/60">4.9/5.0</span>
+                <span className="ml-2 text-xs text-text-primary/60">4.9/5.0</span>
               </div>
             </div>
           </motion.div>
@@ -396,7 +402,7 @@ function LuxuryMinimalHero({ content }: HeroTemplateProps) {
   const { headline, subheadline, ctaText, ctaLink, backgroundImage, backgroundImageAlt } = content;
 
   return (
-    <section className="relative min-h-screen bg-white text-midnight flex items-center">
+    <section className="relative min-h-screen bg-white text-text-primary flex items-center">
       <div className="mx-auto max-w-7xl px-4 w-full">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <motion.div
@@ -405,20 +411,20 @@ function LuxuryMinimalHero({ content }: HeroTemplateProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="w-16 h-0.5 bg-jade" />
+            <div className="w-16 h-0.5 bg-primary" />
 
             <h1 className="font-display text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-tight">
               {headline}
             </h1>
 
-            <p className="text-lg text-midnight/70 leading-relaxed max-w-lg">
+            <p className="text-lg text-text-primary/70 leading-relaxed max-w-lg">
               {subheadline}
             </p>
 
             <div className="flex items-center gap-4 pt-4">
               <Link
                 to={ctaLink}
-                className="inline-flex items-center gap-2 text-midnight font-semibold text-lg group"
+                className="inline-flex items-center gap-2 text-text-primary font-semibold text-lg group"
               >
                 <span>{ctaText}</span>
                 <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-2" />
@@ -427,12 +433,12 @@ function LuxuryMinimalHero({ content }: HeroTemplateProps) {
 
             <div className="flex items-center gap-6 pt-8 border-t border-midnight/10">
               <div className="flex items-center gap-2">
-                <CheckBadgeIcon className="h-5 w-5 text-jade" />
-                <span className="text-sm text-midnight/70">Clinically Tested</span>
+                <CheckBadgeIcon className="h-5 w-5 text-primary" />
+                <span className="text-sm text-text-primary/70">Clinically Tested</span>
               </div>
               <div className="flex items-center gap-2">
-                <HeartIcon className="h-5 w-5 text-jade" />
-                <span className="text-sm text-midnight/70">Cruelty-Free</span>
+                <HeartIcon className="h-5 w-5 text-primary" />
+                <span className="text-sm text-text-primary/70">Cruelty-Free</span>
               </div>
             </div>
           </motion.div>
@@ -483,7 +489,7 @@ function GradientModernHero({ content }: HeroTemplateProps) {
         </>
       )}
       <motion.div
-        className="absolute top-20 left-20 w-96 h-96 bg-jade/30 rounded-full blur-3xl"
+        className="absolute top-20 left-20 w-96 h-96 bg-primary/30 rounded-full blur-3xl"
         animate={prefersReducedMotion ? undefined : {
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3]
@@ -491,7 +497,7 @@ function GradientModernHero({ content }: HeroTemplateProps) {
         transition={{ duration: 8, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-20 right-20 w-96 h-96 bg-champagne/20 rounded-full blur-3xl"
+        className="absolute bottom-20 right-20 w-96 h-96 bg-bg-secondary/20 rounded-full blur-3xl"
         animate={prefersReducedMotion ? undefined : {
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.4, 0.2]
@@ -521,7 +527,7 @@ function GradientModernHero({ content }: HeroTemplateProps) {
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to={ctaLink}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-10 py-5 text-lg font-semibold text-midnight shadow-xl transition-all hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-10 py-5 text-lg font-semibold text-text-primary shadow-xl transition-all hover:scale-105"
             >
               <span>{ctaText}</span>
               <ArrowRightIcon className="h-5 w-5" />

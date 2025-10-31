@@ -21,11 +21,13 @@ import adminMediaRoutes from './routes/admin/mediaRoutes';
 import adminProductMediaRoutes from './routes/admin/productMediaRoutes';
 import apiKeysRoutes from './routes/apiKeysRoutes';
 import aiRoutes from './routes/aiRoutes';
+import aiPageBuilderRoutes from './routes/aiPageBuilderRoutes';
 import newsletterRoutes from './routes/newsletterRoutes';
 import reviewsRoutes from './routes/reviewsRoutes';
 import reviewImageRoutes from './routes/reviewImageRoutes';
 import reviewReminderRoutes from './routes/reviewReminderRoutes';
 import staticTranslationsRoutes from './routes/staticTranslationsRoutes';
+import themeRoutes from './routes/themeRoutes';
 
 const app = express();
 
@@ -59,11 +61,13 @@ app.use('/api/admin/media', adminMediaRoutes);
 app.use('/api/admin', adminProductMediaRoutes);
 app.use('/api/admin/api-keys', apiKeysRoutes);
 app.use('/api/admin/ai', aiRoutes);
+app.use('/api/ai/pages', aiPageBuilderRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api', reviewsRoutes);
 app.use('/api/review-images', reviewImageRoutes);
 app.use('/api/admin/review-reminders', reviewReminderRoutes);
 app.use('/api/static-translations', staticTranslationsRoutes);
+app.use('/api/themes', themeRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

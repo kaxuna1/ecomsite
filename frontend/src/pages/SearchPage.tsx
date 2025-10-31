@@ -103,9 +103,9 @@ export default function SearchPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-midnight/20" />
-          <h1 className="mt-4 font-display text-3xl text-midnight">Search Products</h1>
-          <p className="mt-2 text-midnight/60">Enter a search term to find products</p>
+          <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-[var(--color-text-tertiary)]" />
+          <h1 className="mt-4 font-display text-3xl text-[var(--color-text-primary)]">Search Products</h1>
+          <p className="mt-2 text-[var(--color-text-secondary)]">Enter a search term to find products</p>
           <div className="mx-auto mt-8 max-w-2xl">
             <SearchBar />
           </div>
@@ -121,10 +121,10 @@ export default function SearchPage() {
         <div className="mb-4">
           <SearchBar />
         </div>
-        <h1 className="font-display text-2xl text-midnight md:text-3xl">
+        <h1 className="font-display text-2xl text-[var(--color-text-primary)] md:text-3xl">
           Search results for "{query}"
         </h1>
-        <p className="mt-2 text-midnight/60">
+        <p className="mt-2 text-[var(--color-text-secondary)]">
           {isLoading
             ? 'Searching...'
             : `${filteredResults.length} ${filteredResults.length === 1 ? 'product' : 'products'} found`}
@@ -134,16 +134,16 @@ export default function SearchPage() {
       <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
         {/* Filters Sidebar */}
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-champagne/40 bg-white p-6">
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FunnelIcon className="h-5 w-5 text-jade" />
-                <h2 className="font-semibold text-midnight">Filters</h2>
+                <FunnelIcon className="h-5 w-5 text-[var(--color-primary)]" />
+                <h2 className="font-semibold text-[var(--color-text-primary)]">Filters</h2>
               </div>
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="text-xs text-jade transition-colors hover:text-jade/80"
+                  className="text-xs text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-dark)]"
                 >
                   Clear all
                 </button>
@@ -151,39 +151,39 @@ export default function SearchPage() {
             </div>
 
             {/* Category Filters */}
-            <div className="space-y-3 border-b border-champagne/20 pb-4">
+            <div className="space-y-3 border-b border-[var(--color-border)] pb-4">
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   checked={filters.isNew}
                   onChange={(e) => setFilters({ ...filters, isNew: e.target.checked })}
-                  className="h-4 w-4 rounded border-champagne/60 text-jade focus:ring-jade"
+                  className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                 />
-                <span className="text-sm text-midnight">New Arrivals</span>
+                <span className="text-sm text-[var(--color-text-primary)]">New Arrivals</span>
               </label>
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   checked={filters.isFeatured}
                   onChange={(e) => setFilters({ ...filters, isFeatured: e.target.checked })}
-                  className="h-4 w-4 rounded border-champagne/60 text-jade focus:ring-jade"
+                  className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                 />
-                <span className="text-sm text-midnight">Featured</span>
+                <span className="text-sm text-[var(--color-text-primary)]">Featured</span>
               </label>
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   checked={filters.onSale}
                   onChange={(e) => setFilters({ ...filters, onSale: e.target.checked })}
-                  className="h-4 w-4 rounded border-champagne/60 text-jade focus:ring-jade"
+                  className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                 />
-                <span className="text-sm text-midnight">On Sale</span>
+                <span className="text-sm text-[var(--color-text-primary)]">On Sale</span>
               </label>
             </div>
 
             {/* Price Range Filter */}
             <div className="mt-4 space-y-3">
-              <h3 className="text-sm font-semibold text-midnight">Price Range</h3>
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Price Range</h3>
               {[
                 { value: 'all', label: 'All Prices' },
                 { value: 'under25', label: 'Under $25' },
@@ -202,20 +202,20 @@ export default function SearchPage() {
                         priceRange: option.value as typeof filters.priceRange
                       })
                     }
-                    className="h-4 w-4 border-champagne/60 text-jade focus:ring-jade"
+                    className="h-4 w-4 border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                   />
-                  <span className="text-sm text-midnight">{option.label}</span>
+                  <span className="text-sm text-[var(--color-text-primary)]">{option.label}</span>
                 </label>
               ))}
             </div>
 
             {/* Custom Attribute Filters */}
             {filterableAttributes.length > 0 && (
-              <div className="mt-4 space-y-4 border-t border-champagne/20 pt-4">
-                <h3 className="text-sm font-semibold text-midnight">Custom Filters</h3>
+              <div className="mt-4 space-y-4 border-t border-[var(--color-border)] pt-4">
+                <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Custom Filters</h3>
                 {filterableAttributes.map((attr) => (
                   <div key={attr.id} className="space-y-2">
-                    <label className="text-sm font-medium text-midnight/80">{attr.attributeLabel}</label>
+                    <label className="text-sm font-medium text-[var(--color-text-secondary)]">{attr.attributeLabel}</label>
 
                     {/* Boolean checkbox */}
                     {attr.dataType === 'boolean' && (
@@ -241,7 +241,7 @@ export default function SearchPage() {
                           ...attributeFilters,
                           [attr.attributeKey]: e.target.value || undefined
                         })}
-                        className="w-full rounded-lg border border-champagne/60 bg-white px-3 py-2 text-sm text-midnight focus:border-jade focus:ring-2 focus:ring-jade/20"
+                        className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20"
                       >
                         <option value="">All</option>
                         {attr.options.map((opt) => (
@@ -289,16 +289,16 @@ export default function SearchPage() {
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-jade/20 border-t-jade" />
             </div>
           ) : filteredResults.length === 0 ? (
-            <div className="rounded-2xl border border-champagne/40 bg-white p-12 text-center">
-              <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-midnight/20" />
-              <h3 className="mt-4 font-display text-xl text-midnight">No products found</h3>
-              <p className="mt-2 text-midnight/60">
+            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-12 text-center">
+              <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-[var(--color-text-tertiary)]" />
+              <h3 className="mt-4 font-display text-xl text-[var(--color-text-primary)]">No products found</h3>
+              <p className="mt-2 text-[var(--color-text-secondary)]">
                 Try adjusting your search or filters to find what you're looking for
               </p>
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-jade px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-jade/90"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-6 py-2 text-sm font-semibold text-[var(--color-button-text)] transition-all hover:bg-[var(--color-primary-dark)]"
                 >
                   <XMarkIcon className="h-4 w-4" />
                   Clear filters
@@ -316,9 +316,9 @@ export default function SearchPage() {
                 >
                   <Link
                     to={`/products/${product.id}`}
-                    className="group block overflow-hidden rounded-2xl border border-champagne/40 bg-white transition-all hover:border-jade hover:shadow-lg"
+                    className="group block overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] transition-all hover:border-[var(--color-primary)] hover:shadow-lg"
                   >
-                    <div className="aspect-square overflow-hidden bg-champagne/20">
+                    <div className="aspect-square overflow-hidden bg-[var(--color-surface)]">
                       <img
                         src={product.imageUrl}
                         alt={product.name}
@@ -328,7 +328,7 @@ export default function SearchPage() {
                     <div className="p-4">
                       <div className="mb-2 flex flex-wrap gap-1">
                         {product.isNew && (
-                          <span className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-semibold text-jade">
+                          <span className="rounded-full bg-[var(--color-primary)]/10 px-2 py-0.5 text-xs font-semibold text-[var(--color-primary)]">
                             New
                           </span>
                         )}
@@ -343,24 +343,24 @@ export default function SearchPage() {
                           </span>
                         )}
                       </div>
-                      <h3 className="font-medium text-midnight group-hover:text-jade">
+                      <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)]">
                         {product.name}
                       </h3>
-                      <p className="mt-1 line-clamp-2 text-sm text-midnight/60">
+                      <p className="mt-1 line-clamp-2 text-sm text-[var(--color-text-secondary)]">
                         {product.shortDescription}
                       </p>
                       <div className="mt-3 flex items-baseline gap-2">
                         {product.salePrice ? (
                           <>
-                            <span className="text-lg font-bold text-jade">
+                            <span className="text-lg font-bold text-[var(--color-primary)]">
                               ${product.salePrice.toFixed(2)}
                             </span>
-                            <span className="text-sm text-midnight/40 line-through">
+                            <span className="text-sm text-[var(--color-text-tertiary)] line-through">
                               ${product.price.toFixed(2)}
                             </span>
                           </>
                         ) : (
-                          <span className="text-lg font-bold text-midnight">
+                          <span className="text-lg font-bold text-[var(--color-text-primary)]">
                             ${product.price.toFixed(2)}
                           </span>
                         )}

@@ -26,7 +26,8 @@ import {
   GlobeAltIcon,
   PhotoIcon,
   EnvelopeIcon,
-  StarIcon
+  StarIcon,
+  PaintBrushIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import CommandPalette from './admin/CommandPalette';
@@ -56,6 +57,7 @@ const navigation: NavItem[] = [
   { name: 'Static Translations', href: '/admin/static-translations', icon: CommandLineIcon },
   { name: 'Admin Users', href: '/admin/admin-users', icon: UsersIcon },
   { name: 'Customers', href: '/admin/customers', icon: UserGroupIcon },
+  { name: 'Themes', href: '/admin/themes', icon: PaintBrushIcon },
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon }
 ];
 

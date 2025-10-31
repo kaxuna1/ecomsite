@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, EyeIcon, GlobeAltIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, EyeIcon, GlobeAltIcon, PlusIcon, CheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import {
   fetchCMSPages,
   fetchPageBlocks,
@@ -18,6 +18,7 @@ import {
   type CreatePagePayload
 } from '../../api/cmsAdmin';
 import FooterEditor from '../../components/cms/editors/FooterEditor';
+import AIPageBuilderModal from '../../components/admin/AIPageBuilderModal';
 import { PAGE_TEMPLATES, type PageTemplate } from '../../config/pageTemplates';
 
 export default function AdminCMS() {
@@ -30,6 +31,7 @@ export default function AdminCMS() {
   // Debug logging for language changes
   console.log('🌍 AdminCMS render - footerLanguage:', footerLanguage);
   const [showNewPageModal, setShowNewPageModal] = useState(false);
+  const [showAIPageBuilder, setShowAIPageBuilder] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate>(PAGE_TEMPLATES[0]);
   const [newPageData, setNewPageData] = useState({
     title: '',
@@ -249,6 +251,13 @@ export default function AdminCMS() {
             className="px-4 py-2 bg-champagne/20 text-champagne rounded-lg hover:bg-champagne/30 transition-colors font-semibold"
           >
             Edit Footer
+          </button>
+          <button
+            onClick={() => setShowAIPageBuilder(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl"
+          >
+            <SparklesIcon className="h-5 w-5" />
+            AI Page Builder
           </button>
           <button
             onClick={() => setShowNewPageModal(true)}
@@ -664,6 +673,17 @@ export default function AdminCMS() {
           </>
         )}
       </AnimatePresence>
+
+      {/* AI Page Builder Modal */}
+      <AIPageBuilderModal
+        isOpen={showAIPageBuilder}
+        onClose={() => setShowAIPageBuilder(false)}
+        onSuccess={(pageId) => {
+          queryClient.invalidateQueries({ queryKey: ['cms-pages'] });
+          setSelectedPageId(pageId);
+          setShowAIPageBuilder(false);
+        }}
+      />
     </div>
   );
 }

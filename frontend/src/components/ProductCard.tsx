@@ -158,7 +158,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
 
   return (
     <motion.article
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-champagne/40 bg-white shadow-lg transition-shadow duration-300 hover:shadow-2xl"
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border-default/40 bg-bg-primary shadow-lg transition-shadow duration-300 hover:shadow-2xl"
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -168,7 +168,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
       {/* Favorite Button */}
       <motion.button
         onClick={handleFavoriteClick}
-        className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-white"
+        className="absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
@@ -191,7 +191,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
               exit={{ scale: 0, rotate: -180 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              <HeartOutlineIcon className="h-5 w-5 text-midnight/60" />
+              <HeartOutlineIcon className="h-5 w-5 text-text-primary/60" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -202,7 +202,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         {/* New Badge */}
         {product.isNew && (
           <motion.div
-            className="flex items-center gap-1.5 rounded-full bg-jade/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
+            className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2 + index * 0.1, type: 'spring' }}
@@ -292,7 +292,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           type="button"
           onClick={handleQuickAdd}
           disabled={isAdding || showSuccess || product.inventory === 0}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-jade px-3 py-2 text-xs font-bold text-white shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-jade/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-white shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]"
           variants={buttonVariants}
           initial="rest"
           whileHover={product.inventory > 0 ? "hover" : "rest"}
@@ -344,13 +344,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
       {/* Product Info */}
       <div className="flex flex-1 flex-col gap-2 p-6">
         <div className="flex items-start justify-between gap-2">
-          <h2 className="font-display text-lg leading-tight text-midnight line-clamp-2 group-hover:text-jade transition-colors">
+          <h2 className="font-display text-lg leading-tight text-text-primary line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </h2>
           <div className="flex flex-col items-end gap-1 shrink-0">
             {showPriceRange ? (
               <motion.div
-                className="rounded-full bg-jade/10 px-3 py-1 text-sm font-bold text-jade"
+                className="rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: 'spring', stiffness: 400 }}
                 title={`Price range from variant options`}
@@ -366,13 +366,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
                 >
                   ${product.salePrice.toFixed(2)}
                 </motion.div>
-                <span className="text-xs text-midnight/40 line-through">
+                <span className="text-xs text-text-primary/40 line-through">
                   ${product.price.toFixed(2)}
                 </span>
               </>
             ) : (
               <motion.div
-                className="rounded-full bg-jade/10 px-3 py-1 text-sm font-bold text-jade"
+                className="rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
@@ -382,13 +382,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           </div>
         </div>
 
-        <p className="text-sm text-midnight/70 line-clamp-2">{product.shortDescription}</p>
+        <p className="text-sm text-text-primary/70 line-clamp-2">{product.shortDescription}</p>
 
         {/* Rating */}
         {product.averageRating && product.reviewCount && product.reviewCount > 0 && (
           <div className="flex items-center gap-2">
             <RatingStars rating={product.averageRating} size="sm" />
-            <span className="text-xs text-midnight/60">
+            <span className="text-xs text-text-primary/60">
               ({product.reviewCount})
             </span>
           </div>
@@ -399,7 +399,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           {product.categories.slice(0, 3).map((category) => (
             <span
               key={category}
-              className="rounded-full bg-champagne/50 px-2.5 py-0.5 text-xs font-medium text-midnight/60 capitalize"
+              className="rounded-full bg-champagne/50 px-2.5 py-0.5 text-xs font-medium text-text-primary/60 capitalize"
             >
               {category}
             </span>

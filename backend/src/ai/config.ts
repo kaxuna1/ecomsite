@@ -143,6 +143,16 @@ export const aiServiceConfig: AIServiceConfig = {
       cacheTTL: 86400, // 24 hours - translations rarely change
       maxCostPerExecution: 0.30, // $0.30 max per translation
       rateLimitPerUser: 30 // 30 translations per hour per admin user
+    },
+    {
+      name: 'ai-page-builder',
+      enabled: true,
+      defaultProvider: 'anthropic', // Claude excels at structured content generation
+      fallbackProviders: ['openai'],
+      cacheEnabled: false, // Pages should be unique, don't cache
+      cacheTTL: 0,
+      maxCostPerExecution: 2.00, // $2.00 max per page (structure + multiple blocks)
+      rateLimitPerUser: 10 // 10 page generations per hour per admin user
     }
   ],
 

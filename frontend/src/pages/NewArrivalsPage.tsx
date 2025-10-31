@@ -99,12 +99,12 @@ function NewArrivalsPage() {
             animate={prefersReducedMotion ? {} : { scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           >
-            <SparklesIcon className="h-10 w-10 text-jade" />
-            <h1 className="font-display text-4xl text-midnight sm:text-5xl lg:text-6xl">
+            <SparklesIcon className="h-10 w-10 text-[var(--color-primary)]" />
+            <h1 className="font-display text-4xl text-[var(--color-text-primary)] sm:text-5xl lg:text-6xl">
               New Arrivals
             </h1>
           </motion.div>
-          <p className="mx-auto max-w-2xl text-base text-midnight/70">
+          <p className="mx-auto max-w-2xl text-base text-[var(--color-text-secondary)]">
             Discover our latest luxury hair care innovations, carefully curated for exceptional results
           </p>
         </div>
@@ -117,25 +117,25 @@ function NewArrivalsPage() {
           transition={{ delay: 0.2 }}
         >
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-midnight/40" />
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
             <input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search new arrivals..."
-              className="w-full rounded-full border border-champagne/60 bg-white px-12 py-4 text-sm text-midnight placeholder-midnight/40 shadow-sm transition-all focus:border-jade focus:ring-2 focus:ring-jade/20 focus:outline-none"
+              className="w-full rounded-full border border-[var(--color-border)] bg-[var(--color-background)] px-12 py-4 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] shadow-sm transition-all focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none"
             />
             {searchQuery && (
               <motion.button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-champagne/50 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-[var(--color-surface-hover)] transition-colors"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <span className="text-midnight/60">✕</span>
+                <span className="text-[var(--color-text-secondary)]">✕</span>
               </motion.button>
             )}
           </div>
@@ -156,8 +156,8 @@ function NewArrivalsPage() {
             onClick={() => setSelectedCategory('all')}
             className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
               selectedCategory === 'all'
-                ? 'bg-jade text-white shadow-md'
-                : 'bg-champagne/30 text-midnight/70 hover:bg-champagne/50'
+                ? 'bg-[var(--color-primary)] text-[var(--color-button-text)] shadow-md'
+                : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -171,8 +171,8 @@ function NewArrivalsPage() {
               onClick={() => setSelectedCategory(category)}
               className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition-all ${
                 selectedCategory === category
-                  ? 'bg-jade text-white shadow-md'
-                  : 'bg-champagne/30 text-midnight/70 hover:bg-champagne/50'
+                  ? 'bg-[var(--color-primary)] text-[var(--color-button-text)] shadow-md'
+                  : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -184,14 +184,14 @@ function NewArrivalsPage() {
 
         {/* Sort */}
         <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="text-sm font-medium text-midnight/60">
+          <label htmlFor="sort" className="text-sm font-medium text-[var(--color-text-secondary)]">
             Sort by:
           </label>
           <select
             id="sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="rounded-full border border-champagne/60 bg-white px-4 py-2 text-sm font-medium text-midnight shadow-sm transition-all focus:border-jade focus:ring-2 focus:ring-jade/20 focus:outline-none"
+            className="rounded-full border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] shadow-sm transition-all focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none"
           >
             <option value="newest">Newest First</option>
             <option value="name-asc">Name (A-Z)</option>
@@ -204,7 +204,7 @@ function NewArrivalsPage() {
 
       {/* Results Count */}
       <motion.p
-        className="mt-6 text-sm text-midnight/60"
+        className="mt-6 text-sm text-[var(--color-text-secondary)]"
         initial={prefersReducedMotion ? {} : { opacity: 0 }}
         animate={prefersReducedMotion ? {} : { opacity: 1 }}
         transition={{ delay: 0.4 }}
@@ -213,7 +213,7 @@ function NewArrivalsPage() {
           'Loading new arrivals...'
         ) : (
           <>
-            Showing <span className="font-semibold text-jade">{filteredProducts.length}</span> new{' '}
+            Showing <span className="font-semibold text-[var(--color-primary)]">{filteredProducts.length}</span> new{' '}
             {filteredProducts.length === 1 ? 'product' : 'products'}
           </>
         )}
@@ -249,15 +249,15 @@ function NewArrivalsPage() {
               animate={prefersReducedMotion ? {} : { opacity: 1, scale: 1 }}
               exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
             >
-              <SparklesIcon className="mx-auto h-16 w-16 text-midnight/20" />
-              <p className="mt-4 text-lg text-midnight/60">No new arrivals found matching your criteria.</p>
+              <SparklesIcon className="mx-auto h-16 w-16 text-[var(--color-text-tertiary)]" />
+              <p className="mt-4 text-lg text-[var(--color-text-secondary)]">No new arrivals found matching your criteria.</p>
               <motion.button
                 type="button"
                 onClick={() => {
                   setSearchQuery('');
                   setSelectedCategory('all');
                 }}
-                className="mt-4 rounded-full bg-jade px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-shadow"
+                className="mt-4 rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[var(--color-button-text)] shadow-lg hover:shadow-xl transition-shadow"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

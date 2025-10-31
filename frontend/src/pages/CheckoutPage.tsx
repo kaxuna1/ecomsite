@@ -126,18 +126,18 @@ function CheckoutPage() {
       {/* Back to Cart Link */}
       <Link
         to={`/${lang}/cart`}
-        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-jade transition-colors hover:text-jade/80"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
       >
         <ArrowLeftIcon className="h-4 w-4" />
         {t('checkout.backToCart')}
       </Link>
 
       <motion.div {...fadeIn} className="mb-8">
-        <h1 className="font-display text-3xl sm:text-4xl text-midnight flex items-center gap-3">
-          <ShoppingBagIcon className="h-8 w-8 text-jade" />
+        <h1 className="font-display text-3xl sm:text-4xl text-text-primary flex items-center gap-3">
+          <ShoppingBagIcon className="h-8 w-8 text-primary" />
           {t('checkout.title')}
         </h1>
-        <p className="mt-3 text-sm text-midnight/70">{t('checkout.intro')}</p>
+        <p className="mt-3 text-sm text-text-primary/70">{t('checkout.intro')}</p>
       </motion.div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -147,13 +147,13 @@ function CheckoutPage() {
             {/* User Status */}
             {isAuthenticated && user && (
               <motion.div
-                className="flex items-center gap-3 rounded-2xl border-2 border-jade/20 bg-jade/10 p-4"
+                className="flex items-center gap-3 rounded-2xl border-2 border-primary/20 bg-primary/10 p-4"
                 {...fadeIn}
               >
-                <UserIcon className="h-5 w-5 text-jade" />
+                <UserIcon className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="text-sm font-semibold text-midnight">{t('checkout.loggedInAs', { name: user.name })}</p>
-                  <p className="text-xs text-midnight/70">{user.email}</p>
+                  <p className="text-sm font-semibold text-text-primary">{t('checkout.loggedInAs', { name: user.name })}</p>
+                  <p className="text-xs text-text-primary/70">{user.email}</p>
                 </div>
               </motion.div>
             )}
@@ -171,10 +171,10 @@ function CheckoutPage() {
                     <UserIcon className="h-6 w-6 text-blush" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-midnight mb-2">
+                    <h3 className="text-lg font-semibold text-text-primary mb-2">
                       {t('checkout.haveAccount')}
                     </h3>
-                    <p className="text-sm text-midnight/70 mb-4">
+                    <p className="text-sm text-text-primary/70 mb-4">
                       {t('checkout.loginBenefit')}
                     </p>
                     <div className="flex flex-wrap gap-3">
@@ -192,7 +192,7 @@ function CheckoutPage() {
                         {t('checkout.createAccount')}
                       </Link>
                     </div>
-                    <p className="mt-3 text-xs text-midnight/50">
+                    <p className="mt-3 text-xs text-text-primary/50">
                       {t('checkout.continueAsGuest')}
                     </p>
                   </div>
@@ -202,7 +202,7 @@ function CheckoutPage() {
 
             {/* Saved Addresses (for logged-in users) */}
             {isAuthenticated && (
-              <motion.div className="rounded-3xl border-2 border-jade/20 bg-white p-6 shadow-lg" {...fadeIn}>
+              <motion.div className="rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg" {...fadeIn}>
                 <AddressSelector
                   onSelect={handleAddressSelect}
                   selectedAddressId={selectedAddress?.id || null}
@@ -211,21 +211,21 @@ function CheckoutPage() {
             )}
 
             {/* Contact & Shipping Information */}
-            <motion.fieldset className="space-y-4 rounded-3xl border-2 border-jade/20 bg-white p-6 shadow-lg" {...fadeIn}>
-              <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-midnight/60 px-2">
+            <motion.fieldset className="space-y-4 rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg" {...fadeIn}>
+              <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-text-primary/60 px-2">
                 <div className="flex items-center gap-2">
                   <TruckIcon className="h-4 w-4" />
                   {t('checkout.contactLegend')} {t('checkout.deliveryInfo')}
                 </div>
               </legend>
               <div>
-                <label className="block text-sm font-semibold text-midnight">
+                <label className="block text-sm font-semibold text-text-primary">
                   {t('checkout.nameLabel')} *
                   <input
                     type="text"
                     className={`mt-2 w-full rounded-full border-2 ${
-                      errors.name ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
-                    } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none`}
+                      errors.name ? 'border-red-500 bg-red-50' : 'border-primary/30 bg-bg-secondary/50'
+                    } px-4 py-3 text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none`}
                     placeholder={t('checkout.namePlaceholder')}
                     {...register('name', { required: t('checkout.nameError') })}
                   />
@@ -242,13 +242,13 @@ function CheckoutPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-midnight">
+                <label className="block text-sm font-semibold text-text-primary">
                   {t('checkout.emailLabel')} *
                   <input
                     type="email"
                     className={`mt-2 w-full rounded-full border-2 ${
-                      errors.email ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
-                    } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none`}
+                      errors.email ? 'border-red-500 bg-red-50' : 'border-primary/30 bg-bg-secondary/50'
+                    } px-4 py-3 text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none`}
                     placeholder={t('checkout.emailPlaceholder')}
                     {...register('email', {
                       required: t('checkout.emailError'),
@@ -271,24 +271,24 @@ function CheckoutPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-midnight">
+                <label className="block text-sm font-semibold text-text-primary">
                   {t('checkout.phoneLabel')} (Optional)
                   <input
                     type="tel"
-                    className="mt-2 w-full rounded-full border-2 border-jade/30 bg-champagne/50 px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none"
+                    className="mt-2 w-full rounded-full border-2 border-primary/30 bg-bg-secondary/50 px-4 py-3 text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none"
                     placeholder={t('checkout.phonePlaceholder')}
                     {...register('phone')}
                   />
                 </label>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-midnight">
+                <label className="block text-sm font-semibold text-text-primary">
                   {t('checkout.addressLabel')} *
                   <textarea
                     rows={3}
                     className={`mt-2 w-full rounded-3xl border-2 ${
-                      errors.address ? 'border-red-500 bg-red-50' : 'border-jade/30 bg-champagne/50'
-                    } px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none resize-none`}
+                      errors.address ? 'border-red-500 bg-red-50' : 'border-primary/30 bg-bg-secondary/50'
+                    } px-4 py-3 text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none resize-none`}
                     placeholder={t('checkout.addressPlaceholder')}
                     {...register('address', { required: t('checkout.addressError') })}
                   />
@@ -305,11 +305,11 @@ function CheckoutPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-midnight">
+                <label className="block text-sm font-semibold text-text-primary">
                   {t('checkout.notesLabel')} (Optional)
                   <textarea
                     rows={3}
-                    className="mt-2 w-full rounded-3xl border-2 border-jade/30 bg-champagne/50 px-4 py-3 text-midnight transition-colors focus:border-jade focus:bg-white focus:outline-none resize-none"
+                    className="mt-2 w-full rounded-3xl border-2 border-primary/30 bg-bg-secondary/50 px-4 py-3 text-text-primary transition-colors focus:border-primary focus:bg-white focus:outline-none resize-none"
                     placeholder={t('checkout.notesPlaceholder')}
                     {...register('notes')}
                   />
@@ -321,7 +321,7 @@ function CheckoutPage() {
             <motion.button
               type="submit"
               disabled={mutation.isPending || isSubmitting}
-              className="w-full rounded-full bg-jade px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-jade/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-primary px-8 py-4 text-lg font-semibold text-text-inverse transition-all hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
               whileHover={{ scale: mutation.isPending || isSubmitting ? 1 : 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -352,7 +352,7 @@ function CheckoutPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-jade/10 border-2 border-jade px-4 py-3 text-sm text-jade"
+                className="rounded-3xl bg-primary/10 border-2 border-primary px-4 py-3 text-sm text-primary"
               >
                 <div className="flex items-center gap-2">
                   <CheckCircleIcon className="h-5 w-5" />
@@ -368,12 +368,12 @@ function CheckoutPage() {
           <div className="sticky top-24 space-y-6">
             {/* Order Items */}
             <motion.div
-              className="rounded-3xl border-2 border-jade/20 bg-white p-6 shadow-lg"
+              className="rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg"
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="mb-4 flex items-center gap-2 font-display text-xl text-midnight">
+              <h2 className="mb-4 flex items-center gap-2 font-display text-xl text-text-primary">
                 <ShoppingBagIcon className="h-5 w-5" />
                 {t('checkout.orderItems')} ({itemCount})
               </h2>
@@ -382,7 +382,7 @@ function CheckoutPage() {
                   const itemPrice = variant?.price ?? product.price;
                   const uniqueKey = variant ? `${product.id}-${variant.id}` : `${product.id}`;
                   return (
-                    <div key={uniqueKey} className="flex gap-3 border-b border-champagne/30 pb-4 last:border-0 last:pb-0">
+                    <div key={uniqueKey} className="flex gap-3 border-b border-bg-secondary/30 pb-4 last:border-0 last:pb-0">
                       <img
                         src={(() => {
                           // Prioritize variant image, then media library images, then legacy imageUrl
@@ -397,7 +397,7 @@ function CheckoutPage() {
                         className="h-16 w-16 rounded-lg object-cover"
                       />
                       <div className="flex-1">
-                        <h3 className="text-sm font-semibold text-midnight line-clamp-1">{product.name}</h3>
+                        <h3 className="text-sm font-semibold text-text-primary line-clamp-1">{product.name}</h3>
 
                         {/* Variant Information */}
                         {variant && variant.options && variant.options.length > 0 && (
@@ -413,8 +413,8 @@ function CheckoutPage() {
                           </div>
                         )}
 
-                        <p className="mt-1 text-xs text-midnight/60">{t('checkout.qty')}: {quantity}</p>
-                        <p className="mt-1 text-sm font-bold text-jade">${(itemPrice * quantity).toFixed(2)}</p>
+                        <p className="mt-1 text-xs text-text-primary/60">{t('checkout.qty')}: {quantity}</p>
+                        <p className="mt-1 text-sm font-bold text-primary">${(itemPrice * quantity).toFixed(2)}</p>
                       </div>
                     </div>
                   );
@@ -424,16 +424,16 @@ function CheckoutPage() {
 
             {/* Price Summary */}
             <motion.section
-              className="space-y-4 rounded-3xl border-2 border-jade/20 bg-midnight px-6 py-6 text-champagne shadow-lg"
+              className="space-y-4 rounded-3xl border-2 border-primary/20 bg-text-primary px-6 py-6 text-text-inverse shadow-lg"
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <h2 className="text-lg font-semibold">{t('checkout.orderTotal')}</h2>
 
-              <div className="space-y-3 border-t border-champagne/20 pt-4">
+              <div className="space-y-3 border-t border-text-inverse/20 pt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-champagne/70">{t('checkout.subtotal')}</span>
+                  <span className="text-text-inverse/70">{t('checkout.subtotal')}</span>
                   <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
 
@@ -443,15 +443,15 @@ function CheckoutPage() {
                     animate={{ opacity: 1, height: 'auto' }}
                     className="space-y-2"
                   >
-                    <div className="flex items-center justify-between rounded-lg bg-jade/20 px-3 py-2 text-sm">
+                    <div className="flex items-center justify-between rounded-lg bg-primary/20 px-3 py-2 text-sm">
                       <div className="flex items-center gap-2">
-                        <TagIcon className="h-4 w-4 text-jade" />
+                        <TagIcon className="h-4 w-4 text-primary" />
                         <div>
-                          <p className="font-medium text-jade">{t('cart.promoApplied')}</p>
-                          <p className="text-xs text-champagne/70">{promoCode.code}</p>
+                          <p className="font-medium text-primary">{t('cart.promoApplied')}</p>
+                          <p className="text-xs text-text-inverse/70">{promoCode.code}</p>
                         </div>
                       </div>
-                      <span className="font-semibold text-jade">-${discount.toFixed(2)}</span>
+                      <span className="font-semibold text-primary">-${discount.toFixed(2)}</span>
                     </div>
                   </motion.div>
                 )}
@@ -459,31 +459,31 @@ function CheckoutPage() {
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-1">
                     <TruckIcon className="h-4 w-4" />
-                    <span className="text-champagne/70">{t('cart.shipping')}</span>
+                    <span className="text-text-inverse/70">{t('cart.shipping')}</span>
                   </div>
-                  <span className={`font-semibold ${shipping === 0 ? 'text-jade' : ''}`}>
+                  <span className={`font-semibold ${shipping === 0 ? 'text-primary' : ''}`}>
                     {shipping === 0 ? t('cart.free') : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
 
                 {shipping > 0 && (
-                  <div className="text-xs text-champagne/60 italic">
+                  <div className="text-xs text-text-inverse/60 italic">
                     {t('checkout.addMoreForFreeShipping', { amount: (50 - (subtotal - discount)).toFixed(2) })}
                   </div>
                 )}
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-champagne/70">{t('checkout.tax')}</span>
+                  <span className="text-text-inverse/70">{t('checkout.tax')}</span>
                   <span className="font-semibold">${tax.toFixed(2)}</span>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-champagne/40 pt-3 text-xl font-bold">
+                <div className="flex items-center justify-between border-t border-text-inverse/40 pt-3 text-xl font-bold">
                   <span>{t('cart.total')}</span>
-                  <span className="text-jade">${finalTotal.toFixed(2)}</span>
+                  <span className="text-primary">${finalTotal.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="rounded-lg bg-champagne/10 px-3 py-2 text-xs text-champagne/80">
+              <div className="rounded-lg bg-text-inverse/10 px-3 py-2 text-xs text-text-inverse/80">
                 <p>{t('checkout.manualProcessing')}</p>
               </div>
             </motion.section>

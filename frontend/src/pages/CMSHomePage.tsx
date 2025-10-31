@@ -21,7 +21,7 @@ export default function CMSHomePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jade"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -31,10 +31,10 @@ export default function CMSHomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-display text-midnight mb-4">
+          <h2 className="text-2xl font-display text-text-primary mb-4">
             Unable to load page content
           </h2>
-          <p className="text-midnight/70">
+          <p className="text-text-primary/70">
             Please try refreshing the page or contact support if the problem persists.
           </p>
         </div>

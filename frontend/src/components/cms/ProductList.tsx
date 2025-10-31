@@ -111,7 +111,7 @@ function ProductListItem({
   return (
     <motion.article
       key={product.id}
-      className={`group relative flex flex-col md:flex-row gap-6 overflow-hidden border-2 border-champagne/40 bg-white p-6 transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]} ${hoverEffectClasses[hoverEffect as keyof typeof hoverEffectClasses]}`}
+      className={`group relative flex flex-col md:flex-row gap-6 overflow-hidden border-2 border-border-default/40 bg-bg-primary p-6 transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]} ${hoverEffectClasses[hoverEffect as keyof typeof hoverEffectClasses]}`}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -188,7 +188,7 @@ function ProductListItem({
             <motion.button
               type="button"
               onClick={(e) => handleFavoriteClick(e, product.id)}
-              className="absolute right-3 bottom-3 z-10 rounded-full bg-white p-2.5 shadow-lg transition-all hover:scale-110"
+              className="absolute right-3 bottom-3 z-10 rounded-full bg-bg-primary p-2.5 shadow-lg transition-all hover:scale-110"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title={favorites?.some(fav => fav.productId === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -196,7 +196,7 @@ function ProductListItem({
               {favorites?.some(fav => fav.productId === product.id) ? (
                 <HeartSolidIcon className="h-6 w-6 text-rose-500" />
               ) : (
-                <HeartOutlineIcon className="h-6 w-6 text-midnight" />
+                <HeartOutlineIcon className="h-6 w-6 text-text-primary" />
               )}
             </motion.button>
           )}
@@ -214,7 +214,7 @@ function ProductListItem({
                 {product.categories.slice(0, 3).map((category: string) => (
                   <span
                     key={category}
-                    className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-jade capitalize"
+                    className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-primary capitalize"
                   >
                     {category}
                   </span>
@@ -225,7 +225,7 @@ function ProductListItem({
           {/* Product Title */}
           {showElements.title !== false && (
             <Link to={`/${language}/products/${product.id}`}>
-              <h3 className="font-display text-2xl leading-tight text-midnight transition-colors hover:text-jade">
+              <h3 className="font-display text-2xl leading-tight text-text-primary transition-colors hover:text-primary">
                 {product.name}
               </h3>
             </Link>
@@ -238,14 +238,14 @@ function ProductListItem({
                 <StarIconSolid key={i} className="h-5 w-5 text-yellow-400" />
               ))}
               {showElements.reviewCount !== false && (
-                <span className="ml-2 text-sm text-midnight/60">(245 reviews)</span>
+                <span className="ml-2 text-sm text-text-primary/60">(245 reviews)</span>
               )}
             </div>
           )}
 
           {/* Description */}
           {showElements.description !== false && product.description && (
-            <p className="mt-3 text-base text-midnight/70 line-clamp-3">
+            <p className="mt-3 text-base text-text-primary/70 line-clamp-3">
               {product.description}
             </p>
           )}
@@ -254,28 +254,28 @@ function ProductListItem({
           {showElements.shortDescription !== false &&
             !showElements.description &&
             product.shortDescription && (
-              <p className="mt-3 text-base text-midnight/70 line-clamp-2">
+              <p className="mt-3 text-base text-text-primary/70 line-clamp-2">
                 {product.shortDescription}
               </p>
             )}
         </div>
 
         {/* Price and Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-champagne/40">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-border-default/40">
           {/* Price */}
           {showElements.price !== false && (
             <div className="flex items-baseline gap-3">
               {showPriceRange ? (
-                <span className="text-3xl font-bold text-jade">
+                <span className="text-3xl font-bold text-primary">
                   ${priceRange!.min.toFixed(2)} - ${priceRange!.max.toFixed(2)}
                 </span>
               ) : (
                 <>
-                  <span className="text-3xl font-bold text-jade">
+                  <span className="text-3xl font-bold text-primary">
                     ${(product.salePrice || product.price).toFixed(2)}
                   </span>
                   {showElements.comparePrice !== false && product.salePrice && (
-                    <span className="text-lg text-midnight/40 line-through">
+                    <span className="text-lg text-text-primary/40 line-through">
                       ${product.price.toFixed(2)}
                     </span>
                   )}
@@ -359,7 +359,7 @@ export default function ProductList({
   const cardStyleClasses = {
     elevated: 'shadow-lg hover:shadow-2xl',
     flat: 'shadow-none',
-    outlined: 'shadow-none border-2 border-champagne/40',
+    outlined: 'shadow-none border-2 border-border-default/40',
     minimal: 'shadow-none border-0'
   };
 

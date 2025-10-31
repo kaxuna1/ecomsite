@@ -757,6 +757,234 @@ CREATE INDEX IF NOT EXISTS idx_static_translations_key ON static_translations(tr
 CREATE INDEX IF NOT EXISTS idx_static_translations_language ON static_translations(language_code);
 CREATE INDEX IF NOT EXISTS idx_static_translations_namespace ON static_translations(namespace);
 CREATE INDEX IF NOT EXISTS idx_static_translations_lookup ON static_translations(translation_key, language_code, namespace);
+
+-- ============================================================================
+-- GLOBAL THEME SYSTEM
+-- ============================================================================
+
+-- Themes: Core theme storage with JSONB tokens and versioning
+CREATE TABLE IF NOT EXISTS themes (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  display_name VARCHAR(255) NOT NULL,
+  description TEXT,
+
+  -- Theme configuration (JSON design tokens)
+  tokens JSONB NOT NULL,
+
+  -- Metadata
+  is_active BOOLEAN DEFAULT false,
+  is_system_theme BOOLEAN DEFAULT false,
+  created_by INTEGER REFERENCES admin_users(id) ON DELETE SET NULL,
+  updated_by INTEGER REFERENCES admin_users(id) ON DELETE SET NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  -- Version control
+  version INTEGER DEFAULT 1,
+  parent_theme_id INTEGER REFERENCES themes(id) ON DELETE SET NULL,
+
+  -- Preview
+  thumbnail_url VARCHAR(500)
+);
+
+-- Indexes for themes
+CREATE INDEX IF NOT EXISTS idx_themes_active ON themes(is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_themes_system ON themes(is_system_theme);
+CREATE INDEX IF NOT EXISTS idx_themes_tokens ON themes USING GIN(tokens);
+CREATE INDEX IF NOT EXISTS idx_themes_created_at ON themes(created_at DESC);
+
+-- Trigger to update themes updated_at timestamp
+CREATE OR REPLACE FUNCTION update_themes_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS themes_updated_at_trigger ON themes;
+
+CREATE TRIGGER themes_updated_at_trigger
+BEFORE UPDATE ON themes
+FOR EACH ROW
+EXECUTE FUNCTION update_themes_updated_at();
+
+-- Theme Presets: Pre-built theme templates
+CREATE TABLE IF NOT EXISTS theme_presets (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  display_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  category VARCHAR(100), -- 'light', 'dark', 'seasonal', 'industry'
+
+  -- Preset configuration
+  tokens JSONB NOT NULL,
+
+  -- Preview assets
+  thumbnail_url VARCHAR(500),
+  preview_url VARCHAR(500),
+
+  -- Metadata
+  is_featured BOOLEAN DEFAULT false,
+  display_order INTEGER DEFAULT 0,
+  tags TEXT[],
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_theme_presets_category ON theme_presets(category);
+CREATE INDEX IF NOT EXISTS idx_theme_presets_featured ON theme_presets(is_featured) WHERE is_featured = true;
+CREATE INDEX IF NOT EXISTS idx_theme_presets_display_order ON theme_presets(display_order);
+
+-- Theme History: Audit log for theme changes
+CREATE TABLE IF NOT EXISTS theme_history (
+  id SERIAL PRIMARY KEY,
+  theme_id INTEGER NOT NULL REFERENCES themes(id) ON DELETE CASCADE,
+
+  -- Change details
+  action VARCHAR(50) NOT NULL, -- 'created', 'updated', 'activated', 'deactivated'
+  previous_tokens JSONB,
+  new_tokens JSONB,
+
+  -- User tracking
+  admin_user_id INTEGER REFERENCES admin_users(id) ON DELETE SET NULL,
+  admin_user_email VARCHAR(255),
+  ip_address INET,
+  user_agent TEXT,
+
+  -- Metadata
+  change_summary TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_theme_history_theme ON theme_history(theme_id);
+CREATE INDEX IF NOT EXISTS idx_theme_history_action ON theme_history(action);
+CREATE INDEX IF NOT EXISTS idx_theme_history_date ON theme_history(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_theme_history_admin_user ON theme_history(admin_user_id);
+
+-- Font Library: Available font families
+CREATE TABLE IF NOT EXISTS font_library (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  display_name VARCHAR(255) NOT NULL,
+
+  -- Font source
+  source VARCHAR(50) NOT NULL, -- 'google', 'adobe', 'custom', 'system'
+  font_url VARCHAR(500),
+
+  -- Font properties
+  category VARCHAR(50), -- 'serif', 'sans-serif', 'display', 'handwriting', 'monospace'
+  weights INTEGER[], -- [300, 400, 500, 600, 700]
+  styles VARCHAR[], -- ['normal', 'italic']
+
+  -- Metadata
+  is_system_font BOOLEAN DEFAULT false,
+  is_premium BOOLEAN DEFAULT false,
+  preview_text TEXT DEFAULT 'The quick brown fox jumps over the lazy dog',
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_font_library_category ON font_library(category);
+CREATE INDEX IF NOT EXISTS idx_font_library_source ON font_library(source);
+CREATE INDEX IF NOT EXISTS idx_font_library_system ON font_library(is_system_font);
+
+-- Insert default system fonts
+INSERT INTO font_library (name, display_name, source, category, weights, styles, is_system_font) VALUES
+  ('system-ui', 'System UI', 'system', 'sans-serif', ARRAY[400, 500, 600, 700], ARRAY['normal'], true),
+  ('inter', 'Inter', 'google', 'sans-serif', ARRAY[300, 400, 500, 600, 700, 800], ARRAY['normal'], true),
+  ('playfair-display', 'Playfair Display', 'google', 'serif', ARRAY[400, 500, 600, 700, 800], ARRAY['normal', 'italic'], true),
+  ('roboto', 'Roboto', 'google', 'sans-serif', ARRAY[300, 400, 500, 700], ARRAY['normal', 'italic'], true),
+  ('montserrat', 'Montserrat', 'google', 'sans-serif', ARRAY[300, 400, 500, 600, 700, 800], ARRAY['normal'], true),
+  ('open-sans', 'Open Sans', 'google', 'sans-serif', ARRAY[300, 400, 600, 700], ARRAY['normal', 'italic'], true),
+  ('lora', 'Lora', 'google', 'serif', ARRAY[400, 500, 600, 700], ARRAY['normal', 'italic'], true),
+  ('poppins', 'Poppins', 'google', 'sans-serif', ARRAY[300, 400, 500, 600, 700], ARRAY['normal'], true),
+  ('fira-code', 'Fira Code', 'google', 'monospace', ARRAY[300, 400, 500, 600, 700], ARRAY['normal'], true),
+  ('source-code-pro', 'Source Code Pro', 'google', 'monospace', ARRAY[400, 500, 600, 700], ARRAY['normal'], true)
+ON CONFLICT (name) DO NOTHING;
+
+-- Insert default Luxia theme
+INSERT INTO themes (
+  name,
+  display_name,
+  description,
+  tokens,
+  is_active,
+  is_system_theme,
+  version
+) VALUES (
+  'luxia-default',
+  'Luxia Default',
+  'Default Luxia brand theme with jade and blush colors',
+  '{"version":"1.0.0","metadata":{"displayName":"Luxia Default","description":"Default Luxia brand theme","author":"Luxia Team","category":"light"},"color":{"brand":{"primary":"#8bba9c","secondary":"#e8c7c8","accent":"#0f172a"},"semantic":{"background":{"primary":"#ffffff","secondary":"#f9fafb","elevated":"#ffffff"},"text":{"primary":"#111827","secondary":"#4b5563","tertiary":"#9ca3af","inverse":"#ffffff"},"border":{"default":"#e5e7eb","strong":"#d1d5db"},"interactive":{"default":"#8bba9c","hover":"#7aa88a","active":"#6a967a","disabled":"#d1d5db"},"feedback":{"success":"#10b981","warning":"#f59e0b","error":"#ef4444","info":"#3b82f6"}}},"typography":{"fontFamily":{"display":"Playfair Display, serif","body":"Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif","mono":"Fira Code, Courier New, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"normal","xs":"0.25rem","sm":"0.5rem","md":"1rem","lg":"1.5rem","xl":"2rem","2xl":"3rem","3xl":"4rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.25rem","md":"0.5rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","full":"9999px"}},"shadow":{"sm":"0 1px 2px 0 rgba(0, 0, 0, 0.05)","md":"0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)","lg":"0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)","xl":"0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"}}',
+  true,
+  true,
+  1
+) ON CONFLICT (name) DO NOTHING;
+
+-- Insert theme presets (pre-built themes)
+INSERT INTO theme_presets (
+  name,
+  display_name,
+  description,
+  category,
+  tokens,
+  is_featured,
+  display_order
+) VALUES
+  -- 1. Minimalist Light
+  (
+    'minimalist-light',
+    'Minimalist Light',
+    'Clean and modern light theme with subtle grays and minimal styling',
+    'light',
+    '{"version":"1.0.0","metadata":{"displayName":"Minimalist Light","description":"Clean minimal design","author":"Luxia Team","category":"light"},"color":{"brand":{"primary":"#000000","secondary":"#f5f5f5","accent":"#666666"},"semantic":{"background":{"primary":"#ffffff","secondary":"#fafafa","elevated":"#ffffff"},"text":{"primary":"#000000","secondary":"#666666","tertiary":"#999999","inverse":"#ffffff"},"border":{"default":"#e0e0e0","strong":"#cccccc"},"interactive":{"default":"#000000","hover":"#333333","active":"#666666","disabled":"#cccccc"},"feedback":{"success":"#4caf50","warning":"#ff9800","error":"#f44336","info":"#2196f3"}}},"typography":{"fontFamily":{"display":"Inter, sans-serif","body":"Inter, sans-serif","mono":"Fira Code, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"compact","xs":"0.125rem","sm":"0.25rem","md":"0.5rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","3xl":"2rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.125rem","md":"0.25rem","lg":"0.375rem","xl":"0.5rem","2xl":"0.75rem","full":"9999px"}},"shadow":{"sm":"0 1px 2px 0 rgba(0, 0, 0, 0.03)","md":"0 2px 4px -1px rgba(0, 0, 0, 0.06)","lg":"0 4px 8px -2px rgba(0, 0, 0, 0.08)","xl":"0 8px 16px -4px rgba(0, 0, 0, 0.1)"}}',
+    true,
+    1
+  ),
+  -- 2. Bold & Bright
+  (
+    'bold-bright',
+    'Bold & Bright',
+    'Vibrant and energetic theme with bold colors and playful accents',
+    'light',
+    '{"version":"1.0.0","metadata":{"displayName":"Bold & Bright","description":"Vibrant and playful","author":"Luxia Team","category":"light"},"color":{"brand":{"primary":"#ff6b6b","secondary":"#4ecdc4","accent":"#ffe66d"},"semantic":{"background":{"primary":"#ffffff","secondary":"#fff9f0","elevated":"#ffffff"},"text":{"primary":"#2d3436","secondary":"#636e72","tertiary":"#b2bec3","inverse":"#ffffff"},"border":{"default":"#dfe6e9","strong":"#b2bec3"},"interactive":{"default":"#ff6b6b","hover":"#ff5252","active":"#e63946","disabled":"#dfe6e9"},"feedback":{"success":"#00d2d3","warning":"#fdcb6e","error":"#d63031","info":"#74b9ff"}}},"typography":{"fontFamily":{"display":"Poppins, sans-serif","body":"Open Sans, sans-serif","mono":"Source Code Pro, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"spacious","xs":"0.5rem","sm":"1rem","md":"1.5rem","lg":"2.5rem","xl":"4rem","2xl":"6rem","3xl":"8rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.5rem","md":"0.75rem","lg":"1rem","xl":"1.5rem","2xl":"2rem","full":"9999px"}},"shadow":{"sm":"0 2px 4px 0 rgba(0, 0, 0, 0.1)","md":"0 4px 8px -1px rgba(0, 0, 0, 0.15)","lg":"0 10px 20px -3px rgba(0, 0, 0, 0.2)","xl":"0 20px 30px -5px rgba(0, 0, 0, 0.25)"}}',
+    true,
+    2
+  ),
+  -- 3. Elegant Dark
+  (
+    'elegant-dark',
+    'Elegant Dark',
+    'Sophisticated dark theme with rich purples and elegant typography',
+    'dark',
+    '{"version":"1.0.0","metadata":{"displayName":"Elegant Dark","description":"Sophisticated dark mode","author":"Luxia Team","category":"dark"},"color":{"brand":{"primary":"#9d4edd","secondary":"#7b2cbf","accent":"#c77dff"},"semantic":{"background":{"primary":"#0f0e17","secondary":"#1a1825","elevated":"#252233"},"text":{"primary":"#fffffe","secondary":"#a7a9be","tertiary":"#6e7191","inverse":"#0f0e17"},"border":{"default":"#2e2c3e","strong":"#3f3d56"},"interactive":{"default":"#9d4edd","hover":"#b565ff","active":"#7b2cbf","disabled":"#3f3d56"},"feedback":{"success":"#06ffa5","warning":"#ffbe0b","error":"#ff006e","info":"#0096c7"}}},"typography":{"fontFamily":{"display":"Playfair Display, serif","body":"Inter, sans-serif","mono":"Fira Code, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"normal","xs":"0.25rem","sm":"0.5rem","md":"1rem","lg":"1.5rem","xl":"2rem","2xl":"3rem","3xl":"4rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.25rem","md":"0.5rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","full":"9999px"}},"shadow":{"sm":"0 2px 4px 0 rgba(0, 0, 0, 0.3)","md":"0 4px 8px -1px rgba(0, 0, 0, 0.4)","lg":"0 10px 20px -3px rgba(0, 0, 0, 0.5)","xl":"0 20px 30px -5px rgba(0, 0, 0, 0.6)"}}',
+    true,
+    3
+  ),
+  -- 4. Ocean Breeze
+  (
+    'ocean-breeze',
+    'Ocean Breeze',
+    'Refreshing blue and teal theme inspired by coastal waters',
+    'light',
+    '{"version":"1.0.0","metadata":{"displayName":"Ocean Breeze","description":"Coastal blues and teals","author":"Luxia Team","category":"light"},"color":{"brand":{"primary":"#06b6d4","secondary":"#0891b2","accent":"#164e63"},"semantic":{"background":{"primary":"#ffffff","secondary":"#f0fdfa","elevated":"#ffffff"},"text":{"primary":"#083344","secondary":"#155e75","tertiary":"#67e8f9","inverse":"#ffffff"},"border":{"default":"#cffafe","strong":"#a5f3fc"},"interactive":{"default":"#06b6d4","hover":"#0891b2","active":"#0e7490","disabled":"#cffafe"},"feedback":{"success":"#14b8a6","warning":"#f59e0b","error":"#ef4444","info":"#3b82f6"}}},"typography":{"fontFamily":{"display":"Lora, serif","body":"Open Sans, sans-serif","mono":"Fira Code, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"normal","xs":"0.25rem","sm":"0.5rem","md":"1rem","lg":"1.5rem","xl":"2rem","2xl":"3rem","3xl":"4rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.5rem","md":"0.75rem","lg":"1rem","xl":"1.5rem","2xl":"2rem","full":"9999px"}},"shadow":{"sm":"0 1px 2px 0 rgba(6, 182, 212, 0.1)","md":"0 4px 6px -1px rgba(6, 182, 212, 0.15)","lg":"0 10px 15px -3px rgba(6, 182, 212, 0.2)","xl":"0 20px 25px -5px rgba(6, 182, 212, 0.25)"}}',
+    true,
+    4
+  ),
+  -- 5. Warm Autumn
+  (
+    'warm-autumn',
+    'Warm Autumn',
+    'Cozy earth tones with warm oranges, browns, and rustic charm',
+    'light',
+    '{"version":"1.0.0","metadata":{"displayName":"Warm Autumn","description":"Cozy earth tones","author":"Luxia Team","category":"light"},"color":{"brand":{"primary":"#d97706","secondary":"#92400e","accent":"#f59e0b"},"semantic":{"background":{"primary":"#fffbeb","secondary":"#fef3c7","elevated":"#ffffff"},"text":{"primary":"#78350f","secondary":"#92400e","tertiary":"#d97706","inverse":"#fffbeb"},"border":{"default":"#fed7aa","strong":"#fdba74"},"interactive":{"default":"#d97706","hover":"#ea580c","active":"#c2410c","disabled":"#fed7aa"},"feedback":{"success":"#16a34a","warning":"#ca8a04","error":"#dc2626","info":"#0284c7"}}},"typography":{"fontFamily":{"display":"Playfair Display, serif","body":"Lora, serif","mono":"Source Code Pro, monospace"},"fontSize":{"xs":"0.75rem","sm":"0.875rem","base":"1rem","lg":"1.125rem","xl":"1.25rem","2xl":"1.5rem","3xl":"1.875rem","4xl":"2.25rem","5xl":"3rem"},"fontWeight":{"light":"300","normal":"400","medium":"500","semibold":"600","bold":"700"},"lineHeight":{"tight":"1.25","normal":"1.5","relaxed":"1.75"},"letterSpacing":{"tight":"-0.05em","normal":"0","wide":"0.025em","wider":"0.05em"}},"spacing":{"preset":"normal","xs":"0.25rem","sm":"0.5rem","md":"1rem","lg":"1.5rem","xl":"2rem","2xl":"3rem","3xl":"4rem"},"border":{"width":{"thin":"1px","medium":"2px","thick":"4px"},"radius":{"sm":"0.375rem","md":"0.5rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","full":"9999px"}},"shadow":{"sm":"0 1px 2px 0 rgba(217, 119, 6, 0.1)","md":"0 4px 6px -1px rgba(217, 119, 6, 0.15)","lg":"0 10px 15px -3px rgba(217, 119, 6, 0.2)","xl":"0 20px 25px -5px rgba(217, 119, 6, 0.25)"}}',
+    true,
+    5
+  )
+ON CONFLICT (name) DO NOTHING;
 `;
 
 async function seedTranslations() {

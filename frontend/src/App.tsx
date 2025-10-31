@@ -55,6 +55,7 @@ const AdminMedia = lazy(() => import('./pages/admin/AdminMedia'));
 const AdminNewsletter = lazy(() => import('./pages/admin/AdminNewsletter'));
 const AdminReviews = lazy(() => import('./pages/admin/AdminReviews'));
 const AdminStaticTranslations = lazy(() => import('./pages/admin/AdminStaticTranslations'));
+const AdminThemes = lazy(() => import('./pages/admin/AdminThemes'));
 
 // Language wrapper component to sync i18n with URL
 function LanguageWrapper() {
@@ -272,6 +273,7 @@ function App() {
           <Route path="cms-translations" element={<AdminCMSTranslations />} />
           <Route path="static-translations" element={<AdminStaticTranslations />} />
           <Route path="newsletter" element={<AdminNewsletter />} />
+          <Route path="themes" element={<AdminThemes />} />
         </Route>
 
         {/* Catch-all: redirect any non-language-prefixed paths to /en/{path} */}

@@ -137,7 +137,7 @@ function Navbar() {
           onMouseLeave={() => setActiveDropdown(null)}
         >
           <button
-            className="relative flex items-center gap-1 text-sm font-semibold uppercase tracking-wider text-midnight/70 transition-colors hover:text-jade"
+            className="relative flex items-center gap-1 text-sm font-semibold uppercase tracking-wider text-text-secondary transition-colors hover:text-primary"
           >
             {item.label}
             <ChevronDownIcon className="h-3 w-3" />
@@ -151,7 +151,7 @@ function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute left-0 top-full mt-2 w-56 rounded-2xl border border-champagne/40 bg-white p-2 shadow-2xl"
+                className="absolute left-0 top-full mt-2 w-56 rounded-2xl border border-border-default bg-white p-2 shadow-xl z-50"
               >
                 {item.children.map((child, childIndex) => {
                   const childLink = getMenuItemLink(child);
@@ -165,7 +165,7 @@ function Navbar() {
                         href={childLink}
                         target={childOpenInNewTab ? '_blank' : undefined}
                         rel={childOpenInNewTab ? 'noopener noreferrer' : undefined}
-                        className="block rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
+                        className="block rounded-xl px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-secondary/30 hover:text-text-primary"
                       >
                         {child.label}
                       </a>
@@ -177,7 +177,7 @@ function Navbar() {
                       key={childIndex}
                       to={childLink}
                       onClick={(e) => handleMenuItemClick(child, e)}
-                      className="block rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
+                      className="block rounded-xl px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-secondary/30 hover:text-text-primary"
                     >
                       {child.label}
                     </Link>
@@ -197,7 +197,7 @@ function Navbar() {
           href={link}
           target={openInNewTab ? '_blank' : undefined}
           rel={openInNewTab ? 'noopener noreferrer' : undefined}
-          className="relative text-sm font-semibold uppercase tracking-wider text-midnight/70 transition-colors hover:text-jade"
+          className="relative text-sm font-semibold uppercase tracking-wider text-text-secondary transition-colors hover:text-primary"
         >
           {item.label}
         </a>
@@ -212,7 +212,7 @@ function Navbar() {
         onClick={(e) => handleMenuItemClick(item, e)}
         className={({ isActive }) =>
           `relative text-sm font-semibold uppercase tracking-wider transition-colors ${
-            isActive ? 'text-jade' : 'text-midnight/70 hover:text-jade'
+            isActive ? 'text-primary' : 'text-text-secondary hover:text-primary'
           }`
         }
       >
@@ -222,7 +222,7 @@ function Navbar() {
             {isActive && (
               <motion.div
                 layoutId="navbar-indicator"
-                className="absolute -bottom-[28px] left-0 right-0 h-0.5 bg-jade"
+                className="absolute -bottom-[28px] left-0 right-0 h-0.5 bg-primary"
                 initial={false}
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
@@ -236,7 +236,7 @@ function Navbar() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-midnight py-2 text-center text-xs font-medium text-white">
+      <div className="bg-text-primary py-2 text-center text-xs font-medium text-text-inverse">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
           <TruckIcon className="h-4 w-4" />
           <span>{t('header.announcement')}</span>
@@ -244,13 +244,13 @@ function Navbar() {
       </div>
 
       {/* Main Header */}
-      <header className="sticky top-0 z-50 border-b border-champagne/20 bg-white/95 backdrop-blur-xl shadow-sm">
+      <header className="sticky top-0 z-50 border-b border-border-default bg-bg-primary/95 backdrop-blur-xl shadow-sm">
         <nav className="mx-auto max-w-7xl px-4" aria-label="Main">
           <div className="flex h-20 items-center justify-between">
             {/* Mobile Menu Button */}
             <button
               type="button"
-              className="lg:hidden -ml-2 p-2 text-midnight hover:text-jade transition-colors"
+              className="lg:hidden -ml-2 p-2 text-text-primary hover:text-primary transition-colors"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
             >
@@ -269,7 +269,7 @@ function Navbar() {
                 />
               ) : (
                 <motion.span
-                  className="text-2xl font-display uppercase tracking-[0.3em] text-midnight transition-colors group-hover:text-jade lg:text-3xl"
+                  className="text-2xl font-display uppercase tracking-[0.3em] text-text-primary transition-colors group-hover:text-primary lg:text-3xl"
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: 'spring', stiffness: 400 }}
                 >
@@ -281,7 +281,7 @@ function Navbar() {
             {/* Desktop Navigation - Center */}
             <div className="hidden lg:flex lg:items-center lg:gap-8">
               {menuLoading ? (
-                <div className="h-5 w-96 animate-pulse rounded bg-champagne/20" />
+                <div className="h-5 w-96 animate-pulse rounded bg-bg-secondary/40" />
               ) : (
                 navigation.map((item, index) => renderMenuItem(item, index))
               )}
@@ -293,13 +293,13 @@ function Navbar() {
               <button
                 type="button"
                 onClick={() => setSearchModalOpen(true)}
-                className="group relative flex items-center gap-2 p-2 text-midnight/70 transition-colors hover:text-jade"
+                className="group relative flex items-center gap-2 p-2 text-text-secondary transition-colors hover:text-primary"
                 aria-label="Search"
                 title="Search (Cmd+K)"
               >
                 <MagnifyingGlassIcon className="h-6 w-6" />
-                <span className="hidden lg:flex items-center gap-1 text-xs text-midnight/40">
-                  <kbd className="px-1.5 py-0.5 bg-champagne/30 rounded text-[10px] font-mono">⌘K</kbd>
+                <span className="hidden lg:flex items-center gap-1 text-xs text-text-tertiary">
+                  <kbd className="px-1.5 py-0.5 bg-bg-secondary/30 rounded text-[10px] font-mono">⌘K</kbd>
                 </span>
               </button>
 
@@ -311,10 +311,10 @@ function Navbar() {
                   onMouseLeave={() => setUserMenuOpen(false)}
                 >
                   <button
-                    className="group relative flex items-center gap-2 p-2 text-midnight/70 transition-colors hover:text-jade"
+                    className="group relative flex items-center gap-2 p-2 text-text-secondary transition-colors hover:text-primary"
                     aria-label="Account"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-jade/10 text-jade font-semibold">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                   </button>
@@ -327,11 +327,11 @@ function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-champagne/40 bg-white p-2 shadow-2xl"
+                        className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border-default bg-white p-2 shadow-xl z-50"
                       >
-                        <div className="border-b border-champagne/40 px-4 py-3 mb-2">
-                          <p className="font-semibold text-midnight">{user?.name || 'User'}</p>
-                          <p className="text-xs text-midnight/60 truncate">{user?.email || ''}</p>
+                        <div className="border-b border-border-default px-4 py-3 mb-2">
+                          <p className="font-semibold text-text-primary">{user?.name || 'User'}</p>
+                          <p className="text-xs text-text-secondary truncate">{user?.email || ''}</p>
                         </div>
 
                         {userMenuItems.map((item) => {
@@ -340,7 +340,7 @@ function Navbar() {
                             <Link
                               key={item.nameKey}
                               to={item.href}
-                              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-midnight/70 transition-colors hover:bg-champagne/30 hover:text-midnight"
+                              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-secondary/30 hover:text-text-primary"
                             >
                               <Icon className="h-5 w-5" />
                               {t(item.nameKey)}
@@ -348,7 +348,7 @@ function Navbar() {
                           );
                         })}
 
-                        <div className="my-2 border-t border-champagne/40" />
+                        <div className="my-2 border-t border-border-default" />
 
                         <button
                           onClick={() => {
@@ -367,7 +367,7 @@ function Navbar() {
               ) : (
                 <Link
                   to={localizedPath('/login')}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-midnight/70 transition-colors hover:text-jade"
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:text-primary"
                   aria-label="Login"
                 >
                   <UserIcon className="h-6 w-6" />
@@ -378,7 +378,7 @@ function Navbar() {
               {/* Wishlist */}
               <Link
                 to={localizedPath('/account/favorites')}
-                className="group relative hidden p-2 text-midnight/70 transition-colors hover:text-jade sm:block"
+                className="group relative hidden p-2 text-text-secondary transition-colors hover:text-primary sm:block"
                 aria-label="Wishlist"
               >
                 {favoritesCount > 0 ? (
@@ -405,7 +405,7 @@ function Navbar() {
               >
                 <Link
                   to={localizedPath('/cart')}
-                  className="group relative flex items-center gap-2 p-2 text-midnight/70 transition-colors hover:text-jade"
+                  className="group relative flex items-center gap-2 p-2 text-text-secondary transition-colors hover:text-primary"
                   aria-label={`Cart (${itemCount} items)`}
                 >
                   <div className="relative">
@@ -420,7 +420,7 @@ function Navbar() {
                         >
                           {/* Pulse Ring */}
                           <motion.div
-                            className="absolute inset-0 rounded-full bg-jade"
+                            className="absolute inset-0 rounded-full bg-primary"
                             animate={{
                               scale: [1, 1.3, 1],
                               opacity: [0.7, 0, 0.7]
@@ -433,7 +433,7 @@ function Navbar() {
                           />
                           {/* Badge */}
                           <motion.span
-                            className="relative flex h-full w-full items-center justify-center rounded-full bg-jade text-[10px] font-bold text-white"
+                            className="relative flex h-full w-full items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
                             key={itemCount}
                             initial={{ scale: 1.5, rotate: 180 }}
                             animate={{ scale: 1, rotate: 0 }}
@@ -456,57 +456,59 @@ function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-champagne/40 bg-white p-4 shadow-2xl"
+                      className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-border-default bg-white shadow-xl z-50"
                     >
-                      <div className="mb-3 flex items-center justify-between border-b border-champagne/40 pb-3">
-                        <h3 className="font-display text-lg text-midnight">{t('cart.yourCart')}</h3>
-                        <span className="text-sm text-midnight/60">{itemCount} {t('cart.items')}</span>
-                      </div>
-
-                      <div className="max-h-64 space-y-3 overflow-y-auto">
-                        {items.slice(0, 3).map(({ product, quantity }) => (
-                          <div key={product.id} className="flex gap-3">
-                            <img
-                              src={product.imageUrl}
-                              alt={product.name}
-                              className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
-                            />
-                            <div className="flex-1">
-                              <h4 className="text-sm font-medium text-midnight line-clamp-1">{product.name}</h4>
-                              <p className="mt-1 text-xs text-midnight/60">
-                                {t('cart.qty')} {quantity} × ${product.price.toFixed(2)}
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                removeItem(product.id);
-                              }}
-                              className="text-midnight/40 hover:text-red-500 transition-colors"
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ))}
-                        {items.length > 3 && (
-                          <p className="text-center text-xs text-midnight/60">
-                            +{items.length - 3} {t('cart.moreItems')}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mt-4 space-y-3 border-t border-champagne/40 pt-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="font-medium text-midnight">{t('cart.subtotal')}</span>
-                          <span className="font-bold text-jade">${total.toFixed(2)}</span>
+                      <div className="p-4">
+                        <div className="mb-3 flex items-center justify-between border-b border-border-default pb-3">
+                          <h3 className="font-display text-lg text-text-primary">{t('cart.yourCart')}</h3>
+                          <span className="text-sm text-text-secondary">{itemCount} {t('cart.items')}</span>
                         </div>
-                        <Link
-                          to={localizedPath('/cart')}
-                          className="block w-full rounded-full bg-jade py-3 text-center text-sm font-semibold text-white transition-all hover:bg-jade/90 hover:shadow-lg"
-                        >
-                          {t('cart.viewCart')}
-                        </Link>
+
+                        <div className="max-h-64 space-y-3 overflow-y-auto">
+                          {items.slice(0, 3).map(({ product, quantity }) => (
+                            <div key={product.id} className="flex gap-3">
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
+                              />
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-text-primary line-clamp-1">{product.name}</h4>
+                                <p className="mt-1 text-xs text-text-secondary">
+                                  {t('cart.qty')} {quantity} × ${product.price.toFixed(2)}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  removeItem(product.id);
+                                }}
+                                className="text-text-tertiary hover:text-red-500 transition-colors"
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ))}
+                          {items.length > 3 && (
+                            <p className="text-center text-xs text-text-secondary">
+                              +{items.length - 3} {t('cart.moreItems')}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="mt-4 space-y-3 border-t border-border-default pt-3">
+                          <div className="flex justify-between text-sm">
+                            <span className="font-medium text-text-primary">{t('cart.subtotal')}</span>
+                            <span className="font-bold text-primary">${total.toFixed(2)}</span>
+                          </div>
+                          <Link
+                            to={localizedPath('/cart')}
+                            className="block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg"
+                          >
+                            {t('cart.viewCart')}
+                          </Link>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -539,16 +541,16 @@ function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 z-50 w-80 max-w-full overflow-y-auto bg-white shadow-2xl lg:hidden"
+              className="fixed left-0 top-0 bottom-0 z-50 w-80 max-w-full overflow-y-auto bg-bg-primary shadow-2xl lg:hidden"
             >
-              <div className="flex items-center justify-between border-b border-champagne/40 p-6">
-                <span className="font-display text-2xl uppercase tracking-[0.3em] text-midnight">
+              <div className="flex items-center justify-between border-b border-border-default p-6">
+                <span className="font-display text-2xl uppercase tracking-[0.3em] text-text-primary">
                   {t('brand')}
                 </span>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="-mr-2 p-2 text-midnight/70 hover:text-midnight"
+                  className="-mr-2 p-2 text-text-secondary hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -556,14 +558,14 @@ function Navbar() {
 
               {/* User Info (if logged in) */}
               {isAuthenticated && user && (
-                <div className="border-b border-champagne/40 p-6">
+                <div className="border-b border-border-default p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-jade/10 text-jade font-semibold">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div>
-                      <p className="font-semibold text-midnight">{user?.name || 'User'}</p>
-                      <p className="text-xs text-midnight/60 truncate">{user?.email || ''}</p>
+                      <p className="font-semibold text-text-primary">{user?.name || 'User'}</p>
+                      <p className="text-xs text-text-secondary truncate">{user?.email || ''}</p>
                     </div>
                   </div>
                 </div>
@@ -579,7 +581,7 @@ function Navbar() {
                   if (hasChildren) {
                     return (
                       <div key={index} className="space-y-1">
-                        <div className="rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-midnight/70">
+                        <div className="rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-text-secondary">
                           {item.label}
                         </div>
                         {item.children.map((child, childIndex) => {
@@ -595,7 +597,7 @@ function Navbar() {
                                 target={childOpenInNewTab ? '_blank' : undefined}
                                 rel={childOpenInNewTab ? 'noopener noreferrer' : undefined}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                                className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary"
                               >
                                 {child.label}
                               </a>
@@ -607,7 +609,7 @@ function Navbar() {
                               key={childIndex}
                               to={childLink}
                               onClick={() => setMobileMenuOpen(false)}
-                              className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                              className="block rounded-lg pl-8 pr-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary"
                             >
                               {child.label}
                             </Link>
@@ -625,7 +627,7 @@ function Navbar() {
                         target={openInNewTab ? '_blank' : undefined}
                         rel={openInNewTab ? 'noopener noreferrer' : undefined}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                        className="block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary"
                       >
                         {item.label}
                       </a>
@@ -641,8 +643,8 @@ function Navbar() {
                       className={({ isActive }) =>
                         `block rounded-lg px-4 py-3 text-base font-semibold uppercase tracking-wider transition-colors ${
                           isActive
-                            ? 'bg-jade/10 text-jade'
-                            : 'text-midnight/70 hover:bg-champagne/30 hover:text-midnight'
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                         }`
                       }
                     >
@@ -651,7 +653,7 @@ function Navbar() {
                   );
                 })}
 
-                <div className="my-6 border-t border-champagne/40" />
+                <div className="my-6 border-t border-border-default" />
 
                 {isAuthenticated ? (
                   <>
@@ -662,7 +664,7 @@ function Navbar() {
                           key={item.nameKey}
                           to={item.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary"
                         >
                           <Icon className="h-5 w-5" />
                           <span>{t(item.nameKey)}</span>
@@ -686,7 +688,7 @@ function Navbar() {
                     <Link
                       to={localizedPath('/login')}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-midnight/70 hover:bg-champagne/30 hover:text-midnight"
+                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary"
                     >
                       <UserIcon className="h-5 w-5" />
                       <span>{t('nav.login')}</span>
@@ -694,7 +696,7 @@ function Navbar() {
                     <Link
                       to={localizedPath('/signup')}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-jade/10 text-jade hover:bg-jade/20"
+                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-primary/10 text-primary hover:bg-primary/20"
                     >
                       <UserIcon className="h-5 w-5" />
                       <span>{t('nav.signup')}</span>

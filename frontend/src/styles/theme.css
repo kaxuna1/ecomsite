@@ -1,0 +1,248 @@
+/* Theme System Integration CSS */
+/* This file provides utility classes for theme-aware components */
+/* CSS Variables are dynamically loaded from the backend theme system via ThemeContext */
+
+/* ============================================================================
+   IMPORTANT: No Default CSS Variables Here!
+   ============================================================================
+   All CSS custom properties (--color-*, --typography-*, etc.) are injected
+   dynamically by the ThemeContext provider from the active theme in the database.
+
+   This ensures the theme system always reflects the admin-configured theme
+   without fallback values that could override the active theme.
+   ============================================================================ */
+
+/* ============================================================================
+   Base Element Styling with Theme Variables
+   ============================================================================ */
+body {
+  font-family: var(--typography-fontFamily-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--typography-fontFamily-display);
+  color: var(--color-text-primary);
+}
+
+a {
+  color: var(--color-interactive-default);
+}
+
+a:hover {
+  color: var(--color-interactive-hover);
+}
+
+a:active {
+  color: var(--color-interactive-active);
+}
+
+/* ============================================================================
+   Utility Classes for Theme-Aware Components
+   ============================================================================ */
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--border-radius-lg);
+  font-weight: var(--typography-fontWeight-semibold);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-interactive-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--color-interactive-active);
+}
+
+.btn-secondary {
+  background-color: var(--color-brand-secondary);
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius-lg);
+  font-weight: var(--typography-fontWeight-semibold);
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--color-background-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Input Styles */
+.input-themed {
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+}
+
+.input-themed:focus {
+  border-color: var(--color-brand-primary);
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.input-themed::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Enhanced Button Styles with Guaranteed Visibility */
+.btn-primary-solid {
+  background-color: var(--color-interactive-active);
+  color: var(--color-text-inverse);
+  border: 2px solid var(--color-interactive-active);
+  box-shadow: var(--shadow-md);
+  font-weight: var(--typography-fontWeight-semibold);
+  transition: all 200ms ease;
+}
+
+.btn-primary-solid:hover {
+  background-color: var(--color-interactive-hover);
+  border-color: var(--color-interactive-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-primary-solid:active {
+  background-color: var(--color-interactive-active);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(0);
+}
+
+.btn-primary-solid:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary-outline {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+  font-weight: var(--typography-fontWeight-semibold);
+  transition: all 200ms ease;
+}
+
+.btn-secondary-outline:hover {
+  background-color: var(--color-background-secondary);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+}
+
+/* Badge Styles */
+.badge-success {
+  background-color: var(--color-feedback-success);
+  color: white;
+  border-radius: var(--border-radius-full);
+}
+
+.badge-warning {
+  background-color: var(--color-feedback-warning);
+  color: white;
+  border-radius: var(--border-radius-full);
+}
+
+.badge-error {
+  background-color: var(--color-feedback-error);
+  color: white;
+  border-radius: var(--border-radius-full);
+}
+
+.badge-info {
+  background-color: var(--color-feedback-info);
+  color: white;
+  border-radius: var(--border-radius-full);
+}
+
+/* ============================================================================
+   Theme Transition Animation
+   ============================================================================ */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Disable transitions for elements that shouldn't animate */
+*:where([class*="animate-"], [class*="transition-none"]) {
+  transition: none !important;
+}
+
+/* ============================================================================
+   CMS Block Theme Integration
+   ============================================================================ */
+
+/* Override CMS block inline styles with theme variables */
+.cms-page section {
+  font-family: var(--typography-fontFamily-body);
+}
+
+.cms-page h1, .cms-page h2, .cms-page h3, .cms-page h4 {
+  font-family: var(--typography-fontFamily-display);
+}
+
+/* Hero blocks */
+.hero-block {
+  background-color: var(--color-background-secondary);
+}
+
+.hero-block h1 {
+  color: var(--color-text-primary);
+  font-size: var(--typography-fontSize-5xl);
+}
+
+/* Feature cards */
+.feature-card {
+  background-color: var(--color-background-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-2xl);
+}
+
+.feature-icon {
+  color: var(--color-brand-primary);
+}
+
+/* Testimonial cards */
+.testimonial-card {
+  background-color: var(--color-background-elevated);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* CTA sections */
+.cta-section {
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--border-radius-2xl);
+}
+
+/* ============================================================================
+   Responsive Theme Adjustments
+   ============================================================================ */
+@media (prefers-color-scheme: dark) {
+  /* Future: Dark mode support will go here */
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

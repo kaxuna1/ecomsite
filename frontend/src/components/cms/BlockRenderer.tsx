@@ -86,11 +86,11 @@ function FeaturesBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
   const { title, subtitle, features, columns = 3, style = {} } = content;
 
-  // Extract style values with defaults
-  const bgColor = style?.backgroundColor || '#fef9f3';
-  const cardBgColor = style?.cardBackgroundColor || '#ffffff';
-  const textColor = style?.textColor || '#1e293b';
-  const accentColor = style?.accentColor || '#10b981';
+  // Extract style values with defaults - USE CSS VARIABLES FIRST with block style as fallback
+  const bgColor = `var(--color-background-secondary, ${style?.backgroundColor || '#fef9f3'})`;
+  const cardBgColor = `var(--color-background-primary, ${style?.cardBackgroundColor || '#ffffff'})`;
+  const textColor = `var(--color-text-primary, ${style?.textColor || '#1e293b'})`;
+  const accentColor = `var(--color-brand-primary, ${style?.accentColor || '#10b981'})`;
   const iconBgColor = style?.iconBackgroundColor || 'rgba(16, 185, 129, 0.1)';
   const layout = style?.layout || 'classic';
   const iconStyle = style?.iconStyle || 'circle';
@@ -390,7 +390,7 @@ function ProductsBlock({ content }: { content: any }) {
   const cardStyleClasses = {
     elevated: 'shadow-lg hover:shadow-2xl',
     flat: 'shadow-none',
-    outlined: 'shadow-none border-2 border-champagne/40',
+    outlined: 'shadow-none border-2 border-border-default/40',
     minimal: 'shadow-none border-0'
   };
 
@@ -424,7 +424,7 @@ function ProductsBlock({ content }: { content: any }) {
   // Error state
   if (error) {
     return (
-      <section className="bg-white py-16">
+      <section className="bg-bg-primary py-16">
         <div className="mx-auto max-w-7xl px-4 text-center">
           <p className="text-red-500">Failed to load products. Please try again later.</p>
         </div>
@@ -435,27 +435,27 @@ function ProductsBlock({ content }: { content: any }) {
   // Empty state
   if (!isLoading && displayProducts.length === 0) {
     return (
-      <section className="bg-white py-16">
+      <section className="bg-bg-primary py-16">
         <div className="mx-auto max-w-7xl px-4 text-center">
-          <p className="text-midnight/60">No products found.</p>
+          <p className="text-text-primary/60">No products found.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="bg-white py-16 md:py-24">
+    <section className="bg-bg-primary py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4">
         <motion.div className="text-center" {...fadeInUp}>
-          <p className="text-xs uppercase tracking-[0.6em] text-jade">
+          <p className="text-xs uppercase tracking-[0.6em] text-primary">
             {selectionMethod === 'rules' && rules.showNewArrivals ? 'New Arrivals' :
              selectionMethod === 'rules' && rules.showBestsellers ? 'Best Sellers' :
              selectionMethod === 'rules' && rules.showOnSale ? 'On Sale' :
              'Featured Products'}
           </p>
-          <h2 className="mt-2 font-display text-3xl text-midnight md:text-4xl">{title}</h2>
+          <h2 className="mt-2 font-display text-3xl text-text-primary md:text-4xl">{title}</h2>
           {subtitle && (
-            <p className="mx-auto mt-4 max-w-2xl text-base text-midnight/70">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-text-primary/70">
               {subtitle}
             </p>
           )}
@@ -464,7 +464,7 @@ function ProductsBlock({ content }: { content: any }) {
         {isLoading ? (
           <div className={`mt-12 ${gridClasses}`}>
             {[...Array(maxProducts)].map((_, i) => (
-              <div key={i} className={`h-96 animate-pulse bg-champagne/30 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]}`} />
+              <div key={i} className={`h-96 animate-pulse bg-bg-secondary/30 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]}`} />
             ))}
           </div>
         ) : displayStyle === 'carousel' ? (
@@ -492,7 +492,7 @@ function ProductsBlock({ content }: { content: any }) {
             {displayProducts.map((product: any, index: number) => (
               <motion.article
                 key={product.id}
-                className={`group relative flex flex-col overflow-hidden border-2 border-champagne/40 bg-white transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]} ${hoverEffectClasses[hoverEffect as keyof typeof hoverEffectClasses]}`}
+                className={`group relative flex flex-col overflow-hidden border-2 border-border-default/40 bg-white transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]} ${hoverEffectClasses[hoverEffect as keyof typeof hoverEffectClasses]}`}
                 initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
                 whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -500,7 +500,7 @@ function ProductsBlock({ content }: { content: any }) {
               >
                 {/* Product Image */}
                 {showElements.image !== false && (
-                  <Link to={`/${language}/products/${product.id}`} className={`relative overflow-hidden bg-champagne ${imageAspectRatio === '1:1' ? 'aspect-square' : imageAspectRatio === '4:5' ? 'aspect-[4/5]' : imageAspectRatio === '3:4' ? 'aspect-[3/4]' : 'aspect-[16/9]'}`}>
+                  <Link to={`/${language}/products/${product.id}`} className={`relative overflow-hidden bg-bg-secondary ${imageAspectRatio === '1:1' ? 'aspect-square' : imageAspectRatio === '4:5' ? 'aspect-[4/5]' : imageAspectRatio === '3:4' ? 'aspect-[3/4]' : 'aspect-[16/9]'}`}>
                     <motion.img
                       src={(() => {
                         // Prefer featured image from media library
@@ -529,7 +529,7 @@ function ProductsBlock({ content }: { content: any }) {
                     {showElements.badges !== false && (
                       <>
                         {product.isNew && (
-                          <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                          <div className="absolute left-3 top-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
                             New
                           </div>
                         )}
@@ -561,7 +561,7 @@ function ProductsBlock({ content }: { content: any }) {
                         {favorites?.some(fav => fav.productId === product.id) ? (
                           <HeartSolidIcon className="h-5 w-5 text-rose-500" />
                         ) : (
-                          <HeartOutlineIcon className="h-5 w-5 text-midnight" />
+                          <HeartOutlineIcon className="h-5 w-5 text-text-primary" />
                         )}
                       </motion.button>
                     )}
@@ -575,7 +575,7 @@ function ProductsBlock({ content }: { content: any }) {
                             e.preventDefault();
                             handleQuickView(product);
                           }}
-                          className="flex items-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-midnight shadow-xl"
+                          className="flex items-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-text-primary shadow-xl"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           title="Quick View"
@@ -593,7 +593,7 @@ function ProductsBlock({ content }: { content: any }) {
                             e.preventDefault();
                             handleQuickAdd(product);
                           }}
-                          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-midnight shadow-xl"
+                          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-text-primary shadow-xl"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
@@ -614,7 +614,7 @@ function ProductsBlock({ content }: { content: any }) {
                     <div className="flex items-center gap-2">
                       <RatingStars rating={product.averageRating} size="sm" />
                       {showElements.reviewCount !== false && (
-                        <span className="text-xs text-midnight/60">
+                        <span className="text-xs text-text-primary/60">
                           ({product.reviewCount})
                         </span>
                       )}
@@ -624,7 +624,7 @@ function ProductsBlock({ content }: { content: any }) {
                   {/* Product Title */}
                   {showElements.title !== false && (
                     <Link to={`/${language}/products/${product.id}`}>
-                      <h3 className="font-display text-lg leading-tight text-midnight transition-colors hover:text-jade line-clamp-2">
+                      <h3 className="font-display text-lg leading-tight text-text-primary transition-colors hover:text-primary line-clamp-2">
                         {product.name}
                       </h3>
                     </Link>
@@ -632,20 +632,20 @@ function ProductsBlock({ content }: { content: any }) {
 
                   {/* Short Description */}
                   {showElements.shortDescription !== false && product.shortDescription && (
-                    <p className="mt-1 text-sm text-midnight/60 line-clamp-2">{product.shortDescription}</p>
+                    <p className="mt-1 text-sm text-text-primary/60 line-clamp-2">{product.shortDescription}</p>
                   )}
 
                   {/* Description (full) */}
                   {showElements.description !== false && showElements.shortDescription === false && product.description && (
-                    <p className="mt-1 text-sm text-midnight/60 line-clamp-3">{product.description}</p>
+                    <p className="mt-1 text-sm text-text-primary/60 line-clamp-3">{product.description}</p>
                   )}
 
                   {/* Price */}
                   {showElements.price !== false && (
                     <div className="mt-auto flex items-center gap-2">
-                      <span className="text-xl font-bold text-jade">${(product.salePrice || product.price).toFixed(2)}</span>
+                      <span className="text-xl font-bold text-primary">${(product.salePrice || product.price).toFixed(2)}</span>
                       {showElements.comparePrice !== false && product.salePrice && (
-                        <span className="text-sm text-midnight/40 line-through">${product.price.toFixed(2)}</span>
+                        <span className="text-sm text-text-primary/40 line-through">${product.price.toFixed(2)}</span>
                       )}
                     </div>
                   )}
@@ -656,7 +656,7 @@ function ProductsBlock({ content }: { content: any }) {
                       {product.categories.slice(0, 2).map((category: string) => (
                         <span
                           key={category}
-                          className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-jade capitalize"
+                          className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary capitalize"
                         >
                           {category}
                         </span>
@@ -696,7 +696,7 @@ function ProductsBlock({ content }: { content: any }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-4 right-4 z-50 rounded-lg bg-jade px-6 py-4 text-white shadow-2xl"
+            className="fixed bottom-4 right-4 z-50 rounded-lg bg-primary px-6 py-4 text-white shadow-2xl"
             onAnimationComplete={() => {
               setTimeout(() => setShowToast(false), 2000);
             }}
@@ -714,11 +714,11 @@ function TestimonialsBlock({ content }: { content: any }) {
   const prefersReducedMotion = useReducedMotion();
   const { title, subtitle, testimonials, style = {} } = content;
 
-  // Style values with defaults
-  const bgColor = style?.backgroundColor || '#f5f3e7';
-  const cardBgColor = style?.cardBackgroundColor || '#ffffff';
-  const textColor = style?.textColor || '#0f172a';
-  const accentColor = style?.accentColor || '#10b981';
+  // Style values with defaults - USE CSS VARIABLES FIRST with block style as fallback
+  const bgColor = `var(--color-background-secondary, ${style?.backgroundColor || '#f5f3e7'})`;
+  const cardBgColor = `var(--color-background-primary, ${style?.cardBackgroundColor || '#ffffff'})`;
+  const textColor = `var(--color-text-primary, ${style?.textColor || '#0f172a'})`;
+  const accentColor = `var(--color-brand-primary, ${style?.accentColor || '#10b981'})`;
   const columns = style?.columns || 3;
   const cardStyle = style?.cardStyle || 'elevated';
   const showAvatars = style?.showAvatars !== false;
@@ -891,11 +891,11 @@ function NewsletterBlock({ content }: { content: any }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Extract style values with defaults
-  const bgColor = style?.backgroundColor || '#10b981';
-  const textColor = style?.textColor || '#ffffff';
-  const buttonColor = style?.buttonColor || '#ffffff';
-  const buttonTextColor = style?.buttonTextColor || '#10b981';
+  // Extract style values with defaults - USE CSS VARIABLES FIRST with block style as fallback
+  const bgColor = `var(--color-brand-primary, ${style?.backgroundColor || '#10b981'})`;
+  const textColor = `var(--color-text-inverse, ${style?.textColor || '#ffffff'})`;
+  const buttonColor = `var(--color-background-primary, ${style?.buttonColor || '#ffffff'})`;
+  const buttonTextColor = `var(--color-brand-primary, ${style?.buttonTextColor || '#10b981'})`;
   const showIcon = style?.showIcon !== false;
   const centerAlign = style?.centerAlign !== false;
 
@@ -1121,8 +1121,8 @@ function NewsletterBlock({ content }: { content: any }) {
                 </svg>
               </div>
               <div className="p-12">
-                <h2 className="font-display text-3xl text-midnight">{title}</h2>
-                <p className="mt-4 text-base text-midnight/70">{description}</p>
+                <h2 className="font-display text-3xl text-text-primary">{title}</h2>
+                <p className="mt-4 text-base text-text-primary/70">{description}</p>
 
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                   <input
@@ -1132,7 +1132,7 @@ function NewsletterBlock({ content }: { content: any }) {
                     placeholder={placeholderText}
                     required
                     disabled={isSubmitting}
-                    className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-midnight focus:border-jade focus:outline-none disabled:opacity-50"
+                    className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-text-primary focus:border-jade focus:outline-none disabled:opacity-50"
                   />
                   <button
                     type="submit"
@@ -1151,7 +1151,7 @@ function NewsletterBlock({ content }: { content: any }) {
                       {message.text}
                     </p>
                   )}
-                  <p className="text-center text-xs text-midnight/50">No spam. Unsubscribe anytime.</p>
+                  <p className="text-center text-xs text-text-primary/50">No spam. Unsubscribe anytime.</p>
                 </form>
               </div>
             </div>
@@ -1188,8 +1188,8 @@ function NewsletterBlock({ content }: { content: any }) {
                   </svg>
                 </div>
               )}
-              <h2 className="mt-4 font-display text-3xl text-midnight">{title}</h2>
-              <p className="mx-auto mt-4 max-w-lg text-base text-midnight/70">{description}</p>
+              <h2 className="mt-4 font-display text-3xl text-text-primary">{title}</h2>
+              <p className="mx-auto mt-4 max-w-lg text-base text-text-primary/70">{description}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="mt-8">
@@ -1201,7 +1201,7 @@ function NewsletterBlock({ content }: { content: any }) {
                   placeholder={placeholderText}
                   required
                   disabled={isSubmitting}
-                  className="flex-1 rounded-full border-2 border-gray-200 px-6 py-4 text-midnight focus:border-jade focus:outline-none disabled:opacity-50"
+                  className="flex-1 rounded-full border-2 border-gray-200 px-6 py-4 text-text-primary focus:border-jade focus:outline-none disabled:opacity-50"
                 />
                 <button
                   type="submit"
@@ -1221,7 +1221,7 @@ function NewsletterBlock({ content }: { content: any }) {
                   {message.text}
                 </p>
               )}
-              <p className="mt-4 text-center text-xs text-midnight/50">
+              <p className="mt-4 text-center text-xs text-text-primary/50">
                 Join 10,000+ subscribers. No spam, ever.
               </p>
             </form>
@@ -1258,7 +1258,7 @@ function TextImageBlock({ content }: { content: any }) {
       const parts = line.split(/(\*\*.*?\*\*)/g);
       const rendered = parts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i} className="font-bold text-midnight">{part.slice(2, -2)}</strong>;
+          return <strong key={i} className="font-bold text-text-primary">{part.slice(2, -2)}</strong>;
         }
         return <span key={i}>{part}</span>;
       });
@@ -1272,7 +1272,7 @@ function TextImageBlock({ content }: { content: any }) {
   };
 
   return (
-    <section className="bg-white py-16 md:py-24">
+    <section className="bg-bg-primary py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4">
         <div className={`grid gap-12 items-center lg:grid-cols-2 ${isImageLeft ? 'lg:grid-flow-dense' : ''}`}>
           {/* Text Content */}
@@ -1280,10 +1280,10 @@ function TextImageBlock({ content }: { content: any }) {
             className={isImageLeft ? 'lg:col-start-2' : ''}
             {...fadeInUp}
           >
-            <h2 className="font-display text-3xl text-midnight md:text-4xl lg:text-5xl">
+            <h2 className="font-display text-3xl text-text-primary md:text-4xl lg:text-5xl">
               {title}
             </h2>
-            <div className="mt-6 text-base leading-relaxed text-midnight/70 md:text-lg">
+            <div className="mt-6 text-base leading-relaxed text-text-primary/70 md:text-lg">
               {renderContent(bodyContent)}
             </div>
           </motion.div>
@@ -1296,7 +1296,7 @@ function TextImageBlock({ content }: { content: any }) {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border-2 border-champagne/40 shadow-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border-2 border-border-default/40 shadow-2xl">
               <img
                 src={image || "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80"}
                 alt={imageAlt || title}
@@ -1358,7 +1358,7 @@ function StatsBlock({ content }: { content: any }) {
                   <div className="mb-4 text-4xl">{stat.icon}</div>
                 )}
                 <motion.div
-                  className="font-display text-4xl font-bold md:text-5xl lg:text-6xl text-jade"
+                  className="font-display text-4xl font-bold md:text-5xl lg:text-6xl text-primary"
                   initial={prefersReducedMotion ? {} : { opacity: 0 }}
                   whileInView={prefersReducedMotion ? {} : { opacity: 1 }}
                   viewport={{ once: true }}
@@ -1393,9 +1393,9 @@ function CTABlock({ content }: { content: any }) {
     style = {}
   } = content;
 
-  // Default style values
-  const bgColor = style?.backgroundColor || '#10b981';
-  const textColor = style?.textColor || '#ffffff';
+  // Default style values - USE CSS VARIABLES FIRST with block style as fallback
+  const bgColor = `var(--color-brand-primary, ${style?.backgroundColor || '#10b981'})`;
+  const textColor = `var(--color-text-inverse, ${style?.textColor || '#ffffff'})`;
   const overlayOpacity = style?.overlayOpacity || 80;
   const textAlignment = style?.textAlignment || 'center';
   const padding = style?.padding || 'large';
@@ -1511,7 +1511,7 @@ function CTABlock({ content }: { content: any }) {
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -right-1/4 -top-1/4 h-96 w-96 rounded-full bg-champagne/10 blur-3xl"
+          className="absolute -right-1/4 -top-1/4 h-96 w-96 rounded-full bg-bg-secondary/10 blur-3xl"
           animate={prefersReducedMotion ? undefined : {
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3]
@@ -1703,15 +1703,15 @@ function FAQBlock({ content }: { content: any }) {
       };
 
   return (
-    <section className="bg-champagne/10 py-16 md:py-24">
+    <section className="bg-bg-secondary/10 py-16 md:py-24">
       <div className="mx-auto max-w-4xl px-4">
         {/* Header */}
         <motion.div className="text-center mb-12" {...fadeInUp}>
           {title && (
-            <h2 className="font-display text-3xl text-midnight md:text-4xl">{title}</h2>
+            <h2 className="font-display text-3xl text-text-primary md:text-4xl">{title}</h2>
           )}
           {subtitle && (
-            <p className="mx-auto mt-4 max-w-2xl text-base text-midnight/70">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-text-primary/70">
               {subtitle}
             </p>
           )}
@@ -1729,13 +1729,13 @@ function FAQBlock({ content }: { content: any }) {
             {/* Search Bar */}
             {enableSearch && (
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-midnight/40" />
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-text-primary/40" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search FAQs..."
-                  className="w-full pl-12 pr-4 py-4 bg-white border-2 border-midnight/10 rounded-xl text-midnight placeholder-midnight/40 focus:outline-none focus:border-jade transition-colors"
+                  className="w-full pl-12 pr-4 py-4 bg-white border-2 border-midnight/10 rounded-xl text-text-primary placeholder-midnight/40 focus:outline-none focus:border-jade transition-colors"
                   aria-label="Search frequently asked questions"
                 />
               </div>
@@ -1750,8 +1750,8 @@ function FAQBlock({ content }: { content: any }) {
                     onClick={() => setSelectedCategory('all')}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedCategory === 'all'
-                        ? 'bg-jade text-white shadow-lg'
-                        : 'bg-white text-midnight/70 hover:bg-midnight/5'
+                        ? 'bg-primary text-white shadow-lg'
+                        : 'bg-white text-text-primary/70 hover:bg-midnight/5'
                     }`}
                   >
                     All
@@ -1763,8 +1763,8 @@ function FAQBlock({ content }: { content: any }) {
                       onClick={() => setSelectedCategory(category)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         selectedCategory === category
-                          ? 'bg-jade text-white shadow-lg'
-                          : 'bg-white text-midnight/70 hover:bg-midnight/5'
+                          ? 'bg-primary text-white shadow-lg'
+                          : 'bg-white text-text-primary/70 hover:bg-midnight/5'
                       }`}
                     >
                       {category}
@@ -1778,16 +1778,16 @@ function FAQBlock({ content }: { content: any }) {
               <button
                 type="button"
                 onClick={expandAll}
-                className="px-3 py-2 text-sm text-jade hover:text-jade/80 font-medium transition-colors"
+                className="px-3 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
                 aria-label="Expand all questions"
               >
                 Expand All
               </button>
-              <span className="text-midnight/20">|</span>
+              <span className="text-text-primary/20">|</span>
               <button
                 type="button"
                 onClick={collapseAll}
-                className="px-3 py-2 text-sm text-jade hover:text-jade/80 font-medium transition-colors"
+                className="px-3 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
                 aria-label="Collapse all questions"
               >
                 Collapse All
@@ -1803,8 +1803,8 @@ function FAQBlock({ content }: { content: any }) {
             initial={prefersReducedMotion ? {} : { opacity: 0 }}
             animate={prefersReducedMotion ? {} : { opacity: 1 }}
           >
-            <MagnifyingGlassIcon className="h-12 w-12 mx-auto text-midnight/20 mb-3" />
-            <p className="text-midnight/50">No FAQs found matching your search.</p>
+            <MagnifyingGlassIcon className="h-12 w-12 mx-auto text-text-primary/20 mb-3" />
+            <p className="text-text-primary/50">No FAQs found matching your search.</p>
           </motion.div>
         ) : (
           <div className="space-y-3">
@@ -1814,7 +1814,7 @@ function FAQBlock({ content }: { content: any }) {
               return (
                 <motion.div
                   key={faq.id}
-                  className="bg-white rounded-xl border-2 border-midnight/10 overflow-hidden transition-all hover:border-jade/40 hover:shadow-lg"
+                  className="bg-bg-primary rounded-xl border-2 border-midnight/10 overflow-hidden transition-all hover:border-jade/40 hover:shadow-lg"
                   initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
                   whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -1829,7 +1829,7 @@ function FAQBlock({ content }: { content: any }) {
                     aria-expanded={isOpen}
                     aria-controls={`faq-answer-${faq.id}`}
                   >
-                    <h3 className="font-semibold text-midnight text-base md:text-lg group-hover:text-jade transition-colors flex-1">
+                    <h3 className="font-semibold text-text-primary text-base md:text-lg group-hover:text-primary transition-colors flex-1">
                       {faq.question}
                     </h3>
 
@@ -1839,7 +1839,7 @@ function FAQBlock({ content }: { content: any }) {
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="flex-shrink-0"
                     >
-                      <ChevronDownIcon className="h-6 w-6 text-jade" aria-hidden="true" />
+                      <ChevronDownIcon className="h-6 w-6 text-primary" aria-hidden="true" />
                     </motion.div>
                   </button>
 
@@ -1856,7 +1856,7 @@ function FAQBlock({ content }: { content: any }) {
                         role="region"
                         aria-labelledby={`faq-question-${faq.id}`}
                       >
-                        <div className="px-6 pb-5 pt-2 text-midnight/70 leading-relaxed border-t border-midnight/5">
+                        <div className="px-6 pb-5 pt-2 text-text-primary/70 leading-relaxed border-t border-midnight/5">
                           {faq.answer}
                         </div>
                       </motion.div>

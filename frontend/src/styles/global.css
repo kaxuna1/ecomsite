@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 
+/* Theme System CSS Variables and Utilities */
+@import './theme.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

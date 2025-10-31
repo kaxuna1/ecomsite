@@ -5,7 +5,7 @@ import HreflangTags from './HreflangTags';
 
 function Layout() {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-champagne via-white to-blush">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-bg-secondary via-bg-primary to-secondary">
       <HreflangTags />
       <Navbar />
       <main className="flex-1">

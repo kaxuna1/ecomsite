@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
     const isInAdminArea = window.location.pathname.startsWith('/admin');
 
     // Check if it's an admin-specific route
-    const adminRoutes = ['/auth/', '/admin/'];
+    const adminRoutes = ['/auth/', '/admin/', '/ai/'];
     const isAdminRoute = adminRoutes.some(route => config.url?.startsWith(route));
 
     if (isInAdminArea || isAdminRoute) {
@@ -43,10 +43,10 @@ api.interceptors.response.use(
   (error) => {
     // Handle 401 Unauthorized responses
     if (error.response?.status === 401) {
-      const adminRoutes = ['/auth/', '/admin/'];
-      const isAdminRoute = adminRoutes.some(route => error.config?.url?.startsWith(route));
+      // Check if we're in the admin area
+      const isInAdminArea = window.location.pathname.startsWith('/admin');
 
-      if (isAdminRoute) {
+      if (isInAdminArea) {
         // Clear admin token
         window.localStorage.removeItem('luxia-admin-token');
         // Redirect to admin login if not already there

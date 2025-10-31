@@ -128,25 +128,25 @@ function ProductDetailPage() {
             animate="animate"
           >
             <motion.div
-              className="flex items-center gap-3 rounded-2xl border border-champagne/60 bg-white p-4"
+              className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-4"
               variants={fadeInUp}
-              whileHover={{ scale: 1.02, borderColor: 'rgb(var(--jade))' }}
+              whileHover={{ scale: 1.02, borderColor: 'var(--color-primary)' }}
             >
-              <TruckIcon className="h-6 w-6 text-jade flex-shrink-0" />
+              <TruckIcon className="h-6 w-6 text-[var(--color-primary)] flex-shrink-0" />
               <div>
-                <p className="text-xs font-semibold text-midnight">Free Shipping</p>
-                <p className="text-[10px] text-midnight/60">Orders over $50</p>
+                <p className="text-xs font-semibold text-[var(--color-text-primary)]">Free Shipping</p>
+                <p className="text-[10px] text-[var(--color-text-secondary)]">Orders over $50</p>
               </div>
             </motion.div>
             <motion.div
-              className="flex items-center gap-3 rounded-2xl border border-champagne/60 bg-white p-4"
+              className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-4"
               variants={fadeInUp}
-              whileHover={{ scale: 1.02, borderColor: 'rgb(var(--jade))' }}
+              whileHover={{ scale: 1.02, borderColor: 'var(--color-primary)' }}
             >
-              <ShieldCheckIcon className="h-6 w-6 text-jade flex-shrink-0" />
+              <ShieldCheckIcon className="h-6 w-6 text-[var(--color-primary)] flex-shrink-0" />
               <div>
-                <p className="text-xs font-semibold text-midnight">Authentic</p>
-                <p className="text-[10px] text-midnight/60">100% Genuine</p>
+                <p className="text-xs font-semibold text-[var(--color-text-primary)]">Authentic</p>
+                <p className="text-[10px] text-[var(--color-text-secondary)]">100% Genuine</p>
               </div>
             </motion.div>
           </motion.div>
@@ -183,7 +183,7 @@ function ProductDetailPage() {
             {product.categories.map((category, index) => (
               <motion.span
                 key={category}
-                className="rounded-full bg-jade/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-jade"
+                className="rounded-full bg-[var(--color-primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)]"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
@@ -196,7 +196,7 @@ function ProductDetailPage() {
           {/* Title & Description */}
           <div>
             <motion.h1
-              className="font-display text-3xl text-midnight lg:text-4xl"
+              className="font-display text-3xl text-[var(--color-text-primary)] lg:text-4xl"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -215,7 +215,7 @@ function ProductDetailPage() {
                 <RatingStars rating={product.averageRating} size="md" showValue />
                 <a
                   href="#reviews"
-                  className="text-sm text-jade hover:underline"
+                  className="text-sm text-[var(--color-primary)] hover:underline"
                 >
                   ({product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'})
                 </a>
@@ -223,7 +223,7 @@ function ProductDetailPage() {
             )}
 
             <motion.p
-              className="mt-3 text-base text-midnight/70 lg:text-lg"
+              className="mt-3 text-base text-[var(--color-text-secondary)] lg:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -240,16 +240,16 @@ function ProductDetailPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
           >
-            <span className="text-3xl font-bold text-jade">${finalPrice.toFixed(2)}</span>
+            <span className="text-3xl font-bold text-[var(--color-primary)]">${finalPrice.toFixed(2)}</span>
             {displaySalePrice && (
-              <span className="text-xl text-midnight/40 line-through">${displayPrice.toFixed(2)}</span>
+              <span className="text-xl text-[var(--color-text-tertiary)] line-through">${displayPrice.toFixed(2)}</span>
             )}
-            <span className="text-sm text-midnight/60">Per unit</span>
+            <span className="text-sm text-[var(--color-text-secondary)]">Per unit</span>
           </motion.div>
 
           {/* Description */}
           <motion.p
-            className="text-sm leading-relaxed text-midnight/70 border-l-4 border-jade/20 pl-4"
+            className="text-sm leading-relaxed text-[var(--color-text-secondary)] border-l-4 border-[var(--color-primary)]/20 pl-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
@@ -264,19 +264,19 @@ function ProductDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.4em] text-midnight/60">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.4em] text-[var(--color-text-secondary)]">
                 {t('productDetail.highlights')}
               </h2>
               <ul className="space-y-2">
                 {product.highlights.map((highlight, index) => (
                   <motion.li
                     key={highlight}
-                    className="flex items-start gap-2 text-sm text-midnight/70"
+                    className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.6 + index * 0.05 }}
                   >
-                    <CheckIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-jade" />
+                    <CheckIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--color-primary)]" />
                     <span>{highlight}</span>
                   </motion.li>
                 ))}
@@ -287,15 +287,15 @@ function ProductDetailPage() {
           {/* Usage */}
           {product.usage && (
             <motion.div
-              className="rounded-2xl bg-champagne/30 p-6"
+              className="rounded-2xl bg-[var(--color-surface)] p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
             >
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.4em] text-midnight/60">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.4em] text-[var(--color-text-secondary)]">
                 {t('productDetail.usage')}
               </h2>
-              <p className="text-sm leading-relaxed text-midnight/70">{product.usage}</p>
+              <p className="text-sm leading-relaxed text-[var(--color-text-secondary)]">{product.usage}</p>
             </motion.div>
           )}
 
@@ -304,7 +304,7 @@ function ProductDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="pt-6 border-t border-champagne/10"
+            className="pt-6 border-t border-[var(--color-border)]"
           >
             <VariantSelector
               productId={product.id}
@@ -320,25 +320,25 @@ function ProductDetailPage() {
             transition={{ delay: 0.8 }}
           >
             <div className="flex items-center gap-4">
-              <label htmlFor="quantity" className="text-sm font-semibold text-midnight">
+              <label htmlFor="quantity" className="text-sm font-semibold text-[var(--color-text-primary)]">
                 Quantity:
               </label>
               <div className="flex items-center gap-2">
                 <motion.button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-champagne/60 bg-white text-midnight transition-colors hover:border-jade hover:text-jade disabled:opacity-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50"
                   disabled={quantity <= 1}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   -
                 </motion.button>
-                <span className="w-12 text-center text-lg font-semibold text-midnight">{quantity}</span>
+                <span className="w-12 text-center text-lg font-semibold text-[var(--color-text-primary)]">{quantity}</span>
                 <motion.button
                   type="button"
                   onClick={() => setQuantity(Math.min(selectedVariant?.inventory ?? product.inventory, quantity + 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-champagne/60 bg-white text-midnight transition-colors hover:border-jade hover:text-jade disabled:opacity-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50"
                   disabled={quantity >= (selectedVariant?.inventory ?? product.inventory)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -352,7 +352,7 @@ function ProductDetailPage() {
               type="button"
               onClick={handleAddToCart}
               disabled={isAdding || (selectedVariant?.inventory ?? product.inventory) === 0}
-              className="w-full rounded-full bg-jade px-8 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-full bg-[var(--color-primary)] px-8 py-4 text-base font-semibold text-[var(--color-button-text)] shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={product.inventory > 0 ? { scale: 1.02, y: -2 } : {}}
               whileTap={product.inventory > 0 ? { scale: 0.98 } : {}}
             >
@@ -393,18 +393,18 @@ function ProductDetailPage() {
       {/* Reviews Section */}
       <motion.div
         id="reviews"
-        className="mt-16 pt-16 border-t border-champagne/20"
+        className="mt-16 pt-16 border-t border-[var(--color-border)]"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0 }}
       >
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-midnight mb-2">
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
               Customer Reviews
             </h2>
             {product.reviewCount && product.reviewCount > 0 && (
-              <p className="text-sm text-midnight/60">
+              <p className="text-sm text-[var(--color-text-secondary)]">
                 Based on {product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'}
               </p>
             )}
@@ -419,7 +419,7 @@ function ProductDetailPage() {
                   navigate(localizedPath('/login'), { state: { from: location.pathname } });
                 }
               }}
-              className="px-6 py-3 bg-jade text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2"
+              className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-button-text)] rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -460,7 +460,7 @@ function ProductDetailPage() {
             <div className="flex justify-center gap-4">
               <motion.button
                 onClick={() => navigate(localizedPath('/login'), { state: { from: location.pathname } })}
-                className="px-6 py-2 bg-jade text-white rounded-full font-semibold hover:shadow-lg transition-all"
+                className="px-6 py-2 bg-[var(--color-primary)] text-[var(--color-button-text)] rounded-full font-semibold hover:shadow-lg transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -468,7 +468,7 @@ function ProductDetailPage() {
               </motion.button>
               <motion.button
                 onClick={() => navigate(localizedPath('/signup'), { state: { from: location.pathname } })}
-                className="px-6 py-2 bg-white text-jade border-2 border-jade rounded-full font-semibold hover:shadow-lg transition-all"
+                className="px-6 py-2 bg-[var(--color-background)] text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-full font-semibold hover:shadow-lg transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

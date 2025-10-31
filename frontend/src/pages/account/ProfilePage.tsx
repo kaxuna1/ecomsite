@@ -77,7 +77,7 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="py-12">
+    <div className="py-12 bg-surface-base min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -85,8 +85,8 @@ export default function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-midnight mb-2">{t('profile.title')}</h1>
-          <p className="text-midnight/60">{t('profile.subtitle')}</p>
+          <h1 className="font-display text-4xl text-text-primary mb-2">{t('profile.title')}</h1>
+          <p className="text-text-secondary">{t('profile.subtitle')}</p>
         </motion.div>
 
         {/* Tabs */}
@@ -94,7 +94,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-lg border border-champagne/40 mb-6"
+          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -109,8 +109,8 @@ export default function ProfilePage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-jade text-white shadow-lg'
-                      : 'text-midnight/60 hover:bg-champagne/30 hover:text-midnight'
+                      ? 'bg-interactive-active text-white shadow-lg border-2 border-interactive-active'
+                      : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -126,10 +126,10 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-3xl shadow-2xl border border-champagne/40 overflow-hidden"
+          className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default overflow-hidden"
         >
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-jade to-jade/80 px-8 py-12 text-white">
+          <div className="bg-gradient-to-r from-interactive-active via-primary to-primary px-8 py-12 text-white">
             <div className="flex items-center gap-6">
               <div className="h-24 w-24 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border-4 border-white/30">
                 <span className="text-4xl font-display uppercase">
@@ -166,12 +166,12 @@ export default function ProfilePage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Name Field */}
               <div>
-                <label className="block text-sm font-semibold text-midnight mb-2">
+                <label className="block text-sm font-semibold text-text-primary mb-2">
                   {t('signup.fullName')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <UserIcon className="h-5 w-5 text-midnight/40" />
+                    <UserIcon className="h-5 w-5 text-text-primary/40" />
                   </div>
                   <input
                     {...register('name', {
@@ -180,12 +180,12 @@ export default function ProfilePage() {
                     })}
                     type="text"
                     disabled={!isEditing}
-                    className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-jade/50 focus:border-jade transition-colors ${
+                    className={`block w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors ${
                       isEditing
                         ? errors.name
                           ? 'border-red-300 bg-red-50'
-                          : 'border-champagne/60 bg-champagne/10'
-                        : 'border-champagne/40 bg-champagne/5 text-midnight/60 cursor-not-allowed'
+                          : 'border-bg-secondary/60 bg-bg-secondary/10'
+                        : 'border-border-default bg-bg-secondary/5 text-text-primary/60 cursor-not-allowed'
                     }`}
                   />
                 </div>
@@ -202,21 +202,21 @@ export default function ProfilePage() {
 
               {/* Email Field (Read-only) */}
               <div>
-                <label className="block text-sm font-semibold text-midnight mb-2">
+                <label className="block text-sm font-semibold text-text-primary mb-2">
                   {t('profile.emailAddress')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <EnvelopeIcon className="h-5 w-5 text-midnight/40" />
+                    <EnvelopeIcon className="h-5 w-5 text-text-primary/40" />
                   </div>
                   <input
                     type="email"
                     value={user.email}
                     disabled
-                    className="block w-full pl-12 pr-4 py-3 border border-champagne/40 rounded-xl bg-champagne/5 text-midnight/60 cursor-not-allowed"
+                    className="block w-full pl-12 pr-4 py-3 border border-border-default rounded-xl bg-bg-secondary/5 text-text-primary/60 cursor-not-allowed"
                   />
                 </div>
-                <p className="mt-1 text-xs text-midnight/40">{t('profile.emailCannotChange')}</p>
+                <p className="mt-1 text-xs text-text-primary/40">{t('profile.emailCannotChange')}</p>
               </div>
 
               {/* Action Buttons */}
@@ -227,7 +227,7 @@ export default function ProfilePage() {
                     onClick={() => setIsEditing(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
+                    className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
                   >
                     <PencilIcon className="h-5 w-5" />
                     {t('profile.editProfile')}
@@ -239,7 +239,7 @@ export default function ProfilePage() {
                       disabled={isLoading}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (
                         <>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                       onClick={handleCancel}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-2 px-6 py-3 bg-midnight/10 text-midnight rounded-xl font-semibold hover:bg-midnight/20 transition-all"
+                      className="flex items-center gap-2 px-6 py-3 border-2 border-border-default bg-white text-text-primary rounded-xl font-semibold hover:bg-bg-secondary/30 transition-all"
                     >
                       <XMarkIcon className="h-5 w-5" />
                       {t('profile.cancel')}

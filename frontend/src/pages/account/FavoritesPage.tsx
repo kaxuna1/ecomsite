@@ -75,7 +75,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ delay: index * 0.05 }}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-champagne/40 bg-white shadow-lg transition-shadow duration-300 hover:shadow-2xl"
+      className="group relative flex flex-col overflow-hidden rounded-3xl border-2 border-border-default bg-surface-elevated shadow-lg transition-shadow duration-300 hover:shadow-2xl"
     >
       {/* Remove Button */}
       <button
@@ -86,7 +86,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
       </button>
 
       {/* Product Image */}
-      <Link to={`/${lang}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-champagne">
+      <Link to={`/${lang}/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-bg-secondary">
         <img
           src={getDisplayImage()}
           alt={product.name}
@@ -96,7 +96,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
         {/* Badges */}
         <div className="absolute left-4 top-4 flex flex-col gap-2">
           {product.isNew && (
-            <span className="flex items-center gap-1.5 rounded-full bg-jade/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+            <span className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
               <SparklesIcon className="h-3.5 w-3.5" />
               {t('favorites.new')}
             </span>
@@ -118,17 +118,17 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
       {/* Product Info */}
       <div className="flex flex-1 flex-col gap-3 p-6">
         <Link to={`/${lang}/products/${product.id}`}>
-          <h2 className="font-display text-lg leading-tight text-midnight line-clamp-2 group-hover:text-jade transition-colors">
+          <h2 className="font-display text-lg leading-tight text-text-primary line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </h2>
         </Link>
 
-        <p className="text-sm text-midnight/70 line-clamp-2">{product.shortDescription}</p>
+        <p className="text-sm text-text-primary/70 line-clamp-2">{product.shortDescription}</p>
 
         {/* Price */}
         <div className="flex items-center gap-2 mt-auto">
           {showPriceRange ? (
-            <div className="text-xl font-bold text-jade">
+            <div className="text-xl font-bold text-primary">
               ${priceRange!.min.toFixed(2)} - ${priceRange!.max.toFixed(2)}
             </div>
           ) : product.salePrice ? (
@@ -136,12 +136,12 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
               <div className="text-xl font-bold text-rose-600">
                 ${product.salePrice.toFixed(2)}
               </div>
-              <span className="text-sm text-midnight/40 line-through">
+              <span className="text-sm text-text-primary/40 line-through">
                 ${product.price.toFixed(2)}
               </span>
             </>
           ) : (
-            <div className="text-xl font-bold text-jade">
+            <div className="text-xl font-bold text-primary">
               ${product.price.toFixed(2)}
             </div>
           )}
@@ -153,7 +153,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
           disabled={product.inventory === 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-jade px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-jade/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-interactive-active px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCartIcon className="h-5 w-5" />
           {product.inventory === 0
@@ -198,7 +198,7 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="py-12">
+    <div className="py-12 bg-surface-base min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -206,8 +206,8 @@ export default function FavoritesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-midnight mb-2">{t('favorites.title')}</h1>
-          <p className="text-midnight/60">{t('favorites.subtitle')}</p>
+          <h1 className="font-display text-4xl text-text-primary mb-2">{t('favorites.title')}</h1>
+          <p className="text-text-secondary">{t('favorites.subtitle')}</p>
         </motion.div>
 
         {/* Tabs */}
@@ -215,7 +215,7 @@ export default function FavoritesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-lg border border-champagne/40 mb-6"
+          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -230,8 +230,8 @@ export default function FavoritesPage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-jade text-white shadow-lg'
-                      : 'text-midnight/60 hover:bg-champagne/30 hover:text-midnight'
+                      ? 'bg-interactive-active text-white shadow-lg'
+                      : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -244,34 +244,34 @@ export default function FavoritesPage() {
 
         {/* Favorites Grid */}
         {isLoading ? (
-          <div className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center">
+          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
             <motion.div
-              className="h-12 w-12 mx-auto border-4 border-jade/20 border-t-jade rounded-full"
+              className="h-12 w-12 mx-auto border-4 border-primary/20 border-t-primary rounded-full"
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             />
-            <p className="mt-4 text-midnight/60">{t('favorites.loading')}</p>
+            <p className="mt-4 text-text-secondary">{t('favorites.loading')}</p>
           </div>
         ) : error ? (
-          <div className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center">
+          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
             <TrashIcon className="h-12 w-12 mx-auto text-red-500 mb-4" />
-            <p className="text-midnight/60">{t('favorites.loadError')}</p>
+            <p className="text-text-secondary">{t('favorites.loadError')}</p>
           </div>
         ) : !favorites || favorites.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center"
+            className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center"
           >
-            <HeartIcon className="h-16 w-16 mx-auto text-midnight/20 mb-4" />
-            <h3 className="font-display text-2xl text-midnight mb-2">{t('favorites.noFavoritesTitle')}</h3>
-            <p className="text-midnight/60 mb-6">
+            <HeartIcon className="h-16 w-16 mx-auto text-text-primary/20 mb-4" />
+            <h3 className="font-display text-2xl text-text-primary mb-2">{t('favorites.noFavoritesTitle')}</h3>
+            <p className="text-text-secondary mb-6">
               {t('favorites.noFavoritesMessage')}
             </p>
             <Link
               to={`/${lang}/products`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold hover:bg-jade/90 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
               {t('favorites.browseProducts')}

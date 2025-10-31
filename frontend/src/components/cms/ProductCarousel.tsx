@@ -132,7 +132,7 @@ function ProductSlide({
 
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden border-2 border-champagne/40 bg-white transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]}`}
+      className={`group relative flex flex-col overflow-hidden border-2 border-border-default/40 bg-bg-primary transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]}`}
     >
       {/* Product Image */}
       {showElements.image !== false && (
@@ -198,7 +198,7 @@ function ProductSlide({
             <motion.button
               type="button"
               onClick={(e) => handleFavoriteClick(e, product.id)}
-              className="absolute right-3 top-3 z-10 rounded-full bg-white p-2 shadow-lg transition-all hover:scale-110"
+              className="absolute right-3 top-3 z-10 rounded-full bg-bg-primary p-2 shadow-lg transition-all hover:scale-110"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title={favorites?.some(fav => fav.productId === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -206,7 +206,7 @@ function ProductSlide({
               {favorites?.some(fav => fav.productId === product.id) ? (
                 <HeartSolidIcon className="h-5 w-5 text-rose-500" />
               ) : (
-                <HeartOutlineIcon className="h-5 w-5 text-midnight" />
+                <HeartOutlineIcon className="h-5 w-5 text-text-primary" />
               )}
             </motion.button>
           )}
@@ -220,7 +220,7 @@ function ProductSlide({
                   e.preventDefault();
                   onQuickView(product);
                 }}
-                className="flex items-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-semibold text-midnight shadow-xl"
+                className="flex items-center gap-2 rounded-full bg-bg-primary px-4 py-3 text-sm font-semibold text-text-primary shadow-xl"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Quick View"
@@ -238,7 +238,7 @@ function ProductSlide({
                   e.preventDefault();
                   handleQuickAdd(product, hasVariants);
                 }}
-                className="flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-midnight shadow-xl"
+                className="flex items-center gap-2 rounded-full bg-bg-primary px-6 py-3 text-sm font-semibold text-text-primary shadow-xl"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -271,7 +271,7 @@ function ProductSlide({
               <StarIconSolid key={i} className="h-4 w-4 text-yellow-400" />
             ))}
             {showElements.reviewCount !== false && (
-              <span className="ml-2 text-xs text-midnight/60">(245)</span>
+              <span className="ml-2 text-xs text-text-primary/60">(245)</span>
             )}
           </div>
         )}
@@ -279,7 +279,7 @@ function ProductSlide({
         {/* Product Title */}
         {showElements.title !== false && (
           <Link to={`/${language}/products/${product.id}`}>
-            <h3 className="font-display text-lg leading-tight text-midnight transition-colors hover:text-jade line-clamp-2">
+            <h3 className="font-display text-lg leading-tight text-text-primary transition-colors hover:text-primary line-clamp-2">
               {product.name}
             </h3>
           </Link>
@@ -287,7 +287,7 @@ function ProductSlide({
 
         {/* Short Description */}
         {showElements.shortDescription !== false && product.shortDescription && (
-          <p className="mt-1 text-sm text-midnight/60 line-clamp-2">
+          <p className="mt-1 text-sm text-text-primary/60 line-clamp-2">
             {product.shortDescription}
           </p>
         )}
@@ -296,7 +296,7 @@ function ProductSlide({
         {showElements.description !== false &&
           showElements.shortDescription === false &&
           product.description && (
-            <p className="mt-1 text-sm text-midnight/60 line-clamp-3">
+            <p className="mt-1 text-sm text-text-primary/60 line-clamp-3">
               {product.description}
             </p>
           )}
@@ -305,16 +305,16 @@ function ProductSlide({
         {showElements.price !== false && (
           <div className="mt-auto flex items-center gap-2">
             {showPriceRange ? (
-              <span className="text-xl font-bold text-jade">
+              <span className="text-xl font-bold text-primary">
                 ${priceRange!.min.toFixed(2)} - ${priceRange!.max.toFixed(2)}
               </span>
             ) : (
               <>
-                <span className="text-xl font-bold text-jade">
+                <span className="text-xl font-bold text-primary">
                   ${(product.salePrice || product.price).toFixed(2)}
                 </span>
                 {showElements.comparePrice !== false && product.salePrice && (
-                  <span className="text-sm text-midnight/40 line-through">
+                  <span className="text-sm text-text-primary/40 line-through">
                     ${product.price.toFixed(2)}
                   </span>
                 )}
@@ -331,7 +331,7 @@ function ProductSlide({
               {product.categories.slice(0, 2).map((category: string) => (
                 <span
                   key={category}
-                  className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-jade capitalize"
+                  className="rounded-full bg-jade/10 px-2 py-0.5 text-xs font-medium text-primary capitalize"
                 >
                   {category}
                 </span>
@@ -400,7 +400,7 @@ export default function ProductCarousel({
   const cardStyleClasses = {
     elevated: 'shadow-lg hover:shadow-2xl',
     flat: 'shadow-none',
-    outlined: 'shadow-none border-2 border-champagne/40',
+    outlined: 'shadow-none border-2 border-border-default/40',
     minimal: 'shadow-none border-0'
   };
 
@@ -517,7 +517,7 @@ export default function ProductCarousel({
       {showArrows && (
         <>
           <button
-            className="swiper-button-prev-custom absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
+            className="swiper-button-prev-custom absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
             aria-label="Previous products"
           >
             <svg
@@ -535,7 +535,7 @@ export default function ProductCarousel({
             </svg>
           </button>
           <button
-            className="swiper-button-next-custom absolute right-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
+            className="swiper-button-next-custom absolute right-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
             aria-label="Next products"
           >
             <svg

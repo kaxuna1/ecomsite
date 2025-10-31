@@ -62,16 +62,16 @@ function Footer() {
   // Fallback to hardcoded values if CMS data isn't available
   if (!footerSettings) {
     return (
-      <footer className="bg-midnight text-champagne">
+      <footer className="bg-text-primary text-bg-secondary">
         <div className="mx-auto max-w-6xl px-4 py-12">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
               <h2 className="font-display text-xl uppercase tracking-[0.3em]">{t('common.brand')}</h2>
-              <p className="mt-4 max-w-xs text-sm text-champagne/80">{t('hero.description')}</p>
+              <p className="mt-4 max-w-xs text-sm opacity-80">{t('hero.description')}</p>
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-widest">{t('footer.visit')}</h3>
-              <p className="mt-4 text-sm text-champagne/80">
+              <p className="mt-4 text-sm opacity-80">
                 Atelier Luxia
                 <br />
                 88 Crown Street
@@ -81,14 +81,14 @@ function Footer() {
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-widest">{t('footer.stay')}</h3>
-              <p className="mt-4 text-sm text-champagne/80">
+              <p className="mt-4 text-sm opacity-80">
                 hello@luxiaproducts.com
                 <br />
                 (212) 555-0199
               </p>
             </div>
           </div>
-          <p className="mt-8 text-xs uppercase tracking-[0.2em] text-champagne/60">
+          <p className="mt-8 text-xs uppercase tracking-[0.2em] opacity-60">
             {t('footer.crafted', { values: { year } })}
           </p>
         </div>
@@ -117,8 +117,8 @@ function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: footerSettings.backgroundColor,
-        color: footerSettings.textColor
+        backgroundColor: `var(--color-background-primary, ${footerSettings.backgroundColor})`,
+        color: `var(--color-text-primary, ${footerSettings.textColor})`
       }}
     >
       <div className="mx-auto max-w-6xl px-4 py-12">
@@ -219,8 +219,8 @@ function Footer() {
                   type="submit"
                   className="px-6 py-2 rounded-lg font-semibold transition-colors"
                   style={{
-                    backgroundColor: footerSettings.accentColor,
-                    color: footerSettings.backgroundColor
+                    backgroundColor: `var(--color-brand-primary, ${footerSettings.accentColor})`,
+                    color: `var(--color-background-primary, ${footerSettings.backgroundColor})`
                   }}
                 >
                   {footerSettings.newsletterButtonText}
@@ -242,7 +242,7 @@ function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 opacity-60 hover:opacity-100 transition-opacity"
-                  style={{ color: footerSettings.accentColor }}
+                  style={{ color: `var(--color-brand-primary, ${footerSettings.accentColor})` }}
                 >
                   {renderSocialIcon(social.platform)}
                 </a>

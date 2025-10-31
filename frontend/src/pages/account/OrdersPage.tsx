@@ -85,7 +85,7 @@ export default function OrdersPage() {
   );
 
   return (
-    <div className="py-12">
+    <div className="py-12 bg-surface-base min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -93,8 +93,8 @@ export default function OrdersPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-midnight mb-2">{t('orders.title')}</h1>
-          <p className="text-midnight/60">{t('orders.subtitle')}</p>
+          <h1 className="font-display text-4xl text-text-primary mb-2">{t('orders.title')}</h1>
+          <p className="text-text-secondary">{t('orders.subtitle')}</p>
         </motion.div>
 
         {/* Tabs */}
@@ -102,7 +102,7 @@ export default function OrdersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-lg border border-champagne/40 mb-6"
+          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -117,8 +117,8 @@ export default function OrdersPage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-jade text-white shadow-lg'
-                      : 'text-midnight/60 hover:bg-champagne/30 hover:text-midnight'
+                      ? 'bg-interactive-active text-white shadow-lg'
+                      : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -142,8 +142,8 @@ export default function OrdersPage() {
               onClick={() => setSelectedStatus(filter.value)}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 selectedStatus === filter.value
-                  ? 'bg-jade text-white shadow-lg'
-                  : 'bg-white text-midnight/60 border border-champagne/40 hover:border-jade hover:text-jade'
+                  ? 'bg-interactive-active text-white shadow-lg'
+                  : 'bg-surface-elevated text-text-secondary border-2 border-border-default hover:border-primary hover:text-primary'
               }`}
             >
               {filter.label}
@@ -153,36 +153,36 @@ export default function OrdersPage() {
 
         {/* Orders List */}
         {isLoading ? (
-          <div className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center">
+          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
             <motion.div
-              className="h-12 w-12 mx-auto border-4 border-jade/20 border-t-jade rounded-full"
+              className="h-12 w-12 mx-auto border-4 border-primary/20 border-t-primary rounded-full"
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             />
-            <p className="mt-4 text-midnight/60">{t('orders.loading')}</p>
+            <p className="mt-4 text-text-secondary">{t('orders.loading')}</p>
           </div>
         ) : error ? (
-          <div className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center">
+          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
             <XCircleIcon className="h-12 w-12 mx-auto text-red-500 mb-4" />
-            <p className="text-midnight/60">{t('orders.loadError')}</p>
+            <p className="text-text-secondary">{t('orders.loadError')}</p>
           </div>
         ) : !filteredOrders || filteredOrders.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-3xl shadow-lg border border-champagne/40 p-12 text-center"
+            className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center"
           >
-            <ShoppingCartIcon className="h-16 w-16 mx-auto text-midnight/20 mb-4" />
-            <h3 className="font-display text-2xl text-midnight mb-2">{t('orders.noOrdersTitle')}</h3>
-            <p className="text-midnight/60 mb-6">
+            <ShoppingCartIcon className="h-16 w-16 mx-auto text-text-primary/20 mb-4" />
+            <h3 className="font-display text-2xl text-text-primary mb-2">{t('orders.noOrdersTitle')}</h3>
+            <p className="text-text-secondary mb-6">
               {selectedStatus === 'all'
                 ? t('orders.noOrdersMessage')
                 : t('orders.noFilteredOrders', { status: selectedStatus })}
             </p>
             <Link
               to={`/${lang}/products`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold hover:bg-jade/90 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
               {t('orders.startShopping')}
@@ -201,14 +201,14 @@ export default function OrdersPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-2xl shadow-lg border border-champagne/40 overflow-hidden"
+                className="bg-surface-elevated rounded-2xl shadow-lg border-2 border-border-default overflow-hidden"
               >
                 {/* Order Header */}
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm text-midnight/60">{t('orders.orderNumber')}{order.id}</p>
-                      <p className="text-xs text-midnight/40 mt-1">
+                      <p className="text-sm text-text-primary/60">{t('orders.orderNumber')}{order.id}</p>
+                      <p className="text-xs text-text-primary/40 mt-1">
                         {new Date(order.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
@@ -231,15 +231,15 @@ export default function OrdersPage() {
                   {/* Order Summary */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-midnight/60">
+                      <p className="text-sm text-text-primary/60">
                         {order.items.length} {order.items.length === 1 ? t('orders.item') : t('orders.items')}
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <p className="text-lg font-bold text-jade">${order.total.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-primary">${order.total.toFixed(2)}</p>
                       <button
                         onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
-                        className="p-2 text-midnight/60 hover:text-jade transition-colors"
+                        className="p-2 text-text-primary/60 hover:text-primary transition-colors"
                       >
                         {expandedOrder === order.id ? (
                           <ChevronUpIcon className="h-5 w-5" />
@@ -259,12 +259,12 @@ export default function OrdersPage() {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="border-t border-champagne/40 bg-champagne/5"
+                      className="border-t border-border-default bg-bg-secondary/5"
                     >
                       <div className="p-6 space-y-6">
                         {/* Order Status Timeline */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-4">{t('orders.orderStatus')}</h4>
+                          <h4 className="font-semibold text-text-primary mb-4">{t('orders.orderStatus')}</h4>
                           <OrderStatusTimeline
                             currentStatus={order.status}
                             createdAt={order.createdAt}
@@ -273,18 +273,18 @@ export default function OrdersPage() {
 
                         {/* Items */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-3">{t('orders.orderItems')}</h4>
+                          <h4 className="font-semibold text-text-primary mb-3">{t('orders.orderItems')}</h4>
                           <div className="space-y-2">
                             {order.items.map((item, idx) => (
                               <div
                                 key={idx}
-                                className="flex items-center justify-between py-2 border-b border-champagne/40 last:border-0"
+                                className="flex items-center justify-between py-2 border-b border-border-default last:border-0"
                               >
                                 <div>
-                                  <p className="font-medium text-midnight">{item.name || 'Product'}</p>
-                                  <p className="text-sm text-midnight/60">{t('orders.quantity')} {item.quantity}</p>
+                                  <p className="font-medium text-text-primary">{item.name || 'Product'}</p>
+                                  <p className="text-sm text-text-primary/60">{t('orders.quantity')} {item.quantity}</p>
                                 </div>
-                                <p className="font-semibold text-midnight">
+                                <p className="font-semibold text-text-primary">
                                   ${((item.price || 0) * item.quantity).toFixed(2)}
                                 </p>
                               </div>
@@ -294,8 +294,8 @@ export default function OrdersPage() {
 
                         {/* Customer Info */}
                         <div>
-                          <h4 className="font-semibold text-midnight mb-2">{t('orders.deliveryInfo')}</h4>
-                          <div className="space-y-1 text-sm text-midnight/60">
+                          <h4 className="font-semibold text-text-primary mb-2">{t('orders.deliveryInfo')}</h4>
+                          <div className="space-y-1 text-sm text-text-primary/60">
                             <p>{order.customer.name}</p>
                             <p>{order.customer.email}</p>
                             {order.customer.phone && <p>{order.customer.phone}</p>}
