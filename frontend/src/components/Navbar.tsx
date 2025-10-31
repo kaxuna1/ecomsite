@@ -79,9 +79,8 @@ function Navbar() {
     retry: 1,
   });
 
-  // Fallback navigation items if menu fetch fails
+  // Fallback navigation items if menu fetch fails (Home is CMS-based now)
   const fallbackNavigation: MenuItemHierarchical[] = [
-    { id: 0, label: t('nav.home'), linkType: 'internal', linkUrl: '/', cmsPageId: null, openInNewTab: false, children: [] },
     { id: 1, label: t('nav.products'), linkType: 'internal', linkUrl: '/products', cmsPageId: null, openInNewTab: false, children: [] },
     { id: 2, label: t('nav.newArrivals'), linkType: 'internal', linkUrl: '/new-arrivals', cmsPageId: null, openInNewTab: false, children: [] },
     { id: 3, label: t('nav.bestSellers'), linkType: 'internal', linkUrl: '/best-sellers', cmsPageId: null, openInNewTab: false, children: [] },

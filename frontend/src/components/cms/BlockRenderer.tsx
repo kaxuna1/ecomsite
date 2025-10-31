@@ -37,6 +37,7 @@ import { addFavorite, removeFavorite, getFavorites } from '../../api/favorites';
 import { useCart } from '../../context/CartContext';
 import { useI18n } from '../../context/I18nContext';
 import { useAuth } from '../../context/AuthContext';
+import RatingStars from '../reviews/RatingStars';
 
 interface BlockRendererProps {
   block: CMSBlock;
@@ -609,13 +610,13 @@ function ProductsBlock({ content }: { content: any }) {
                 {/* Product Info */}
                 <div className="flex flex-1 flex-col gap-2 p-6">
                   {/* Star Rating */}
-                  {showElements.rating !== false && (
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <StarIconSolid key={i} className="h-4 w-4 text-yellow-400" />
-                      ))}
+                  {showElements.rating !== false && product.averageRating && product.reviewCount && product.reviewCount > 0 && (
+                    <div className="flex items-center gap-2">
+                      <RatingStars rating={product.averageRating} size="sm" />
                       {showElements.reviewCount !== false && (
-                        <span className="ml-2 text-xs text-midnight/60">(245)</span>
+                        <span className="text-xs text-midnight/60">
+                          ({product.reviewCount})
+                        </span>
                       )}
                     </div>
                   )}

@@ -154,13 +154,63 @@ export const attributeService = {
     return mapAttributeDefinition(result.rows[0]);
   },
 
-  // Delete attribute definition
+  // Delete attribute definition and remove from products
   async remove(id: number): Promise<boolean> {
-    const result = await pool.query(
-      `DELETE FROM product_attribute_definitions WHERE id = $1`,
-      [id]
-    );
-    return result.rowCount !== null && result.rowCount > 0;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Get the attribute key before deletion
+      const attributeResult = await client.query(
+        `SELECT attribute_key FROM product_attribute_definitions WHERE id = $1`,
+        [id]
+      );
+
+      if (attributeResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return false;
+      }
+
+      const attributeKey = attributeResult.rows[0].attribute_key;
+
+      // Count products that have this attribute
+      const countResult = await client.query(
+        `SELECT COUNT(*) as count FROM products WHERE custom_attributes ? $1`,
+        [attributeKey]
+      );
+      const affectedProductsCount = parseInt(countResult.rows[0].count);
+
+      console.log(`🗑️  Deleting attribute '${attributeKey}' (ID: ${id})`);
+      if (affectedProductsCount > 0) {
+        console.log(`   - Removing from ${affectedProductsCount} product(s)`);
+      }
+
+      // Remove the attribute key from all products' custom_attributes JSONB
+      await client.query(
+        `UPDATE products
+         SET custom_attributes = custom_attributes - $1
+         WHERE custom_attributes ? $1`,
+        [attributeKey]
+      );
+
+      // Delete the attribute definition
+      const deleteResult = await client.query(
+        `DELETE FROM product_attribute_definitions WHERE id = $1`,
+        [id]
+      );
+
+      await client.query('COMMIT');
+
+      console.log(`✅ Successfully deleted attribute '${attributeKey}' and updated ${affectedProductsCount} product(s)`);
+
+      return deleteResult.rowCount !== null && deleteResult.rowCount > 0;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('❌ Error deleting attribute:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
   },
 
   // Get unique values for a specific attribute across all products

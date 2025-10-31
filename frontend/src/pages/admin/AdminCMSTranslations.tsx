@@ -180,17 +180,14 @@ export default function AdminCMSTranslations() {
   const translatePageMutation = useMutation({
     mutationFn: async () => {
       if (!selectedPage) throw new Error('No page selected');
-      if (!pageBlocks) throw new Error('No blocks loaded');
 
+      // Only send page metadata for translation, not blocks
+      // Blocks should be translated individually in the Blocks tab
       const result = await translateCMSPage({
         title: selectedPage.title,
-        metaTitle: undefined,
+        metaTitle: selectedPage.metaTitle || undefined,
         metaDescription: selectedPage.metaDescription || undefined,
-        blocks: pageBlocks.map(block => ({
-          id: block.id,
-          type: block.blockType,
-          content: block.content
-        })),
+        blocks: [], // Empty - only translating page metadata
         targetLanguage: pageLanguage,
         sourceLanguage: 'en'
       });

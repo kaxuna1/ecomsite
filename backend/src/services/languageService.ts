@@ -173,7 +173,7 @@ export const languageService = {
 
       // Check if language exists
       const existingCheck = await client.query(
-        'SELECT code, is_default FROM languages WHERE code = $1',
+        'SELECT code, is_default, name FROM languages WHERE code = $1',
         [code]
       );
 
@@ -181,13 +181,50 @@ export const languageService = {
         throw new Error(`Language with code '${code}' not found`);
       }
 
+      const language = existingCheck.rows[0];
+
       // Prevent deleting the default language
-      if (existingCheck.rows[0].is_default) {
+      if (language.is_default) {
         throw new Error('Cannot delete the default language');
       }
 
-      // Delete the language (cascade will handle translations)
-      await client.query('DELETE FROM languages WHERE code = $1', [code]);
+      // Count translations that will be deleted
+      const translationCounts = await Promise.all([
+        client.query('SELECT COUNT(*) as count FROM product_translations WHERE language_code = $1', [code]),
+        client.query('SELECT COUNT(*) as count FROM cms_page_translations WHERE language_code = $1', [code]),
+        client.query('SELECT COUNT(*) as count FROM cms_block_translations WHERE language_code = $1', [code]),
+        client.query('SELECT COUNT(*) as count FROM menu_item_translations WHERE language_code = $1', [code]),
+        client.query('SELECT COUNT(*) as count FROM footer_settings_translations WHERE language_code = $1', [code]),
+        client.query('SELECT COUNT(*) as count FROM static_translations WHERE language_code = $1', [code])
+      ]);
+
+      const counts = {
+        productTranslations: parseInt(translationCounts[0].rows[0].count),
+        cmsPageTranslations: parseInt(translationCounts[1].rows[0].count),
+        cmsBlockTranslations: parseInt(translationCounts[2].rows[0].count),
+        menuItemTranslations: parseInt(translationCounts[3].rows[0].count),
+        footerSettingsTranslations: parseInt(translationCounts[4].rows[0].count),
+        staticTranslations: parseInt(translationCounts[5].rows[0].count)
+      };
+
+      const totalTranslations = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+      console.log(`🗑️  Deleting language '${language.name}' (${code}) and ${totalTranslations} translations:`);
+      console.log(`   - Product translations: ${counts.productTranslations}`);
+      console.log(`   - CMS page translations: ${counts.cmsPageTranslations}`);
+      console.log(`   - CMS block translations: ${counts.cmsBlockTranslations}`);
+      console.log(`   - Menu item translations: ${counts.menuItemTranslations}`);
+      console.log(`   - Footer settings translations: ${counts.footerSettingsTranslations}`);
+      console.log(`   - Static translations: ${counts.staticTranslations}`);
+
+      // Delete the language (CASCADE will automatically delete all related translations)
+      const deleteResult = await client.query('DELETE FROM languages WHERE code = $1', [code]);
+
+      if (deleteResult.rowCount === 0) {
+        throw new Error(`Failed to delete language '${code}'`);
+      }
+
+      console.log(`✅ Successfully deleted language '${language.name}' (${code}) and all ${totalTranslations} translations`);
 
       await client.query('COMMIT');
     } catch (error) {

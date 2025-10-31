@@ -1085,16 +1085,26 @@ router.post(
     }
 
     try {
+      console.log('=== FOOTER TRANSLATION ENDPOINT ===');
+      console.log('Language:', req.params.lang);
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Keys in body:', Object.keys(req.body));
+
       const footer = await cmsService.getFooterSettingsAdmin();
       if (!footer) {
         return res.status(404).json({ message: 'Footer settings not found' });
       }
+
+      console.log('Footer ID:', footer.id);
 
       const translation = await cmsService.createFooterTranslation(
         footer.id,
         req.params.lang,
         req.body
       );
+
+      console.log('Translation created/updated:', translation.id);
+      console.log('=== END FOOTER TRANSLATION ===');
 
       res.status(201).json(translation);
     } catch (error: any) {
@@ -1103,6 +1113,79 @@ router.post(
         return res.status(404).json({ message: 'Footer settings or language not found' });
       }
       res.status(500).json({ message: 'Error creating footer translation' });
+    }
+  }
+);
+
+// ============================================================================
+// TRANSLATION SYNCHRONIZATION ROUTES
+// ============================================================================
+
+/**
+ * POST /api/cms/admin/pages/:id/sync-translations
+ * Sync all block translations for a page with base content
+ * Preserves translatable text, syncs structure/media/styles
+ */
+router.post(
+  '/admin/pages/:id/sync-translations',
+  adminAuth,
+  [param('id').isInt()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const pageId = parseInt(req.params.id);
+      const updatedCount = await cmsService.syncPageBlockTranslations(pageId);
+
+      res.json({
+        message: `Successfully synced ${updatedCount} block translation(s)`,
+        updatedCount
+      });
+    } catch (error: any) {
+      console.error('Error syncing page translations:', error);
+      res.status(500).json({ message: 'Error syncing translations' });
+    }
+  }
+);
+
+/**
+ * POST /api/cms/admin/blocks/:id/sync-translation/:lang
+ * Sync a specific block translation with base content
+ */
+router.post(
+  '/admin/blocks/:id/sync-translation/:lang',
+  adminAuth,
+  [
+    param('id').isInt(),
+    param('lang').isString().notEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const blockId = parseInt(req.params.id);
+      const translation = await cmsService.syncBlockTranslationByLanguage(
+        blockId,
+        req.params.lang
+      );
+
+      if (!translation) {
+        return res.status(404).json({ message: 'Translation not found' });
+      }
+
+      res.json({
+        message: 'Translation synced successfully',
+        translation
+      });
+    } catch (error: any) {
+      console.error('Error syncing block translation:', error);
+      res.status(500).json({ message: 'Error syncing translation' });
     }
   }
 );

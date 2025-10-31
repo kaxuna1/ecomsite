@@ -5,8 +5,38 @@ import { Router, Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import { authenticate as adminAuth, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as navigationService from '../services/navigationService';
+import { AIServiceManager } from '../ai/AIServiceManager';
+import { NavigationGenerator } from '../ai/features/NavigationGenerator';
+import { MenuItemTranslator } from '../ai/features/MenuItemTranslator';
+import { aiServiceConfig } from '../ai/config';
 
 const router = Router();
+
+// AI Service Manager (singleton)
+let aiServiceManager: AIServiceManager | null = null;
+
+/**
+ * Get or create AI Service Manager instance for navigation features
+ */
+async function getAIServiceManager(): Promise<AIServiceManager> {
+  if (!aiServiceManager) {
+    aiServiceManager = new AIServiceManager(aiServiceConfig);
+
+    // Register navigation-specific features
+    const navigationGenerator = new NavigationGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(navigationGenerator);
+
+    const menuItemTranslator = new MenuItemTranslator(aiServiceManager);
+    aiServiceManager.registerFeature(menuItemTranslator);
+
+    console.log('AI Service Manager created for navigation features');
+  }
+
+  // Re-initialize on every request to pick up updated settings
+  await aiServiceManager.initialize();
+
+  return aiServiceManager;
+}
 
 // ============================================================================
 // PUBLIC ROUTES (No authentication required)
@@ -336,6 +366,110 @@ router.post(
         return res.status(404).json({ message: 'Menu item or language not found' });
       }
       res.status(500).json({ message: 'Error creating menu item translation' });
+    }
+  }
+);
+
+// ============================================================================
+// AI-POWERED FEATURES (Require authentication)
+// ============================================================================
+
+/**
+ * POST /api/navigation/generate
+ * Generate navigation menu using AI based on available pages
+ */
+router.post(
+  '/generate',
+  adminAuth,
+  [
+    body('locationCode').isString().isIn(['header', 'footer', 'mobile']),
+    body('availablePages').isArray({ min: 1 }),
+    body('maxTopLevelItems').optional().isInt({ min: 1, max: 20 }),
+    body('maxNestingDepth').optional().isInt({ min: 0, max: 3 }),
+    body('brandName').optional().isString(),
+    body('brandDescription').optional().isString(),
+    body('targetAudience').optional().isString(),
+    body('style').optional().isString().isIn(['minimal', 'comprehensive', 'balanced'])
+  ],
+  async (req: AuthenticatedRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const aiService = await getAIServiceManager();
+
+      const result = await aiService.executeFeature(
+        'navigation_menu_generator',
+        req.body,
+        {
+          metadata: {
+            adminUserId: req.admin?.id,
+            locationCode: req.body.locationCode
+          }
+        }
+      );
+
+      res.json({
+        success: true,
+        data: result
+      });
+    } catch (error: any) {
+      console.error('Error generating navigation menu:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error generating navigation menu'
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/navigation/items/translate-batch
+ * Translate multiple menu items using AI
+ */
+router.post(
+  '/items/translate-batch',
+  adminAuth,
+  [
+    body('menuItems').isArray({ min: 1 }),
+    body('targetLanguage').isString().notEmpty(),
+    body('targetLanguageNative').optional().isString(),
+    body('sourceLanguage').optional().isString(),
+    body('brandName').optional().isString(),
+    body('style').optional().isString().isIn(['formal', 'casual', 'professional'])
+  ],
+  async (req: AuthenticatedRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const aiService = await getAIServiceManager();
+
+      const result = await aiService.executeFeature(
+        'menu_item_translator',
+        req.body,
+        {
+          metadata: {
+            adminUserId: req.admin?.id,
+            targetLanguage: req.body.targetLanguage
+          }
+        }
+      );
+
+      res.json({
+        success: true,
+        data: result
+      });
+    } catch (error: any) {
+      console.error('Error translating menu items:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error translating menu items'
+      });
     }
   }
 );

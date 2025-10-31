@@ -280,9 +280,11 @@ export interface UpdateFooterPayload {
  * @param language - Language code (default: 'en')
  */
 export async function fetchFooterSettings(language: string = 'en'): Promise<FooterSettings> {
+  console.log('🔍 API: fetchFooterSettings called with language:', language);
   const response = await api.get<FooterSettings>('/cms/admin/footer', {
     params: { lang: language }
   });
+  console.log('✅ API: fetchFooterSettings response received');
   return response.data;
 }
 

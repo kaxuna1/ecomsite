@@ -95,26 +95,29 @@ export class DescriptionGenerator implements IAIFeature {
         cleanedContent = cleanedContent.trim();
       }
 
+      // Remove "json" or "JSON" that might appear after opening ```
+      if (cleanedContent.startsWith('json') || cleanedContent.startsWith('JSON')) {
+        cleanedContent = cleanedContent.substring(4).trim();
+      }
+
       // Try parsing with control character fallback
       try {
         parsedContent = JSON.parse(cleanedContent);
       } catch (firstError) {
-        const escapedContent = cleanedContent.replace(
-          /"((?:[^"\\]|\\.)*)"/g,
-          (match, stringContent) => {
-            const escaped = stringContent
-              .replace(/\r\n/g, '\\n')
-              .replace(/\r/g, '\\n')
-              .replace(/\n/g, '\\n')
-              .replace(/\t/g, '\\t');
-            return `"${escaped}"`;
-          }
-        );
+        // Try to fix common JSON formatting issues
+        const escapedContent = cleanedContent
+          .replace(/\r\n/g, '\\n')
+          .replace(/\r/g, '\\n')
+          .replace(/\n/g, '\\n')
+          .replace(/\t/g, '\\t')
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, ''); // Remove control characters
+
         parsedContent = JSON.parse(escapedContent);
       }
     } catch (error) {
       // If JSON parsing fails, try to extract structured data
       console.error('Failed to parse AI response as JSON:', error);
+      console.error('Raw content:', response.content.substring(0, 500)); // Log first 500 chars for debugging
       parsedContent = this.extractStructuredData(response.content);
     }
 
@@ -300,12 +303,20 @@ Guidelines:
       cleanedContent = cleanedContent.trim();
     }
 
+    // Remove "json" or "JSON" prefix if present
+    if (cleanedContent.startsWith('json') || cleanedContent.startsWith('JSON')) {
+      cleanedContent = cleanedContent.substring(4).trim();
+    }
+
     // Try to find JSON-like structure
     const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       try {
         // Try to fix truncated JSON by adding missing closing quotes/braces
         let jsonStr = jsonMatch[0];
+
+        // Remove control characters
+        jsonStr = jsonStr.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
 
         // Count opening and closing braces
         const openBraces = (jsonStr.match(/\{/g) || []).length;
@@ -355,9 +366,10 @@ Guidelines:
       }
     }
 
-    // If extraction failed, use the whole content as description
+    // If extraction failed completely, provide a helpful message instead of dumping raw JSON
     if (!result.description) {
-      result.description = content;
+      console.error('Complete extraction failure. Content appears to be malformed JSON or unstructured text.');
+      result.description = 'Unable to generate description. Please try again or provide more details.';
     }
 
     return result;

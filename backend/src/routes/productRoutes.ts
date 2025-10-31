@@ -400,9 +400,6 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  if (!req.file) {
-    return res.status(400).json({ message: 'Product image is required' });
-  }
 
   try {
     const categories = parseJsonArray(req.body.categories, 'Invalid categories format');
@@ -410,7 +407,8 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
 
     const metaKeywords = req.body.metaKeywords ? parseJsonArray(req.body.metaKeywords, 'Invalid metaKeywords format') : undefined;
 
-    const imageUrl = await productService.saveImage(req.file);
+    // Image is optional - will use media library images instead
+    const imageUrl = req.file ? await productService.saveImage(req.file) : '';
     const product = await productService.create(
       {
         name: req.body.name,

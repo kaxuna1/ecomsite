@@ -18,6 +18,11 @@ import { HeroGenerator } from '../ai/features/HeroGenerator';
 import { TestimonialGenerator } from '../ai/features/TestimonialGenerator';
 import { FeaturesGenerator } from '../ai/features/FeaturesGenerator';
 import { CMSPageTranslator } from '../ai/features/CMSPageTranslator';
+import { FooterGenerator } from '../ai/features/FooterGenerator';
+import { FooterTranslator } from '../ai/features/FooterTranslator';
+import { AttributeGenerator } from '../ai/features/AttributeGenerator';
+import { VariantOptionsGenerator } from '../ai/features/VariantOptionsGenerator';
+import { VariantOptionsTypeGenerator } from '../ai/features/VariantOptionsTypeGenerator';
 import { aiServiceConfig } from '../ai/config';
 
 const router = Router();
@@ -64,7 +69,22 @@ async function getAIServiceManager(): Promise<AIServiceManager> {
     const cmsPageTranslator = new CMSPageTranslator(aiServiceManager);
     aiServiceManager.registerFeature(cmsPageTranslator);
 
-    console.log('AI Service Manager created with 10 features');
+    const footerGenerator = new FooterGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(footerGenerator);
+
+    const footerTranslator = new FooterTranslator(aiServiceManager);
+    aiServiceManager.registerFeature(footerTranslator);
+
+    const attributeGenerator = new AttributeGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(attributeGenerator);
+
+    const variantOptionsGenerator = new VariantOptionsGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(variantOptionsGenerator);
+
+    const variantOptionsTypeGenerator = new VariantOptionsTypeGenerator(aiServiceManager);
+    aiServiceManager.registerFeature(variantOptionsTypeGenerator);
+
+    console.log('AI Service Manager created with 15 features');
   }
 
   // IMPORTANT: Re-initialize on every request to pick up updated provider/model settings
@@ -1339,6 +1359,473 @@ Return ONLY the translated text, without quotes or explanations.`;
     return res.status(500).json({
       success: false,
       error: error.message || 'Failed to translate static text'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/generate-footer
+ *
+ * Generate AI-powered footer content
+ *
+ * Body:
+ * - brandName: string (required)
+ * - brandDescription: string (optional)
+ * - industry: string (optional)
+ * - targetAudience: string (optional)
+ * - businessType: 'ecommerce' | 'saas' | 'agency' | 'blog' | 'other' (optional)
+ * - includeNewsletter: boolean (optional, default: true)
+ * - includeSocial: boolean (optional, default: true)
+ * - availablePages: Array<{label, url, type}> (optional)
+ * - contactInfo: {email?, phone?, address?} (optional)
+ * - existingFooter: any (optional) - for refinement
+ * - columnsCount: number (optional, 2-5, default: 4)
+ * - style: 'minimal' | 'comprehensive' | 'balanced' (optional)
+ * - tone: 'professional' | 'friendly' | 'luxury' | 'casual' (optional)
+ * - language: string (optional, default: 'en')
+ *
+ * Response:
+ * - success: boolean
+ * - data: {
+ *     brandName: string
+ *     brandTagline: string
+ *     footerColumns: Array<{title, links[], displayOrder}>
+ *     contactInfo: {email?, phone?, address?, businessHours?}
+ *     socialLinks: Array<{platform, url, icon, displayOrder}>
+ *     newsletter: {enabled, title, description, placeholder, buttonText}
+ *     copyrightText: string
+ *     bottomLinks: Array<{label, url, displayOrder}>
+ *     reasoning: string
+ *     cost: number
+ *     tokensUsed: number
+ *     provider: string
+ *   }
+ */
+router.post('/generate-footer', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      brandName,
+      brandDescription,
+      industry,
+      targetAudience,
+      businessType,
+      includeNewsletter,
+      includeSocial,
+      availablePages,
+      contactInfo,
+      existingFooter,
+      columnsCount,
+      style,
+      tone,
+      language
+    } = req.body;
+
+    // Validate required fields
+    if (!brandName || typeof brandName !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Brand name is required and must be a string'
+      });
+    }
+
+    // Validate optional fields
+    const validBusinessTypes = ['ecommerce', 'saas', 'agency', 'blog', 'other'];
+    if (businessType && !validBusinessTypes.includes(businessType)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid business type. Must be one of: ${validBusinessTypes.join(', ')}`
+      });
+    }
+
+    const validStyles = ['minimal', 'comprehensive', 'balanced'];
+    if (style && !validStyles.includes(style)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid style. Must be one of: ${validStyles.join(', ')}`
+      });
+    }
+
+    const validTones = ['professional', 'friendly', 'luxury', 'casual'];
+    if (tone && !validTones.includes(tone)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid tone. Must be one of: ${validTones.join(', ')}`
+      });
+    }
+
+    if (columnsCount && (typeof columnsCount !== 'number' || columnsCount < 2 || columnsCount > 5)) {
+      return res.status(400).json({
+        success: false,
+        error: 'columnsCount must be a number between 2 and 5'
+      });
+    }
+
+    // Get AI Service Manager
+    const aiService = await getAIServiceManager();
+
+    // Execute footer generation
+    const result = await aiService.executeFeature(
+      'footer_content_generator',
+      {
+        brandName,
+        brandDescription,
+        industry,
+        targetAudience,
+        businessType,
+        includeNewsletter: includeNewsletter !== false,
+        includeSocial: includeSocial !== false,
+        availablePages: Array.isArray(availablePages) ? availablePages : [],
+        contactInfo: contactInfo || {},
+        existingFooter,
+        columnsCount: columnsCount || 4,
+        style: style || 'balanced',
+        tone: tone || 'professional',
+        language: language || 'en'
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'footer_content_generator'
+        }
+      }
+    );
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error generating footer content:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate footer content'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/translate-footer
+ *
+ * Translate footer content to another language
+ *
+ * Body:
+ * - fields: object (required) - Footer fields to translate
+ *   - brandName: string (optional)
+ *   - brandTagline: string (optional)
+ *   - footerColumns: array (optional)
+ *   - contactInfo: object (optional)
+ *   - newsletterTitle: string (optional)
+ *   - newsletterDescription: string (optional)
+ *   - newsletterPlaceholder: string (optional)
+ *   - newsletterButtonText: string (optional)
+ *   - copyrightText: string (optional)
+ *   - bottomLinks: array (optional)
+ * - sourceLanguage: string (required) - ISO code (e.g., 'en', 'ka')
+ * - targetLanguage: string (required) - ISO code
+ * - preserveTerms: string[] (optional) - Brand names/terms to not translate
+ * - tone: 'luxury' | 'professional' | 'casual' | 'friendly' (optional)
+ *
+ * Response:
+ * - success: boolean
+ * - data: {
+ *     translatedFields: object
+ *     preservedTerms: string[]
+ *     languagePair: string
+ *     cost: number
+ *     tokensUsed: number
+ *     provider: string
+ *   }
+ */
+router.post('/translate-footer', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      fields,
+      sourceLanguage,
+      targetLanguage,
+      preserveTerms,
+      tone
+    } = req.body;
+
+    // Validate required fields
+    if (!fields || typeof fields !== 'object') {
+      return res.status(400).json({
+        success: false,
+        error: 'fields object is required'
+      });
+    }
+
+    if (!sourceLanguage || typeof sourceLanguage !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'sourceLanguage is required and must be a string (ISO code)'
+      });
+    }
+
+    if (!targetLanguage || typeof targetLanguage !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'targetLanguage is required and must be a string (ISO code)'
+      });
+    }
+
+    // Validate at least one field is provided
+    const hasFields = Object.keys(fields).some(key => fields[key]);
+    if (!hasFields) {
+      return res.status(400).json({
+        success: false,
+        error: 'At least one field must be provided for translation'
+      });
+    }
+
+    // Validate tone if provided
+    const validTones = ['luxury', 'professional', 'casual', 'friendly'];
+    if (tone && !validTones.includes(tone)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid tone. Must be one of: ${validTones.join(', ')}`
+      });
+    }
+
+    // Get AI Service Manager
+    const aiService = await getAIServiceManager();
+
+    // Execute footer translation
+    const result = await aiService.executeFeature(
+      'footer_translator',
+      {
+        fields,
+        sourceLanguage,
+        targetLanguage,
+        preserveTerms: Array.isArray(preserveTerms) ? preserveTerms : [],
+        tone: tone || 'professional'
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'footer_translator'
+        }
+      }
+    );
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error translating footer:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to translate footer'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/generate-attributes
+ *
+ * Generate industry-standard product attributes using AI
+ *
+ * Body:
+ * - productCategory: string (required) - e.g., "Hair Care", "Skin Care", "Makeup"
+ * - productType: string (optional) - e.g., "Serum", "Shampoo", "Moisturizer"
+ * - brandFocus: string (optional) - e.g., "Natural", "Luxury", "Professional"
+ * - numberOfAttributes: number (optional) - Default: 10, Range: 3-20
+ * - existingAttributes: string[] (optional) - Already defined attribute keys to avoid
+ *
+ * Response:
+ * - success: boolean
+ * - data: {
+ *     attributes: Array<{
+ *       attributeKey: string
+ *       attributeLabel: string
+ *       dataType: string
+ *       isSearchable: boolean
+ *       isFilterable: boolean
+ *       isRequired: boolean
+ *       options?: Array<{value: string, label: string}>
+ *       description: string
+ *       reasoning: string
+ *     }>
+ *     industryStandards: {
+ *       category: string
+ *       recommendedCount: number
+ *       essentialAttributes: string[]
+ *     }
+ *     reasoning: string
+ *     cost: number
+ *     tokensUsed: number
+ *     provider: string
+ *   }
+ */
+router.post('/generate-attributes', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { productCategory, productType, brandFocus, numberOfAttributes, existingAttributes } = req.body;
+
+    // Validation
+    if (!productCategory || typeof productCategory !== 'string' || productCategory.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'productCategory is required and must be a non-empty string'
+      });
+    }
+
+    if (numberOfAttributes !== undefined) {
+      const count = parseInt(numberOfAttributes);
+      if (isNaN(count) || count < 3 || count > 20) {
+        return res.status(400).json({
+          success: false,
+          error: 'numberOfAttributes must be a number between 3 and 20'
+        });
+      }
+    }
+
+    if (existingAttributes !== undefined && !Array.isArray(existingAttributes)) {
+      return res.status(400).json({
+        success: false,
+        error: 'existingAttributes must be an array of strings'
+      });
+    }
+
+    console.log(`🎨 Generating ${numberOfAttributes || 10} attributes for category: ${productCategory}`);
+
+    const aiService = await getAIServiceManager();
+
+    const result = await aiService.executeFeature(
+      'attribute_generator',
+      {
+        productCategory: productCategory.trim(),
+        productType: productType?.trim(),
+        brandFocus: brandFocus?.trim(),
+        numberOfAttributes: numberOfAttributes || 10,
+        existingAttributes: existingAttributes || []
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'attribute_generator',
+          category: productCategory
+        }
+      }
+    );
+
+    console.log(`✅ Successfully generated ${result.attributes.length} attributes`);
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error generating attributes:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate attributes'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/generate-variant-options
+ * Generate variant option types using AI
+ */
+router.post('/generate-variant-options', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { productCategory, productType, numberOfOptions, existingOptions } = req.body;
+
+    console.log(`🤖 Generating variant option types`);
+    if (productCategory) console.log(`   Category: ${productCategory}`);
+    if (productType) console.log(`   Product Type: ${productType}`);
+    console.log(`   Requested Options: ${numberOfOptions || 5}`);
+    if (existingOptions?.length) console.log(`   Existing Options: ${existingOptions.length}`);
+
+    const aiService = await getAIServiceManager();
+
+    const result = await aiService.executeFeature(
+      'variant_options_type_generator',
+      {
+        productCategory: productCategory?.trim(),
+        productType: productType?.trim(),
+        numberOfOptions: numberOfOptions || 5,
+        existingOptions: existingOptions || []
+      },
+      {
+        userId: req.adminId?.toString(),
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'variant_options_type_generator',
+          category: productCategory
+        }
+      }
+    );
+
+    console.log(`✅ Successfully generated ${result.options.length} variant option types`);
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error generating variant option types:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate variant option types'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/ai/generate-variant-values
+ * Generate variant option values using AI
+ */
+router.post('/generate-variant-values', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { optionName, productCategory, productType, numberOfValues, existingValues } = req.body;
+
+    // Validate required fields
+    if (!optionName || typeof optionName !== 'string' || optionName.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'optionName is required and must be a non-empty string'
+      });
+    }
+
+    console.log(`🤖 Generating variant option values for: ${optionName}`);
+    if (productCategory) console.log(`   Category: ${productCategory}`);
+    if (productType) console.log(`   Product Type: ${productType}`);
+    console.log(`   Requested Values: ${numberOfValues || 8}`);
+    if (existingValues?.length) console.log(`   Existing Values: ${existingValues.length}`);
+
+    const aiService = await getAIServiceManager();
+
+    const result = await aiService.executeFeature(
+      'variant_options_generator',
+      {
+        optionName: optionName.trim(),
+        productCategory: productCategory?.trim(),
+        productType: productType?.trim(),
+        numberOfValues: numberOfValues || 8,
+        existingValues: existingValues || []
+      },
+      {
+        userId: req.adminId?.toString(),
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'variant_options_generator',
+          optionName: optionName
+        }
+      }
+    );
+
+    console.log(`✅ Successfully generated ${result.values.length} variant option values`);
+
+    return res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error generating variant option values:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate variant option values'
     });
   }
 });

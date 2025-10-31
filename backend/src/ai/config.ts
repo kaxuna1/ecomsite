@@ -123,6 +123,26 @@ export const aiServiceConfig: AIServiceConfig = {
       cacheTTL: 86400, // 24 hours - FAQs don't change often
       maxCostPerExecution: 0.25, // $0.25 max per generation
       rateLimitPerUser: 40 // 40 generations per hour per admin user
+    },
+    {
+      name: 'navigation_menu_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic'],
+      cacheEnabled: true,
+      cacheTTL: 7200, // 2 hours - menus can be regenerated/refined
+      maxCostPerExecution: 0.40, // $0.40 max per generation
+      rateLimitPerUser: 20 // 20 generations per hour per admin user
+    },
+    {
+      name: 'menu_item_translator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic'],
+      cacheEnabled: true,
+      cacheTTL: 86400, // 24 hours - translations rarely change
+      maxCostPerExecution: 0.30, // $0.30 max per translation
+      rateLimitPerUser: 30 // 30 translations per hour per admin user
     }
   ],
 

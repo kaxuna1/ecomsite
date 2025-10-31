@@ -16,6 +16,9 @@ import {
   createVariantOptionValue
 } from '../../api/variants';
 import type { VariantOption, VariantOptionValue } from '../../types/product';
+import { AIVariantOptionsGenerator } from '../../components/admin/AIVariantOptionsGenerator';
+import { AIVariantOptionsTypeGenerator } from '../../components/admin/AIVariantOptionsTypeGenerator';
+import type { GeneratedVariantValue, GeneratedVariantOptionType } from '../../api/ai';
 
 function AdminVariantOptions() {
   const queryClient = useQueryClient();
@@ -53,10 +56,6 @@ function AdminVariantOptions() {
       createVariantOptionValue(data.optionId, data.value, data.displayOrder),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['variant-option-values'] });
-      setShowValueModal(false);
-      setValueInput('');
-      setValueDisplayOrder(0);
-      setSelectedOption(null);
     }
   });
 
@@ -70,16 +69,84 @@ function AdminVariantOptions() {
 
   const handleCreateValue = () => {
     if (!selectedOption || !valueInput.trim()) return;
-    createValueMutation.mutate({
-      optionId: selectedOption.id,
-      value: valueInput,
-      displayOrder: valueDisplayOrder
-    });
+    createValueMutation.mutate(
+      {
+        optionId: selectedOption.id,
+        value: valueInput,
+        displayOrder: valueDisplayOrder
+      },
+      {
+        onSuccess: () => {
+          setShowValueModal(false);
+          setValueInput('');
+          setValueDisplayOrder(0);
+          setSelectedOption(null);
+        }
+      }
+    );
   };
 
   const handleAddValue = (option: VariantOption) => {
     setSelectedOption(option);
     setShowValueModal(true);
+  };
+
+  const handleAIValuesGenerated = async (option: VariantOption, values: GeneratedVariantValue[]) => {
+    const optionId = option.id;
+    const optionName = option.name;
+
+    console.log(`📦 Adding ${values.length} AI-generated values to ${optionName}`);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    // Add each generated value sequentially
+    for (const value of values) {
+      try {
+        await createValueMutation.mutateAsync({
+          optionId: optionId,
+          value: value.displayName,
+          displayOrder: value.sortOrder
+        });
+        successCount++;
+        console.log(`✅ Added: ${value.displayName}`);
+      } catch (error) {
+        failCount++;
+        console.error(`❌ Failed to add value: ${value.displayName}`, error);
+      }
+    }
+
+    console.log(`✅ Complete: ${successCount} added, ${failCount} failed`);
+
+    // Final refetch to ensure UI is in sync
+    await queryClient.invalidateQueries({ queryKey: ['variant-option-values'] });
+  };
+
+  const handleAIOptionsGenerated = async (generatedOptions: GeneratedVariantOptionType[]) => {
+    console.log(`📦 Adding ${generatedOptions.length} AI-generated option types`);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    // Add each generated option type sequentially
+    for (const option of generatedOptions) {
+      try {
+        await createOptionMutation.mutateAsync({
+          name: option.name,
+          displayOrder: option.displayOrder
+        });
+        successCount++;
+        console.log(`✅ Added: ${option.name}`);
+      } catch (error) {
+        failCount++;
+        console.error(`❌ Failed to add option type: ${option.name}`, error);
+      }
+    }
+
+    console.log(`✅ Complete: ${successCount} added, ${failCount} failed`);
+
+    // Final refetch to ensure UI is in sync
+    await queryClient.invalidateQueries({ queryKey: ['variant-options'] });
   };
 
   // Group values by option
@@ -111,16 +178,22 @@ function AdminVariantOptions() {
             Manage product variant option types (Size, Color, etc.) and their values
           </p>
         </div>
-        <motion.button
-          type="button"
-          onClick={() => setShowOptionModal(true)}
-          className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <PlusIcon className="h-5 w-5" />
-          Add Option Type
-        </motion.button>
+        <div className="flex items-center gap-3">
+          <AIVariantOptionsTypeGenerator
+            existingOptions={options.map(o => o.name)}
+            onOptionsGenerated={handleAIOptionsGenerated}
+          />
+          <motion.button
+            type="button"
+            onClick={() => setShowOptionModal(true)}
+            className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <PlusIcon className="h-5 w-5" />
+            Add Option Type
+          </motion.button>
+        </div>
       </div>
 
       {/* Options List */}
@@ -159,13 +232,22 @@ function AdminVariantOptions() {
                       Display Order: {option.displayOrder}
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleAddValue(option)}
-                    className="flex items-center gap-2 rounded-lg bg-blush/20 px-4 py-2 text-sm font-medium text-blush transition-colors hover:bg-blush/30"
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Add Value
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <AIVariantOptionsGenerator
+                      optionName={option.name}
+                      existingValues={values.map(v => v.value)}
+                      onValuesGenerated={(generatedValues) => {
+                        handleAIValuesGenerated(option, generatedValues);
+                      }}
+                    />
+                    <button
+                      onClick={() => handleAddValue(option)}
+                      className="flex items-center gap-2 rounded-lg bg-blush/20 px-4 py-2 text-sm font-medium text-blush transition-colors hover:bg-blush/30"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      Add Value
+                    </button>
+                  </div>
                 </div>
 
                 {/* Values */}

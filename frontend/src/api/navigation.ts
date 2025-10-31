@@ -90,3 +90,19 @@ export async function createMenuItemTranslation(
   );
   return response.data;
 }
+
+// AI Navigation Generation
+export async function generateNavigationMenu(
+  input: import('../types/navigation').NavigationGenerationInput
+): Promise<import('../types/navigation').NavigationGenerationOutput> {
+  const response = await api.post('/navigation/generate', input);
+  return response.data.data;
+}
+
+// AI Menu Translation
+export async function translateMenuItems(
+  input: import('../types/navigation').MenuTranslationInput
+): Promise<import('../types/navigation').MenuTranslationOutput> {
+  const response = await api.post('/navigation/items/translate-batch', input);
+  return response.data.data;
+}

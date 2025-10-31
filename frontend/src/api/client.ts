@@ -7,11 +7,11 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    // Add language parameter to all requests
+    // Add language parameter to all requests (but don't override if already set)
     const currentLanguage = i18n.language || 'en';
     config.params = {
-      ...config.params,
-      lang: currentLanguage
+      lang: currentLanguage,  // Set default first
+      ...config.params  // Then allow explicit params to override
     };
 
     // Check if we're in the admin area

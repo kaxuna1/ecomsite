@@ -10,6 +10,7 @@ import {
   toggleLanguageEnabled
 } from '../../api/languages';
 import type { Language, LanguagePayload, UpdateLanguagePayload } from '../../types/language';
+import { LanguageAutocomplete, type LanguageOption } from '../../components/admin/LanguageAutocomplete';
 
 interface LanguageFormData {
   code: string;
@@ -35,6 +36,7 @@ export default function AdminLanguages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLanguage, setEditingLanguage] = useState<Language | null>(null);
   const [formData, setFormData] = useState<LanguageFormData>(emptyForm);
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption | null>(null);
 
   // Fetch all languages including disabled
   const { data: languages, isLoading } = useQuery({
@@ -72,9 +74,13 @@ export default function AdminLanguages() {
   // Delete language mutation
   const deleteMutation = useMutation({
     mutationFn: deleteLanguage,
-    onSuccess: () => {
+    onSuccess: (_, code) => {
       queryClient.invalidateQueries({ queryKey: ['languages'] });
-      toast.success('Language deleted successfully');
+      const deletedLanguage = languages?.find(l => l.code === code);
+      toast.success(
+        `Language '${deletedLanguage?.name || code}' and all its translations have been permanently deleted`,
+        { duration: 5000 }
+      );
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to delete language');
@@ -96,6 +102,7 @@ export default function AdminLanguages() {
   const openCreateModal = () => {
     setEditingLanguage(null);
     setFormData(emptyForm);
+    setSelectedLanguage(null);
     setIsModalOpen(true);
   };
 
@@ -116,10 +123,27 @@ export default function AdminLanguages() {
     setIsModalOpen(false);
     setEditingLanguage(null);
     setFormData(emptyForm);
+    setSelectedLanguage(null);
+  };
+
+  const handleLanguageSelect = (language: LanguageOption) => {
+    setSelectedLanguage(language);
+    setFormData({
+      ...formData,
+      code: language.code,
+      name: language.name,
+      nativeName: language.nativeName
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate that a language is selected when creating
+    if (!editingLanguage && !selectedLanguage) {
+      toast.error('Please select a language from the list');
+      return;
+    }
 
     if (editingLanguage) {
       // Update existing language
@@ -152,7 +176,16 @@ export default function AdminLanguages() {
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to delete ${language.name}? This will remove all translations in this language.`
+      `⚠️ DELETE LANGUAGE: ${language.name} (${language.nativeName})\n\n` +
+      `This will permanently delete:\n` +
+      `• All product translations in ${language.name}\n` +
+      `• All CMS page translations in ${language.name}\n` +
+      `• All CMS block translations in ${language.name}\n` +
+      `• All menu item translations in ${language.name}\n` +
+      `• All footer settings translations in ${language.name}\n` +
+      `• All static content translations in ${language.name}\n\n` +
+      `This action CANNOT be undone!\n\n` +
+      `Are you absolutely sure you want to delete this language and ALL its content?`
     );
 
     if (confirmed) {
@@ -195,89 +228,96 @@ export default function AdminLanguages() {
       </div>
 
       {/* Languages Table */}
-      <div className="rounded-3xl border border-white/10 bg-white/5 overflow-hidden backdrop-blur">
-        <table className="min-w-full divide-y divide-white/10">
-          <thead className="bg-white/5">
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Code
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Name
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Native Name
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Status
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Default
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Order
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-[0.2em] text-champagne/60">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {languages?.map((language) => (
-              <tr key={language.code} className="hover:bg-white/5 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm font-mono font-semibold text-champagne">
-                    {language.code.toUpperCase()}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-champagne">{language.name}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-champagne">{language.nativeName}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    onClick={() => handleToggle(language)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors ${
-                      language.isEnabled
-                        ? 'bg-jade/20 text-jade'
-                        : 'bg-champagne/20 text-champagne/60'
-                    }`}
-                  >
-                    {language.isEnabled ? 'Enabled' : 'Disabled'}
-                  </button>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {language.isDefault && (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider bg-blush/20 text-blush">
-                      Default
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-champagne">{language.displayOrder}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => openEditModal(language)}
-                    className="text-blush hover:text-blush/80 mr-4 transition-colors"
-                  >
-                    Edit
-                  </button>
-                  {!language.isDefault && (
-                    <button
-                      onClick={() => handleDelete(language)}
-                      className="text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </td>
+      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-white/10">
+            <thead className="bg-white/5">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Code
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Name
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Native Name
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Default
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Order
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {languages?.map((language) => (
+                <tr key={language.code} className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm font-mono font-semibold text-champagne">
+                      {language.code.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-champagne">{language.name}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-champagne">{language.nativeName}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => handleToggle(language)}
+                      className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors ${
+                        language.isEnabled
+                          ? 'bg-jade/20 text-jade'
+                          : 'bg-champagne/20 text-champagne/60'
+                      }`}
+                    >
+                      {language.isEnabled ? 'Enabled' : 'Disabled'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {language.isDefault && (
+                      <span className="px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider bg-blush/20 text-blush">
+                        Default
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-champagne">{language.displayOrder}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end gap-4">
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(language)}
+                        className="text-blush hover:text-blush/80 transition-colors"
+                      >
+                        Edit
+                      </button>
+                      {!language.isDefault && (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(language)}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal */}
@@ -289,53 +329,63 @@ export default function AdminLanguages() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Language Code */}
-              <div>
-                <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
-                  Language Code *
-                </label>
-                <input
-                  type="text"
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toLowerCase() })}
-                  disabled={!!editingLanguage}
-                  placeholder="e.g., en, es, fr"
-                  className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none disabled:opacity-50"
-                  required
-                  maxLength={5}
-                />
-                <p className="mt-2 text-xs text-champagne/60">2-5 characters (ISO 639-1 code)</p>
-              </div>
+              {!editingLanguage ? (
+                /* Language Autocomplete - Only for creating new languages */
+                <div>
+                  <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
+                    Select Language *
+                  </label>
+                  <LanguageAutocomplete
+                    value={selectedLanguage}
+                    onChange={handleLanguageSelect}
+                    placeholder="Search for a language (e.g., Spanish, French, Japanese)..."
+                  />
+                  <p className="mt-2 text-xs text-champagne/60">
+                    Search by language name or native name. All fields will be auto-populated.
+                  </p>
+                </div>
+              ) : (
+                /* Display selected language info when editing */
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
+                      Language Code
+                    </label>
+                    <div className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne/60">
+                      {formData.code.toUpperCase()}
+                    </div>
+                    <p className="mt-2 text-xs text-champagne/60">Language code cannot be changed</p>
+                  </div>
 
-              {/* Language Name */}
-              <div>
-                <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
-                  Language Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g., English, Spanish"
-                  className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
-                  required
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
+                      Language Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="e.g., English, Spanish"
+                      className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                      required
+                    />
+                  </div>
 
-              {/* Native Name */}
-              <div>
-                <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
-                  Native Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.nativeName}
-                  onChange={(e) => setFormData({ ...formData, nativeName: e.target.value })}
-                  placeholder="e.g., English, Español"
-                  className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
-                  required
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80 mb-2">
+                      Native Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.nativeName}
+                      onChange={(e) => setFormData({ ...formData, nativeName: e.target.value })}
+                      placeholder="e.g., English, Español"
+                      className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Display Order */}
               <div>
@@ -386,7 +436,11 @@ export default function AdminLanguages() {
                 </button>
                 <button
                   type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
+                  disabled={
+                    createMutation.isPending ||
+                    updateMutation.isPending ||
+                    (!editingLanguage && !selectedLanguage)
+                  }
                   className="rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createMutation.isPending || updateMutation.isPending

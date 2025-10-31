@@ -13,7 +13,9 @@ import {
   LinkIcon,
   GlobeAltIcon,
   DocumentTextIcon,
-  MinusCircleIcon
+  MinusCircleIcon,
+  SparklesIcon,
+  LanguageIcon
 } from '@heroicons/react/24/outline';
 import {
   fetchMenuLocations,
@@ -23,12 +25,22 @@ import {
   deleteMenuItem,
   reorderMenuItems,
   createMenuItemTranslation,
-  fetchPageSuggestions
+  fetchPageSuggestions,
+  generateNavigationMenu,
+  translateMenuItems
 } from '../../api/navigation';
 import { fetchCMSPages } from '../../api/cmsAdmin';
-import type { MenuItem, CreateMenuItemPayload, UpdateMenuItemPayload, LinkType, PageSuggestion } from '../../types/navigation';
-
-type Language = 'en' | 'ka';
+import { fetchLanguages } from '../../api/languages';
+import type {
+  MenuItem,
+  CreateMenuItemPayload,
+  UpdateMenuItemPayload,
+  LinkType,
+  PageSuggestion,
+  PageInfo,
+  GeneratedMenuItem
+} from '../../types/navigation';
+import type { Language } from '../../types/language';
 
 interface MenuItemFormData {
   label: string;
@@ -43,7 +55,7 @@ interface MenuItemFormData {
 export default function AdminNavigation() {
   const queryClient = useQueryClient();
   const [selectedLocationId, setSelectedLocationId] = useState<number>(1); // Default to header (id: 1)
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [formData, setFormData] = useState<MenuItemFormData>({
@@ -55,6 +67,28 @@ export default function AdminNavigation() {
     openInNewTab: false,
     isEnabled: true
   });
+
+  // AI Generation state
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiStyle, setAiStyle] = useState<'minimal' | 'balanced' | 'comprehensive'>('balanced');
+  const [generatedMenuItems, setGeneratedMenuItems] = useState<GeneratedMenuItem[] | null>(null);
+  const [aiReasoning, setAiReasoning] = useState<string>('');
+
+  // Fetch available languages
+  const { data: languages = [] } = useQuery({
+    queryKey: ['languages'],
+    queryFn: () => fetchLanguages(false) // Only fetch enabled languages
+  });
+
+  // Set default language when languages are loaded
+  useEffect(() => {
+    if (languages.length > 0 && !selectedLanguage) {
+      const defaultLang = languages.find(l => l.isDefault);
+      if (defaultLang) {
+        setSelectedLanguage(defaultLang.code);
+      }
+    }
+  }, [languages, selectedLanguage]);
 
   // Fetch menu locations
   const { data: locations = [] } = useQuery({
@@ -146,6 +180,101 @@ export default function AdminNavigation() {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to reorder menu items');
+    }
+  });
+
+  // AI Generation mutation
+  const aiGenerateMutation = useMutation({
+    mutationFn: async () => {
+      // Build available pages list
+      const availablePages: PageInfo[] = [
+        // Static routes (Home is CMS-based now, not static)
+        { type: 'static', label: 'Products', url: '/products', priority: 'high' },
+        { type: 'static', label: 'New Arrivals', url: '/new-arrivals', priority: 'medium' },
+        { type: 'static', label: 'Best Sellers', url: '/best-sellers', priority: 'medium' },
+        { type: 'static', label: 'Sale', url: '/sale', priority: 'high' },
+        { type: 'static', label: 'Cart', url: '/cart', priority: 'medium' },
+        { type: 'static', label: 'Search', url: '/search', priority: 'low' },
+        // Add CMS pages (including Home)
+        ...cmsPages.map(page => ({
+          type: 'cms' as const,
+          label: page.title,
+          url: `/${page.slug}`,
+          cmsPageId: page.id,
+          priority: page.slug === 'home' ? ('high' as const) : ('medium' as const)
+        }))
+      ];
+
+      const locationCode = locations.find(l => l.id === selectedLocationId)?.code as 'header' | 'footer' | 'mobile';
+
+      return generateNavigationMenu({
+        locationCode,
+        availablePages,
+        style: aiStyle,
+        brandName: 'Luxia Products',
+        brandDescription: 'Luxury scalp and hair-care products',
+        targetAudience: 'Health-conscious consumers seeking premium hair care solutions'
+      });
+    },
+    onSuccess: (data) => {
+      setGeneratedMenuItems(data.menuItems);
+      setAiReasoning(data.reasoning);
+      toast.success(`Menu generated! Cost: $${data.cost.toFixed(4)}`);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || 'Failed to generate menu');
+    }
+  });
+
+  // AI Translation mutation
+  const aiTranslateMutation = useMutation({
+    mutationFn: async (targetLang: string) => {
+      const itemsToTranslate = menuItems.map(item => ({
+        id: item.id,
+        label: item.label,
+        linkType: item.linkType,
+        context: item.linkUrl || undefined
+      }));
+
+      const targetLanguage = languages.find(l => l.code === targetLang);
+      const sourceLanguage = languages.find(l => l.isDefault);
+
+      return translateMenuItems({
+        menuItems: itemsToTranslate,
+        targetLanguage: targetLang,
+        targetLanguageNative: targetLanguage?.nativeName || targetLang,
+        sourceLanguage: sourceLanguage?.code || 'en',
+        brandName: 'Luxia Products',
+        style: 'professional'
+      });
+    },
+    onSuccess: async (data, targetLang) => {
+      // Map AI response IDs back to actual menu item IDs
+      // AI returns sequential IDs (1, 2, 3...) but we need the original IDs
+      const idMapping = new Map<number, number>();
+      menuItems.forEach((item, index) => {
+        // AI response uses sequential IDs starting from 1
+        idMapping.set(index + 1, item.id);
+      });
+
+      // Apply translations with correct IDs
+      for (const translated of data.translatedItems) {
+        const actualMenuItemId = idMapping.get(translated.id);
+        if (actualMenuItemId) {
+          await translationMutation.mutateAsync({
+            menuItemId: actualMenuItemId,
+            lang: targetLang,
+            label: translated.label
+          });
+        }
+      }
+      toast.success(`Translated ${data.translatedItems.length} items! Cost: $${data.cost.toFixed(4)}`);
+      if (data.notes) {
+        console.log('Translation notes:', data.notes);
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || 'Failed to translate menu items');
     }
   });
 
@@ -291,6 +420,80 @@ export default function AdminNavigation() {
     });
   };
 
+  // AI Generation handlers
+  const handleOpenAIModal = () => {
+    setShowAIModal(true);
+    setGeneratedMenuItems(null);
+    setAiReasoning('');
+  };
+
+  const handleGenerateMenu = () => {
+    aiGenerateMutation.mutate();
+  };
+
+  const handleApplyGeneratedMenu = async () => {
+    if (!generatedMenuItems) return;
+
+    try {
+      // Create menu items from generated structure
+      const createMenuItemRecursive = async (item: GeneratedMenuItem, parentId: number | null = null, order: number = 0) => {
+        const payload: CreateMenuItemPayload = {
+          locationId: selectedLocationId,
+          label: item.label,
+          linkType: item.linkType,
+          linkUrl: item.linkUrl,
+          cmsPageId: item.cmsPageId,
+          parentId,
+          openInNewTab: item.openInNewTab,
+          isEnabled: true,
+          displayOrder: order
+        };
+
+        const created = await createMenuItem(payload);
+
+        // Create children if any
+        if (item.children && item.children.length > 0) {
+          for (let i = 0; i < item.children.length; i++) {
+            await createMenuItemRecursive(item.children[i], created.id, i);
+          }
+        }
+      };
+
+      // Create all top-level items
+      for (let i = 0; i < generatedMenuItems.length; i++) {
+        await createMenuItemRecursive(generatedMenuItems[i], null, i);
+      }
+
+      toast.success('Menu created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['navigation-items'] });
+      queryClient.invalidateQueries({ queryKey: ['navigation-menu'] });
+      setShowAIModal(false);
+      setGeneratedMenuItems(null);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create menu items');
+    }
+  };
+
+  const handleTranslateMenu = () => {
+    const defaultLang = languages.find(l => l.isDefault);
+    if (selectedLanguage === defaultLang?.code) {
+      toast.error(`Cannot translate to ${defaultLang.name} (source language)`);
+      return;
+    }
+
+    if (menuItems.length === 0) {
+      toast.error('No menu items to translate');
+      return;
+    }
+
+    const targetLang = languages.find(l => l.code === selectedLanguage);
+    const targetLangName = targetLang?.nativeName || targetLang?.name || selectedLanguage;
+
+    if (confirm(`Translate all ${menuItems.length} menu items to ${targetLangName}?`)) {
+      aiTranslateMutation.mutate(selectedLanguage);
+    }
+  };
+
   // Build hierarchical tree for display
   type MenuItemWithChildren = MenuItem & { children: MenuItemWithChildren[] };
 
@@ -400,18 +603,30 @@ export default function AdminNavigation() {
             </p>
           </div>
 
-          <button
-            onClick={() => {
-              setIsCreatingNew(true);
-              setSelectedItemId(null);
-              setSelectedLanguage('en'); // Always create new items in English
-              resetFormData();
-            }}
-            className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 hover:shadow-lg"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Menu Item
-          </button>
+          <div className="flex items-center gap-3">
+            {/* AI Generate Button */}
+            <button
+              onClick={handleOpenAIModal}
+              disabled={aiGenerateMutation.isPending}
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-5 py-2.5 font-semibold text-white transition-all hover:shadow-lg disabled:opacity-50"
+            >
+              <SparklesIcon className="h-5 w-5" />
+              {aiGenerateMutation.isPending ? 'Generating...' : 'Generate with AI'}
+            </button>
+
+            <button
+              onClick={() => {
+                setIsCreatingNew(true);
+                setSelectedItemId(null);
+                setSelectedLanguage('en'); // Always create new items in English
+                resetFormData();
+              }}
+              className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 hover:shadow-lg"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add Menu Item
+            </button>
+          </div>
         </div>
 
         {/* Location Tabs */}
@@ -447,27 +662,40 @@ export default function AdminNavigation() {
               </div>
 
               {/* Language Selector */}
-              <div className="mb-4 flex gap-2">
-                <button
-                  onClick={() => setSelectedLanguage('en')}
-                  className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                    selectedLanguage === 'en'
-                      ? 'bg-blush text-midnight'
-                      : 'bg-white/10 text-champagne/70 hover:bg-white/20'
-                  }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => setSelectedLanguage('ka')}
-                  className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                    selectedLanguage === 'ka'
-                      ? 'bg-blush text-midnight'
-                      : 'bg-white/10 text-champagne/70 hover:bg-white/20'
-                  }`}
-                >
-                  ქართული
-                </button>
+              <div className="mb-4 space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {languages.map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => setSelectedLanguage(lang.code)}
+                      className={`flex-1 min-w-[120px] rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                        selectedLanguage === lang.code
+                          ? 'bg-blush text-midnight'
+                          : 'bg-white/10 text-champagne/70 hover:bg-white/20'
+                      }`}
+                      title={lang.name}
+                    >
+                      {lang.nativeName}
+                      {lang.isDefault && (
+                        <span className="ml-1 text-xs opacity-60">(default)</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* AI Translation Button */}
+                {languages.length > 0 &&
+                 selectedLanguage !== languages.find(l => l.isDefault)?.code &&
+                 menuItems.length > 0 && (
+                  <button
+                    onClick={handleTranslateMenu}
+                    disabled={aiTranslateMutation.isPending}
+                    className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-md disabled:opacity-50"
+                  >
+                    <LanguageIcon className="h-4 w-4" />
+                    {aiTranslateMutation.isPending ? 'Translating...' : 'Translate All with AI'}
+                  </button>
+                )}
               </div>
 
               {/* Menu Tree */}
@@ -707,6 +935,154 @@ export default function AdminNavigation() {
             )}
           </main>
         </div>
+
+        {/* AI Generation Modal */}
+        {showAIModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-midnight p-8">
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+                    <SparklesIcon className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-display text-2xl text-champagne">Generate Navigation with AI</h2>
+                    <p className="text-sm text-champagne/60">
+                      AI will analyze your site and create a logical menu structure
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowAIModal(false)}
+                  className="text-champagne/40 transition-colors hover:text-champagne"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Style Selector */}
+              <div className="mb-6">
+                <label className="mb-3 block text-sm font-semibold text-champagne">Style</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(['minimal', 'balanced', 'comprehensive'] as const).map(style => (
+                    <button
+                      key={style}
+                      onClick={() => setAiStyle(style)}
+                      className={`rounded-xl px-4 py-3 text-sm font-semibold capitalize transition-all ${
+                        aiStyle === style
+                          ? 'bg-blush text-midnight shadow-lg'
+                          : 'bg-white/5 text-champagne/70 hover:bg-white/10'
+                      }`}
+                    >
+                      {style}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-champagne/50">
+                  {aiStyle === 'minimal' && 'Essential pages only, flat structure (5-6 items)'}
+                  {aiStyle === 'balanced' && 'Important pages with logical grouping (6-8 items)'}
+                  {aiStyle === 'comprehensive' && 'Most pages included, use nesting (8-12 items)'}
+                </p>
+              </div>
+
+              {/* Generate Button */}
+              {!generatedMenuItems && (
+                <button
+                  onClick={handleGenerateMenu}
+                  disabled={aiGenerateMutation.isPending}
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-4 font-semibold text-white transition-all hover:shadow-lg disabled:opacity-50"
+                >
+                  {aiGenerateMutation.isPending ? (
+                    <>
+                      <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                      Generating menu structure...
+                    </>
+                  ) : (
+                    <>
+                      <SparklesIcon className="h-5 w-5" />
+                      Generate Menu
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Generated Menu Preview */}
+              {generatedMenuItems && (
+                <div className="space-y-6">
+                  {/* AI Reasoning */}
+                  {aiReasoning && (
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <h3 className="mb-2 text-sm font-semibold text-champagne">AI Reasoning:</h3>
+                      <p className="text-sm text-champagne/70">{aiReasoning}</p>
+                    </div>
+                  )}
+
+                  {/* Menu Preview */}
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                    <h3 className="mb-4 text-sm font-semibold text-champagne">
+                      Generated Menu ({generatedMenuItems.length} top-level items)
+                    </h3>
+                    <div className="space-y-2">
+                      {generatedMenuItems.map((item, index) => (
+                        <div key={index} className="rounded-lg bg-white/5 p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-champagne">{item.label}</span>
+                            <span className="rounded bg-white/10 px-2 py-0.5 text-xs text-champagne/60">
+                              {item.linkType}
+                            </span>
+                            {item.linkUrl && (
+                              <span className="text-xs text-champagne/40">{item.linkUrl}</span>
+                            )}
+                          </div>
+                          {item.reasoning && (
+                            <p className="mt-1 text-xs text-champagne/50">{item.reasoning}</p>
+                          )}
+                          {item.children && item.children.length > 0 && (
+                            <div className="ml-4 mt-2 space-y-1 border-l-2 border-white/10 pl-3">
+                              {item.children.map((child, childIndex) => (
+                                <div key={childIndex} className="text-sm text-champagne/70">
+                                  → {child.label}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleApplyGeneratedMenu}
+                      className="flex-1 flex items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 hover:shadow-lg"
+                    >
+                      <CheckIcon className="h-5 w-5" />
+                      Apply This Menu
+                    </button>
+                    <button
+                      onClick={handleGenerateMenu}
+                      disabled={aiGenerateMutation.isPending}
+                      className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 font-semibold text-champagne transition-all hover:bg-white/20 disabled:opacity-50"
+                    >
+                      <ArrowPathIcon className="h-5 w-5" />
+                      Regenerate
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowAIModal(false);
+                        setGeneratedMenuItems(null);
+                      }}
+                      className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 font-semibold text-champagne transition-all hover:bg-white/20"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

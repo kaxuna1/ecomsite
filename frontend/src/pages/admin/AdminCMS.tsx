@@ -26,6 +26,9 @@ export default function AdminCMS() {
   const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
   const [showFooterEditor, setShowFooterEditor] = useState(false);
   const [footerLanguage, setFooterLanguage] = useState('en');
+
+  // Debug logging for language changes
+  console.log('🌍 AdminCMS render - footerLanguage:', footerLanguage);
   const [showNewPageModal, setShowNewPageModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate>(PAGE_TEMPLATES[0]);
   const [newPageData, setNewPageData] = useState({
@@ -49,8 +52,15 @@ export default function AdminCMS() {
 
   const { data: footerSettings } = useQuery({
     queryKey: ['footer-settings', footerLanguage],
-    queryFn: () => fetchFooterSettings(footerLanguage),
-    enabled: showFooterEditor
+    queryFn: () => {
+      console.log('⚡ React Query: Fetching footer with language:', footerLanguage);
+      return fetchFooterSettings(footerLanguage);
+    },
+    enabled: showFooterEditor,
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache in memory or localStorage
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   const statusMutation = useMutation({
@@ -117,7 +127,12 @@ export default function AdminCMS() {
   };
 
   const handleFooterChange = (updates: Partial<FooterSettings>) => {
+    console.log('=== FRONTEND handleFooterChange ===');
+    console.log('Language:', footerLanguage);
+    console.log('Updates received:', updates);
+
     if (footerLanguage === 'en') {
+      console.log('>>> Calling English mutation');
       // Update base footer settings for English
       footerMutation.mutate(updates);
     } else {
@@ -135,18 +150,32 @@ export default function AdminCMS() {
         ...(updates.bottomLinks !== undefined && { bottomLinks: updates.bottomLinks })
       };
 
+      console.log('>>> Translatable fields extracted:', translatableFields);
+      console.log('>>> Field count:', Object.keys(translatableFields).length);
+
       // Only mutate if there are translatable fields
       if (Object.keys(translatableFields).length > 0) {
+        console.log('>>> Calling translation mutation with:', {
+          languageCode: footerLanguage,
+          payload: translatableFields
+        });
         footerTranslationMutation.mutate({
           languageCode: footerLanguage,
           payload: translatableFields
         });
+      } else {
+        console.log('>>> No translatable fields, skipping mutation');
       }
     }
   };
 
   const handleFooterSave = () => {
     setShowFooterEditor(false);
+  };
+
+  const handleOpenFooterEditor = () => {
+    setFooterLanguage('en'); // Reset to English when opening editor
+    setShowFooterEditor(true);
   };
 
   const generateSlug = (title: string) => {
@@ -216,7 +245,7 @@ export default function AdminCMS() {
         <h1 className="font-display text-3xl uppercase tracking-wider">CMS Management</h1>
         <div className="flex gap-3">
           <button
-            onClick={() => setShowFooterEditor(true)}
+            onClick={handleOpenFooterEditor}
             className="px-4 py-2 bg-champagne/20 text-champagne rounded-lg hover:bg-champagne/30 transition-colors font-semibold"
           >
             Edit Footer
@@ -393,7 +422,10 @@ export default function AdminCMS() {
                     <GlobeAltIcon className="h-4 w-4 text-champagne/60" />
                     <select
                       value={footerLanguage}
-                      onChange={(e) => setFooterLanguage(e.target.value)}
+                      onChange={(e) => {
+                        console.log('🔄 Language dropdown changed from', footerLanguage, 'to', e.target.value);
+                        setFooterLanguage(e.target.value);
+                      }}
                       className="bg-transparent text-sm text-champagne border-none focus:outline-none focus:ring-0 cursor-pointer"
                     >
                       <option value="en" className="bg-midnight">English</option>

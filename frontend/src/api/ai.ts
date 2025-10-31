@@ -395,3 +395,302 @@ export async function performBulkOperation(
   );
   return response.data.data;
 }
+
+// ============================================================================
+// Footer Content Generator
+// ============================================================================
+
+export interface GenerateFooterRequest {
+  brandName: string;
+  brandDescription?: string;
+  industry?: string;
+  targetAudience?: string;
+  businessType?: 'ecommerce' | 'saas' | 'agency' | 'blog' | 'other';
+  includeNewsletter?: boolean;
+  includeSocial?: boolean;
+  availablePages?: Array<{
+    label: string;
+    url: string;
+    type: 'static' | 'cms' | 'legal';
+  }>;
+  contactInfo?: {
+    email?: string;
+    phone?: string;
+    address?: string;
+  };
+  existingFooter?: any;
+  columnsCount?: number;
+  style?: 'minimal' | 'comprehensive' | 'balanced';
+  tone?: 'professional' | 'friendly' | 'luxury' | 'casual';
+  language?: string;
+}
+
+export interface GenerateFooterResponse {
+  brandName: string;
+  brandTagline: string;
+  footerColumns: Array<{
+    title: string;
+    links: Array<{
+      label: string;
+      url: string;
+      openInNewTab: boolean;
+    }>;
+    displayOrder: number;
+  }>;
+  contactInfo: {
+    email?: string;
+    phone?: string;
+    address?: string;
+    businessHours?: string;
+  };
+  socialLinks: Array<{
+    platform: string;
+    url: string;
+    icon: string;
+    displayOrder: number;
+  }>;
+  newsletter: {
+    enabled: boolean;
+    title: string;
+    description: string;
+    placeholder: string;
+    buttonText: string;
+  };
+  copyrightText: string;
+  bottomLinks: Array<{
+    label: string;
+    url: string;
+    displayOrder: number;
+  }>;
+  reasoning: string;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function generateFooterContent(
+  data: GenerateFooterRequest
+): Promise<GenerateFooterResponse> {
+  const response = await api.post<{ success: boolean; data: GenerateFooterResponse }>(
+    '/admin/ai/generate-footer',
+    data
+  );
+  return response.data.data;
+}
+
+// ============================================================================
+// Footer Translator
+// ============================================================================
+
+export interface TranslateFooterRequest {
+  fields: {
+    brandName?: string;
+    brandTagline?: string;
+    footerColumns?: Array<{
+      title: string;
+      links: Array<{
+        label: string;
+        url: string;
+        is_external?: boolean;
+      }>;
+    }>;
+    contactInfo?: {
+      address?: {
+        label: string;
+        street: string;
+        city: string;
+        country: string;
+      };
+      email?: string;
+      phone?: string;
+    };
+    newsletterTitle?: string;
+    newsletterDescription?: string;
+    newsletterPlaceholder?: string;
+    newsletterButtonText?: string;
+    copyrightText?: string;
+    bottomLinks?: Array<{ label: string; url: string }>;
+  };
+  sourceLanguage: string;
+  targetLanguage: string;
+  preserveTerms?: string[];
+  tone?: 'luxury' | 'professional' | 'casual' | 'friendly';
+}
+
+export interface TranslateFooterResponse {
+  translatedFields: {
+    brandName?: string;
+    brandTagline?: string;
+    footerColumns?: Array<{
+      title: string;
+      links: Array<{
+        label: string;
+        url: string;
+        is_external?: boolean;
+      }>;
+    }>;
+    contactInfo?: {
+      address?: {
+        label: string;
+        street: string;
+        city: string;
+        country: string;
+      };
+      email?: string;
+      phone?: string;
+    };
+    newsletterTitle?: string;
+    newsletterDescription?: string;
+    newsletterPlaceholder?: string;
+    newsletterButtonText?: string;
+    copyrightText?: string;
+    bottomLinks?: Array<{ label: string; url: string }>;
+  };
+  preservedTerms: string[];
+  languagePair: string;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function translateFooterContent(
+  data: TranslateFooterRequest
+): Promise<TranslateFooterResponse> {
+  const response = await api.post<{ success: boolean; data: TranslateFooterResponse }>(
+    '/admin/ai/translate-footer',
+    data
+  );
+  return response.data.data;
+}
+
+// ============================================================================
+// Attribute Generator
+// ============================================================================
+
+export interface GenerateAttributesRequest {
+  productCategory: string; // e.g., "Hair Care", "Skin Care", "Makeup"
+  productType?: string; // e.g., "Serum", "Shampoo", "Moisturizer"
+  brandFocus?: string; // e.g., "Natural", "Luxury", "Professional"
+  numberOfAttributes?: number; // Default: 10, Range: 3-20
+  existingAttributes?: string[]; // Already defined attribute keys to avoid
+}
+
+export interface GeneratedAttribute {
+  attributeKey: string;
+  attributeLabel: string;
+  dataType: 'text' | 'number' | 'boolean' | 'select' | 'multiselect' | 'date';
+  isSearchable: boolean;
+  isFilterable: boolean;
+  isRequired: boolean;
+  options?: Array<{ value: string; label: string }>;
+  description: string;
+  reasoning: string;
+}
+
+export interface GenerateAttributesResponse {
+  attributes: GeneratedAttribute[];
+  industryStandards: {
+    category: string;
+    recommendedCount: number;
+    essentialAttributes: string[];
+  };
+  reasoning: string;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function generateAttributes(
+  data: GenerateAttributesRequest
+): Promise<GenerateAttributesResponse> {
+  const response = await api.post<{ success: boolean; data: GenerateAttributesResponse }>(
+    '/admin/ai/generate-attributes',
+    data
+  );
+  return response.data.data;
+}
+
+// ============================================================================
+// Variant Option Types Generator
+// ============================================================================
+
+export interface GenerateVariantOptionsRequest {
+  productCategory?: string; // e.g., "Clothing", "Electronics", "Beauty"
+  productType?: string; // e.g., "T-Shirt", "Laptop", "Shampoo"
+  numberOfOptions?: number; // Default: 5
+  existingOptions?: string[]; // Already defined option names to avoid
+}
+
+export interface GeneratedVariantOptionType {
+  name: string;
+  displayOrder: number;
+  description: string;
+  reasoning: string;
+  commonValues: string[];
+}
+
+export interface GenerateVariantOptionsResponse {
+  options: GeneratedVariantOptionType[];
+  categoryGuidelines: {
+    category: string;
+    recommendedCount: number;
+    essentialOptions: string[];
+  };
+  reasoning: string;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function generateVariantOptions(
+  data: GenerateVariantOptionsRequest
+): Promise<GenerateVariantOptionsResponse> {
+  const response = await api.post<{ success: boolean; data: GenerateVariantOptionsResponse }>(
+    '/admin/ai/generate-variant-options',
+    data
+  );
+  return response.data.data;
+}
+
+// ============================================================================
+// Variant Options Values Generator
+// ============================================================================
+
+export interface GenerateVariantValuesRequest {
+  optionName: string; // e.g., "Size", "Color", "Material", "Scent"
+  productCategory?: string; // e.g., "Hair Care", "Clothing", "Electronics"
+  productType?: string; // e.g., "Shampoo", "T-Shirt", "Laptop"
+  numberOfValues?: number; // Default: 8
+  existingValues?: string[]; // Already defined values to avoid
+}
+
+export interface GeneratedVariantValue {
+  value: string;
+  displayName: string;
+  sortOrder: number;
+  description?: string;
+  reasoning: string;
+}
+
+export interface GenerateVariantValuesResponse {
+  values: GeneratedVariantValue[];
+  optionGuidelines: {
+    optionName: string;
+    recommendedCount: number;
+    bestPractices: string[];
+  };
+  reasoning: string;
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+}
+
+export async function generateVariantValues(
+  data: GenerateVariantValuesRequest
+): Promise<GenerateVariantValuesResponse> {
+  const response = await api.post<{ success: boolean; data: GenerateVariantValuesResponse }>(
+    '/admin/ai/generate-variant-values',
+    data
+  );
+  return response.data.data;
+}

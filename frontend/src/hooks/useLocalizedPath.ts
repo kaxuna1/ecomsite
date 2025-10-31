@@ -32,8 +32,10 @@ export function useChangeLanguage() {
   return (newLanguage: string) => {
     // Update URL path
     const currentPath = window.location.pathname;
-    const pathWithoutLang = currentPath.replace(/^\/(en|ka)/, '');
-    const newPath = `/${newLanguage}${pathWithoutLang}`;
+    // Remove any language prefix (matches /xx/ or /xxx/ at the start)
+    // This regex matches: slash + 2-3 lowercase letters + slash (or end of string)
+    const pathWithoutLang = currentPath.replace(/^\/[a-z]{2,3}(\/|$)/, '/');
+    const newPath = `/${newLanguage}${pathWithoutLang === '/' ? '' : pathWithoutLang}`;
 
     // Change language in i18n
     i18n.changeLanguage(newLanguage);

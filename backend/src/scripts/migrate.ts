@@ -1,4 +1,10 @@
 import { pool } from '../db/client';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const migrations = `
 CREATE TABLE IF NOT EXISTS products (
@@ -753,14 +759,61 @@ CREATE INDEX IF NOT EXISTS idx_static_translations_namespace ON static_translati
 CREATE INDEX IF NOT EXISTS idx_static_translations_lookup ON static_translations(translation_key, language_code, namespace);
 `;
 
+async function seedTranslations() {
+  try {
+    const sqlPath = path.join(__dirname, 'translationsSeed.sql');
+
+    if (!fs.existsSync(sqlPath)) {
+      console.log('⚠️  Translation seed file not found. Skipping translation seeding.');
+      console.log('   Run "npm run export:translations" to generate the seed file.');
+      return;
+    }
+
+    console.log('Seeding static translations...');
+
+    const sqlContent = fs.readFileSync(sqlPath, 'utf-8');
+
+    // Remove comments and split by semicolon
+    const statements = sqlContent
+      .split('\n')
+      .filter(line => !line.trim().startsWith('--') && line.trim().length > 0)
+      .join('\n')
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    console.log(`  Processing ${statements.length} translation entries...`);
+
+    // Execute each statement
+    for (const statement of statements) {
+      await pool.query(statement);
+    }
+
+    // Verify counts
+    const countResult = await pool.query(`
+      SELECT COUNT(*) as total FROM static_translations
+    `);
+
+    console.log(`✅ Translations seeded successfully: ${countResult.rows[0].total} entries`);
+  } catch (error: any) {
+    console.error('❌ Translation seeding failed:', error.message);
+    throw error;
+  }
+}
+
 async function migrate() {
   try {
-    console.log('Running database migrations...');
+    console.log('🔄 Running database migrations...');
     await pool.query(migrations);
-    console.log('Database migrated successfully');
+    console.log('✅ Database schema migrated successfully');
+
+    // Automatically seed translations after migrations
+    await seedTranslations();
+
+    console.log('\n🎉 Migration and seeding complete!');
     process.exit(0);
   } catch (error) {
-    console.error('Migration failed:', error);
+    console.error('❌ Migration failed:', error);
     process.exit(1);
   }
 }

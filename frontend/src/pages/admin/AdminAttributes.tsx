@@ -18,6 +18,9 @@ import {
   type AttributeDefinition,
   type AttributeDefinitionPayload
 } from '../../api/attributes';
+import { AIAttributeGenerator } from '../../components/admin/AIAttributeGenerator';
+import { type GeneratedAttribute } from '../../api/ai';
+import toast from 'react-hot-toast';
 
 const dataTypeLabels: Record<AttributeDefinition['dataType'], string> = {
   text: 'Text',
@@ -82,6 +85,36 @@ function AdminAttributes() {
     setEditingAttribute(null);
   };
 
+  const handleAIGenerated = (generatedAttributes: GeneratedAttribute[]) => {
+    // Create attributes in batch
+    const promises = generatedAttributes.map(attr =>
+      createAttribute({
+        attributeKey: attr.attributeKey,
+        attributeLabel: attr.attributeLabel,
+        dataType: attr.dataType,
+        isSearchable: attr.isSearchable,
+        isFilterable: attr.isFilterable,
+        isRequired: attr.isRequired,
+        options: attr.options,
+        displayOrder: 0
+      })
+    );
+
+    Promise.all(promises)
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: ['admin-attributes'] });
+        toast.success(`Successfully created ${generatedAttributes.length} attributes!`, {
+          duration: 4000
+        });
+      })
+      .catch((error) => {
+        console.error('Error creating attributes:', error);
+        toast.error('Some attributes failed to create. Check console for details.');
+      });
+  };
+
+  const existingAttributeKeys = attributes.map(attr => attr.attributeKey);
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -92,16 +125,22 @@ function AdminAttributes() {
             Define custom attributes for product categorization and filtering
           </p>
         </div>
-        <motion.button
-          type="button"
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <PlusIcon className="h-5 w-5" />
-          Create Attribute
-        </motion.button>
+        <div className="flex items-center gap-3">
+          <AIAttributeGenerator
+            existingAttributes={existingAttributeKeys}
+            onAttributesGenerated={handleAIGenerated}
+          />
+          <motion.button
+            type="button"
+            onClick={() => handleOpenModal()}
+            className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <PlusIcon className="h-5 w-5" />
+            Create Attribute
+          </motion.button>
+        </div>
       </div>
 
       {/* Search */}
@@ -549,7 +588,11 @@ function DeleteConfirmModal({
           Delete Attribute?
         </h3>
         <p className="mb-6 text-champagne/60">
-          This action cannot be undone. Products using this attribute may be affected.
+          This will permanently delete this attribute definition and remove it from all products that use it.
+          Products will not be deleted, only the attribute data will be removed.
+        </p>
+        <p className="mb-6 text-sm text-orange-400">
+          This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button

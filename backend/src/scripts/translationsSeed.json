@@ -1,0 +1,3668 @@
+{
+  "account": [
+    {
+      "translationKey": "addresses",
+      "languageCode": "en",
+      "translationValue": "Addresses",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "addresses",
+      "languageCode": "ka",
+      "translationValue": "მისამართები",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "favorites",
+      "languageCode": "en",
+      "translationValue": "Favorites",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "favorites",
+      "languageCode": "ka",
+      "translationValue": "즐겨찾기",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "login",
+      "languageCode": "en",
+      "translationValue": "Login",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "login",
+      "languageCode": "ka",
+      "translationValue": "ログイン",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "logout",
+      "languageCode": "en",
+      "translationValue": "Logout",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "logout",
+      "languageCode": "ka",
+      "translationValue": "გამოსვლა",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "orders",
+      "languageCode": "en",
+      "translationValue": "Orders",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "orders",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთები",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "profile",
+      "languageCode": "en",
+      "translationValue": "Profile",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "profile",
+      "languageCode": "ka",
+      "translationValue": "პროფილი",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "signup",
+      "languageCode": "en",
+      "translationValue": "Sign Up",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "signup",
+      "languageCode": "ka",
+      "translationValue": "ចុះឈ្មោះ",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "welcome",
+      "languageCode": "en",
+      "translationValue": "Welcome back",
+      "namespace": "account"
+    },
+    {
+      "translationKey": "welcome",
+      "languageCode": "ka",
+      "translationValue": "ისევ მივესალმები",
+      "namespace": "account"
+    }
+  ],
+  "admin": [
+    {
+      "translationKey": "addProduct",
+      "languageCode": "en",
+      "translationValue": "Add Product",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "cms",
+      "languageCode": "en",
+      "translationValue": "CMS",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "dashboard",
+      "languageCode": "en",
+      "translationValue": "Dashboard",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "deleteProduct",
+      "languageCode": "en",
+      "translationValue": "Delete Product",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "editProduct",
+      "languageCode": "en",
+      "translationValue": "Edit Product",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "manageTranslations",
+      "languageCode": "en",
+      "translationValue": "Manage Translations",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "orders",
+      "languageCode": "en",
+      "translationValue": "Orders",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "products",
+      "languageCode": "en",
+      "translationValue": "Products",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "settings",
+      "languageCode": "en",
+      "translationValue": "Settings",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "translations",
+      "languageCode": "en",
+      "translationValue": "Translations",
+      "namespace": "admin"
+    },
+    {
+      "translationKey": "users",
+      "languageCode": "en",
+      "translationValue": "Users",
+      "namespace": "admin"
+    }
+  ],
+  "cart": [
+    {
+      "translationKey": "browse",
+      "languageCode": "en",
+      "translationValue": "Browse products",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "browse",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტების ბრაუზირება",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "checkout",
+      "languageCode": "en",
+      "translationValue": "Proceed to checkout",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "checkout",
+      "languageCode": "ka",
+      "translationValue": "checkout-ისკენ გადასვლა",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "empty",
+      "languageCode": "en",
+      "translationValue": "Your cart is currently empty.",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "empty",
+      "languageCode": "ka",
+      "translationValue": "თქვენი კალათა ამჟამად ცარიელია.",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "quantity",
+      "languageCode": "en",
+      "translationValue": "Quantity",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "quantity",
+      "languageCode": "ka",
+      "translationValue": "რაოდენობა",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "remove",
+      "languageCode": "en",
+      "translationValue": "Remove",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "remove",
+      "languageCode": "ka",
+      "translationValue": "წაშლა",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "subtotal",
+      "languageCode": "en",
+      "translationValue": "Subtotal: ${{amount}}",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "subtotal",
+      "languageCode": "ka",
+      "translationValue": "ქვე-სულ: ${{amount}}",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "en",
+      "translationValue": "Your Products",
+      "namespace": "cart"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "ka",
+      "translationValue": "თქვენი პროდუქტები",
+      "namespace": "cart"
+    }
+  ],
+  "checkout": [
+    {
+      "translationKey": "addressError",
+      "languageCode": "en",
+      "translationValue": "Address is required",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "addressError",
+      "languageCode": "ka",
+      "translationValue": "მისამართი აუცილებელია",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "addressLabel",
+      "languageCode": "en",
+      "translationValue": "Address",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "addressLabel",
+      "languageCode": "ka",
+      "translationValue": "მისამართი",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "contactLegend",
+      "languageCode": "en",
+      "translationValue": "Contact Information",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "contactLegend",
+      "languageCode": "ka",
+      "translationValue": "Contact Information",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "emailError",
+      "languageCode": "en",
+      "translationValue": "Email is required",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "emailError",
+      "languageCode": "ka",
+      "translationValue": "Email is required",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "emailLabel",
+      "languageCode": "en",
+      "translationValue": "Email address",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "emailLabel",
+      "languageCode": "ka",
+      "translationValue": "Email address",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "error",
+      "languageCode": "en",
+      "translationValue": "An error occurred. Please try again or contact our concierge.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "error",
+      "languageCode": "ka",
+      "translationValue": "შეცდომა მოხდა. გთხოვთ, სცადოთ ხელახლა ან დაუკავშირდით ჩვენს კონსიერჟს.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "intro",
+      "languageCode": "en",
+      "translationValue": "After confirming your order, you will receive an email and SMS with manual payment instructions. Orders ship once payment is verified by our concierge team.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "intro",
+      "languageCode": "ka",
+      "translationValue": "თქვენი შეკვეთის დადასტურების შემდეგ, თქვენ მიიღებთ ელ-ფოსტას და SMS-ს ხელით გადახდის ინსტრუქციებით. შეკვეთები იგზავნება მას შემდეგ, რაც ჩვენი კონსიერჟ-გუნდი გადახდას დაადასტურებს.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "manualProcessing",
+      "languageCode": "en",
+      "translationValue": "Payment is processed manually for bespoke verification. Expect a confirmation within 24 hours.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "manualProcessing",
+      "languageCode": "ka",
+      "translationValue": "გადახდა ხელით დამუშავდება სპეციალური გადამოწმებისთვის. დაადასტურეთ პასუხი 24 საათის განმავლობაში.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "nameError",
+      "languageCode": "en",
+      "translationValue": "Please enter your name",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "nameError",
+      "languageCode": "ka",
+      "translationValue": "Please enter your name",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "nameLabel",
+      "languageCode": "en",
+      "translationValue": "Full name",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "nameLabel",
+      "languageCode": "ka",
+      "translationValue": "სრული სახელი",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "notesLabel",
+      "languageCode": "en",
+      "translationValue": "Order notes (optional)",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "notesLabel",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის შენიშვნები (სურვილისამებრ)",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "orderTotal",
+      "languageCode": "en",
+      "translationValue": "Order Total",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "orderTotal",
+      "languageCode": "ka",
+      "translationValue": "Order Total",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "phoneLabel",
+      "languageCode": "en",
+      "translationValue": "Phone (optional for SMS updates)",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "phoneLabel",
+      "languageCode": "ka",
+      "translationValue": "ტელეფონი (სმს განახლებებისთვის არასავალდებულო)",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "placeOrder",
+      "languageCode": "en",
+      "translationValue": "Place order",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "placeOrder",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის განთავსება",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "shippingLegend",
+      "languageCode": "en",
+      "translationValue": "Shipping",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "shippingLegend",
+      "languageCode": "ka",
+      "translationValue": "Shipping",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "submitting",
+      "languageCode": "en",
+      "translationValue": "Submitting…",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "submitting",
+      "languageCode": "ka",
+      "translationValue": "გაგზავნება მიმდინარეობს…",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "success",
+      "languageCode": "en",
+      "translationValue": "Thank you. We have emailed manual payment instructions and will ship once confirmed.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "success",
+      "languageCode": "ka",
+      "translationValue": "Thank you. We have emailed manual payment instructions and will ship once confirmed.",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "en",
+      "translationValue": "Secure Checkout",
+      "namespace": "checkout"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "ka",
+      "translationValue": "უსაფრთხო გადახდა",
+      "namespace": "checkout"
+    }
+  ],
+  "common": [
+    {
+      "translationKey": "account.favorites",
+      "languageCode": "en",
+      "translationValue": "Favorites",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "account.favorites",
+      "languageCode": "ka",
+      "translationValue": "რჩეულები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "account.orders",
+      "languageCode": "en",
+      "translationValue": "Orders",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "account.orders",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "account.profile",
+      "languageCode": "en",
+      "translationValue": "Profile",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "account.profile",
+      "languageCode": "ka",
+      "translationValue": "პროფილი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addNew",
+      "languageCode": "en",
+      "translationValue": "Add New",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addNew",
+      "languageCode": "ka",
+      "translationValue": "ახლის დამატება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addOneToSaveTime",
+      "languageCode": "en",
+      "translationValue": "Add one to save time on future orders",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addOneToSaveTime",
+      "languageCode": "ka",
+      "translationValue": "დაამატეთ მისამართი მომავალი შეკვეთებისთვის დროის დაზოგვის მიზნით",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addedError",
+      "languageCode": "en",
+      "translationValue": "Failed to add address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addedError",
+      "languageCode": "ka",
+      "translationValue": "მისამართის დამატება ვერ მოხერხდა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addedSuccess",
+      "languageCode": "en",
+      "translationValue": "Address added successfully",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.addedSuccess",
+      "languageCode": "ka",
+      "translationValue": "მისამართი წარმატებით დაემატა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.aptSuite",
+      "languageCode": "en",
+      "translationValue": "Apt, Suite (Optional)",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.aptSuite",
+      "languageCode": "ka",
+      "translationValue": "ბინა, ოფისი (არასავალდებულო)",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.cancel",
+      "languageCode": "en",
+      "translationValue": "Cancel",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.cancel",
+      "languageCode": "ka",
+      "translationValue": "გაუქმება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.city",
+      "languageCode": "en",
+      "translationValue": "City",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.city",
+      "languageCode": "ka",
+      "translationValue": "ქალაქი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.default",
+      "languageCode": "en",
+      "translationValue": "Default",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.default",
+      "languageCode": "ka",
+      "translationValue": "ძირითადი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.defaultUpdateError",
+      "languageCode": "en",
+      "translationValue": "Failed to update default address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.defaultUpdateError",
+      "languageCode": "ka",
+      "translationValue": "ძირითადი მისამართის განახლება ვერ მოხერხდა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.defaultUpdated",
+      "languageCode": "en",
+      "translationValue": "Default address updated",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.defaultUpdated",
+      "languageCode": "ka",
+      "translationValue": "ძირითადი მისამართი განახლდა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.delete",
+      "languageCode": "en",
+      "translationValue": "Delete",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.delete",
+      "languageCode": "ka",
+      "translationValue": "წაშლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deleteConfirm",
+      "languageCode": "en",
+      "translationValue": "Delete address for {{name}}?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deleteConfirm",
+      "languageCode": "ka",
+      "translationValue": "წავშალო მისამართი {{name}}-სთვის?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deletedError",
+      "languageCode": "en",
+      "translationValue": "Failed to delete address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deletedError",
+      "languageCode": "ka",
+      "translationValue": "მისამართის წაშლა ვერ მოხერხდა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deletedSuccess",
+      "languageCode": "en",
+      "translationValue": "Address deleted",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.deletedSuccess",
+      "languageCode": "ka",
+      "translationValue": "მისამართი წაიშალა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.fullName",
+      "languageCode": "en",
+      "translationValue": "Full Name",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.fullName",
+      "languageCode": "ka",
+      "translationValue": "სრული სახელი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.label",
+      "languageCode": "en",
+      "translationValue": "Label",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.label",
+      "languageCode": "ka",
+      "translationValue": "ნიშნული",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelHome",
+      "languageCode": "en",
+      "translationValue": "Home",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelHome",
+      "languageCode": "ka",
+      "translationValue": "სახლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelOther",
+      "languageCode": "en",
+      "translationValue": "Other",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelOther",
+      "languageCode": "ka",
+      "translationValue": "სხვა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelWork",
+      "languageCode": "en",
+      "translationValue": "Work",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.labelWork",
+      "languageCode": "ka",
+      "translationValue": "სამსახური",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.loadingAddresses",
+      "languageCode": "en",
+      "translationValue": "Loading addresses...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.loadingAddresses",
+      "languageCode": "ka",
+      "translationValue": "მისამართები იტვირთება...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.noSavedYet",
+      "languageCode": "en",
+      "translationValue": "No saved addresses yet",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.noSavedYet",
+      "languageCode": "ka",
+      "translationValue": "ჯერ არ არის შენახული მისამართები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.phone",
+      "languageCode": "en",
+      "translationValue": "Phone",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.phone",
+      "languageCode": "ka",
+      "translationValue": "ტელეფონი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.postalCode",
+      "languageCode": "en",
+      "translationValue": "Postal Code",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.postalCode",
+      "languageCode": "ka",
+      "translationValue": "საფოსტო ინდექსი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.saveAddress",
+      "languageCode": "en",
+      "translationValue": "Save Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.saveAddress",
+      "languageCode": "ka",
+      "translationValue": "მისამართის შენახვა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.savedAddresses",
+      "languageCode": "en",
+      "translationValue": "Saved Addresses",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.savedAddresses",
+      "languageCode": "ka",
+      "translationValue": "შენახული მისამართები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.saving",
+      "languageCode": "en",
+      "translationValue": "Saving...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.saving",
+      "languageCode": "ka",
+      "translationValue": "ინახება...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.setAsDefault",
+      "languageCode": "en",
+      "translationValue": "Set as default",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.setAsDefault",
+      "languageCode": "ka",
+      "translationValue": "დაყენება ძირითადად",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.state",
+      "languageCode": "en",
+      "translationValue": "State",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.state",
+      "languageCode": "ka",
+      "translationValue": "რეგიონი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.streetAddress",
+      "languageCode": "en",
+      "translationValue": "Street Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "address.streetAddress",
+      "languageCode": "ka",
+      "translationValue": "ქუჩის მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "brand",
+      "languageCode": "en",
+      "translationValue": "Luxia",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "brand",
+      "languageCode": "ka",
+      "translationValue": "ლუქსია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "brandTagline",
+      "languageCode": "en",
+      "translationValue": "Luxia Products — Elevated scalp care",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "brandTagline",
+      "languageCode": "ka",
+      "translationValue": "ლუქსია პროდუქტები — თავის კანის მაღალი დონის მოვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.bestPriceGuarantee",
+      "languageCode": "en",
+      "translationValue": "Best price guarantee",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.bestPriceGuarantee",
+      "languageCode": "ka",
+      "translationValue": "საუკეთესო ფასის გარანტია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.cancel",
+      "languageCode": "en",
+      "translationValue": "Cancel",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.cancel",
+      "languageCode": "ka",
+      "translationValue": "გაუქმება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.continueShopping",
+      "languageCode": "en",
+      "translationValue": "Continue Shopping",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.continueShopping",
+      "languageCode": "ka",
+      "translationValue": "განაგრძეთ შოპინგი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.discount",
+      "languageCode": "en",
+      "translationValue": "Discount",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.discount",
+      "languageCode": "ka",
+      "translationValue": "ფასდაკლება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.emptyMessage",
+      "languageCode": "en",
+      "translationValue": "Add some items to your cart to get started on your beauty journey",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.emptyMessage",
+      "languageCode": "ka",
+      "translationValue": "დაამატეთ პროდუქტები კალათაში თქვენი სილამაზის მოგზაურობის დასაწყებად",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.enterPromoCode",
+      "languageCode": "en",
+      "translationValue": "Enter promo code",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.enterPromoCode",
+      "languageCode": "ka",
+      "translationValue": "შეიყვანეთ პრომო კოდი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.estimatedTax",
+      "languageCode": "en",
+      "translationValue": "Estimated Tax",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.estimatedTax",
+      "languageCode": "ka",
+      "translationValue": "სავარაუდო გადასახადი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.free",
+      "languageCode": "en",
+      "translationValue": "FREE",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.free",
+      "languageCode": "ka",
+      "translationValue": "უფასო",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.freeShippingOver50",
+      "languageCode": "en",
+      "translationValue": "Free shipping on orders over $50",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.freeShippingOver50",
+      "languageCode": "ka",
+      "translationValue": "უფასო მიწოდება $50-ზე მეტი შეკვეთისთვის",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.freeShippingProgress",
+      "languageCode": "en",
+      "translationValue": "Add ${{amount}} more for FREE shipping!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.freeShippingProgress",
+      "languageCode": "ka",
+      "translationValue": "დაამატეთ ${{amount}} უფასო მიწოდებისთვის!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.havePromoCode",
+      "languageCode": "en",
+      "translationValue": "Have a promo code?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.havePromoCode",
+      "languageCode": "ka",
+      "translationValue": "გაქვთ პრომო კოდი?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.invalidPromoCode",
+      "languageCode": "en",
+      "translationValue": "Invalid promo code",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.invalidPromoCode",
+      "languageCode": "ka",
+      "translationValue": "არასწორი პრომო კოდი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.item",
+      "languageCode": "en",
+      "translationValue": "item",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.item",
+      "languageCode": "ka",
+      "translationValue": "ნივთი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.itemTotal",
+      "languageCode": "en",
+      "translationValue": "Item total:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.itemTotal",
+      "languageCode": "ka",
+      "translationValue": "ნივთის ჯამი:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.items",
+      "languageCode": "en",
+      "translationValue": "items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.items",
+      "languageCode": "ka",
+      "translationValue": "ნივთი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.itemsInCart",
+      "languageCode": "en",
+      "translationValue": "in your cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.itemsInCart",
+      "languageCode": "ka",
+      "translationValue": "თქვენს კალათაში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.moreItems",
+      "languageCode": "en",
+      "translationValue": "more items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.moreItems",
+      "languageCode": "ka",
+      "translationValue": "სხვა ნივთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.onlyLeftInStock",
+      "languageCode": "en",
+      "translationValue": "Only {{count}} left in stock",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.onlyLeftInStock",
+      "languageCode": "ka",
+      "translationValue": "მხოლოდ {{count}} დარჩა მარაგში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.orderSummary",
+      "languageCode": "en",
+      "translationValue": "Order Summary",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.orderSummary",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის ჯამი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.price",
+      "languageCode": "en",
+      "translationValue": "Price",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.price",
+      "languageCode": "ka",
+      "translationValue": "ფასი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.proceedToCheckout",
+      "languageCode": "en",
+      "translationValue": "Proceed to Checkout",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.proceedToCheckout",
+      "languageCode": "ka",
+      "translationValue": "გადასვლა შეკვეთაზე",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoApplied",
+      "languageCode": "en",
+      "translationValue": "Promo Applied",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoApplied",
+      "languageCode": "ka",
+      "translationValue": "პრომო გამოყენებულია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoCodeAppliedSuccess",
+      "languageCode": "en",
+      "translationValue": "Promo code applied! You saved ${{discount}}",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoCodeAppliedSuccess",
+      "languageCode": "ka",
+      "translationValue": "პრომო კოდი გამოყენებულია! თქვენ დაზოგეთ ${{discount}}",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoCodeRemoved",
+      "languageCode": "en",
+      "translationValue": "Promo code removed",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.promoCodeRemoved",
+      "languageCode": "ka",
+      "translationValue": "პრომო კოდი წაშლილია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.qty",
+      "languageCode": "en",
+      "translationValue": "Qty:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.qty",
+      "languageCode": "ka",
+      "translationValue": "რაოდ:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.remove",
+      "languageCode": "en",
+      "translationValue": "Remove",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.remove",
+      "languageCode": "ka",
+      "translationValue": "წაშლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.removedFromCart",
+      "languageCode": "en",
+      "translationValue": "{{productName}} removed from cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.removedFromCart",
+      "languageCode": "ka",
+      "translationValue": "{{productName}} წაიშალა კალათიდან",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.shipping",
+      "languageCode": "en",
+      "translationValue": "Shipping",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.shipping",
+      "languageCode": "ka",
+      "translationValue": "მიწოდება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.sku",
+      "languageCode": "en",
+      "translationValue": "SKU",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.sku",
+      "languageCode": "ka",
+      "translationValue": "SKU",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.subtotal",
+      "languageCode": "en",
+      "translationValue": "Subtotal:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.subtotal",
+      "languageCode": "ka",
+      "translationValue": "შუალედური ჯამი:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.title",
+      "languageCode": "en",
+      "translationValue": "Your Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.title",
+      "languageCode": "ka",
+      "translationValue": "შენი კალათა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.total",
+      "languageCode": "en",
+      "translationValue": "Total",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.total",
+      "languageCode": "ka",
+      "translationValue": "სულ",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.viewCart",
+      "languageCode": "en",
+      "translationValue": "View Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.viewCart",
+      "languageCode": "ka",
+      "translationValue": "კალათის ნახვა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.yourCart",
+      "languageCode": "en",
+      "translationValue": "Your Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "cart.yourCart",
+      "languageCode": "ka",
+      "translationValue": "თქვენი კალათა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addMoreForFreeShipping",
+      "languageCode": "en",
+      "translationValue": "Add ${{amount}} more for free shipping",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addMoreForFreeShipping",
+      "languageCode": "ka",
+      "translationValue": "დაამატეთ ${{amount}} უფასო მიწოდებისთვის",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressError",
+      "languageCode": "en",
+      "translationValue": "Address is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressError",
+      "languageCode": "ka",
+      "translationValue": "მისამართი აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressLabel",
+      "languageCode": "en",
+      "translationValue": "Shipping Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressLabel",
+      "languageCode": "ka",
+      "translationValue": "მიწოდების მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressPlaceholder",
+      "languageCode": "en",
+      "translationValue": "Street address, city, state, postal code",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.addressPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "ქუჩის მისამართი, ქალაქი, რაიონი, საფოსტო ინდექსი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.backToCart",
+      "languageCode": "en",
+      "translationValue": "Back to Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.backToCart",
+      "languageCode": "ka",
+      "translationValue": "უკან კალათაში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.contactLegend",
+      "languageCode": "en",
+      "translationValue": "Contact",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.contactLegend",
+      "languageCode": "ka",
+      "translationValue": "კონტაქტი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.continueAsGuest",
+      "languageCode": "en",
+      "translationValue": "Or continue below as a guest",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.continueAsGuest",
+      "languageCode": "ka",
+      "translationValue": "ან განაგრძეთ როგორც სტუმარი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.createAccount",
+      "languageCode": "en",
+      "translationValue": "Create Account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.createAccount",
+      "languageCode": "ka",
+      "translationValue": "ანგარიშის შექმნა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.deliveryInfo",
+      "languageCode": "en",
+      "translationValue": "& Delivery",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.deliveryInfo",
+      "languageCode": "ka",
+      "translationValue": "და მიწოდება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailError",
+      "languageCode": "en",
+      "translationValue": "Email is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailError",
+      "languageCode": "ka",
+      "translationValue": "ელ-ფოსტა აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailInvalid",
+      "languageCode": "en",
+      "translationValue": "Invalid email address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailInvalid",
+      "languageCode": "ka",
+      "translationValue": "არასწორი ელ-ფოსტის მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailLabel",
+      "languageCode": "en",
+      "translationValue": "Email Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailLabel",
+      "languageCode": "ka",
+      "translationValue": "ელექტრონული ფოსტა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailPlaceholder",
+      "languageCode": "en",
+      "translationValue": "your@email.com",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.emailPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "თქვენი@ფოსტა.com",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.error",
+      "languageCode": "en",
+      "translationValue": "Failed to place order. Please try again.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.error",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის გაფორმება ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.haveAccount",
+      "languageCode": "en",
+      "translationValue": "Have an account?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.haveAccount",
+      "languageCode": "ka",
+      "translationValue": "გაქვთ ანგარიში?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.intro",
+      "languageCode": "en",
+      "translationValue": "Complete your order by filling in the details below",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.intro",
+      "languageCode": "ka",
+      "translationValue": "შეავსეთ ქვემოთ მოცემული დეტალები შეკვეთის დასასრულებლად",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.logIn",
+      "languageCode": "en",
+      "translationValue": "Log In",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.logIn",
+      "languageCode": "ka",
+      "translationValue": "შესვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.loggedInAs",
+      "languageCode": "en",
+      "translationValue": "Logged in as {{name}}",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.loggedInAs",
+      "languageCode": "ka",
+      "translationValue": "შესული ხართ როგორც {{name}}",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.loginBenefit",
+      "languageCode": "en",
+      "translationValue": "Log in to enjoy faster checkout, saved addresses, and order tracking.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.loginBenefit",
+      "languageCode": "ka",
+      "translationValue": "შედით სისტემაში სწრაფი შეკვეთისთვის, შენახული მისამართებისთვის და შეკვეთების თვალთვალისთვის.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.manualProcessing",
+      "languageCode": "en",
+      "translationValue": "Orders are manually processed. You will receive payment instructions via email.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.manualProcessing",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთები მუშავდება ხელით. თქვენ მიიღებთ გადახდის ინსტრუქციებს ელ-ფოსტაზე.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.nameError",
+      "languageCode": "en",
+      "translationValue": "Name is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.nameError",
+      "languageCode": "ka",
+      "translationValue": "სახელი აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.nameLabel",
+      "languageCode": "en",
+      "translationValue": "Full Name",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.nameLabel",
+      "languageCode": "ka",
+      "translationValue": "სრული სახელი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.namePlaceholder",
+      "languageCode": "en",
+      "translationValue": "Enter your full name",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.namePlaceholder",
+      "languageCode": "ka",
+      "translationValue": "შეიყვანეთ თქვენი სრული სახელი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.notesLabel",
+      "languageCode": "en",
+      "translationValue": "Order Notes",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.notesLabel",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის შენიშვნები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.notesPlaceholder",
+      "languageCode": "en",
+      "translationValue": "Delivery instructions, gift message, etc.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.notesPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "მიწოდების ინსტრუქციები, საჩუქრის მესიჯი და ა.შ.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.orderItems",
+      "languageCode": "en",
+      "translationValue": "Order Items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.orderItems",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის ნივთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.orderTotal",
+      "languageCode": "en",
+      "translationValue": "Order Total",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.orderTotal",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის ჯამი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.phoneLabel",
+      "languageCode": "en",
+      "translationValue": "Phone Number",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.phoneLabel",
+      "languageCode": "ka",
+      "translationValue": "ტელეფონის ნომერი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.phonePlaceholder",
+      "languageCode": "en",
+      "translationValue": "+1 (555) 000-0000",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.phonePlaceholder",
+      "languageCode": "ka",
+      "translationValue": "+995 555 00 00 00",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.placeOrder",
+      "languageCode": "en",
+      "translationValue": "Place Order",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.placeOrder",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის გაფორმება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.qty",
+      "languageCode": "en",
+      "translationValue": "Qty",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.qty",
+      "languageCode": "ka",
+      "translationValue": "რაოდ.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.submitting",
+      "languageCode": "en",
+      "translationValue": "Processing...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.submitting",
+      "languageCode": "ka",
+      "translationValue": "მუშავდება...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.subtotal",
+      "languageCode": "en",
+      "translationValue": "Subtotal",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.subtotal",
+      "languageCode": "ka",
+      "translationValue": "შუალედური ჯამი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.success",
+      "languageCode": "en",
+      "translationValue": "Order placed successfully!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.success",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთა წარმატებით გაფორმდა!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.tax",
+      "languageCode": "en",
+      "translationValue": "Tax (10%)",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.tax",
+      "languageCode": "ka",
+      "translationValue": "გადასახადი (10%)",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.title",
+      "languageCode": "en",
+      "translationValue": "Checkout",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "checkout.title",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის გაფორმება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "common.brand",
+      "languageCode": "en",
+      "translationValue": "Luxia Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "common.brand",
+      "languageCode": "ka",
+      "translationValue": "Luxia Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.addToCart",
+      "languageCode": "en",
+      "translationValue": "Add to Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.addToCart",
+      "languageCode": "ka",
+      "translationValue": "კალათაში დამატება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.browseProducts",
+      "languageCode": "en",
+      "translationValue": "Browse Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.browseProducts",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტების დათვალიერება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.itemInFavorites",
+      "languageCode": "en",
+      "translationValue": "in your favorites",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.itemInFavorites",
+      "languageCode": "ka",
+      "translationValue": "თქვენს რჩეულებში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.loadError",
+      "languageCode": "en",
+      "translationValue": "Failed to load favorites. Please try again.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.loadError",
+      "languageCode": "ka",
+      "translationValue": "რჩეულების ჩატვირთვა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.loading",
+      "languageCode": "en",
+      "translationValue": "Loading your favorites...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.loading",
+      "languageCode": "ka",
+      "translationValue": "თქვენი რჩეულების ჩატვირთვა...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.new",
+      "languageCode": "en",
+      "translationValue": "NEW",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.new",
+      "languageCode": "ka",
+      "translationValue": "ახალი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.noFavoritesMessage",
+      "languageCode": "en",
+      "translationValue": "Start adding products to your favorites to see them here",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.noFavoritesMessage",
+      "languageCode": "ka",
+      "translationValue": "დაამატეთ პროდუქტები თქვენს რჩეულებში რომ ისინი აქ დაინახოთ",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.noFavoritesTitle",
+      "languageCode": "en",
+      "translationValue": "No Favorites Yet",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.noFavoritesTitle",
+      "languageCode": "ka",
+      "translationValue": "ჯერ არ გაქვთ რჩეულები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.off",
+      "languageCode": "en",
+      "translationValue": "% OFF",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.off",
+      "languageCode": "ka",
+      "translationValue": "% ფასდაკლება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.outOfStock",
+      "languageCode": "en",
+      "translationValue": "Out of Stock",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.outOfStock",
+      "languageCode": "ka",
+      "translationValue": "აღარ არის მარაგში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.sale",
+      "languageCode": "en",
+      "translationValue": "SALE",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.sale",
+      "languageCode": "ka",
+      "translationValue": "ფასდაკლება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.selectOptions",
+      "languageCode": "en",
+      "translationValue": "Select Options",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.selectOptions",
+      "languageCode": "ka",
+      "translationValue": "აირჩიეთ ვარიანტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.subtitle",
+      "languageCode": "en",
+      "translationValue": "Your curated collection of favorite items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.subtitle",
+      "languageCode": "ka",
+      "translationValue": "თქვენი რჩეული ნივთების კოლექცია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.title",
+      "languageCode": "en",
+      "translationValue": "My Favorites",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "favorites.title",
+      "languageCode": "ka",
+      "translationValue": "ჩემი რჩეულები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.crafted",
+      "languageCode": "en",
+      "translationValue": "© {{year}} Luxia Products. Crafted with reverence for healthy scalps.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.crafted",
+      "languageCode": "ka",
+      "translationValue": "© {{year}} Luxia Products. ჯანმრთელი თავის ტყავის প্রতি პატივისცემით შექმნილი.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.stay",
+      "languageCode": "en",
+      "translationValue": "Stay in touch",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.stay",
+      "languageCode": "ka",
+      "translationValue": "კავშირში დარჩით",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.visit",
+      "languageCode": "en",
+      "translationValue": "Visit",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "footer.visit",
+      "languageCode": "ka",
+      "translationValue": "ვიზიტი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "header.announcement",
+      "languageCode": "en",
+      "translationValue": "FREE SHIPPING OVER $50 | NEW CUSTOMER? GET 10% OFF WITH CODE: WELCOME10",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "header.announcement",
+      "languageCode": "ka",
+      "translationValue": "უფასო მიწოდება $50-ზე მეტი შეკვეთისას | ახალი კლიენტი? მიიღეთ 10% ფასდაკლება კოდით: WELCOME10",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.ctaPrimary",
+      "languageCode": "en",
+      "translationValue": "Explore collections",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.ctaPrimary",
+      "languageCode": "ka",
+      "translationValue": "კოლექციების გამოკვლევა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.ctaSecondary",
+      "languageCode": "en",
+      "translationValue": "Reserve consultation",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.ctaSecondary",
+      "languageCode": "ka",
+      "translationValue": "კონსულტაციის დაჯავშნა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.description",
+      "languageCode": "en",
+      "translationValue": "Our clinically proven serums, masks, and massage tools restore balance to the scalp biome, delivering shine and resilience worthy of a crown.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.description",
+      "languageCode": "ka",
+      "translationValue": "ჩვენი კლინიკურად დადასტურებული სერუმები, მასკები და მასაჟის ხელსაწყოები აღადგენენ თავის კანის ბიომის ბალანსს, რაც უზრუნველყოფს ბრწყინვალებას და მდგრადობას, რომელიც ღირსია გვირგვინის.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.clinicalDescription",
+      "languageCode": "en",
+      "translationValue": "Dermatologist-reviewed ingredients calm irritation and rebalance the scalp microbiome without silicones or sulfates.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.clinicalDescription",
+      "languageCode": "ka",
+      "translationValue": "დერმატოლოგის მიერ გადამოწმებული ინგრედიენტები დამშვიდებენ წაბლიანობას და აბალანსებენ თავის ტყავის მიკრობიომს სილიკონებისა და სულფატების გარეშე.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.clinicalTitle",
+      "languageCode": "en",
+      "translationValue": "Clinically vetted actives",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.clinicalTitle",
+      "languageCode": "ka",
+      "translationValue": "კლინიკურად დამტკიცებული აქტიური ნივთიერებები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.ritualDescription",
+      "languageCode": "en",
+      "translationValue": "Layerable textures and precision tools turn nightly care into a restorative ceremony.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.ritualDescription",
+      "languageCode": "ka",
+      "translationValue": "ფენიანი ტექსტურები და სიზუსტის ხელსაწყოები ღამის მოვლას აღდგენილ ცერემონიად აქცევს.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.ritualTitle",
+      "languageCode": "en",
+      "translationValue": "Modern ritual essentials",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.highlights.ritualTitle",
+      "languageCode": "ka",
+      "translationValue": "თანამედროვე რიტუალის აუცილებელი ნივთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.label",
+      "languageCode": "en",
+      "translationValue": "Scalp Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.label",
+      "languageCode": "ka",
+      "translationValue": "頭皮製品",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.consultations",
+      "languageCode": "en",
+      "translationValue": "Personal consultations completed",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.consultations",
+      "languageCode": "ka",
+      "translationValue": "ব্যক্তিগত পরামর্শ সম্পন্ন",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.satisfaction",
+      "languageCode": "en",
+      "translationValue": "Client satisfaction rating",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.satisfaction",
+      "languageCode": "ka",
+      "translationValue": "კლიენტის კმაყოფილების რეიტინგი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.turnaround",
+      "languageCode": "en",
+      "translationValue": "Average concierge response time",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.metrics.turnaround",
+      "languageCode": "ka",
+      "translationValue": "საშუალო კონსიერჟის პასუხის დრო",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.promise",
+      "languageCode": "en",
+      "translationValue": "Clinical-grade scalp rituals, delivered with concierge care.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.promise",
+      "languageCode": "ka",
+      "translationValue": "კლინიკური დონის თავის კანის რიტუალები, კონსიერჟ სერვისით.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.title",
+      "languageCode": "en",
+      "translationValue": "Illuminate your hair from the root",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "hero.title",
+      "languageCode": "ka",
+      "translationValue": "თქვენი თმის ფესვიდან განათება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.designedBody",
+      "languageCode": "en",
+      "translationValue": "Our experts blend holistic massage therapy with targeted actives to calm inflammation, reduce shedding, and accelerate healthy growth cycles.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.designedBody",
+      "languageCode": "ka",
+      "translationValue": "ჩვენი ექსპერტები აერთიანებენ ჰოლისტიკური მასაჟის თერაპიას მიზნობრივი აქტიური ინგრედიენტებით, რათა შეამციროს ანთება, შეწყვიტოს თმის დაკარგვა და დააჩქაროს ჯანმრთელი ზრდის ციკლი.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.designedTitle",
+      "languageCode": "en",
+      "translationValue": "Products designed by trichologists",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.designedTitle",
+      "languageCode": "ka",
+      "translationValue": "ტრიქოლოგების მიერ დიზაინერი პროდუქტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredHeading",
+      "languageCode": "en",
+      "translationValue": "Signature Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredHeading",
+      "languageCode": "ka",
+      "translationValue": "ხელმოწერილი პროდუქტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredIntro",
+      "languageCode": "en",
+      "translationValue": "From detoxifying scalp masks to overnight serums, our products are meticulously packaged for elevated vanities and travel essentials alike.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredIntro",
+      "languageCode": "ka",
+      "translationValue": "დეტოქსიკაციური თავის ტყავის მასკებიდან ღამის სერუმებამდე, ჩვენი პროდუქტები ფრთხილად შეფუთულია ელეგანტური სილამაზის მაგიდებისა და მოგზაურობის აუცილებელი ნივთებისთვის.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.celestialDescription",
+      "languageCode": "en",
+      "translationValue": "Volcanic enzymes and willow bark gently exfoliate buildup while micro algae replenish essential minerals.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.celestialDescription",
+      "languageCode": "ka",
+      "translationValue": "ვულკანური ფერმენტები და ტყის ღერო ნაზად აშორებენ დაგროვილ ნაშთებს, ხოლო მიკროწამწამი აღსდევს აუცილებელ მინერალებს.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.celestialName",
+      "languageCode": "en",
+      "translationValue": "Celestial Detox Mask",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.celestialName",
+      "languageCode": "ka",
+      "translationValue": "ციელესტიალური დეტოქსის მასკა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.luminousDescription",
+      "languageCode": "en",
+      "translationValue": "Cooling tonic balancing sebum and pH while infusing shine with sustainably sourced sea kelp.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.luminousDescription",
+      "languageCode": "ka",
+      "translationValue": "გამაგრილებელი ტონიკი, რომელიც აბალანსებს სებუმს და pH-ს, ხოლო ტონიკი ანათებს ბრწყინვალებას მდგრადად მოპოვებული ზღვის წიბლით.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.luminousName",
+      "languageCode": "en",
+      "translationValue": "Luminous Scalp Tonic",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.luminousName",
+      "languageCode": "ka",
+      "translationValue": "ნათელი თავის კანის ტონიკი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.nocturneDescription",
+      "languageCode": "en",
+      "translationValue": "Peptide-rich serum that floods the follicles with antioxidants and soothing ceramides overnight.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.nocturneDescription",
+      "languageCode": "ka",
+      "translationValue": "პეპტიდებით მდიდარი სერუმი, რომელიც ღამის განმავლობაში ფოლიკულებს ანტიოქსიდანტებითა და დამამშვიდებელი კერამიდებით ივსება.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.nocturneName",
+      "languageCode": "en",
+      "translationValue": "Nocturne Renewal Serum",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.featuredProducts.nocturneName",
+      "languageCode": "ka",
+      "translationValue": "ნოქტურნ განახლების სერუმი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.precisionBody",
+      "languageCode": "en",
+      "translationValue": "Luxia's bioactive concentrates feature marine stem cells, cold-pressed adaptogens, and dermatologically vetted peptides. Each formula is fragrance-free, color-safe, and tested on all hair textures.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.precisionBody",
+      "languageCode": "ka",
+      "translationValue": "Luxia-ს ბიოაქტიური კონცენტრატები შეიცავს საზღვაო ღეროვან უჯრედებს, ცივად დაჭერილ ადაპტოგენებს და დერმატოლოგიურად შემოწმებულ პეპტიდებს. თითოეული ფორმულა არის უსუნი, ფერი-უსაფრთხო და გამოცდილი ყველა ტიპის თმაზე.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.precisionTitle",
+      "languageCode": "en",
+      "translationValue": "Precision-formulated for sensitive scalps",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.precisionTitle",
+      "languageCode": "ka",
+      "translationValue": "მგრძნობიარე თავის კანის জন্য ზუსტად ფორმულირებული",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchHeading",
+      "languageCode": "en",
+      "translationValue": "Backed by mindful research",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchHeading",
+      "languageCode": "ka",
+      "translationValue": "신중한 연구로 뒷받침됨",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchIntro",
+      "languageCode": "en",
+      "translationValue": "Our formulations are reviewed with dermatologists and mindfulness coaches to harmonize results with product care. Each release reflects a six-month testing cadence with real clients.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchIntro",
+      "languageCode": "ka",
+      "translationValue": "ჩვენი ფორმულები განიხილება დერმატოლოგებთან და მინდფულნესის კოჩებთან, რათა შედეგები ჰარმონიზირდეს პროდუქტის მოვლასთან. თითოეული გამოშვება ასახავს ექვსთვიანი ტესტირების ციკლს რეალური კლიენტებით.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.phBalance",
+      "languageCode": "en",
+      "translationValue": "98% reported calmer, balanced scalps after 4 weeks",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.phBalance",
+      "languageCode": "ka",
+      "translationValue": "98% მომხმარებელმა აცხადა უფრო მშვიდი, დაბალანსებული თავის ტყავის შესახებ 4 კვირის შემდეგ",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.product",
+      "languageCode": "en",
+      "translationValue": "Consistent product care improved overall hair confidence in 9 of 10 clients",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.product",
+      "languageCode": "ka",
+      "translationValue": "თანმიმდევრული პროდუქტის ზრუნვამ გაუმჯობესა თმის თავდაჯერებულობა 10-დან 9 კლიენტში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.shedding",
+      "languageCode": "en",
+      "translationValue": "87% saw visibly reduced shedding by week 6",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.researchPoints.shedding",
+      "languageCode": "ka",
+      "translationValue": "კვირა 6-ის ფარგლებში 87% შენიშნა თმის ხილული შემცირება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.avaName",
+      "languageCode": "en",
+      "translationValue": "Ava D., creative director",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.avaName",
+      "languageCode": "ka",
+      "translationValue": "ავა დ., კრეატიული დირექტორი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.avaQuote",
+      "languageCode": "en",
+      "translationValue": "\"Luxia transformed my nightly routine into a ceremony. The serum soothed my scalp within days and the glow is unreal.\"",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.avaQuote",
+      "languageCode": "ka",
+      "translationValue": "Luxia ჩემი ღამის რუტინს ceremonial-ად გადაიქცა. სერუმმა ჩემი თავის კანი რამდენიმე დღეში დამამშვიდა და ის ბრწყინვალება უნდა ნახო.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.lailaName",
+      "languageCode": "en",
+      "translationValue": "Laila K., textile artist",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.lailaName",
+      "languageCode": "ka",
+      "translationValue": "ლაილა კ., ტექსტილის მხატვარი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.lailaQuote",
+      "languageCode": "en",
+      "translationValue": "\"The consultation experience felt so personal. Their team listened to my scalp struggles and paired me with a product lineup that actually works.\"",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.lailaQuote",
+      "languageCode": "ka",
+      "translationValue": "კონსულტაციის გამოცდილება ძალიან პირადი იყო. მათი გუნდი ჩემი თმის პრობლემებს მოუსმინა და მომირჩია პროდუქტების ხაზი, რომელიც ნამდვილად მუშაობს.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.theoName",
+      "languageCode": "en",
+      "translationValue": "Theo M., movement coach",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.theoName",
+      "languageCode": "ka",
+      "translationValue": "თეო მ., მოძრაობის კოუჩი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.theoQuote",
+      "languageCode": "en",
+      "translationValue": "\"Every product feels purposeful. I love the botanical notes and the instant relief from tightness after workouts.\"",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonials.theoQuote",
+      "languageCode": "ka",
+      "translationValue": "\"ყველა პროდუქტი მიზანმიმართული და აზრიანია. მიყვარს ბოტანიკური ნოტები და ვარჯიშის შემდეგ დაძაბულობისგან მიღებული მყისიერი დამსუბუქება.\"",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonialsHeading",
+      "languageCode": "en",
+      "translationValue": "Voices from the collection",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "home.testimonialsHeading",
+      "languageCode": "ka",
+      "translationValue": "კოლექციიდან ხმები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "language",
+      "languageCode": "en",
+      "translationValue": "Language",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "language",
+      "languageCode": "ka",
+      "translationValue": "ენა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "loading",
+      "languageCode": "en",
+      "translationValue": "Loading content…",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "loading",
+      "languageCode": "ka",
+      "translationValue": "იტვირთება კონტენტი…",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.backToHome",
+      "languageCode": "en",
+      "translationValue": "Back to Home",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.backToHome",
+      "languageCode": "ka",
+      "translationValue": "მთავარზე დაბრუნება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.createAccount",
+      "languageCode": "en",
+      "translationValue": "Create one",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.createAccount",
+      "languageCode": "ka",
+      "translationValue": "შექმენით",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.email",
+      "languageCode": "en",
+      "translationValue": "Email Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.email",
+      "languageCode": "ka",
+      "translationValue": "ელ-ფოსტის მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailInvalid",
+      "languageCode": "en",
+      "translationValue": "Invalid email address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailInvalid",
+      "languageCode": "ka",
+      "translationValue": "არასწორი ელ-ფოსტის მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailPlaceholder",
+      "languageCode": "en",
+      "translationValue": "you@example.com",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "თქვენი@მაგალითი.com",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailRequired",
+      "languageCode": "en",
+      "translationValue": "Email is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.emailRequired",
+      "languageCode": "ka",
+      "translationValue": "ელ-ფოსტა აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.error",
+      "languageCode": "en",
+      "translationValue": "Invalid email or password",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.error",
+      "languageCode": "ka",
+      "translationValue": "არასწორი ელ-ფოსტა ან პაროლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.forgotPassword",
+      "languageCode": "en",
+      "translationValue": "Forgot password?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.forgotPassword",
+      "languageCode": "ka",
+      "translationValue": "დაგავიწყდათ პაროლი?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.noAccount",
+      "languageCode": "en",
+      "translationValue": "Don't have an account?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.noAccount",
+      "languageCode": "ka",
+      "translationValue": "არ გაქვთ ანგარიში?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.password",
+      "languageCode": "en",
+      "translationValue": "Password",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.password",
+      "languageCode": "ka",
+      "translationValue": "პაროლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordMinLength",
+      "languageCode": "en",
+      "translationValue": "Password must be at least 8 characters",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordMinLength",
+      "languageCode": "ka",
+      "translationValue": "პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლოს",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordPlaceholder",
+      "languageCode": "en",
+      "translationValue": "Enter your password",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "შეიყვანეთ თქვენი პაროლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordRequired",
+      "languageCode": "en",
+      "translationValue": "Password is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.passwordRequired",
+      "languageCode": "ka",
+      "translationValue": "პაროლი აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.rememberMe",
+      "languageCode": "en",
+      "translationValue": "Remember me",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.rememberMe",
+      "languageCode": "ka",
+      "translationValue": "დამიმახსოვრე",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.signIn",
+      "languageCode": "en",
+      "translationValue": "Sign In",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.signIn",
+      "languageCode": "ka",
+      "translationValue": "შესვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.signingIn",
+      "languageCode": "en",
+      "translationValue": "Signing in...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.signingIn",
+      "languageCode": "ka",
+      "translationValue": "შესვლა...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.subtitle",
+      "languageCode": "en",
+      "translationValue": "Sign in to your account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.subtitle",
+      "languageCode": "ka",
+      "translationValue": "შედით თქვენს ანგარიშში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.title",
+      "languageCode": "en",
+      "translationValue": "Welcome Back",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "login.title",
+      "languageCode": "ka",
+      "translationValue": "კეთილი იყოს თქვენი დაბრუნება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.account",
+      "languageCode": "en",
+      "translationValue": "Account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.account",
+      "languageCode": "ka",
+      "translationValue": "ანგარიში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.admin",
+      "languageCode": "en",
+      "translationValue": "Admin",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.admin",
+      "languageCode": "ka",
+      "translationValue": "ადმინი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.bestSellers",
+      "languageCode": "en",
+      "translationValue": "Best Sellers",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.bestSellers",
+      "languageCode": "ka",
+      "translationValue": "ბესტსელერები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.cart",
+      "languageCode": "en",
+      "translationValue": "Cart",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.cart",
+      "languageCode": "ka",
+      "translationValue": "კალათა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.cartWithCount",
+      "languageCode": "en",
+      "translationValue": "Cart ({{count}})",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.cartWithCount",
+      "languageCode": "ka",
+      "translationValue": "კალათა ({{count}})",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.home",
+      "languageCode": "en",
+      "translationValue": "Home",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.home",
+      "languageCode": "ka",
+      "translationValue": "მთავარი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.login",
+      "languageCode": "en",
+      "translationValue": "Login",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.login",
+      "languageCode": "ka",
+      "translationValue": "შესვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.logout",
+      "languageCode": "en",
+      "translationValue": "Logout",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.logout",
+      "languageCode": "ka",
+      "translationValue": "გასვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.newArrivals",
+      "languageCode": "en",
+      "translationValue": "New Arrivals",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.newArrivals",
+      "languageCode": "ka",
+      "translationValue": "ახალი შემოსვლები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.products",
+      "languageCode": "en",
+      "translationValue": "Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.products",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.sale",
+      "languageCode": "en",
+      "translationValue": "Sale",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.sale",
+      "languageCode": "ka",
+      "translationValue": "ფასდაკლება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.signup",
+      "languageCode": "en",
+      "translationValue": "Sign up",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "nav.signup",
+      "languageCode": "ka",
+      "translationValue": "რეგისტრაცია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.allOrders",
+      "languageCode": "en",
+      "translationValue": "All Orders",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.allOrders",
+      "languageCode": "ka",
+      "translationValue": "ყველა შეკვეთა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.cancelled",
+      "languageCode": "en",
+      "translationValue": "Cancelled",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.cancelled",
+      "languageCode": "ka",
+      "translationValue": "გაუქმებული",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.confirmed",
+      "languageCode": "en",
+      "translationValue": "Confirmed",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.confirmed",
+      "languageCode": "ka",
+      "translationValue": "დადასტურებული",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.delivered",
+      "languageCode": "en",
+      "translationValue": "Delivered",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.delivered",
+      "languageCode": "ka",
+      "translationValue": "მიტანილი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.deliveryInfo",
+      "languageCode": "en",
+      "translationValue": "Delivery Information",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.deliveryInfo",
+      "languageCode": "ka",
+      "translationValue": "მიწოდების ინფორმაცია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.item",
+      "languageCode": "en",
+      "translationValue": "item",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.item",
+      "languageCode": "ka",
+      "translationValue": "ნივთი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.items",
+      "languageCode": "en",
+      "translationValue": "items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.items",
+      "languageCode": "ka",
+      "translationValue": "ნივთი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.loadError",
+      "languageCode": "en",
+      "translationValue": "Failed to load orders. Please try again.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.loadError",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთების ჩატვირთვა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.loading",
+      "languageCode": "en",
+      "translationValue": "Loading your orders...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.loading",
+      "languageCode": "ka",
+      "translationValue": "თქვენი შეკვეთების ჩატვირთვა...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noFilteredOrders",
+      "languageCode": "en",
+      "translationValue": "No {status} orders found.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noFilteredOrders",
+      "languageCode": "ka",
+      "translationValue": "{status} შეკვეთები ვერ მოიძებნა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noOrdersMessage",
+      "languageCode": "en",
+      "translationValue": "You haven't placed any orders yet.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noOrdersMessage",
+      "languageCode": "ka",
+      "translationValue": "თქვენ ჯერ არ გაქვთ გაკეთებული შეკვეთები.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noOrdersTitle",
+      "languageCode": "en",
+      "translationValue": "No Orders Yet",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.noOrdersTitle",
+      "languageCode": "ka",
+      "translationValue": "ჯერ არ გაქვთ შეკვეთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.note",
+      "languageCode": "en",
+      "translationValue": "Note:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.note",
+      "languageCode": "ka",
+      "translationValue": "შენიშვნა:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderItems",
+      "languageCode": "en",
+      "translationValue": "Order Items",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderItems",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის ნივთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderNumber",
+      "languageCode": "en",
+      "translationValue": "Order #",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderNumber",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთა #",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderStatus",
+      "languageCode": "en",
+      "translationValue": "Order Status",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.orderStatus",
+      "languageCode": "ka",
+      "translationValue": "შეკვეთის სტატუსი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.pending",
+      "languageCode": "en",
+      "translationValue": "Pending",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.pending",
+      "languageCode": "ka",
+      "translationValue": "მოლოდინში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.quantity",
+      "languageCode": "en",
+      "translationValue": "Qty:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.quantity",
+      "languageCode": "ka",
+      "translationValue": "რაოდ:",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.shipped",
+      "languageCode": "en",
+      "translationValue": "Shipped",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.shipped",
+      "languageCode": "ka",
+      "translationValue": "გაგზავნილი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.startShopping",
+      "languageCode": "en",
+      "translationValue": "Start Shopping",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.startShopping",
+      "languageCode": "ka",
+      "translationValue": "შოპინგის დაწყება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.subtitle",
+      "languageCode": "en",
+      "translationValue": "Track and manage your orders",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.subtitle",
+      "languageCode": "ka",
+      "translationValue": "თვალყური ადევნეთ და მართეთ თქვენი შეკვეთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.title",
+      "languageCode": "en",
+      "translationValue": "My Orders",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "orders.title",
+      "languageCode": "ka",
+      "translationValue": "ჩემი შეკვეთები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.cancel",
+      "languageCode": "en",
+      "translationValue": "Cancel",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.cancel",
+      "languageCode": "ka",
+      "translationValue": "გაუქმება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.editProfile",
+      "languageCode": "en",
+      "translationValue": "Edit Profile",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.editProfile",
+      "languageCode": "ka",
+      "translationValue": "პროფილის რედაქტირება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.emailAddress",
+      "languageCode": "en",
+      "translationValue": "Email Address",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.emailAddress",
+      "languageCode": "ka",
+      "translationValue": "ელფოსტის მისამართი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.emailCannotChange",
+      "languageCode": "en",
+      "translationValue": "Email cannot be changed",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.emailCannotChange",
+      "languageCode": "ka",
+      "translationValue": "ელფოსტა ვერ შეიცვლება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.memberSince",
+      "languageCode": "en",
+      "translationValue": "Member since",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.memberSince",
+      "languageCode": "ka",
+      "translationValue": "წევრობის თარიღი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.saveChanges",
+      "languageCode": "en",
+      "translationValue": "Save Changes",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.saveChanges",
+      "languageCode": "ka",
+      "translationValue": "ცვლილებების შენახვა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.saving",
+      "languageCode": "en",
+      "translationValue": "Saving...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.saving",
+      "languageCode": "ka",
+      "translationValue": "შენახვა...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.subtitle",
+      "languageCode": "en",
+      "translationValue": "Manage your profile and preferences",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.subtitle",
+      "languageCode": "ka",
+      "translationValue": "მართეთ თქვენი პროფილი და პარამეტრები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.title",
+      "languageCode": "en",
+      "translationValue": "My Account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.title",
+      "languageCode": "ka",
+      "translationValue": "ჩემი ანგარიში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.updateError",
+      "languageCode": "en",
+      "translationValue": "Failed to update profile. Please try again.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.updateError",
+      "languageCode": "ka",
+      "translationValue": "პროფილის განახლება ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.updateSuccess",
+      "languageCode": "en",
+      "translationValue": "Profile updated successfully!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "profile.updateSuccess",
+      "languageCode": "ka",
+      "translationValue": "პროფილი წარმატებით განახლდა!",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.clear",
+      "languageCode": "en",
+      "translationValue": "Clear",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.clear",
+      "languageCode": "ka",
+      "translationValue": "გასუფთავება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.clearSearch",
+      "languageCode": "en",
+      "translationValue": "Clear search",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.clearSearch",
+      "languageCode": "ka",
+      "translationValue": "ძიების გასუფთავება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.close",
+      "languageCode": "en",
+      "translationValue": "close",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.close",
+      "languageCode": "ka",
+      "translationValue": "დახურვა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.inCategory",
+      "languageCode": "en",
+      "translationValue": "in",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.inCategory",
+      "languageCode": "ka",
+      "translationValue": "კატეგორიაში",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.navigate",
+      "languageCode": "en",
+      "translationValue": "navigate",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.navigate",
+      "languageCode": "ka",
+      "translationValue": "ნავიგაცია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.noResults",
+      "languageCode": "en",
+      "translationValue": "No products found for \"{{query}}\"",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.noResults",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტები ვერ მოიძებნა \"{{query}}\"-სთვის",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.placeholder",
+      "languageCode": "en",
+      "translationValue": "Search products...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.placeholder",
+      "languageCode": "ka",
+      "translationValue": "მოძებნეთ პროდუქტები...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.products",
+      "languageCode": "en",
+      "translationValue": "Products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.products",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.recentSearches",
+      "languageCode": "en",
+      "translationValue": "Recent Searches",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.recentSearches",
+      "languageCode": "ka",
+      "translationValue": "ბოლო ძიებები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.searchForProducts",
+      "languageCode": "en",
+      "translationValue": "Search for products",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.searchForProducts",
+      "languageCode": "ka",
+      "translationValue": "მოძებნეთ პროდუქტები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.select",
+      "languageCode": "en",
+      "translationValue": "select",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.select",
+      "languageCode": "ka",
+      "translationValue": "არჩევა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.startTyping",
+      "languageCode": "en",
+      "translationValue": "Start typing to see suggestions",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.startTyping",
+      "languageCode": "ka",
+      "translationValue": "დაიწყეთ აკრეფა რჩევების სანახავად",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.tryDifferentKeywords",
+      "languageCode": "en",
+      "translationValue": "Try different keywords",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.tryDifferentKeywords",
+      "languageCode": "ka",
+      "translationValue": "სცადეთ სხვა საძიებო სიტყვები",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.viewAllResults",
+      "languageCode": "en",
+      "translationValue": "View all {{count}} results →",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "search.viewAllResults",
+      "languageCode": "ka",
+      "translationValue": "ყველა {{count}} შედეგის ნახვა →",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.backToHome",
+      "languageCode": "en",
+      "translationValue": "Back to Home",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.backToHome",
+      "languageCode": "ka",
+      "translationValue": "მთავარზე დაბრუნება",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPassword",
+      "languageCode": "en",
+      "translationValue": "Confirm Password",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPassword",
+      "languageCode": "ka",
+      "translationValue": "დაადასტურეთ პაროლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPasswordPlaceholder",
+      "languageCode": "en",
+      "translationValue": "••••••••",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPasswordPlaceholder",
+      "languageCode": "ka",
+      "translationValue": "••••••••",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPasswordRequired",
+      "languageCode": "en",
+      "translationValue": "Please confirm your password",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.confirmPasswordRequired",
+      "languageCode": "ka",
+      "translationValue": "გთხოვთ დაადასტუროთ პაროლი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.createAccount",
+      "languageCode": "en",
+      "translationValue": "Create Account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.createAccount",
+      "languageCode": "ka",
+      "translationValue": "ანგარიშის შექმნა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.creatingAccount",
+      "languageCode": "en",
+      "translationValue": "Creating Account...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.creatingAccount",
+      "languageCode": "ka",
+      "translationValue": "ანგარიშის შექმნა...",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.error",
+      "languageCode": "en",
+      "translationValue": "Failed to create account. Please try again.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.error",
+      "languageCode": "ka",
+      "translationValue": "ანგარიშის შექმნა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.fullName",
+      "languageCode": "en",
+      "translationValue": "Full Name",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.fullName",
+      "languageCode": "ka",
+      "translationValue": "სრული სახელი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.haveAccount",
+      "languageCode": "en",
+      "translationValue": "Already have an account?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.haveAccount",
+      "languageCode": "ka",
+      "translationValue": "უკვე გაქვთ ანგარიში?",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.nameMinLength",
+      "languageCode": "en",
+      "translationValue": "Name must be at least 2 characters",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.nameMinLength",
+      "languageCode": "ka",
+      "translationValue": "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.namePlaceholder",
+      "languageCode": "en",
+      "translationValue": "John Doe",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.namePlaceholder",
+      "languageCode": "ka",
+      "translationValue": "სახელი გვარი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.nameRequired",
+      "languageCode": "en",
+      "translationValue": "Name is required",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.nameRequired",
+      "languageCode": "ka",
+      "translationValue": "სახელი აუცილებელია",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.passwordsNoMatch",
+      "languageCode": "en",
+      "translationValue": "Passwords do not match",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.passwordsNoMatch",
+      "languageCode": "ka",
+      "translationValue": "პაროლები არ ემთხვევა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.signIn",
+      "languageCode": "en",
+      "translationValue": "Sign in",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.signIn",
+      "languageCode": "ka",
+      "translationValue": "შესვლა",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.subtitle",
+      "languageCode": "en",
+      "translationValue": "Join us and start shopping",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.subtitle",
+      "languageCode": "ka",
+      "translationValue": "შემოგვიერთდით და დაიწყეთ შოპინგი",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.title",
+      "languageCode": "en",
+      "translationValue": "Create Account",
+      "namespace": "common"
+    },
+    {
+      "translationKey": "signup.title",
+      "languageCode": "ka",
+      "translationValue": "ანგარიშის შექმნა",
+      "namespace": "common"
+    }
+  ],
+  "products": [
+    {
+      "translationKey": "addToCart",
+      "languageCode": "en",
+      "translationValue": "Add to cart",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "addToCart",
+      "languageCode": "ka",
+      "translationValue": "კალათში დამატება",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "bestSellers",
+      "languageCode": "en",
+      "translationValue": "Best Sellers",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "bestSellers",
+      "languageCode": "ka",
+      "translationValue": "საუკეთესო გაყიდვები",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "description",
+      "languageCode": "en",
+      "translationValue": "Discover targeted treatments for detox, nourishment, and renewal. Each product is ethically sourced and tested for sensitive scalps.",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "description",
+      "languageCode": "ka",
+      "translationValue": "დეტოქსიკაციის, კვების და განახლების მიზნობრივი მკურნალობების აღმოჩენა. თითოეული პროდუქტი ეთიკურად მოპოვებული და მგრძნობიარე თავის კანის জন্য გამოცდილი.",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "highlights",
+      "languageCode": "en",
+      "translationValue": "Highlights",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "highlights",
+      "languageCode": "ka",
+      "translationValue": "highlights",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "loading",
+      "languageCode": "en",
+      "translationValue": "Loading products…",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "loading",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტების ჩატვირთვა…",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "loadingDetail",
+      "languageCode": "en",
+      "translationValue": "Loading product details…",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "loadingDetail",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტის დეტალების ჩატვირთვა…",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "newArrivals",
+      "languageCode": "en",
+      "translationValue": "New Arrivals",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "newArrivals",
+      "languageCode": "ka",
+      "translationValue": "ახალი ჩამოსვლები",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "notFound",
+      "languageCode": "en",
+      "translationValue": "Product not found.",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "notFound",
+      "languageCode": "ka",
+      "translationValue": "პროდუქტი არ მოიძებნა.",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "onSale",
+      "languageCode": "en",
+      "translationValue": "On Sale",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "onSale",
+      "languageCode": "ka",
+      "translationValue": "გაყიდვაზე",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "en",
+      "translationValue": "Shop Luxia Products",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "title",
+      "languageCode": "ka",
+      "translationValue": "Luxia პროდუქტების ყიდვა",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "usage",
+      "languageCode": "en",
+      "translationValue": "Usage",
+      "namespace": "products"
+    },
+    {
+      "translationKey": "usage",
+      "languageCode": "ka",
+      "translationValue": "გამოყენება",
+      "namespace": "products"
+    }
+  ]
+}

@@ -3,18 +3,39 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 
-i18n
-  // Load translations using http backend
-  .use(Backend)
-  // Detect user language
-  .use(LanguageDetector)
-  // Pass the i18n instance to react-i18next
-  .use(initReactI18next)
-  // Initialize i18next
-  .init({
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'ka'],
-    debug: import.meta.env.DEV,
+// Fetch supported languages from API
+const fetchSupportedLanguages = async (): Promise<string[]> => {
+  try {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    const response = await fetch(`${apiBaseUrl}/languages`);
+    if (response.ok) {
+      const languages = await response.json();
+      return languages.filter((lang: any) => lang.isEnabled).map((lang: any) => lang.code);
+    }
+  } catch (error) {
+    console.warn('Failed to fetch languages from API, using defaults:', error);
+  }
+  // Fallback to default languages
+  return ['en', 'ka'];
+};
+
+// Initialize i18next with dynamic language support
+(async () => {
+  const supportedLanguages = await fetchSupportedLanguages();
+  console.log('Supported languages:', supportedLanguages);
+
+  i18n
+    // Load translations using http backend
+    .use(Backend)
+    // Detect user language
+    .use(LanguageDetector)
+    // Pass the i18n instance to react-i18next
+    .use(initReactI18next)
+    // Initialize i18next
+    .init({
+      fallbackLng: 'en',
+      supportedLngs: supportedLanguages,
+      debug: import.meta.env.DEV,
 
     // Namespace organization
     ns: ['common', 'products', 'cart', 'checkout', 'admin', 'account'],
@@ -93,5 +114,6 @@ i18n
       useSuspense: true,
     },
   });
+})();
 
 export default i18n;

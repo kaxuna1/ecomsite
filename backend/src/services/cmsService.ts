@@ -362,6 +362,37 @@ export async function updateBlock(
     );
   }
 
+  // Auto-sync translations when content changes
+  // This ensures all language versions have the same structure/media/styles
+  // while preserving translated text
+  if (payload.content !== undefined) {
+    try {
+      // Get all translations for this block
+      const translationsResult = await pool.query(
+        'SELECT * FROM cms_block_translations WHERE block_id = $1',
+        [blockId]
+      );
+
+      // Sync each translation with the updated base content
+      for (const translationRow of translationsResult.rows) {
+        const translationContent = translationRow.content;
+        const syncedContent = syncBlockTranslation(updatedBlock.content, translationContent);
+
+        await pool.query(
+          `UPDATE cms_block_translations
+           SET content = $1, updated_at = CURRENT_TIMESTAMP
+           WHERE id = $2`,
+          [JSON.stringify(syncedContent), translationRow.id]
+        );
+      }
+
+      console.log(`Auto-synced ${translationsResult.rows.length} translation(s) for block ${blockId}`);
+    } catch (error) {
+      console.error('Error auto-syncing translations:', error);
+      // Don't fail the update if sync fails
+    }
+  }
+
   return updatedBlock;
 }
 
@@ -1013,31 +1044,31 @@ export async function createFooterTranslation(
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      ON CONFLICT (footer_settings_id, language_code)
      DO UPDATE SET
-       brand_name = EXCLUDED.brand_name,
-       brand_tagline = EXCLUDED.brand_tagline,
-       footer_columns = EXCLUDED.footer_columns,
-       contact_info = EXCLUDED.contact_info,
-       newsletter_title = EXCLUDED.newsletter_title,
-       newsletter_description = EXCLUDED.newsletter_description,
-       newsletter_placeholder = EXCLUDED.newsletter_placeholder,
-       newsletter_button_text = EXCLUDED.newsletter_button_text,
-       copyright_text = EXCLUDED.copyright_text,
-       bottom_links = EXCLUDED.bottom_links,
+       brand_name = CASE WHEN EXCLUDED.brand_name IS NOT NULL THEN EXCLUDED.brand_name ELSE footer_settings_translations.brand_name END,
+       brand_tagline = CASE WHEN EXCLUDED.brand_tagline IS NOT NULL THEN EXCLUDED.brand_tagline ELSE footer_settings_translations.brand_tagline END,
+       footer_columns = CASE WHEN EXCLUDED.footer_columns IS NOT NULL THEN EXCLUDED.footer_columns ELSE footer_settings_translations.footer_columns END,
+       contact_info = CASE WHEN EXCLUDED.contact_info IS NOT NULL THEN EXCLUDED.contact_info ELSE footer_settings_translations.contact_info END,
+       newsletter_title = CASE WHEN EXCLUDED.newsletter_title IS NOT NULL THEN EXCLUDED.newsletter_title ELSE footer_settings_translations.newsletter_title END,
+       newsletter_description = CASE WHEN EXCLUDED.newsletter_description IS NOT NULL THEN EXCLUDED.newsletter_description ELSE footer_settings_translations.newsletter_description END,
+       newsletter_placeholder = CASE WHEN EXCLUDED.newsletter_placeholder IS NOT NULL THEN EXCLUDED.newsletter_placeholder ELSE footer_settings_translations.newsletter_placeholder END,
+       newsletter_button_text = CASE WHEN EXCLUDED.newsletter_button_text IS NOT NULL THEN EXCLUDED.newsletter_button_text ELSE footer_settings_translations.newsletter_button_text END,
+       copyright_text = CASE WHEN EXCLUDED.copyright_text IS NOT NULL THEN EXCLUDED.copyright_text ELSE footer_settings_translations.copyright_text END,
+       bottom_links = CASE WHEN EXCLUDED.bottom_links IS NOT NULL THEN EXCLUDED.bottom_links ELSE footer_settings_translations.bottom_links END,
        updated_at = CURRENT_TIMESTAMP
      RETURNING *`,
     [
       footerSettingsId,
       languageCode,
-      data.brandName || null,
-      data.brandTagline || null,
-      data.footerColumns ? JSON.stringify(data.footerColumns) : null,
-      data.contactInfo ? JSON.stringify(data.contactInfo) : null,
-      data.newsletterTitle || null,
-      data.newsletterDescription || null,
-      data.newsletterPlaceholder || null,
-      data.newsletterButtonText || null,
-      data.copyrightText || null,
-      data.bottomLinks ? JSON.stringify(data.bottomLinks) : null
+      data.brandName !== undefined ? data.brandName : null,
+      data.brandTagline !== undefined ? data.brandTagline : null,
+      data.footerColumns !== undefined ? JSON.stringify(data.footerColumns) : null,
+      data.contactInfo !== undefined ? JSON.stringify(data.contactInfo) : null,
+      data.newsletterTitle !== undefined ? data.newsletterTitle : null,
+      data.newsletterDescription !== undefined ? data.newsletterDescription : null,
+      data.newsletterPlaceholder !== undefined ? data.newsletterPlaceholder : null,
+      data.newsletterButtonText !== undefined ? data.newsletterButtonText : null,
+      data.copyrightText !== undefined ? data.copyrightText : null,
+      data.bottomLinks !== undefined ? JSON.stringify(data.bottomLinks) : null
     ]
   );
 
@@ -1079,4 +1110,135 @@ export async function getAllFooterTranslations(
   );
 
   return result.rows.map(mapFooterTranslationFromDb);
+}
+
+// ============================================================================
+// TRANSLATION SYNCHRONIZATION
+// ============================================================================
+
+import { syncBlockTranslation, extractTranslatableContent } from '../utils/translationSync';
+
+/**
+ * Sync all block translations for a page with base block content
+ * Preserves translatable text, syncs structure/media/styles from base
+ *
+ * @param pageId - Page ID
+ * @returns Updated translation count
+ */
+export async function syncPageBlockTranslations(pageId: number): Promise<number> {
+  // Get all blocks for this page
+  const blocks = await getBlocksByPageId(pageId);
+  let updatedCount = 0;
+
+  for (const block of blocks) {
+    // Get all translations for this block
+    const translationsResult = await pool.query(
+      'SELECT * FROM cms_block_translations WHERE block_id = $1',
+      [block.id]
+    );
+
+    for (const translationRow of translationsResult.rows) {
+      const translationContent = translationRow.content;
+
+      // Sync: merge base content with translation (only keeping translatable fields)
+      const syncedContent = syncBlockTranslation(block.content, translationContent);
+
+      // Update the translation with synced content
+      await pool.query(
+        `UPDATE cms_block_translations
+         SET content = $1, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $2`,
+        [JSON.stringify(syncedContent), translationRow.id]
+      );
+
+      updatedCount++;
+    }
+  }
+
+  return updatedCount;
+}
+
+/**
+ * Sync a specific block translation with base block content
+ *
+ * @param blockId - Block ID
+ * @param languageCode - Language code to sync
+ * @returns Updated translation or null if not found
+ */
+export async function syncBlockTranslationByLanguage(
+  blockId: number,
+  languageCode: string
+): Promise<CMSBlockTranslation | null> {
+  // Get base block
+  const block = await getBlockById(blockId);
+  if (!block) {
+    throw new Error('Block not found');
+  }
+
+  // Get translation
+  const translationResult = await pool.query(
+    'SELECT * FROM cms_block_translations WHERE block_id = $1 AND language_code = $2',
+    [blockId, languageCode]
+  );
+
+  if (translationResult.rows.length === 0) {
+    return null;
+  }
+
+  const translationRow = translationResult.rows[0];
+  const translationContent = translationRow.content;
+
+  // Sync: merge base content with translation
+  const syncedContent = syncBlockTranslation(block.content, translationContent);
+
+  // Update the translation
+  const result = await pool.query(
+    `UPDATE cms_block_translations
+     SET content = $1, updated_at = CURRENT_TIMESTAMP
+     WHERE id = $2
+     RETURNING *`,
+    [JSON.stringify(syncedContent), translationRow.id]
+  );
+
+  return mapBlockTranslationFromDb(result.rows[0]);
+}
+
+/**
+ * Optimize a block translation to store only translatable fields
+ * Reduces data duplication and makes future syncs automatic
+ *
+ * @param blockId - Block ID
+ * @param languageCode - Language code
+ * @returns Optimized translation
+ */
+export async function optimizeBlockTranslation(
+  blockId: number,
+  languageCode: string
+): Promise<CMSBlockTranslation | null> {
+  // Get translation
+  const translationResult = await pool.query(
+    'SELECT * FROM cms_block_translations WHERE block_id = $1 AND language_code = $2',
+    [blockId, languageCode]
+  );
+
+  if (translationResult.rows.length === 0) {
+    return null;
+  }
+
+  const translationRow = translationResult.rows[0];
+  const translationContent = translationRow.content;
+
+  // Extract only translatable fields
+  const optimizedContent = extractTranslatableContent(translationContent);
+
+  // Update the translation
+  const result = await pool.query(
+    `UPDATE cms_block_translations
+     SET content = $1, updated_at = CURRENT_TIMESTAMP
+     WHERE id = $2
+     RETURNING *`,
+    [JSON.stringify(optimizedContent), translationRow.id]
+  );
+
+  return mapBlockTranslationFromDb(result.rows[0]);
 }

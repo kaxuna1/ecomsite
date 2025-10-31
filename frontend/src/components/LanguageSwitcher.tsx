@@ -15,7 +15,9 @@ function LanguageSwitcher() {
   const { data: languages = [], isLoading } = useQuery({
     queryKey: ['languages'],
     queryFn: () => fetchLanguages(false), // Only fetch enabled languages
-    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+    staleTime: 30 * 1000, // Cache for 30 seconds (refresh more frequently to pick up new languages)
+    refetchOnMount: 'always', // Always refetch when component mounts
+    refetchOnWindowFocus: true // Refetch when window gains focus
   });
 
   const handleLanguageChange = (newLang: string) => {

@@ -25,19 +25,10 @@ const STATIC_ROUTES = [
   { type: 'static' as const, label: 'Checkout', url: '/checkout' },
 ];
 
-// Default header menu configuration
+// Default header menu configuration (Home is CMS-based now)
 const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
   {
     id: -1,
-    label: 'Home',
-    linkType: 'internal',
-    linkUrl: '/',
-    cmsPageId: null,
-    openInNewTab: false,
-    children: []
-  },
-  {
-    id: -2,
     label: 'Products',
     linkType: 'internal',
     linkUrl: '/products',
@@ -46,7 +37,7 @@ const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
     children: []
   },
   {
-    id: -3,
+    id: -2,
     label: 'New Arrivals',
     linkType: 'internal',
     linkUrl: '/new-arrivals',
@@ -55,7 +46,7 @@ const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
     children: []
   },
   {
-    id: -4,
+    id: -3,
     label: 'Best Sellers',
     linkType: 'internal',
     linkUrl: '/best-sellers',
@@ -64,7 +55,7 @@ const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
     children: []
   },
   {
-    id: -5,
+    id: -4,
     label: 'Sale',
     linkType: 'internal',
     linkUrl: '/sale',

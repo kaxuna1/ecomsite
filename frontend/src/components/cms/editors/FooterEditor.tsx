@@ -9,6 +9,8 @@ import {
 } from '@heroicons/react/24/outline';
 import FormField from './FormField';
 import ColorPicker, { ColorSchemePicker } from './ColorPicker';
+import AIFooterGenerator from '../../admin/AIFooterGenerator';
+import AIFooterTranslator from '../../admin/AIFooterTranslator';
 import type {
   FooterSettings,
   FooterColumn,
@@ -77,6 +79,77 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
     const updated = { ...formData, [field]: value };
     setFormData(updated);
     onChange({ [field]: value });
+  };
+
+  const handleSave = () => {
+    // Ensure all current formData is sent to the parent before saving
+    onChange(formData);
+    onSave();
+  };
+
+  const handleAIGenerate = (generatedData: any) => {
+    console.log('AI Generated Footer Data:', generatedData);
+
+    // Map AI generated data to FooterSettings format
+    const updates: Partial<FooterSettings> = {
+      brandName: generatedData.brandName || formData.brandName,
+      brandTagline: generatedData.brandTagline || formData.brandTagline,
+      footerColumns: generatedData.footerColumns || formData.footerColumns,
+      contactInfo: generatedData.contactInfo || formData.contactInfo,
+      socialLinks: generatedData.socialLinks || formData.socialLinks,
+      copyrightText: generatedData.copyrightText || formData.copyrightText,
+      bottomLinks: generatedData.bottomLinks || formData.bottomLinks
+    };
+
+    // Update newsletter settings if included
+    if (generatedData.newsletter) {
+      updates.newsletterEnabled = generatedData.newsletter.enabled;
+      updates.newsletterTitle = generatedData.newsletter.title;
+      updates.newsletterDescription = generatedData.newsletter.description;
+      updates.newsletterPlaceholder = generatedData.newsletter.placeholder;
+      updates.newsletterButtonText = generatedData.newsletter.buttonText;
+    }
+
+    // Apply all updates
+    const updated = { ...formData, ...updates };
+    setFormData(updated);
+
+    // Notify parent of changes
+    Object.entries(updates).forEach(([key, value]) => {
+      onChange({ [key as keyof FooterSettings]: value });
+    });
+  };
+
+  const handleAITranslate = (translatedData: any, targetLanguage: string) => {
+    console.log('AI Translated Footer Data:', translatedData, 'Target language:', targetLanguage);
+
+    // Map translated data to FooterSettings format
+    const updates: Partial<FooterSettings> = {};
+
+    // Only update fields that were translated
+    if (translatedData.brandName) updates.brandName = translatedData.brandName;
+    if (translatedData.brandTagline) updates.brandTagline = translatedData.brandTagline;
+    if (translatedData.footerColumns) updates.footerColumns = translatedData.footerColumns;
+    if (translatedData.contactInfo) updates.contactInfo = translatedData.contactInfo;
+    if (translatedData.newsletterTitle) updates.newsletterTitle = translatedData.newsletterTitle;
+    if (translatedData.newsletterDescription) updates.newsletterDescription = translatedData.newsletterDescription;
+    if (translatedData.newsletterPlaceholder) updates.newsletterPlaceholder = translatedData.newsletterPlaceholder;
+    if (translatedData.newsletterButtonText) updates.newsletterButtonText = translatedData.newsletterButtonText;
+    if (translatedData.copyrightText) updates.copyrightText = translatedData.copyrightText;
+    if (translatedData.bottomLinks) updates.bottomLinks = translatedData.bottomLinks;
+
+    // Apply all updates
+    const updated = { ...formData, ...updates };
+    setFormData(updated);
+
+    // Notify parent of changes
+    Object.entries(updates).forEach(([key, value]) => {
+      onChange({ [key as keyof FooterSettings]: value });
+    });
+
+    // Auto-save the translation
+    console.log('Auto-saving translated footer...');
+    handleSave();
   };
 
   const handleColorScheme = (colors: { primary: string; secondary: string; accent: string; text: string }) => {
@@ -203,13 +276,27 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
             <p className="text-sm text-champagne/60">Customize your site footer</p>
           </div>
         </div>
-        <button
-          onClick={onSave}
-          disabled={isSaving}
-          className="px-6 py-3 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold disabled:opacity-50"
-        >
-          {isSaving ? 'Saving...' : 'Save Changes'}
-        </button>
+        <div className="flex items-center gap-3">
+          <AIFooterGenerator
+            onGenerate={handleAIGenerate}
+            currentFooter={formData}
+            brandName={formData.brandName}
+            brandDescription={formData.brandTagline}
+          />
+          <AIFooterTranslator
+            currentLanguage={language}
+            onTranslate={handleAITranslate}
+            brandName={formData.brandName}
+          />
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-6 py-3 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
       </div>
 
       {/* Layout Type Selector */}
@@ -278,6 +365,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
             <span className="text-jade">●</span> Footer Columns
           </h4>
           <button
+            type="button"
             onClick={addColumn}
             className="px-3 py-2 bg-jade/20 text-jade rounded-lg hover:bg-jade/30 transition-colors text-sm font-semibold flex items-center gap-2"
           >
@@ -298,6 +386,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
                   placeholder="Column Title"
                 />
                 <button
+                  type="button"
                   onClick={() => removeColumn(columnIndex)}
                   className="ml-2 p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
                 >
@@ -323,6 +412,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
                       className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne text-sm focus:outline-none focus:border-jade"
                     />
                     <button
+                      type="button"
                       onClick={() => removeLinkFromColumn(columnIndex, linkIndex)}
                       className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
                     >
@@ -333,6 +423,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
               </div>
 
               <button
+                type="button"
                 onClick={() => addLinkToColumn(columnIndex)}
                 className="w-full px-3 py-2 bg-white/5 border border-white/10 border-dashed rounded-lg text-champagne/60 hover:text-champagne hover:border-jade/50 transition-colors text-sm flex items-center justify-center gap-2"
               >
@@ -424,6 +515,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
             <span className="text-jade">●</span> Social Media Links
           </h4>
           <button
+            type="button"
             onClick={addSocialLink}
             className="px-3 py-2 bg-jade/20 text-jade rounded-lg hover:bg-jade/30 transition-colors text-sm font-semibold flex items-center gap-2"
           >
@@ -454,6 +546,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
                 className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-jade"
               />
               <button
+                type="button"
                 onClick={() => updateSocialLink(index, 'is_enabled', !social.is_enabled)}
                 className={`px-3 py-2 rounded-lg font-medium transition-all text-sm ${
                   social.is_enabled
@@ -464,6 +557,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
                 {social.is_enabled ? 'Enabled' : 'Disabled'}
               </button>
               <button
+                type="button"
                 onClick={() => removeSocialLink(index)}
                 className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
               >
@@ -481,6 +575,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
             <span className="text-jade">●</span> Newsletter Section
           </h4>
           <button
+            type="button"
             onClick={() => handleChange('newsletterEnabled', !formData.newsletterEnabled)}
             className={`px-4 py-2 rounded-lg font-medium transition-all ${
               formData.newsletterEnabled
@@ -559,6 +654,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-champagne">Legal Links</label>
             <button
+              type="button"
               onClick={addBottomLink}
               className="px-3 py-1 bg-jade/20 text-jade rounded-lg hover:bg-jade/30 transition-colors text-xs font-semibold flex items-center gap-1"
             >
@@ -585,6 +681,7 @@ export default function FooterEditor({ footer, language, onChange, onSave, isSav
                   className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne text-sm focus:outline-none focus:border-jade"
                 />
                 <button
+                  type="button"
                   onClick={() => removeBottomLink(index)}
                   className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
                 >
