@@ -15,6 +15,7 @@
 
 import { IAIFeature, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface HeroGeneratorInput {
   brandName: string;
@@ -82,40 +83,10 @@ export class HeroGenerator implements IAIFeature {
       }
     );
 
-    // Parse JSON response
+    // Parse JSON response using robust extraction
     let parsedContent;
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = response.content.trim();
-
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Try parsing with control character fallback
-      try {
-        parsedContent = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        const escapedContent = cleanedContent.replace(
-          /"((?:[^"\\]|\\.)*)"/g,
-          (match, stringContent) => {
-            const escaped = stringContent
-              .replace(/\r\n/g, '\\n')
-              .replace(/\r/g, '\\n')
-              .replace(/\n/g, '\\n')
-              .replace(/\t/g, '\\t');
-            return `"${escaped}"`;
-          }
-        );
-        parsedContent = JSON.parse(escapedContent);
-      }
+      parsedContent = extractJSON<any>(response.content);
     } catch (error) {
       console.error('Failed to parse hero generation response as JSON:', error);
       throw new Error('Failed to generate hero content');
@@ -326,17 +297,18 @@ ALTERNATIVE VARIANTS:
 
   /**
    * Get max tokens based on template
+   * Note: Significantly increased for Gemini 3 Flash compatibility
    */
   private getMaxTokensByTemplate(template: string): number {
     const tokenLimits: Record<string, number> = {
-      'centered-minimal': 600,   // Shorter, punchier content
-      'luxury-minimal': 600,     // Elegant, concise
-      'split-screen': 800,       // Standard balanced content
-      'full-width-overlay': 700, // Focus on visual, less text
-      'asymmetric-bold': 900,    // More room for bold statements
-      'gradient-modern': 800     // Standard
+      'centered-minimal': 4000,
+      'luxury-minimal': 4000,
+      'split-screen': 4000,
+      'full-width-overlay': 4000,
+      'asymmetric-bold': 4000,
+      'gradient-modern': 4000
     };
-    return tokenLimits[template] || 800;
+    return tokenLimits[template] || 4000;
   }
 
   /**

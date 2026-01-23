@@ -339,7 +339,7 @@ export default function AdminThemes() {
         {/* My Themes Grid */}
         <div>
           <h2 className="text-2xl font-display text-champagne mb-4">My Themes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             <AnimatePresence mode="popLayout">
               {themes.map((theme) => (
               <motion.div
@@ -495,7 +495,7 @@ export default function AdminThemes() {
                 Professional pre-built themes ready to use
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <AnimatePresence>
                 {presets.map((preset) => (
                   <motion.div

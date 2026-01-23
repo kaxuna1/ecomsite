@@ -27,6 +27,7 @@ export default function AdminStaticTranslations() {
   const [newKey, setNewKey] = useState('');
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<'browse' | 'stats' | 'missing'>('browse');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Bulk translation state
   const [showBulkTranslateModal, setShowBulkTranslateModal] = useState(false);
@@ -525,9 +526,19 @@ export default function AdminStaticTranslations() {
 
       {/* Browse & Edit Tab */}
       {activeTab === 'browse' && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Sidebar: Namespace & Keys */}
-          <div className="col-span-1 space-y-4 lg:col-span-4">
+        <div className="space-y-4">
+          {/* Mobile Sidebar Toggle */}
+          <button
+            className="lg:hidden w-full px-4 py-2 bg-white/10 text-champagne rounded-lg flex items-center justify-center gap-2 border border-white/20 hover:bg-white/20 transition-colors"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <LanguageIcon className="h-5 w-5" />
+            {sidebarOpen ? 'Hide Categories' : 'Show Categories & Keys'}
+          </button>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            {/* Sidebar: Namespace & Keys */}
+            <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block col-span-1 space-y-4 lg:col-span-4`}>
             {/* Namespace Selector */}
             <div>
               <label className="block text-sm font-medium text-champagne mb-2">
@@ -633,8 +644,8 @@ export default function AdminStaticTranslations() {
             </div>
           </div>
 
-          {/* Main Content: Translation Editor */}
-          <div className="col-span-1 lg:col-span-8">
+            {/* Main Content: Translation Editor */}
+            <div className="col-span-1 lg:col-span-8">
             {selectedKey ? (
               <div className="space-y-6 rounded-2xl border border-white/20 bg-white/5 p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -645,9 +656,9 @@ export default function AdminStaticTranslations() {
                     <p className="text-sm text-champagne/60 font-mono">{selectedKey}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
-                      className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleAITranslate}
                       disabled={!selectedKey || !translations['en']?.trim() || aiTranslateMutation.isPending}
                     >
@@ -703,6 +714,7 @@ export default function AdminStaticTranslations() {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       )}
@@ -798,7 +810,7 @@ export default function AdminStaticTranslations() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl border border-white/20 bg-midnight p-6 shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-sm sm:max-w-md transform overflow-hidden rounded-3xl border border-white/20 bg-midnight p-4 md:p-6 shadow-xl transition-all">
                   <Dialog.Title className="text-lg font-semibold text-champagne mb-4">
                     Select Target Language
                   </Dialog.Title>
@@ -873,7 +885,7 @@ export default function AdminStaticTranslations() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-3xl border border-white/20 bg-midnight shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-sm sm:max-w-md md:max-w-4xl transform overflow-hidden rounded-3xl border border-white/20 bg-midnight shadow-xl transition-all">
                   <div className="border-b border-white/10 p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>

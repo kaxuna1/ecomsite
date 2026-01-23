@@ -302,14 +302,14 @@ export default function AdminCMS() {
                     {page.isPublished ? 'Published' : 'Draft'}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 mt-4">
                   {page.isPublished && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleViewLive(page.slug);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-jade text-midnight rounded hover:bg-jade/90 transition-colors text-sm font-semibold"
+                      className="flex items-center gap-1.5 px-3 py-1 bg-jade text-midnight rounded hover:bg-jade/90 transition-colors text-sm font-semibold w-full sm:w-auto justify-center sm:justify-start"
                     >
                       <EyeIcon className="h-4 w-4" />
                       View Live
@@ -320,7 +320,7 @@ export default function AdminCMS() {
                       e.stopPropagation();
                       handleToggleStatus(page);
                     }}
-                    className={`px-3 py-1 rounded hover:bg-opacity-80 transition-colors text-sm ${
+                    className={`px-3 py-1 rounded hover:bg-opacity-80 transition-colors text-sm w-full sm:w-auto ${
                       page.isPublished
                         ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'
                         : 'bg-jade/20 text-jade hover:bg-jade/30'
@@ -330,14 +330,14 @@ export default function AdminCMS() {
                   </button>
                   <Link
                     to={`/admin/cms/inline-edit/${page.id}`}
-                    className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-sm"
+                    className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-sm w-full sm:w-auto text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Inline Edit
                   </Link>
                   <Link
                     to={`/admin/cms/edit/${page.id}`}
-                    className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors text-sm"
+                    className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors text-sm w-full sm:w-auto text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Advanced
@@ -347,7 +347,7 @@ export default function AdminCMS() {
                       e.stopPropagation();
                       handleDeletePage(page.id);
                     }}
-                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors text-sm"
+                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors text-sm w-full sm:w-auto"
                   >
                     Delete
                   </button>
@@ -487,7 +487,7 @@ export default function AdminCMS() {
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-midnight border border-white/10 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+              <div className="bg-midnight border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-jade/10 to-champagne/10 flex-shrink-0">
                   <div>
@@ -509,7 +509,7 @@ export default function AdminCMS() {
                     <label className="block text-sm font-semibold text-champagne mb-3">
                       Start with Template
                     </label>
-                    <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2">
                       {PAGE_TEMPLATES.map((template) => (
                         <button
                           key={template.id}

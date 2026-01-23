@@ -28,10 +28,22 @@ import {
 // ============================================================================
 
 /**
+ * Options for page retrieval
+ */
+export interface PageRetrievalOptions {
+  /** Include blocks with the page data */
+  includeBlocks?: boolean;
+}
+
+/**
  * Get all pages with optional filtering
  */
-export async function getAllPages(filters: PageQueryFilters = {}): Promise<CMSPage[]> {
+export async function getAllPages(
+  filters: PageQueryFilters = {},
+  options: PageRetrievalOptions = {}
+): Promise<CMSPage[]> {
   const { slug, isPublished, createdBy, limit = 100, offset = 0 } = filters;
+  const { includeBlocks = false } = options;
 
   let query = 'SELECT * FROM cms_pages WHERE 1=1';
   const params: any[] = [];
@@ -56,15 +68,38 @@ export async function getAllPages(filters: PageQueryFilters = {}): Promise<CMSPa
   params.push(limit, offset);
 
   const result = await pool.query(query, params);
-  return result.rows.map(mapPageFromDb);
+  const pages = result.rows.map(mapPageFromDb);
+
+  // Optionally include blocks for each page
+  if (includeBlocks) {
+    for (const page of pages) {
+      (page as any).blocks = await getBlocksByPageId(page.id);
+    }
+  }
+
+  return pages;
 }
 
 /**
  * Get a single page by ID
  */
-export async function getPageById(pageId: number): Promise<CMSPage | null> {
+export async function getPageById(
+  pageId: number,
+  options: PageRetrievalOptions = {}
+): Promise<CMSPage | null> {
+  const { includeBlocks = false } = options;
+
   const result = await pool.query('SELECT * FROM cms_pages WHERE id = $1', [pageId]);
-  return result.rows.length > 0 ? mapPageFromDb(result.rows[0]) : null;
+  if (result.rows.length === 0) return null;
+
+  const page = mapPageFromDb(result.rows[0]);
+
+  // Optionally include blocks
+  if (includeBlocks) {
+    (page as any).blocks = await getBlocksByPageId(page.id);
+  }
+
+  return page;
 }
 
 /**

@@ -84,29 +84,13 @@ export class GeminiProvider extends BaseProvider {
         metadata: {
           finishReasonRaw: response.candidates?.[0]?.finishReason,
           modelVersion: response.modelVersion,
+          safetyRatings: response.candidates?.[0]?.safetyRatings,
           ...params.metadata
         }
       };
     } catch (error: any) {
       console.error('Gemini API error:', error);
-
-      return {
-        content: '',
-        finishReason: 'error',
-        usage: {
-          promptTokens: 0,
-          completionTokens: 0,
-          totalTokens: 0
-        },
-        cost: 0,
-        latency: Date.now() - startTime,
-        provider: this.name,
-        modelId: this.modelId,
-        metadata: {
-          error: error.message,
-          ...params.metadata
-        }
-      };
+      throw new Error(`Gemini generation failed: ${error.message}`);
     }
   }
 

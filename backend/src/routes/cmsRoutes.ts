@@ -60,6 +60,7 @@ router.get(
 /**
  * GET /api/cms/pages
  * Get all pages with optional filtering
+ * Admin endpoint includes blocks by default
  */
 router.get(
   '/pages',
@@ -72,7 +73,7 @@ router.get(
   ],
   async (req, res) => {
     try {
-      const pages = await cmsService.getAllPages(req.query);
+      const pages = await cmsService.getAllPages(req.query, { includeBlocks: true });
       res.json(pages);
     } catch (error) {
       console.error('Error fetching pages:', error);
@@ -84,6 +85,7 @@ router.get(
 /**
  * GET /api/cms/pages/:id
  * Get a single page by ID
+ * Admin endpoint includes blocks by default
  */
 router.get(
   '/pages/:id',
@@ -96,7 +98,7 @@ router.get(
     }
 
     try {
-      const page = await cmsService.getPageById(parseInt(req.params.id));
+      const page = await cmsService.getPageById(parseInt(req.params.id), { includeBlocks: true });
       if (!page) {
         return res.status(404).json({ message: 'Page not found' });
       }

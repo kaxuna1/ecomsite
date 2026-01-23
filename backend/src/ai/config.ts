@@ -64,10 +64,13 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'gemini',
       enabled: true,
       apiKeyName: 'gemini_api_key', // References key in api_keys table
-      defaultModel: 'gemini-3-flash-preview',
+      defaultModel: 'gemini-3-flash-preview', // Back to Gemini 3 Flash with higher tokens
       availableModels: [
-        'gemini-3-flash-preview',
-        'gemini-3-pro-preview'
+        'gemini-3-flash-preview', // Gemini 3 Flash - best multimodal understanding & reasoning
+        'gemini-3-pro-preview', // Gemini 3 Pro - reasoning-first for agentic workflows
+        'gemini-2.5-flash', // Gemini 2.5 Flash - stable, fast
+        'gemini-2.5-pro', // Gemini 2.5 Pro - most powerful, adaptive thinking
+        'gemini-2.5-flash-lite' // Gemini 2.5 Flash Lite - fast, low-cost
       ],
       maxRetries: 3,
       timeout: 60000,
@@ -75,9 +78,9 @@ export const aiServiceConfig: AIServiceConfig = {
         requestsPerMinute: 50,
         tokensPerMinute: 100000
       },
-      // Gemini 3 Flash Preview pricing (as of 2025)
-      costPerPromptToken: 0.50 / 1000000, // $0.50 per 1M tokens
-      costPerCompletionToken: 3.00 / 1000000 // $3.00 per 1M tokens
+      // Gemini 3 Flash pricing (as of 2025)
+      costPerPromptToken: 0.10 / 1000000, // $0.10 per 1M tokens
+      costPerCompletionToken: 0.40 / 1000000 // $0.40 per 1M tokens
     }
   ],
 
@@ -449,27 +452,58 @@ export const MODEL_PRICING: ModelPricing[] = [
     badge: 'Legacy',
     speed: 'Fastest'
   },
-  // Gemini Models
+  // Gemini Models (2025)
   {
     id: 'gemini-3-flash-preview',
-    name: 'Gemini 3 Flash Preview',
+    name: 'Gemini 3 Flash',
     provider: 'gemini',
-    description: 'Balanced speed and quality',
-    inputPricePerMillion: 0.50,
-    outputPricePerMillion: 3.00,
-    contextWindow: '1M/64K',
+    description: 'Best multimodal understanding & reasoning',
+    inputPricePerMillion: 0.10,
+    outputPricePerMillion: 0.40,
+    contextWindow: '1M',
     badge: 'Recommended',
-    speed: 'Fast'
+    speed: 'Fastest'
   },
   {
     id: 'gemini-3-pro-preview',
-    name: 'Gemini 3 Pro Preview',
+    name: 'Gemini 3 Pro',
     provider: 'gemini',
-    description: 'Highest-quality reasoning model',
-    inputPricePerMillion: 2.00,
-    outputPricePerMillion: 12.00,
-    contextWindow: '1M/64K',
-    speed: 'Medium'
+    description: 'Reasoning-first for agentic workflows',
+    inputPricePerMillion: 1.25,
+    outputPricePerMillion: 5.00,
+    contextWindow: '1M',
+    speed: 'Fast'
+  },
+  {
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash',
+    provider: 'gemini',
+    description: 'Stable, fast, cost-effective',
+    inputPricePerMillion: 0.075,
+    outputPricePerMillion: 0.30,
+    contextWindow: '1M',
+    badge: 'Cheapest',
+    speed: 'Fastest'
+  },
+  {
+    id: 'gemini-2.5-pro',
+    name: 'Gemini 2.5 Pro',
+    provider: 'gemini',
+    description: 'Most powerful with adaptive thinking',
+    inputPricePerMillion: 1.25,
+    outputPricePerMillion: 5.00,
+    contextWindow: '2M',
+    speed: 'Fast'
+  },
+  {
+    id: 'gemini-2.5-flash-lite',
+    name: 'Gemini 2.5 Flash Lite',
+    provider: 'gemini',
+    description: 'Fast, low-cost, high-performance',
+    inputPricePerMillion: 0.05,
+    outputPricePerMillion: 0.20,
+    contextWindow: '1M',
+    speed: 'Fastest'
   }
 ];
 

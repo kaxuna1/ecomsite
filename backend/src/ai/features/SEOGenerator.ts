@@ -11,6 +11,7 @@
 
 import { IAIFeature, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface SEOGeneratorInput {
   productName: string;
@@ -53,7 +54,7 @@ export class SEOGenerator implements IAIFeature {
       {
         prompt,
         systemPrompt,
-        maxTokens: 800,
+        maxTokens: 4000, // Increased for Gemini 3 Flash
         temperature: 0.7,
         responseFormat: 'json',
         metadata: {
@@ -192,44 +193,8 @@ You MUST respond with valid JSON in this exact structure:
    */
   private parseResponse(content: string): any {
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = content.trim();
-
-      // Remove ```json and ``` wrappers
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Try to parse JSON (with fallback for control characters)
-      let parsed: any;
-      try {
-        parsed = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        // If parsing fails, try escaping control characters in strings
-        try {
-          const escapedContent = cleanedContent.replace(
-            /"((?:[^"\\]|\\.)*)"/g,
-            (match, stringContent) => {
-              const escaped = stringContent
-                .replace(/\r\n/g, '\\n')
-                .replace(/\r/g, '\\n')
-                .replace(/\n/g, '\\n')
-                .replace(/\t/g, '\\t');
-              return `"${escaped}"`;
-            }
-          );
-          parsed = JSON.parse(escapedContent);
-        } catch (secondError) {
-          throw firstError;
-        }
-      }
+      // Use robust JSON extraction
+      const parsed = extractJSON<any>(content);
 
       // Validate required fields
       if (!parsed.metaTitle || !parsed.metaDescription || !parsed.focusKeyword) {
@@ -250,7 +215,6 @@ You MUST respond with valid JSON in this exact structure:
       return parsed;
     } catch (error) {
       console.error('Failed to parse SEO generation response:', error);
-      console.error('Raw response:', content);
 
       // Fallback: Try to extract from text
       return this.extractFromText(content);

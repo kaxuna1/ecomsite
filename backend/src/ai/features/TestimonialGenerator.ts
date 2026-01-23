@@ -7,6 +7,7 @@
 
 import { IAIFeature, FeatureInput, FeatureOutput, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface TestimonialGeneratorInput extends FeatureInput {
   productName: string;
@@ -140,7 +141,7 @@ Generate ${numberOfTestimonials} unique, authentic testimonials now.`;
     const userPrompt = `Generate ${input.numberOfTestimonials} testimonials for: ${input.productName}`;
 
     const temperature = input.tone === 'technical' ? 0.6 : 0.8;
-    const maxTokens = input.numberOfTestimonials * 200; // ~150 words per testimonial
+    const maxTokens = Math.max(4000, input.numberOfTestimonials * 500); // Increased for Gemini 3 Flash
 
     // Actually call the AI service
     const response = await this.aiService.generateText(
@@ -164,43 +165,12 @@ Generate ${numberOfTestimonials} unique, authentic testimonials now.`;
       }
     );
 
-    // Parse JSON response
+    // Parse JSON response using robust extraction
     let parsedContent;
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = response.content.trim();
-
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Try parsing with control character fallback
-      try {
-        parsedContent = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        const escapedContent = cleanedContent.replace(
-          /"((?:[^"\\]|\\.)*)"/g,
-          (match, stringContent) => {
-            const escaped = stringContent
-              .replace(/\r\n/g, '\\n')
-              .replace(/\r/g, '\\n')
-              .replace(/\n/g, '\\n')
-              .replace(/\t/g, '\\t');
-            return `"${escaped}"`;
-          }
-        );
-        parsedContent = JSON.parse(escapedContent);
-      }
+      parsedContent = extractJSON<any>(response.content);
     } catch (error) {
       console.error('Failed to parse testimonial response as JSON:', error);
-      console.error('Raw response:', response.content);
       throw new Error('Failed to generate testimonials: Invalid JSON response');
     }
 

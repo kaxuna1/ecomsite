@@ -21,6 +21,20 @@ import { CacheManager } from './infrastructure/CacheManager';
 import { CostTracker } from './infrastructure/CostTracker';
 import { AuditLogger } from './infrastructure/AuditLogger';
 
+/**
+ * Type guard to check if a value is a string
+ */
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+/**
+ * Type guard to check if a value is a number
+ */
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
 export class AIServiceManager {
   private config: AIServiceConfig;
   private providers: Map<string, IAIProvider>;
@@ -148,8 +162,10 @@ export class AIServiceManager {
       throw new Error(`Feature disabled: ${featureName}`);
     }
 
-    const adminUserId = options?.metadata?.adminUserId;
-    if (featureConfig?.rateLimitPerUser && adminUserId) {
+    const adminUserId = isNumber(options?.metadata?.adminUserId)
+      ? options.metadata.adminUserId
+      : undefined;
+    if (featureConfig?.rateLimitPerUser && adminUserId !== undefined) {
       this.enforceRateLimit(featureName, adminUserId, featureConfig.rateLimitPerUser);
     }
 
@@ -175,7 +191,9 @@ export class AIServiceManager {
       throw new Error(`No available provider found`);
     }
 
-    const featureName = options?.metadata?.feature;
+    const featureName = isString(options?.metadata?.feature)
+      ? options.metadata.feature
+      : undefined;
     const featureConfig = featureName ? this.getFeatureConfig(featureName) : undefined;
 
     const maxAllowedCost = this.getMaxAllowedCost(featureConfig, options?.maxCost);
@@ -194,7 +212,7 @@ export class AIServiceManager {
 
     // Check cache if enabled
     if (cacheEnabled) {
-      const cacheKey = this.cacheManager.generateCacheKey(params, providerName);
+      const cacheKey = this.cacheManager.generateCacheKey(params, providerName, options?.metadata);
       const cached = this.cacheManager.get(cacheKey);
 
       if (cached) {
@@ -208,10 +226,17 @@ export class AIServiceManager {
 
     // Track cost and audit
     if (this.config.monitoring.enabled) {
+      const adminUserIdForTracking = isNumber(options?.metadata?.adminUserId)
+        ? options.metadata.adminUserId
+        : undefined;
+      const featureNameForTracking = isString(options?.metadata?.feature)
+        ? options.metadata.feature
+        : 'unknown';
+
       if (this.config.monitoring.trackCosts) {
         await this.costTracker.trackDetailed(
           response.provider,
-          options?.metadata?.feature || 'unknown',
+          featureNameForTracking,
           response.usage.promptTokens,
           response.usage.completionTokens,
           response.usage.totalTokens,
@@ -219,7 +244,7 @@ export class AIServiceManager {
           response.latency,
           response.modelId,
           response.finishReason !== 'error',
-          options?.metadata?.adminUserId,
+          adminUserIdForTracking,
           response.finishReason === 'error' ? 'Generation failed' : undefined,
           params.metadata
         );
@@ -228,7 +253,7 @@ export class AIServiceManager {
       if (this.config.monitoring.logAllRequests) {
         await this.auditLogger.logDetailed(
           response.provider,
-          options?.metadata?.feature || 'unknown',
+          featureNameForTracking,
           response.usage.promptTokens,
           response.usage.completionTokens,
           response.usage.totalTokens,
@@ -236,7 +261,7 @@ export class AIServiceManager {
           response.latency,
           response.modelId,
           response.finishReason !== 'error',
-          options?.metadata?.adminUserId,
+          adminUserIdForTracking,
           response.finishReason === 'error' ? 'Generation failed' : undefined,
           params.metadata
         );
@@ -248,7 +273,7 @@ export class AIServiceManager {
       cacheEnabled &&
       response.finishReason === 'stop'
     ) {
-      const cacheKey = this.cacheManager.generateCacheKey(params, providerName);
+      const cacheKey = this.cacheManager.generateCacheKey(params, providerName, options?.metadata);
       const ttl = featureConfig?.cacheTTL || this.config.cache.ttl;
       this.cacheManager.set(cacheKey, response, ttl);
     }

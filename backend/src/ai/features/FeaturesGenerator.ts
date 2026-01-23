@@ -7,6 +7,7 @@
 
 import { IAIFeature, FeatureInput, FeatureOutput, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface FeaturesGeneratorInput extends FeatureInput {
   productOrService: string;
@@ -174,7 +175,7 @@ Generate ${numberOfFeatures} compelling, unique features now. Make each one dist
     const userPrompt = `Generate ${input.numberOfFeatures} features for: ${input.productOrService}`;
 
     const temperature = input.tone === 'technical' ? 0.5 : 0.7;
-    const maxTokens = input.numberOfFeatures * 150; // ~100 words per feature
+    const maxTokens = Math.max(4000, input.numberOfFeatures * 500); // Increased for Gemini 3 Flash
 
     // Actually call the AI service
     const response = await this.aiService.generateText(
@@ -199,54 +200,43 @@ Generate ${numberOfFeatures} compelling, unique features now. Make each one dist
       }
     );
 
-    // Parse JSON response
+    // Parse JSON response using robust extraction
     let parsedContent;
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = response.content.trim();
-
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Try parsing with control character fallback
-      try {
-        parsedContent = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        const escapedContent = cleanedContent.replace(
-          /"((?:[^"\\]|\\.)*)"/g,
-          (match, stringContent) => {
-            const escaped = stringContent
-              .replace(/\r\n/g, '\\n')
-              .replace(/\r/g, '\\n')
-              .replace(/\n/g, '\\n')
-              .replace(/\t/g, '\\t');
-            return `"${escaped}"`;
-          }
-        );
-        parsedContent = JSON.parse(escapedContent);
-      }
+      parsedContent = extractJSON<any>(response.content);
     } catch (error) {
       console.error('Failed to parse features response as JSON:', error);
-      console.error('Raw response:', response.content);
-      throw new Error('Failed to generate features: Invalid JSON response');
+      console.error('Raw response content (first 500 chars):', response.content?.substring(0, 500));
+      const finishReason = response.metadata?.finishReasonRaw || 'unknown';
+      throw new Error(`Failed to generate features: Invalid JSON response (finish: ${finishReason})`);
     }
 
-    // Validate and normalize features
-    if (!parsedContent.features || !Array.isArray(parsedContent.features)) {
-      throw new Error('Invalid response format: missing features array');
+    // Handle case where features is a string (Gemini sometimes double-encodes)
+    let featuresArray = parsedContent.features;
+    if (typeof featuresArray === 'string') {
+      try {
+        featuresArray = JSON.parse(featuresArray);
+      } catch (e) {
+        // Not a JSON string, might be truncated
+      }
     }
 
-    const validFeatures: GeneratedFeature[] = parsedContent.features.map((f: any) => {
+    // Validate features array
+    if (!featuresArray || !Array.isArray(featuresArray) || featuresArray.length === 0) {
+      const finishReason = response.metadata?.finishReasonRaw || 'unknown';
+      if (finishReason === 'MAX_TOKENS') {
+        throw new Error('Failed to generate features: Response was truncated. Please try again or configure OpenAI/Anthropic API keys for better results.');
+      }
+      throw new Error('Failed to generate features: Invalid response format');
+    }
+
+    // Use the parsed features array
+    parsedContent.features = featuresArray;
+
+    const validFeatures: GeneratedFeature[] = parsedContent.features.map((f: any, index: number) => {
       if (!f.icon || !f.title || !f.description) {
-        throw new Error('Invalid feature: missing required fields');
+        console.error(`Feature ${index} missing fields:`, JSON.stringify(f).substring(0, 100));
+        throw new Error(`Invalid feature ${index}: missing required fields`);
       }
 
       return {

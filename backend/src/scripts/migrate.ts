@@ -157,6 +157,26 @@ CREATE TABLE IF NOT EXISTS cms_block_versions (
 
 CREATE INDEX IF NOT EXISTS idx_cms_block_versions_block_id ON cms_block_versions(block_id);
 
+-- Add unique constraint for block versions
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'unique_block_version'
+  ) THEN
+    ALTER TABLE cms_block_versions
+    ADD CONSTRAINT unique_block_version UNIQUE (block_id, version_number);
+  END IF;
+END $$;
+
+-- Add check constraint for positive version numbers
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'positive_version'
+  ) THEN
+    ALTER TABLE cms_block_versions
+    ADD CONSTRAINT positive_version CHECK (version_number >= 1);
+  END IF;
+END $$;
+
 -- CMS Media table (for image management)
 CREATE TABLE IF NOT EXISTS cms_media (
   id SERIAL PRIMARY KEY,
@@ -1252,6 +1272,15 @@ CREATE TABLE IF NOT EXISTS product_attribute_definitions (
 CREATE INDEX IF NOT EXISTS idx_product_attributes_filterable
 ON product_attribute_definitions(is_filterable) WHERE is_filterable = TRUE;
 
+CREATE INDEX IF NOT EXISTS idx_cms_block_versions_block_version
+  ON cms_block_versions(block_id, version_number DESC);
+
+CREATE INDEX IF NOT EXISTS idx_cms_block_versions_created
+  ON cms_block_versions(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_product_attr_defs_category
+  ON product_attribute_definitions USING GIN(category_ids);
+
 -- Add custom_attributes JSONB column to products
 ALTER TABLE products ADD COLUMN IF NOT EXISTS custom_attributes JSONB DEFAULT '{}'::jsonb;
 
@@ -1297,6 +1326,16 @@ BEGIN
         IF jsonb_typeof(attr_value) != 'string' THEN
           RAISE EXCEPTION 'Attribute % must be a string', attr_key;
         END IF;
+      WHEN 'date' THEN
+        IF jsonb_typeof(attr_value) != 'string' THEN
+          RAISE EXCEPTION 'Attribute "%" must be a date string', attr_key;
+        END IF;
+        -- Validate ISO 8601 format
+        BEGIN
+          PERFORM attr_value::text::date;
+        EXCEPTION WHEN OTHERS THEN
+          RAISE EXCEPTION 'Attribute "%" must be a valid date (YYYY-MM-DD)', attr_key;
+        END;
       WHEN 'select' THEN
         -- Validate against options
         IF definition.options IS NOT NULL THEN
@@ -1308,21 +1347,15 @@ BEGIN
           END IF;
         END IF;
       WHEN 'multiselect' THEN
-        -- Validate all values against options
         IF jsonb_typeof(attr_value) != 'array' THEN
-          RAISE EXCEPTION 'Attribute % must be an array', attr_key;
+          RAISE EXCEPTION 'Attribute "%" must be an array', attr_key;
         END IF;
-        IF definition.options IS NOT NULL THEN
-          -- Check each value in the array
-          IF EXISTS (
-            SELECT 1 FROM jsonb_array_elements_text(attr_value) AS val
-            WHERE NOT EXISTS (
-              SELECT 1 FROM jsonb_array_elements(definition.options) AS opt
-              WHERE opt->>'value' = val
-            )
-          ) THEN
-            RAISE EXCEPTION 'Invalid options for attribute %', attr_key;
-          END IF;
+        -- Use array containment for O(n) performance
+        IF NOT (
+          SELECT ARRAY(SELECT jsonb_array_elements_text(attr_value))
+          <@ ARRAY(SELECT opt->>'value' FROM jsonb_array_elements(definition.options) AS opt)
+        ) THEN
+          RAISE EXCEPTION 'Attribute "%" contains invalid values', attr_key;
         END IF;
     END CASE;
   END LOOP;
@@ -1359,7 +1392,11 @@ BEGIN
     pad.display_order
   FROM product_attribute_definitions pad
   WHERE pad.is_filterable = TRUE
-    AND (category_filter IS NULL OR pad.category_ids = '{}' OR category_filter = ANY(pad.category_ids::TEXT[]))
+    AND (
+      category_filter IS NULL
+      OR array_length(pad.category_ids, 1) IS NULL
+      OR category_filter::integer = ANY(pad.category_ids)
+    )
   ORDER BY pad.display_order, pad.attribute_label;
 END;
 $$ LANGUAGE plpgsql STABLE;

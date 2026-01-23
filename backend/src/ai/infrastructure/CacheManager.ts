@@ -18,6 +18,7 @@ export class CacheManager {
   private cache: Map<string, CacheEntry>;
   private maxSize: number;
   private defaultTTL: number; // in seconds
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(maxSize: number = 1000, defaultTTL: number = 3600) {
     this.cache = new Map();
@@ -32,7 +33,7 @@ export class CacheManager {
    * Generate cache key from prompt parameters
    * Uses SHA-256 hash of relevant parameters
    */
-  generateCacheKey(params: GenerateTextParams, provider: string): string {
+  generateCacheKey(params: GenerateTextParams, provider: string, metadata?: Record<string, any>): string {
     const keyData = {
       provider,
       prompt: params.prompt,
@@ -40,7 +41,8 @@ export class CacheManager {
       maxTokens: params.maxTokens,
       temperature: params.temperature,
       topP: params.topP,
-      responseFormat: params.responseFormat
+      responseFormat: params.responseFormat,
+      language: metadata?.targetLanguage || ''
     };
 
     const keyString = JSON.stringify(keyData);
@@ -180,8 +182,20 @@ export class CacheManager {
    */
   private startCleanupInterval(): void {
     // Run cleanup every 5 minutes
-    setInterval(() => {
+    this.cleanupInterval = setInterval(() => {
       this.cleanupExpired();
     }, 5 * 60 * 1000);
+  }
+
+  /**
+   * Destroy cache manager and cleanup resources
+   * Should be called when cache manager is no longer needed
+   */
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+    this.cache.clear();
   }
 }

@@ -36,6 +36,17 @@ export class StaticTextTranslator implements IAIFeature {
     input: StaticTextTranslationInput,
     options?: FeatureOptions
   ): Promise<StaticTextTranslationOutput> {
+    // Validation
+    if (!input.text || input.text.trim().length === 0) {
+      throw new Error('Text to translate cannot be empty');
+    }
+    if (input.text.length > 10000) {
+      throw new Error('Text exceeds maximum length of 10000 characters');
+    }
+    if (!this.isValidLanguageCode(input.targetLanguage)) {
+      throw new Error(`Invalid target language code: ${input.targetLanguage}`);
+    }
+
     const prompt = this.buildPrompt(input);
     const systemPrompt = this.getSystemPrompt(input);
 
@@ -110,7 +121,7 @@ Requirements:
 - Keep any placeholders intact (e.g., {{variable}}, \${{amount}})
 - Preserve HTML tags if present
 - Maintain special characters and punctuation appropriately
-${input.preserveTerms && input.preserveTerms.length > 0 ? `- DO NOT translate these terms: ${input.preserveTerms.join(', ')}` : ''}
+${input.preserveTerms?.length ? `- DO NOT translate these terms: ${input.preserveTerms.join(', ')}` : ''}
 - Ensure the translation sounds natural for native speakers
 - For UI text, keep it concise and clear
 
@@ -157,5 +168,32 @@ Return ONLY valid JSON.`;
       console.error('Failed to parse static text translation response:', error);
       return content.trim().replace(/^["']|["']$/g, '');
     }
+  }
+
+  /**
+   * Validates if the provided string is a valid language code.
+   * Supports ISO 639-1 (2-letter), ISO 639-2 (3-letter), and locale codes (e.g., en-US).
+   */
+  private isValidLanguageCode(code: string): boolean {
+    if (!code || typeof code !== 'string') {
+      return false;
+    }
+
+    // ISO 639-1 (2-letter) codes: en, ka, fr, de, etc.
+    const iso639_1 = /^[a-z]{2}$/i;
+
+    // ISO 639-2 (3-letter) codes: eng, kat, fra, deu, etc.
+    const iso639_2 = /^[a-z]{3}$/i;
+
+    // Locale codes: en-US, ka-GE, fr-FR, zh-CN, etc.
+    const locale = /^[a-z]{2}-[A-Z]{2}$/;
+
+    // Extended locale codes: zh-Hans-CN, sr-Latn-RS, etc.
+    const extendedLocale = /^[a-z]{2,3}-[A-Z][a-z]{3}(-[A-Z]{2})?$/;
+
+    return iso639_1.test(code) ||
+           iso639_2.test(code) ||
+           locale.test(code) ||
+           extendedLocale.test(code);
   }
 }

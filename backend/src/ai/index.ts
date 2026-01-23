@@ -29,6 +29,7 @@ import { StaticTextTranslator } from './features/StaticTextTranslator';
 
 // Singleton instance
 let aiServiceManagerInstance: AIServiceManager | null = null;
+let isInitialized = false;
 
 /**
  * Get or create AI Service Manager singleton instance
@@ -63,10 +64,28 @@ export async function getAIServiceManager(): Promise<AIServiceManager> {
     console.log('AI Service Manager created with 19 features (including AI Page Builder)');
   }
 
-  // Re-initialize on every call to pick up updated provider/model settings
-  await aiServiceManagerInstance.initialize();
+  // Only initialize once (not on every request)
+  if (!isInitialized) {
+    await aiServiceManagerInstance.initialize();
+    isInitialized = true;
+    console.log('AI Service Manager initialized');
+  }
 
   return aiServiceManagerInstance;
+}
+
+/**
+ * Reset AI Service Manager instance
+ * Useful for testing or when configuration changes require re-initialization
+ */
+export function resetAIServiceManager(): void {
+  if (aiServiceManagerInstance) {
+    // Note: AIServiceManager should have a destroy() method to cleanup resources
+    // For now, we just reset the references
+    aiServiceManagerInstance = null;
+    isInitialized = false;
+    console.log('AI Service Manager reset');
+  }
 }
 
 /**

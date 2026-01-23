@@ -14,6 +14,7 @@
 
 import { IAIFeature, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface FAQGeneratorInput {
   productName: string;
@@ -79,40 +80,10 @@ export class FAQGenerator implements IAIFeature {
       }
     );
 
-    // Parse JSON response
+    // Parse JSON response using robust extraction
     let parsedContent;
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = response.content.trim();
-
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Try parsing with control character fallback
-      try {
-        parsedContent = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        const escapedContent = cleanedContent.replace(
-          /"((?:[^"\\]|\\.)*)"/g,
-          (match, stringContent) => {
-            const escaped = stringContent
-              .replace(/\r\n/g, '\\n')
-              .replace(/\r/g, '\\n')
-              .replace(/\n/g, '\\n')
-              .replace(/\t/g, '\\t');
-            return `"${escaped}"`;
-          }
-        );
-        parsedContent = JSON.parse(escapedContent);
-      }
+      parsedContent = extractJSON<any>(response.content);
     } catch (error) {
       console.error('Failed to parse FAQ response as JSON:', error);
       throw new Error('Failed to generate FAQs');

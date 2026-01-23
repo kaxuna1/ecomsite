@@ -7,6 +7,7 @@
 
 import { IAIFeature, FeatureOptions, GenerateTextParams } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
+import { extractJSON } from '../utils/jsonParser';
 
 export interface DescriptionGeneratorInput {
   productName: string;
@@ -78,46 +79,13 @@ export class DescriptionGenerator implements IAIFeature {
       }
     });
 
-    // Parse JSON response
+    // Parse JSON response using robust extraction
     let parsedContent;
     try {
-      // Strip markdown code blocks if present
-      let cleanedContent = response.content.trim();
-
-      if (cleanedContent.startsWith('```')) {
-        const firstNewline = cleanedContent.indexOf('\n');
-        if (firstNewline !== -1) {
-          cleanedContent = cleanedContent.substring(firstNewline + 1);
-        }
-        if (cleanedContent.endsWith('```')) {
-          cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf('```'));
-        }
-        cleanedContent = cleanedContent.trim();
-      }
-
-      // Remove "json" or "JSON" that might appear after opening ```
-      if (cleanedContent.startsWith('json') || cleanedContent.startsWith('JSON')) {
-        cleanedContent = cleanedContent.substring(4).trim();
-      }
-
-      // Try parsing with control character fallback
-      try {
-        parsedContent = JSON.parse(cleanedContent);
-      } catch (firstError) {
-        // Try to fix common JSON formatting issues
-        const escapedContent = cleanedContent
-          .replace(/\r\n/g, '\\n')
-          .replace(/\r/g, '\\n')
-          .replace(/\n/g, '\\n')
-          .replace(/\t/g, '\\t')
-          .replace(/[\u0000-\u001F\u007F-\u009F]/g, ''); // Remove control characters
-
-        parsedContent = JSON.parse(escapedContent);
-      }
+      parsedContent = extractJSON<any>(response.content);
     } catch (error) {
-      // If JSON parsing fails, try to extract structured data
+      // If JSON parsing fails, try to extract structured data as fallback
       console.error('Failed to parse AI response as JSON:', error);
-      console.error('Raw content:', response.content.substring(0, 500)); // Log first 500 chars for debugging
       parsedContent = this.extractStructuredData(response.content);
     }
 
@@ -253,11 +221,14 @@ Guidelines:
   /**
    * Get max tokens based on desired length
    */
+  /**
+   * Note: Token limits increased for Gemini 3 Flash
+   */
   private getMaxTokensByLength(length: string): number {
     const tokenLimits: Record<string, number> = {
-      short: 500,
-      medium: 1000,
-      long: 1500
+      short: 3000,
+      medium: 4000,
+      long: 5000
     };
 
     return tokenLimits[length] || tokenLimits.medium;
