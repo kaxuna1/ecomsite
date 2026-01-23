@@ -63,7 +63,7 @@ docker run -d -p 80:80 \
 - **Entry Point**: `src/server.ts` → `src/app.ts` (Express app configuration)
 - **Database**: `src/db/client.ts` - PostgreSQL connection pool using `pg` library
 - **Migrations**: `src/scripts/migrate.ts` - Single file with all DDL (creates tables, indexes, functions)
-- **Routes**: `src/routes/` - 15 Express routers organized by domain
+- **Routes**: `src/routes/` - 26 Express routers organized by domain
   - `authRoutes.ts` - Admin authentication
   - `userAuthRoutes.ts` - Customer authentication
   - `productRoutes.ts` - Product CRUD with image upload (multipart/form-data)
@@ -79,38 +79,57 @@ docker run -d -p 80:80 \
   - `languageRoutes.ts` - Multilingual configuration
   - `adminUserRoutes.ts` - Admin user management
   - `apiKeysRoutes.ts` - Encrypted API keys management
-- **Services**: `src/services/` - 17 business logic modules
-  - Product, order, user, auth, CMS, media, navigation, settings, API keys, etc.
+  - `aiRoutes.ts` - AI-powered content generation (18 features)
+  - `aiPageBuilderRoutes.ts` - AI page builder
+  - `reviewsRoutes.ts` - Product reviews
+  - `reviewImageRoutes.ts` - Review image uploads
+  - `reviewReminderRoutes.ts` - Review reminder emails
+  - `newsletterRoutes.ts` - Newsletter subscriptions
+  - `staticTranslationsRoutes.ts` - UI string translations
+  - `themeRoutes.ts` - Theme management
+- **Services**: `src/services/` - 27 business logic modules
+  - Core: Product, order, user, auth, CMS, media, navigation, settings, API keys
+  - New: themeService, reviewsService, reviewImageService, aiPageBuilderService
+  - New: staticTranslationsService, emailService, notificationService, newsletterService
   - Service layer isolates business logic from routes
 - **Middleware**: `src/middleware/authMiddleware.ts` - JWT authentication guards; `rateLimiter.ts` - Rate limiting
 - **Types**: `src/types/` - Shared TypeScript interfaces and types
 - **Config**: `src/config/env.ts` - Environment variable validation with defaults
 - **Utilities**: `src/utils/` - Notification templates, image processing helpers
+- **AI Module**: `src/ai/` - Complete AI service architecture
+  - `AIServiceManager.ts` - Orchestrator for all AI operations
+  - `providers/` - OpenAI, Anthropic provider implementations
+  - `features/` - 18 AI feature generators (descriptions, translations, SEO, etc.)
+  - `infrastructure/` - CacheManager, CostTracker, AuditLogger
 
 ### Frontend Structure
 
 - **Entry Point**: `src/main.tsx` → `src/App.tsx` (React Router with language routing)
 - **Routing**: Language-prefixed URLs (`/:lang/*`) for all public routes
-- **Pages**: `src/pages/` - 36 route components organized by section
+- **Pages**: `src/pages/` - 41 route components organized by section
   - **Storefront**: HomePage, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, SearchPage
   - **Special Pages**: NewArrivalsPage, BestSellersPage, SalePage
   - **Auth**: LoginPage, SignupPage
-  - **Account** (Protected): ProfilePage, OrdersPage, FavoritesPage
-  - **Admin** (Protected): Dashboard, Products, Orders, CMS, Navigation, Settings, etc.
+  - **Account** (Protected): ProfilePage, OrdersPage, FavoritesPage, MyReviewsPage
+  - **Admin** (Protected): Dashboard, Products, Orders, CMS, Navigation, Settings, Themes, Reviews, Newsletter, StaticTranslations, VariantOptions
   - **Dynamic**: CMSPage (handles `/:lang/:slug` for CMS content)
-- **Components**: `src/components/` - 56 reusable UI components
+- **Components**: `src/components/` - 90+ reusable UI components
   - Layout components (Layout, AdminLayout, Navbar, Footer)
   - Product components (ProductCard, VariantSelector, ImageZoom)
   - Admin components (DataTable, ProductEditor, ImageEditor, block editors)
   - CMS components (BlockRenderer, EditableBlock, 10+ block editors)
+  - Theme components (ThemeEditorModal, ThemePreviewModal, ColorPicker)
+  - Review components (RatingStars, RatingDistribution, ReviewForm, ReviewList)
+  - AI components (AIPageBuilderModal, AI generators for descriptions, attributes, translations)
   - Utility components (SEOHead, LanguageSwitcher, LoadingScreen)
-- **API Layer**: `src/api/` - 15 typed API client modules with Axios
+- **API Layer**: `src/api/` - 20+ typed API client modules with Axios
   - Base client with JWT token injection and error handling
-  - Typed functions for all endpoints (auth, products, orders, cms, etc.)
+  - Typed functions for all endpoints (auth, products, orders, cms, themes, reviews, ai, etc.)
 - **Context**: `src/context/` - React Context providers
   - `CartContext.tsx` - Shopping cart with localStorage persistence
   - `AuthContext.tsx` - User authentication state
   - `I18nContext.tsx` - Language switching and i18n configuration
+  - `ThemeContext.tsx` - Dynamic theming with design tokens and runtime CSS injection
 - **Hooks**: `src/hooks/` - Custom React hooks (useAutoSave, etc.)
 - **Types**: `src/types/` - TypeScript interfaces matching backend models
 - **Internationalization**: `src/i18n/` + `public/locales/` - i18next configuration and translations
@@ -608,7 +627,133 @@ All API routes are prefixed with `/api`:
 - Manual adjustments in product editor
 - Low stock indicators (can be added)
 
-### 10. API Keys Management
+### 10. AI-Powered Features
+
+**AI Service Architecture:**
+The platform includes a comprehensive AI service layer with provider abstraction, caching, cost tracking, and audit logging.
+
+**Supported AI Providers:**
+- **OpenAI GPT-4**: Primary provider for all AI features
+- **Anthropic Claude**: Alternative provider (configured)
+
+**Available AI Features (18 generators):**
+
+| Feature | Endpoint | Description |
+|---------|----------|-------------|
+| Product Descriptions | `/api/admin/ai/generate-description` | Generate product copy with highlights and usage |
+| Product Translations | `/api/admin/ai/translate-product` | Translate products to target languages |
+| SEO Optimization | `/api/admin/ai/generate-seo` | Generate meta titles, descriptions, keywords |
+| Image Alt Text | `/api/admin/ai/generate-alt-text` | Generate accessible alt text for images |
+| Hero Blocks | `/api/admin/ai/generate-hero` | Generate CMS hero block content |
+| Feature Blocks | `/api/admin/ai/generate-features` | Generate feature grid content |
+| FAQ Blocks | `/api/admin/ai/generate-faq` | Generate FAQ content from context |
+| Testimonials | `/api/admin/ai/generate-testimonials` | Generate realistic testimonials |
+| Email Campaigns | `/api/admin/ai/generate-email` | Generate marketing emails |
+| CMS Page Translation | `/api/admin/ai/translate-cms-page` | Translate entire CMS pages |
+| Navigation Generation | `/api/admin/ai/generate-navigation` | Generate menu structures |
+| Menu Item Translation | `/api/admin/ai/translate-menu-item` | Translate navigation labels |
+| Footer Generation | `/api/admin/ai/generate-footer` | Generate footer content |
+| Footer Translation | `/api/admin/ai/translate-footer` | Translate footer content |
+| Attribute Generation | `/api/admin/ai/generate-attributes` | Generate product attributes |
+| Variant Options | `/api/admin/ai/generate-variant-options` | Generate variant option values |
+| AI Page Builder | `/api/admin/ai/page-builder/generate` | Generate complete CMS pages from prompts |
+
+**AI Infrastructure:**
+- **CacheManager**: In-memory caching with TTL (2 hours default)
+- **CostTracker**: PostgreSQL-based usage and cost logging
+- **AuditLogger**: Full audit trail of all AI operations
+- **Rate Limiting**: 20 generations per hour per admin user
+
+**Cost Management:**
+- Real-time cost tracking per operation
+- Usage analytics by provider, feature, and user
+- Configurable max cost per generation ($0.50 default)
+
+**Database Tables:**
+- `ai_usage_log`: Tracks tokens, cost, latency, success/failure per request
+
+See `backend/src/ai/README.md` for detailed AI architecture documentation.
+
+### 11. Theme System
+
+**Global Design Tokens:**
+The platform supports a comprehensive theming system with customizable design tokens.
+
+**Theme Features:**
+- **Design Tokens**: Colors, typography, spacing, borders, shadows
+- **Theme Presets**: Pre-built themes (light, dark, custom)
+- **Theme History**: Track theme changes with rollback capability
+- **Font Library**: Custom font management
+
+**API Endpoints:**
+- `GET /api/themes` - List all themes
+- `GET /api/themes/active` - Get active theme
+- `POST /api/themes` - Create new theme
+- `PUT /api/themes/:id` - Update theme
+- `PATCH /api/themes/:id/activate` - Activate theme
+
+**Database Tables:**
+- `themes`: Theme definitions with JSONB design tokens
+- `theme_presets`: Pre-built theme configurations
+- `theme_history`: Audit trail of theme changes
+- `font_library`: Custom font definitions
+
+### 12. Product Reviews
+
+**Review System Features:**
+- Customer reviews with 1-5 star ratings
+- Review images with Sharp optimization
+- Admin moderation (approve/reject)
+- Helpful vote tracking
+- Review reminders via email
+
+**Review Endpoints:**
+- `GET /api/reviews/product/:productId` - Get product reviews
+- `POST /api/reviews` - Submit review (authenticated customers)
+- `PUT /api/reviews/:id` - Update own review
+- `DELETE /api/reviews/:id` - Delete review
+- `POST /api/reviews/:id/helpful` - Mark as helpful
+
+**Admin Endpoints:**
+- `GET /api/admin/reviews` - List all reviews with filters
+- `PATCH /api/admin/reviews/:id/status` - Moderate review
+- `DELETE /api/admin/reviews/:id` - Delete review
+
+**Database Tables:**
+- `product_reviews`: Review content, rating, status
+- `review_images`: Associated review images
+- `review_helpful_votes`: Helpful vote tracking
+
+### 13. Newsletter System
+
+**Newsletter Features:**
+- Email subscriber management
+- Subscription/unsubscription flow
+- Welcome email on signup
+- Subscriber export
+
+**Endpoints:**
+- `POST /api/newsletter/subscribe` - Subscribe email
+- `POST /api/newsletter/unsubscribe` - Unsubscribe email
+- `GET /api/admin/newsletter/subscribers` - List subscribers
+- `DELETE /api/admin/newsletter/subscribers/:id` - Remove subscriber
+
+**Database Tables:**
+- `newsletter_subscribers`: Email, status, subscribed_at, unsubscribed_at
+
+### 14. Static Translations
+
+**Static UI String Management:**
+- Manage frontend UI translations via admin panel
+- Export/import translation files
+- Bulk translation updates
+
+**Endpoints:**
+- `GET /api/static-translations?lang=en` - Get translations for language
+- `PUT /api/admin/static-translations` - Update translations
+- `POST /api/admin/static-translations/export` - Export to JSON
+
+### 15. API Keys Management
 
 **Secure Storage & Encryption:**
 - AES-256-GCM encryption for all stored API keys
@@ -1006,13 +1151,13 @@ cd backend && npm run migrate
 
 ### Important
 
-4. **Email/SMS Not Implemented**: Templates exist but no actual sending. Implement nodemailer for SMTP.
+4. **~~Email/SMS Not Implemented~~**: ✅ Email implemented with Nodemailer (`emailService.ts`). SMS integration still pending.
 
 5. **No CSRF Protection**: Add CSRF tokens for state-changing operations.
 
 6. **S3 Integration Incomplete**: S3 code exists but is disabled. Either implement fully or remove.
 
-7. **No Admin Audit Log**: Track who changed what in admin panel.
+7. **~~No Admin Audit Log~~**: ✅ Partial - API keys have full audit logging. Expand to other admin actions.
 
 ### Enhancements
 
@@ -1067,12 +1212,14 @@ cd backend && npm run migrate
 
 ## Project Metrics
 
-- **Backend Services**: 16 modules
-- **Backend Routes**: 14 routers
-- **Frontend Pages**: 36 components
-- **Frontend Components**: 56 reusable components
-- **API Endpoints**: 60+ endpoints
-- **Database Tables**: 30+ tables
+- **Backend Services**: 27 modules (services/)
+- **Backend Routes**: 26 routers
+- **Backend AI Features**: 18 generators (in ai/features/)
+- **Frontend Pages**: 41 route components
+- **Frontend Components**: 90+ reusable components
+- **Frontend API Modules**: 20+ typed clients
+- **API Endpoints**: 120+ endpoints
+- **Database Tables**: 40+ tables
 - **Languages Supported**: 2 (English, Georgian) - extensible
 - **CMS Block Types**: 10+ types
 
@@ -1083,6 +1230,69 @@ cd backend && npm run migrate
 - **ADMIN_USER_SETUP.md**: Admin user configuration guide
 - **README.md**: High-level project overview
 - **docker/README.md**: Docker-specific documentation
+
+## Naming Conventions
+
+### File Naming
+
+| Location | Convention | Examples |
+|----------|------------|----------|
+| Frontend Components | PascalCase | `ProductCard.tsx`, `AdminLayout.tsx`, `SearchModal.tsx` |
+| Frontend Pages | PascalCase | `ProductsPage.tsx`, `CheckoutPage.tsx`, `AdminDashboard.tsx` |
+| Frontend Hooks | camelCase with `use` prefix | `useAutoSave.ts`, `useDebounce.ts`, `useLocalizedPath.ts` |
+| Frontend API modules | camelCase | `products.ts`, `cmsAdmin.ts`, `staticTranslations.ts` |
+| Frontend Context | PascalCase | `CartContext.tsx`, `AuthContext.tsx`, `I18nContext.tsx` |
+| Backend Services | camelCase with `Service` suffix | `productService.ts`, `cmsService.ts`, `themeService.ts` |
+| Backend Routes | camelCase with `Routes` suffix | `productRoutes.ts`, `authRoutes.ts`, `cmsRoutes.ts` |
+| Backend AI Features | PascalCase | `DescriptionGenerator.ts`, `SEOGenerator.ts`, `AIPageBuilderFeature.ts` |
+| Types | camelCase or `index.ts` | `user.ts`, `cms.ts`, `navigation.ts` |
+
+### Code Naming
+
+| Identifier Type | Convention | Examples |
+|-----------------|------------|----------|
+| React Components | PascalCase | `export function ProductCard()`, `export default AdminLayout` |
+| React Hooks | camelCase with `use` prefix | `function useAutoSave()`, `const useDebounce = ()` |
+| Regular Functions | camelCase | `handleClick()`, `fetchProducts()`, `validatePromoCode()` |
+| Variables | camelCase | `const userData`, `let isLoading`, `const productList` |
+| Constants | SCREAMING_SNAKE_CASE | `const MAX_RETRIES = 3`, `const API_URL = '...'` |
+| Boolean Variables | is/has/should/can prefix | `isLoading`, `hasPermission`, `shouldUpdate`, `canEdit` |
+| Event Handlers | handle prefix | `handleSubmit`, `handleClick`, `handleChange` |
+| Service Classes | PascalCase | `class ThemeService`, `class AIServiceManager` |
+| TypeScript Interfaces | PascalCase | `interface Product`, `interface CreatePagePayload` |
+| TypeScript Types | PascalCase | `type Theme`, `type BlockContent` |
+| Database Columns | snake_case | `created_at`, `is_active`, `admin_user_id` |
+
+### Import Order
+
+```typescript
+// 1. External packages
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+// 2. Internal absolute imports (if path aliases configured)
+// (Currently not using path aliases - uses relative imports)
+
+// 3. Relative imports - types first
+import type { Product, ProductTranslation } from '../types';
+
+// 4. Relative imports - components
+import { ProductCard } from '../components/ProductCard';
+
+// 5. Relative imports - hooks/utils
+import { useAutoSave } from '../hooks/useAutoSave';
+
+// 6. Styles (if applicable)
+```
+
+### Backend SQL Conventions
+
+- Table names: snake_case, plural (`products`, `order_items`, `cms_pages`)
+- Column names: snake_case (`created_at`, `is_active`, `user_id`)
+- Foreign keys: `{referenced_table_singular}_id` (`product_id`, `admin_user_id`)
+- Junction tables: `{table1}_{table2}` (`product_variant_options`)
+- Always use parameterized queries: `$1, $2, $3`
 
 ## Support & Contribution
 
@@ -1100,4 +1310,31 @@ When working on this codebase:
 
 ---
 
-**Last Updated**: January 2025 (PostgreSQL architecture with full CMS and multilingual support)
+**Last Updated**: January 2025 (PostgreSQL architecture, full CMS, multilingual support, AI-powered content generation, theme system, product reviews)
+
+
+## Skill Usage Guide
+
+When working on tasks involving these technologies, invoke the corresponding skill:
+
+| Skill | Invoke When |
+|-------|-------------|
+| postgresql | Designs schemas, writes parameterized queries, and manages database migrations |
+| zustand | Implements lightweight client-side state management with persistence |
+| tanstack-query | Manages server state, API caching, and data fetching with React Query |
+| frontend-design | Styles React components with Tailwind CSS utility-first approach and design tokens |
+| tailwind | Applies Tailwind CSS utilities for responsive layouts and component styling |
+| prisma | Defines ORM schemas and generates type-safe database client operations |
+| nestjs | Structures modular API with controllers, services, guards, and dependency injection |
+| typescript | Enforces strict TypeScript types across frontend and backend codebases |
+| react | Manages React 18 components, hooks, and functional patterns for the SPA |
+| node | Manages Node.js LTS runtime, async operations, and backend service architecture |
+| react-hook-form | Handles form validation and state management with Zod schema integration |
+| playwright | Builds E2E tests for payment flows, checkout, and critical user journeys |
+| express | Builds RESTful API routes, middleware, and request handling in NestJS-like patterns |
+| elasticsearch | Configures audit logging, search functionality, and analytics queries |
+| redis | Implements caching, session storage, and Bull job queues for background tasks |
+| vite | Configures Vite 7.x build tool, dev server, and frontend asset optimization |
+| zod | Validates API payloads, form inputs, and environment variables at runtime |
+| jest | Writes unit tests and mocks for backend services and business logic |
+| docker | Builds single-container deployments with PostgreSQL, Nginx, and Supervisor |
