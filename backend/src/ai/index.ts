@@ -14,6 +14,8 @@ import { ProductTranslator } from './features/ProductTranslator';
 import { EmailCampaignGenerator } from './features/EmailCampaignGenerator';
 import { FAQGenerator } from './features/FAQGenerator';
 import { HeroGenerator } from './features/HeroGenerator';
+import { NavigationGenerator } from './features/NavigationGenerator';
+import { MenuItemTranslator } from './features/MenuItemTranslator';
 import { TestimonialGenerator } from './features/TestimonialGenerator';
 import { FeaturesGenerator } from './features/FeaturesGenerator';
 import { CMSPageTranslator } from './features/CMSPageTranslator';
@@ -23,6 +25,7 @@ import { AttributeGenerator } from './features/AttributeGenerator';
 import { VariantOptionsGenerator } from './features/VariantOptionsGenerator';
 import { VariantOptionsTypeGenerator } from './features/VariantOptionsTypeGenerator';
 import { AIPageBuilderFeature } from './features/AIPageBuilderFeature';
+import { StaticTextTranslator } from './features/StaticTextTranslator';
 
 // Singleton instance
 let aiServiceManagerInstance: AIServiceManager | null = null;
@@ -44,6 +47,8 @@ export async function getAIServiceManager(): Promise<AIServiceManager> {
     aiServiceManagerInstance.registerFeature(new EmailCampaignGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new FAQGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new HeroGenerator(aiServiceManagerInstance));
+    aiServiceManagerInstance.registerFeature(new NavigationGenerator(aiServiceManagerInstance));
+    aiServiceManagerInstance.registerFeature(new MenuItemTranslator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new TestimonialGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new FeaturesGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new CMSPageTranslator(aiServiceManagerInstance));
@@ -53,8 +58,9 @@ export async function getAIServiceManager(): Promise<AIServiceManager> {
     aiServiceManagerInstance.registerFeature(new VariantOptionsGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new VariantOptionsTypeGenerator(aiServiceManagerInstance));
     aiServiceManagerInstance.registerFeature(new AIPageBuilderFeature(aiServiceManagerInstance));
+    aiServiceManagerInstance.registerFeature(new StaticTextTranslator(aiServiceManagerInstance));
 
-    console.log('AI Service Manager created with 16 features (including AI Page Builder)');
+    console.log('AI Service Manager created with 19 features (including AI Page Builder)');
   }
 
   // Re-initialize on every call to pick up updated provider/model settings

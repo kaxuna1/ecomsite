@@ -5,10 +5,10 @@
  * Creates varied personas with realistic details and benefit-focused reviews.
  */
 
-import { AIFeature, AIFeatureInput, AIFeatureOutput, FeatureOptions } from '../core/types';
+import { IAIFeature, FeatureInput, FeatureOutput, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
 
-export interface TestimonialGeneratorInput extends AIFeatureInput {
+export interface TestimonialGeneratorInput extends FeatureInput {
   productName: string;
   productType?: string; // e.g., "Scalp Serum", "Hair Oil"
   industry?: string; // e.g., "Beauty & Personal Care", "Health & Wellness"
@@ -30,13 +30,14 @@ export interface GeneratedTestimonial {
   location?: string;
 }
 
-export interface TestimonialGeneratorOutput extends AIFeatureOutput {
+export interface TestimonialGeneratorOutput extends FeatureOutput {
   testimonials: GeneratedTestimonial[];
 }
 
-export class TestimonialGenerator implements AIFeature<TestimonialGeneratorInput, TestimonialGeneratorOutput> {
+export class TestimonialGenerator implements IAIFeature {
   name = 'testimonial_generator';
   description = 'Generate authentic customer testimonials with diverse personas';
+  requiredCapabilities = ['text-generation'];
 
   constructor(private aiService: AIServiceManager) {}
 

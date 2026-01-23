@@ -433,7 +433,7 @@ function Navbar() {
                           />
                           {/* Badge */}
                           <motion.span
-                            className="relative flex h-full w-full items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
+                            className="relative flex h-full w-full items-center justify-center rounded-full bg-primary text-[10px] font-bold text-on-primary"
                             key={itemCount}
                             initial={{ scale: 1.5, rotate: 180 }}
                             animate={{ scale: 1, rotate: 0 }}
@@ -504,7 +504,7 @@ function Navbar() {
                           </div>
                           <Link
                             to={localizedPath('/cart')}
-                            className="block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg"
+                            className="block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-on-primary transition-all hover:bg-primary/90 hover:shadow-lg"
                           >
                             {t('cart.viewCart')}
                           </Link>

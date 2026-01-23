@@ -8,6 +8,7 @@
 import { IAIProvider, ProviderConfig } from '../types';
 import { OpenAIProvider } from './OpenAIProvider';
 import { AnthropicProvider } from './AnthropicProvider';
+import { GeminiProvider } from './GeminiProvider';
 
 export class ProviderFactory {
   /**
@@ -25,6 +26,9 @@ export class ProviderFactory {
       case 'anthropic':
         return new AnthropicProvider(config, apiKey);
 
+      case 'gemini':
+        return new GeminiProvider(config, apiKey);
+
       // Future providers can be added here:
       // case 'cohere':
       //   return new CohereProvider(config, apiKey);
@@ -38,7 +42,7 @@ export class ProviderFactory {
    * Get list of supported provider names
    */
   static getSupportedProviders(): string[] {
-    return ['openai', 'anthropic'];
+    return ['openai', 'anthropic', 'gemini'];
   }
 
   /**

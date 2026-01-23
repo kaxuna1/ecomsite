@@ -174,7 +174,7 @@ export default function VariantSelector({ productId, onVariantChange, className 
                     className={`
                       relative px-4 py-2 rounded-lg border-2 font-medium text-sm transition-all
                       ${isSelected
-                        ? 'border-blush bg-blush text-white shadow-md'
+                        ? 'border-blush bg-blush text-on-secondary shadow-md'
                         : isDisabled
                         ? 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed line-through'
                         : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:border-blush hover:shadow-sm'

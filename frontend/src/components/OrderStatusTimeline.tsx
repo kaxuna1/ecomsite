@@ -96,7 +96,7 @@ export default function OrderStatusTimeline({
 
   const getStepColor = (step: TimelineStep) => {
     if (step.isCancelled) return 'bg-red-100 text-red-600 border-red-300';
-    if (step.isCompleted) return 'bg-jade text-white border-jade';
+    if (step.isCompleted) return 'bg-jade text-on-primary border-jade';
     if (step.isActive) return 'bg-blue-100 text-blue-600 border-blue-400 animate-pulse';
     return 'bg-gray-100 text-gray-400 border-gray-300';
   };

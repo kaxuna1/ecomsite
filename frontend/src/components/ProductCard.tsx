@@ -202,7 +202,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         {/* New Badge */}
         {product.isNew && (
           <motion.div
-            className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
+            className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-on-primary backdrop-blur-sm"
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2 + index * 0.1, type: 'spring' }}
@@ -266,7 +266,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         {/* Variant Options Badge */}
         {hasVariants && (
           <motion.div
-            className="flex items-center gap-1.5 rounded-full bg-blush/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
+            className="flex items-center gap-1.5 rounded-full bg-blush/90 px-3 py-1.5 text-xs font-semibold text-on-secondary backdrop-blur-sm"
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.4 + index * 0.1, type: 'spring' }}
@@ -292,7 +292,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           type="button"
           onClick={handleQuickAdd}
           disabled={isAdding || showSuccess || product.inventory === 0}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-white shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]"
           variants={buttonVariants}
           initial="rest"
           whileHover={product.inventory > 0 ? "hover" : "rest"}

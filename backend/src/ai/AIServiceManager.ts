@@ -11,6 +11,7 @@ import {
   IAIProvider,
   IAIFeature,
   AIServiceConfig,
+  FeatureConfig,
   FeatureOptions,
   GenerateTextParams,
   GenerateTextResponse
@@ -27,6 +28,7 @@ export class AIServiceManager {
   private cacheManager: CacheManager;
   private costTracker: CostTracker;
   private auditLogger: AuditLogger;
+  private invocationTracker: Map<string, { count: number; windowStart: number }>;
   private initialized: boolean = false;
 
   constructor(config: AIServiceConfig) {
@@ -39,6 +41,7 @@ export class AIServiceManager {
     );
     this.costTracker = new CostTracker();
     this.auditLogger = new AuditLogger();
+    this.invocationTracker = new Map();
   }
 
   /**
@@ -52,12 +55,14 @@ export class AIServiceManager {
     console.log('Initializing AI Service Manager...');
 
     // Fetch user-selected models from settings
-    let selectedModels: { openai?: string; anthropic?: string } = {};
+    let selectedModels: { openai?: string; anthropic?: string; gemini?: string } = {};
     try {
       const openaiModel = await getSetting('openaiModel');
       const anthropicModel = await getSetting('anthropicModel');
+      const geminiModel = await getSetting('geminiModel');
       if (openaiModel) selectedModels.openai = openaiModel;
       if (anthropicModel) selectedModels.anthropic = anthropicModel;
+      if (geminiModel) selectedModels.gemini = geminiModel;
     } catch (error) {
       console.warn('Failed to load model preferences from settings:', error);
     }
@@ -87,6 +92,9 @@ export class AIServiceManager {
         } else if (providerConfig.name === 'anthropic' && selectedModels.anthropic) {
           configWithSelectedModel.defaultModel = selectedModels.anthropic;
           console.log(`Using user-selected Anthropic model: ${selectedModels.anthropic}`);
+        } else if (providerConfig.name === 'gemini' && selectedModels.gemini) {
+          configWithSelectedModel.defaultModel = selectedModels.gemini;
+          console.log(`Using user-selected Gemini model: ${selectedModels.gemini}`);
         }
 
         // Create provider instance with potentially overridden model
@@ -135,6 +143,16 @@ export class AIServiceManager {
       throw new Error(`Feature not found: ${featureName}`);
     }
 
+    const featureConfig = this.getFeatureConfig(featureName);
+    if (featureConfig && !featureConfig.enabled) {
+      throw new Error(`Feature disabled: ${featureName}`);
+    }
+
+    const adminUserId = options?.metadata?.adminUserId;
+    if (featureConfig?.rateLimitPerUser && adminUserId) {
+      this.enforceRateLimit(featureName, adminUserId, featureConfig.rateLimitPerUser);
+    }
+
     return await feature.execute(input, options);
   }
 
@@ -157,8 +175,25 @@ export class AIServiceManager {
       throw new Error(`No available provider found`);
     }
 
+    const featureName = options?.metadata?.feature;
+    const featureConfig = featureName ? this.getFeatureConfig(featureName) : undefined;
+
+    const maxAllowedCost = this.getMaxAllowedCost(featureConfig, options?.maxCost);
+    if (maxAllowedCost !== undefined) {
+      const estimatedCost = provider.estimateCost(params);
+      if (estimatedCost > maxAllowedCost) {
+        throw new Error(
+          `Estimated cost $${estimatedCost.toFixed(4)} exceeds max allowed $${maxAllowedCost.toFixed(2)}`
+        );
+      }
+    }
+
+    const cacheEnabled = options?.useCache !== false &&
+      this.config.cache.enabled &&
+      featureConfig?.cacheEnabled !== false;
+
     // Check cache if enabled
-    if (options?.useCache !== false && this.config.cache.enabled) {
+    if (cacheEnabled) {
       const cacheKey = this.cacheManager.generateCacheKey(params, providerName);
       const cached = this.cacheManager.get(cacheKey);
 
@@ -210,12 +245,10 @@ export class AIServiceManager {
 
     // Cache response if successful
     if (
-      options?.useCache !== false &&
-      this.config.cache.enabled &&
+      cacheEnabled &&
       response.finishReason === 'stop'
     ) {
       const cacheKey = this.cacheManager.generateCacheKey(params, providerName);
-      const featureConfig = this.config.features.find(f => f.name === options?.metadata?.feature);
       const ttl = featureConfig?.cacheTTL || this.config.cache.ttl;
       this.cacheManager.set(cacheKey, response, ttl);
     }
@@ -345,6 +378,45 @@ export class AIServiceManager {
   getSelectedModel(providerName: string): string | undefined {
     const provider = this.providers.get(providerName);
     return provider?.modelId;
+  }
+
+  private getFeatureConfig(featureName?: string): FeatureConfig | undefined {
+    if (!featureName) return undefined;
+    return this.config.features.find(f => f.name === featureName);
+  }
+
+  private getMaxAllowedCost(featureConfig: FeatureConfig | undefined, override?: number) {
+    if (featureConfig?.maxCostPerExecution === undefined && override === undefined) {
+      return undefined;
+    }
+
+    if (featureConfig?.maxCostPerExecution === undefined) {
+      return override;
+    }
+
+    if (override === undefined) {
+      return featureConfig.maxCostPerExecution;
+    }
+
+    return Math.min(featureConfig.maxCostPerExecution, override);
+  }
+
+  private enforceRateLimit(featureName: string, adminUserId: number, limitPerHour: number) {
+    const key = `${featureName}:${adminUserId}`;
+    const now = Date.now();
+    const windowMs = 60 * 60 * 1000;
+    const entry = this.invocationTracker.get(key);
+
+    if (!entry || now - entry.windowStart >= windowMs) {
+      this.invocationTracker.set(key, { count: 1, windowStart: now });
+      return;
+    }
+
+    if (entry.count >= limitPerHour) {
+      throw new Error(`Rate limit exceeded for ${featureName}. Try again later.`);
+    }
+
+    entry.count += 1;
   }
 
   /**

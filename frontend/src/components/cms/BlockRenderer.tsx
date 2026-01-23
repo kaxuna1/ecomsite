@@ -523,13 +523,13 @@ function ProductsBlock({ content }: { content: any }) {
                       transition={{ duration: 0.4 }}
                     />
                     {/* Quick View Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition-opacity group-hover:opacity-80" />
 
                     {/* Badges */}
                     {showElements.badges !== false && (
                       <>
                         {product.isNew && (
-                          <div className="absolute left-3 top-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                          <div className="absolute left-3 top-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-on-primary backdrop-blur">
                             New
                           </div>
                         )}
@@ -696,7 +696,7 @@ function ProductsBlock({ content }: { content: any }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-4 right-4 z-50 rounded-lg bg-primary px-6 py-4 text-white shadow-2xl"
+            className="fixed bottom-4 right-4 z-50 rounded-lg bg-primary px-6 py-4 text-on-primary shadow-2xl"
             onAnimationComplete={() => {
               setTimeout(() => setShowToast(false), 2000);
             }}
@@ -1750,7 +1750,7 @@ function FAQBlock({ content }: { content: any }) {
                     onClick={() => setSelectedCategory('all')}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedCategory === 'all'
-                        ? 'bg-primary text-white shadow-lg'
+                        ? 'bg-primary text-on-primary shadow-lg'
                         : 'bg-white text-text-primary/70 hover:bg-midnight/5'
                     }`}
                   >
@@ -1763,7 +1763,7 @@ function FAQBlock({ content }: { content: any }) {
                       onClick={() => setSelectedCategory(category)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         selectedCategory === category
-                          ? 'bg-primary text-white shadow-lg'
+                          ? 'bg-primary text-on-primary shadow-lg'
                           : 'bg-white text-text-primary/70 hover:bg-midnight/5'
                       }`}
                     >

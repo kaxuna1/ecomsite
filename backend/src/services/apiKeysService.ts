@@ -389,7 +389,7 @@ function getCategoryFromKeyName(keyName: string): string {
 
   if (lower.includes('stripe') || lower.includes('paypal')) return 'payment';
   if (lower.includes('twilio') || lower.includes('sendgrid') || lower.includes('mailgun')) return 'communication';
-  if (lower.includes('openai') || lower.includes('anthropic')) return 'ai';
+  if (lower.includes('openai') || lower.includes('anthropic') || lower.includes('gemini')) return 'ai';
   if (lower.includes('analytics') || lower.includes('pixel') || lower.includes('mixpanel')) return 'analytics';
   if (lower.includes('shippo') || lower.includes('easypost') || lower.includes('shipstation')) return 'shipping';
   if (lower.includes('aws') || lower.includes('s3') || lower.includes('cloudflare')) return 'storage';
@@ -509,7 +509,8 @@ export async function validateAPIKeysForFeature(
     // AI & Machine Learning
     openai: ['openai_api_key'],
     anthropic: ['anthropic_api_key'],
-    ai: ['openai_api_key'], // At least one AI service
+    gemini: ['gemini_api_key'],
+    ai: [], // At least one AI service
 
     // Analytics & Tracking
     google_analytics: ['google_analytics_id'],
@@ -558,11 +559,19 @@ export async function validateAPIKeysForFeature(
   const missing: string[] = [];
   const missingOptional: string[] = [];
 
-  // Check required keys
-  for (const keyName of required) {
-    const value = await getAPIKey(keyName);
-    if (!value) {
-      missing.push(keyName);
+  if (feature === 'ai') {
+    const aiKeys = ['openai_api_key', 'anthropic_api_key', 'gemini_api_key'];
+    const found = await Promise.all(aiKeys.map(keyName => getAPIKey(keyName)));
+    if (!found.some(Boolean)) {
+      missing.push(...aiKeys);
+    }
+  } else {
+    // Check required keys
+    for (const keyName of required) {
+      const value = await getAPIKey(keyName);
+      if (!value) {
+        missing.push(keyName);
+      }
     }
   }
 
@@ -580,4 +589,3 @@ export async function validateAPIKeysForFeature(
     optional: missingOptional.length > 0 ? missingOptional : undefined
   };
 }
-

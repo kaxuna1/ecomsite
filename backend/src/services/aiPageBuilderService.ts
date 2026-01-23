@@ -6,7 +6,7 @@
  */
 
 import { getAIServiceManager } from '../ai/index.js';
-import { AIPageBuilderFeature, PagePrompt, GeneratedPage, BlockRegenerationPrompt } from '../ai/features/AIPageBuilderFeature';
+import { PagePrompt, GeneratedPage, BlockRegenerationPrompt } from '../ai/features/AIPageBuilderFeature';
 import { createPage, createBlock, updateBlock, getBlockById } from './cmsService';
 import { CreatePagePayload, CreateBlockPayload, BlockContent, CMSBlock } from '../types/cms';
 
@@ -44,15 +44,11 @@ export async function generatePageFromPrompt(
 ): Promise<GeneratePageResult> {
   console.log('[AI Page Builder Service] Generating page from prompt');
 
-  // Get AI Service Manager and Page Builder feature
   const aiManager = await getAIServiceManager();
-  const pageBuilderFeature = aiManager.getFeature('ai-page-builder') as AIPageBuilderFeature;
-  if (!pageBuilderFeature) {
-    throw new Error('AI Page Builder feature not initialized');
-  }
 
   // Generate page structure and content
-  const generatedPage: GeneratedPage = await pageBuilderFeature.generatePage(
+  const generatedPage: GeneratedPage = await aiManager.executeFeature(
+    'ai-page-builder',
     options.prompt,
     {
       metadata: {
@@ -115,13 +111,6 @@ export async function regenerateBlockWithFeedback(
     throw new Error(`Block not found: ${options.blockId}`);
   }
 
-  // Get AI Service Manager and Page Builder feature
-  const aiManager = await getAIServiceManager();
-  const pageBuilderFeature = aiManager.getFeature('ai-page-builder') as AIPageBuilderFeature;
-  if (!pageBuilderFeature) {
-    throw new Error('AI Page Builder feature not initialized');
-  }
-
   // Prepare regeneration prompt
   const regenerationPrompt: BlockRegenerationPrompt = {
     blockType: existingBlock.blockType,
@@ -131,7 +120,9 @@ export async function regenerateBlockWithFeedback(
   };
 
   // Generate new content
-  const newContent = await pageBuilderFeature.regenerateBlock(
+  const aiManager = await getAIServiceManager();
+  const newContent = await aiManager.executeFeature(
+    'ai-page-builder',
     regenerationPrompt,
     {
       metadata: {
@@ -169,16 +160,11 @@ export async function generatePageVariations(
 ): Promise<GeneratedPage[]> {
   console.log(`[AI Page Builder Service] Generating ${count} page variations`);
 
-  const aiManager = await getAIServiceManager();
-  const pageBuilderFeature = aiManager.getFeature('ai-page-builder') as AIPageBuilderFeature;
-  if (!pageBuilderFeature) {
-    throw new Error('AI Page Builder feature not initialized');
-  }
-
   const variations: GeneratedPage[] = [];
 
   for (let i = 0; i < count; i++) {
-    const variation = await pageBuilderFeature.generatePage(prompt, {
+    const aiManager = await getAIServiceManager();
+    const variation = await aiManager.executeFeature('ai-page-builder', prompt, {
       metadata: {
         feature: 'ai-page-builder',
         action: `variation-${i + 1}`

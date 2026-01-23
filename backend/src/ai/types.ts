@@ -89,6 +89,21 @@ export interface FeatureOptions {
 }
 
 /**
+ * Optional base input/output shapes for features
+ */
+export interface FeatureInput {
+  language?: string;
+  [key: string]: any;
+}
+
+export interface FeatureOutput {
+  cost: number;
+  tokensUsed: number;
+  provider: string;
+  [key: string]: any;
+}
+
+/**
  * Provider configuration
  */
 export interface ProviderConfig {

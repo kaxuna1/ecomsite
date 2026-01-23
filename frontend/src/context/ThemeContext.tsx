@@ -218,6 +218,14 @@ function addCompatibilityLayer(css: string): string {
   --color-text-secondary: var(--color-semantic-text-secondary);
   --color-text-tertiary: var(--color-semantic-text-tertiary);
   --color-text-inverse: var(--color-semantic-text-inverse);
+  --color-text-on-primary: var(--color-semantic-text-onPrimary, var(--color-text-inverse));
+  --color-text-on-secondary: var(--color-semantic-text-onSecondary, var(--color-text-primary));
+  --color-text-on-accent: var(--color-semantic-text-onAccent, var(--color-text-inverse));
+  --color-text-on-interactive: var(--color-semantic-text-onInteractive, var(--color-text-inverse));
+  --color-text-on-success: var(--color-semantic-text-onSuccess, var(--color-text-inverse));
+  --color-text-on-warning: var(--color-semantic-text-onWarning, var(--color-text-inverse));
+  --color-text-on-error: var(--color-semantic-text-onError, var(--color-text-inverse));
+  --color-text-on-info: var(--color-semantic-text-onInfo, var(--color-text-inverse));
 
   --color-background-primary: var(--color-semantic-background-primary);
   --color-background-secondary: var(--color-semantic-background-secondary);

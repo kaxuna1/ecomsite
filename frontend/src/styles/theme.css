@@ -45,7 +45,7 @@ a:active {
 /* Button Styles */
 .btn-primary {
   background-color: var(--color-brand-primary);
-  color: var(--color-text-inverse);
+  color: var(--color-text-on-primary, var(--color-text-inverse));
   border-radius: var(--border-radius-lg);
   font-weight: var(--typography-fontWeight-semibold);
 }
@@ -60,7 +60,7 @@ a:active {
 
 .btn-secondary {
   background-color: var(--color-brand-secondary);
-  color: var(--color-text-primary);
+  color: var(--color-text-on-secondary, var(--color-text-primary));
   border-radius: var(--border-radius-lg);
   font-weight: var(--typography-fontWeight-semibold);
 }
@@ -102,7 +102,7 @@ a:active {
 /* Enhanced Button Styles with Guaranteed Visibility */
 .btn-primary-solid {
   background-color: var(--color-interactive-active);
-  color: var(--color-text-inverse);
+  color: var(--color-text-on-interactive, var(--color-text-inverse));
   border: 2px solid var(--color-interactive-active);
   box-shadow: var(--shadow-md);
   font-weight: var(--typography-fontWeight-semibold);
@@ -146,25 +146,25 @@ a:active {
 /* Badge Styles */
 .badge-success {
   background-color: var(--color-feedback-success);
-  color: white;
+  color: var(--color-text-on-success, #ffffff);
   border-radius: var(--border-radius-full);
 }
 
 .badge-warning {
   background-color: var(--color-feedback-warning);
-  color: white;
+  color: var(--color-text-on-warning, #ffffff);
   border-radius: var(--border-radius-full);
 }
 
 .badge-error {
   background-color: var(--color-feedback-error);
-  color: white;
+  color: var(--color-text-on-error, #ffffff);
   border-radius: var(--border-radius-full);
 }
 
 .badge-info {
   background-color: var(--color-feedback-info);
-  color: white;
+  color: var(--color-text-on-info, #ffffff);
   border-radius: var(--border-radius-full);
 }
 
@@ -226,7 +226,7 @@ a:active {
 /* CTA sections */
 .cta-section {
   background-color: var(--color-brand-primary);
-  color: var(--color-text-inverse);
+  color: var(--color-text-on-primary, var(--color-text-inverse));
   border-radius: var(--border-radius-2xl);
 }
 

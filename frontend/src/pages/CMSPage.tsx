@@ -55,7 +55,7 @@ export default function CMSPage() {
             <div className="flex gap-4 justify-center">
               <a
                 href="/"
-                className="px-8 py-3 bg-primary text-text-inverse rounded-full hover:bg-primary/90 transition-colors font-semibold shadow-lg hover:shadow-xl"
+                className="px-8 py-3 bg-primary text-on-primary rounded-full hover:bg-primary/90 transition-colors font-semibold shadow-lg hover:shadow-xl"
               >
                 Go Home
               </a>
@@ -83,7 +83,7 @@ export default function CMSPage() {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-primary text-text-inverse rounded-full hover:bg-primary/90 transition-colors font-semibold"
+            className="px-6 py-3 bg-primary text-on-primary rounded-full hover:bg-primary/90 transition-colors font-semibold"
           >
             Reload Page
           </button>

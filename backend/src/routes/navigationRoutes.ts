@@ -5,38 +5,11 @@ import { Router, Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import { authenticate as adminAuth, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as navigationService from '../services/navigationService';
-import { AIServiceManager } from '../ai/AIServiceManager';
-import { NavigationGenerator } from '../ai/features/NavigationGenerator';
-import { MenuItemTranslator } from '../ai/features/MenuItemTranslator';
-import { aiServiceConfig } from '../ai/config';
+import { getAIServiceManager } from '../ai';
 
 const router = Router();
 
-// AI Service Manager (singleton)
-let aiServiceManager: AIServiceManager | null = null;
-
-/**
- * Get or create AI Service Manager instance for navigation features
- */
-async function getAIServiceManager(): Promise<AIServiceManager> {
-  if (!aiServiceManager) {
-    aiServiceManager = new AIServiceManager(aiServiceConfig);
-
-    // Register navigation-specific features
-    const navigationGenerator = new NavigationGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(navigationGenerator);
-
-    const menuItemTranslator = new MenuItemTranslator(aiServiceManager);
-    aiServiceManager.registerFeature(menuItemTranslator);
-
-    console.log('AI Service Manager created for navigation features');
-  }
-
-  // Re-initialize on every request to pick up updated settings
-  await aiServiceManager.initialize();
-
-  return aiServiceManager;
-}
+// getAIServiceManager returns a singleton; providers are reinitialized on settings/API key updates.
 
 // ============================================================================
 // PUBLIC ROUTES (No authentication required)

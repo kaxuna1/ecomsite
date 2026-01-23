@@ -10,6 +10,7 @@ import {
   isValidLogoType,
   isValidAiProvider
 } from '../services/settingsService';
+import { getAIServiceManager } from '../ai';
 
 const router = Router();
 
@@ -83,7 +84,15 @@ router.get('/', authenticate, async (req, res) => {
  */
 router.put('/', authenticate, async (req, res) => {
   try {
-    const { logoType, logoText, logoImageUrl, aiProvider, openaiModel, anthropicModel } = req.body;
+    const {
+      logoType,
+      logoText,
+      logoImageUrl,
+      aiProvider,
+      openaiModel,
+      anthropicModel,
+      geminiModel
+    } = req.body;
 
     // Validate logo_type if provided
     if (logoType !== undefined && !isValidLogoType(logoType)) {
@@ -95,7 +104,7 @@ router.put('/', authenticate, async (req, res) => {
     // Validate ai_provider if provided
     if (aiProvider !== undefined && !isValidAiProvider(aiProvider)) {
       return res.status(400).json({
-        message: 'Invalid AI provider. Must be either "openai" or "anthropic"'
+        message: 'Invalid AI provider. Must be either "openai", "anthropic", or "gemini"'
       });
     }
 
@@ -125,11 +134,31 @@ router.put('/', authenticate, async (req, res) => {
       updates.anthropicModel = anthropicModel;
     }
 
+    if (geminiModel !== undefined) {
+      updates.geminiModel = geminiModel;
+    }
+
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ message: 'No settings provided to update' });
     }
 
     await updateSettings(updates);
+
+    const aiSettingsChanged = [
+      'aiProvider',
+      'openaiModel',
+      'anthropicModel',
+      'geminiModel'
+    ].some((key) => key in updates);
+
+    if (aiSettingsChanged) {
+      try {
+        const aiService = await getAIServiceManager();
+        await aiService.reinitialize();
+      } catch (error: any) {
+        console.warn('Failed to reinitialize AI providers after settings update:', error?.message || error);
+      }
+    }
 
     // Return updated settings
     const settings = await getAllSettings();

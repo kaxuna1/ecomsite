@@ -7,9 +7,10 @@ export interface SiteSettings {
   logoType: 'text' | 'image';
   logoText: string | null;
   logoImageUrl: string | null;
-  aiProvider: 'openai' | 'anthropic';
+  aiProvider: 'openai' | 'anthropic' | 'gemini';
   openaiModel?: string | null; // Selected OpenAI model
   anthropicModel?: string | null; // Selected Anthropic model
+  geminiModel?: string | null; // Selected Gemini model
 }
 
 /**
@@ -98,9 +99,10 @@ export async function getPublicLogoSettings(): Promise<SiteSettings> {
     logoType: (settings.logoType as 'text' | 'image') || 'text',
     logoText: settings.logoText || null,
     logoImageUrl: settings.logoImageUrl || null,
-    aiProvider: (settings.aiProvider as 'openai' | 'anthropic') || 'openai',
+    aiProvider: (settings.aiProvider as 'openai' | 'anthropic' | 'gemini') || 'openai',
     openaiModel: settings.openaiModel || null,
-    anthropicModel: settings.anthropicModel || null
+    anthropicModel: settings.anthropicModel || null,
+    geminiModel: settings.geminiModel || null
   };
 }
 
@@ -114,14 +116,14 @@ export function isValidLogoType(type: string): type is 'text' | 'image' {
 /**
  * Validate AI provider
  */
-export function isValidAiProvider(provider: string): provider is 'openai' | 'anthropic' {
-  return provider === 'openai' || provider === 'anthropic';
+export function isValidAiProvider(provider: string): provider is 'openai' | 'anthropic' | 'gemini' {
+  return provider === 'openai' || provider === 'anthropic' || provider === 'gemini';
 }
 
 /**
  * Validate AI model for a given provider
  */
-export function isValidAiModel(provider: 'openai' | 'anthropic', model: string): boolean {
+export function isValidAiModel(provider: 'openai' | 'anthropic' | 'gemini', model: string): boolean {
   const validModels = {
     openai: [
       'gpt-4o',
@@ -143,6 +145,10 @@ export function isValidAiModel(provider: 'openai' | 'anthropic', model: string):
       'claude-3-opus-20240229',
       'claude-3-sonnet-20240229',
       'claude-3-haiku-20240307'
+    ],
+    gemini: [
+      'gemini-3-flash-preview',
+      'gemini-3-pro-preview'
     ]
   };
 

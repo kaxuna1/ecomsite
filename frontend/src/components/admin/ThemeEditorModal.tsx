@@ -36,30 +36,38 @@ type TabType = 'colors' | 'typography' | 'spacing' | 'borders';
 const DEFAULT_TOKENS: DesignTokens = {
   color: {
     brand: {
-      primary: '#8BBA9C',
+      primary: '#2F6D5F',
       secondary: '#E8C7C8',
-      accent: '#D4A574'
+      accent: '#0F172A'
     },
     semantic: {
       background: {
         primary: '#FFFFFF',
-        secondary: '#F8F9FA',
+        secondary: '#F9FAFB',
         elevated: '#FFFFFF'
       },
       text: {
-        primary: '#1A1A1A',
-        secondary: '#6B7280',
-        tertiary: '#9CA3AF',
-        inverse: '#FFFFFF'
+        primary: '#111827',
+        secondary: '#4B5563',
+        tertiary: '#6B7280',
+        inverse: '#FFFFFF',
+        onPrimary: '#FFFFFF',
+        onSecondary: '#111827',
+        onAccent: '#FFFFFF',
+        onInteractive: '#FFFFFF',
+        onSuccess: '#111827',
+        onWarning: '#111827',
+        onError: '#111827',
+        onInfo: '#111827'
       },
       border: {
         default: '#E5E7EB',
         strong: '#D1D5DB'
       },
       interactive: {
-        default: '#8BBA9C',
-        hover: '#7AA98B',
-        active: '#699879',
+        default: '#2F6D5F',
+        hover: '#275A4F',
+        active: '#214940',
         disabled: '#D1D5DB'
       },
       feedback: {

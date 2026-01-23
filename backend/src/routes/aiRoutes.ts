@@ -7,91 +7,13 @@
 
 import { Router, Response } from 'express';
 import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
-import { AIServiceManager } from '../ai/AIServiceManager';
-import { DescriptionGenerator } from '../ai/features/DescriptionGenerator';
-import { SEOGenerator } from '../ai/features/SEOGenerator';
-import { ImageAltTextGenerator } from '../ai/features/ImageAltTextGenerator';
-import { ProductTranslator } from '../ai/features/ProductTranslator';
-import { EmailCampaignGenerator } from '../ai/features/EmailCampaignGenerator';
-import { FAQGenerator } from '../ai/features/FAQGenerator';
-import { HeroGenerator } from '../ai/features/HeroGenerator';
-import { TestimonialGenerator } from '../ai/features/TestimonialGenerator';
-import { FeaturesGenerator } from '../ai/features/FeaturesGenerator';
-import { CMSPageTranslator } from '../ai/features/CMSPageTranslator';
-import { FooterGenerator } from '../ai/features/FooterGenerator';
-import { FooterTranslator } from '../ai/features/FooterTranslator';
-import { AttributeGenerator } from '../ai/features/AttributeGenerator';
-import { VariantOptionsGenerator } from '../ai/features/VariantOptionsGenerator';
-import { VariantOptionsTypeGenerator } from '../ai/features/VariantOptionsTypeGenerator';
-import { aiServiceConfig } from '../ai/config';
+import { getAIServiceManager } from '../ai';
+import { productService } from '../services/productService';
+import { updateMedia } from '../services/mediaService';
 
 const router = Router();
 
-// Initialize AI Service Manager (singleton)
-let aiServiceManager: AIServiceManager | null = null;
-
-/**
- * Get or create AI Service Manager instance
- * Re-initializes on each call to pick up updated settings (provider/model changes)
- */
-async function getAIServiceManager(): Promise<AIServiceManager> {
-  if (!aiServiceManager) {
-    aiServiceManager = new AIServiceManager(aiServiceConfig);
-
-    // Register features (only once)
-    const descriptionGenerator = new DescriptionGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(descriptionGenerator);
-
-    const seoGenerator = new SEOGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(seoGenerator);
-
-    const altTextGenerator = new ImageAltTextGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(altTextGenerator);
-
-    const productTranslator = new ProductTranslator(aiServiceManager);
-    aiServiceManager.registerFeature(productTranslator);
-
-    const emailCampaignGenerator = new EmailCampaignGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(emailCampaignGenerator);
-
-    const faqGenerator = new FAQGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(faqGenerator);
-
-    const heroGenerator = new HeroGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(heroGenerator);
-
-    const testimonialGenerator = new TestimonialGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(testimonialGenerator);
-
-    const featuresGenerator = new FeaturesGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(featuresGenerator);
-
-    const cmsPageTranslator = new CMSPageTranslator(aiServiceManager);
-    aiServiceManager.registerFeature(cmsPageTranslator);
-
-    const footerGenerator = new FooterGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(footerGenerator);
-
-    const footerTranslator = new FooterTranslator(aiServiceManager);
-    aiServiceManager.registerFeature(footerTranslator);
-
-    const attributeGenerator = new AttributeGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(attributeGenerator);
-
-    const variantOptionsGenerator = new VariantOptionsGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(variantOptionsGenerator);
-
-    const variantOptionsTypeGenerator = new VariantOptionsTypeGenerator(aiServiceManager);
-    aiServiceManager.registerFeature(variantOptionsTypeGenerator);
-
-    console.log('AI Service Manager created with 15 features');
-  }
-
-  // IMPORTANT: Re-initialize on every request to pick up updated provider/model settings
-  await aiServiceManager.initialize();
-
-  return aiServiceManager;
-}
+// getAIServiceManager returns a singleton; providers are reinitialized on settings/API key updates.
 
 /**
  * POST /api/admin/ai/generate-description
@@ -551,24 +473,178 @@ router.post('/bulk-operation', authenticate, async (req: AuthenticatedRequest, r
       });
     }
 
-    // Get AI Service Manager
     const aiService = await getAIServiceManager();
 
-    // TODO: Implement actual bulk operation logic
-    // For now, return a placeholder response
-    // In production, this should:
-    // 1. Fetch product data from database
-    // 2. Process each product with the specified operation
-    // 3. Track successes and failures
-    // 4. Consider using a queue system for large batches
+    const results: Array<{
+      productId: number;
+      success: boolean;
+      data?: any;
+      error?: string;
+    }> = [];
+
+    const buildProductPayload = (product: any, overrides: any) => {
+      const categories = Array.isArray(product.categories)
+        ? product.categories
+        : product.categories
+          ? [product.categories]
+          : [];
+
+      return {
+        name: product.name,
+        shortDescription: product.shortDescription || '',
+        description: product.description || '',
+        price: product.price,
+        salePrice: product.salePrice ?? undefined,
+        inventory: product.inventory,
+        categories,
+        highlights: product.highlights ?? undefined,
+        usage: product.usage ?? undefined,
+        isNew: product.isNew,
+        isFeatured: product.isFeatured,
+        slug: product.slug,
+        metaTitle: product.metaTitle,
+        metaDescription: product.metaDescription,
+        metaKeywords: product.metaKeywords,
+        ogImageUrl: product.ogImageUrl,
+        canonicalUrl: product.canonicalUrl,
+        ...overrides
+      };
+    };
+
+    for (const productId of productIds) {
+      try {
+        const product = await productService.get(productId);
+        if (!product) {
+          throw new Error('Product not found');
+        }
+
+        if (operation === 'seo') {
+          const seoResult = await aiService.executeFeature(
+            'seo_meta_generator',
+            {
+              productName: product.name,
+              shortDescription: product.shortDescription,
+              description: product.description,
+              categories: Array.isArray(product.categories) ? product.categories : [],
+              targetKeyword: options?.targetKeyword,
+              existingKeywords: Array.isArray(product.metaKeywords) ? product.metaKeywords : [],
+              language: options?.language || 'en'
+            },
+            {
+              metadata: {
+                adminUserId: req.adminId,
+                feature: 'seo_meta_generator',
+                productId
+              }
+            }
+          );
+
+          const metaKeywords = [
+            seoResult.focusKeyword,
+            ...(seoResult.secondaryKeywords || [])
+          ].filter(Boolean);
+
+          await productService.update(
+            productId,
+            buildProductPayload(product, {
+              metaTitle: seoResult.metaTitle,
+              metaDescription: seoResult.metaDescription,
+              metaKeywords
+            })
+          );
+
+          results.push({ productId, success: true, data: seoResult });
+          continue;
+        }
+
+        if (operation === 'description') {
+          const descResult = await aiService.executeFeature(
+            'product_description_generator',
+            {
+              productName: product.name,
+              shortDescription: product.shortDescription,
+              categories: Array.isArray(product.categories) ? product.categories : [],
+              existingDescription: product.description,
+              tone: options?.tone || 'professional',
+              length: options?.length || 'medium',
+              keyFeatures: Array.isArray(options?.keyFeatures) ? options.keyFeatures : []
+            },
+            {
+              metadata: {
+                adminUserId: req.adminId,
+                feature: 'product_description_generator',
+                productId
+              }
+            }
+          );
+
+          await productService.update(
+            productId,
+            buildProductPayload(product, {
+              description: descResult.description,
+              highlights: descResult.highlights,
+              usage: descResult.usage,
+              metaDescription: descResult.metaDescription
+            })
+          );
+
+          results.push({ productId, success: true, data: descResult });
+          continue;
+        }
+
+        if (operation === 'alt-text') {
+          const featuredImage = (product.images || []).find((img: any) => img.isFeatured)
+            || (product.images || [])[0];
+
+          if (!featuredImage) {
+            throw new Error('No product media available for alt text');
+          }
+
+          const altResult = await aiService.executeFeature(
+            'image_alt_text_generator',
+            {
+              imageUrl: featuredImage.url || product.imageUrl,
+              filename: featuredImage.filename,
+              productName: product.name,
+              productCategory: Array.isArray(product.categories) ? product.categories[0] : undefined,
+              productDescription: product.description,
+              existingAltText: featuredImage.altText,
+              language: options?.language || 'en'
+            },
+            {
+              metadata: {
+                adminUserId: req.adminId,
+                feature: 'image_alt_text_generator',
+                productId
+              }
+            }
+          );
+
+          await updateMedia(featuredImage.mediaId, {
+            altText: altResult.altText
+          });
+
+          results.push({ productId, success: true, data: altResult });
+        }
+      } catch (error: any) {
+        results.push({
+          productId,
+          success: false,
+          error: error.message || 'Bulk operation failed'
+        });
+      }
+    }
+
+    const successful = results.filter(r => r.success).length;
+    const failed = results.length - successful;
 
     return res.json({
       success: true,
-      message: 'Bulk operation endpoint ready for implementation',
       data: {
-        operation,
-        productIds,
-        note: 'This endpoint will be fully implemented with background job processing'
+        total: results.length,
+        successful,
+        failed,
+        results
       }
     });
   } catch (error: any) {
@@ -1298,61 +1374,32 @@ router.post('/translate-static-text', authenticate, async (req: AuthenticatedReq
       });
     }
 
-    // Get AI Service Manager
     const aiService = await getAIServiceManager();
 
-    // Build context-aware prompt
-    const contextInfo = [
-      key ? `Translation key: ${key}` : null,
-      namespace ? `Context: ${namespace} UI section` : null,
-      context ? `Usage: ${context}` : null
-    ].filter(Boolean).join('\n');
-
-    const fullPrompt = `Translate the following UI text from ${sourceLanguage || 'en'} to ${targetLanguage}.
-
-${contextInfo ? contextInfo + '\n\n' : ''}Text to translate:
-"${text}"
-
-Requirements:
-- Maintain the same tone and formality level
-- Keep any placeholders intact (e.g., {{variable}}, \${{amount}})
-- Preserve HTML tags if present
-- Maintain special characters and punctuation appropriately
-${preserveTerms && preserveTerms.length > 0 ? `- DO NOT translate these terms: ${preserveTerms.join(', ')}` : ''}
-- Ensure the translation sounds natural for native speakers
-- For UI text, keep it concise and clear
-
-Return ONLY the translated text, without quotes or explanations.`;
-
-    // Use the AI service to generate translation
-    const result = await aiService.generateText({
-      prompt: fullPrompt,
-      maxTokens: 500,
-      temperature: 0.3, // Lower temperature for more consistent translations
-      metadata: {
-        adminUserId: req.adminId,
-        feature: 'static_text_translator',
+    const result = await aiService.executeFeature(
+      'static_text_translator',
+      {
+        text,
+        key,
+        namespace,
         sourceLanguage: sourceLanguage || 'en',
-        targetLanguage
+        targetLanguage,
+        preserveTerms: Array.isArray(preserveTerms) ? preserveTerms : [],
+        context
+      },
+      {
+        metadata: {
+          adminUserId: req.adminId,
+          feature: 'static_text_translator',
+          sourceLanguage: sourceLanguage || 'en',
+          targetLanguage
+        }
       }
-    });
-
-    // Validate that we got a valid response
-    if (!result || typeof result.content !== 'string' || !result.content.trim()) {
-      throw new Error('AI service returned an invalid or empty translation');
-    }
-
-    // Extract translated text (remove any quotes if AI added them)
-    const translatedText = result.content.trim().replace(/^["']|["']$/g, '');
+    );
 
     return res.json({
       success: true,
-      data: {
-        translatedText,
-        cost: result.cost,
-        tokensUsed: result.usage.totalTokens,
-        provider: result.provider
-      }
+      data: result
     });
   } catch (error: any) {
     console.error('Error translating static text:', error);

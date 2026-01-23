@@ -6,9 +6,10 @@ export interface SiteSettings {
   logoType: 'text' | 'image';
   logoText: string | null;
   logoImageUrl: string | null;
-  aiProvider?: 'openai' | 'anthropic';
+  aiProvider?: 'openai' | 'anthropic' | 'gemini';
   openaiModel?: string | null; // Selected OpenAI model
   anthropicModel?: string | null; // Selected Anthropic model
+  geminiModel?: string | null; // Selected Gemini model
 }
 
 // Public endpoint - no authentication required

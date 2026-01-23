@@ -123,7 +123,7 @@ function OldHeroBlock({ content }: HeroBlockProps) {
             >
               <Link
                 to={ctaLink}
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-jade px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-jade px-8 py-4 text-base font-semibold text-on-primary shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
               >
                 <span>{ctaText}</span>
                 <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />

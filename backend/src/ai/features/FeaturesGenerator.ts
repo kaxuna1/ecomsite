@@ -5,10 +5,10 @@
  * Creates benefit-focused features with appropriate icons and descriptions.
  */
 
-import { AIFeature, AIFeatureInput, AIFeatureOutput, FeatureOptions } from '../core/types';
+import { IAIFeature, FeatureInput, FeatureOutput, FeatureOptions } from '../types';
 import { AIServiceManager } from '../AIServiceManager';
 
-export interface FeaturesGeneratorInput extends AIFeatureInput {
+export interface FeaturesGeneratorInput extends FeatureInput {
   productOrService: string;
   industry?: string; // e.g., "E-commerce", "SaaS", "Healthcare"
   targetAudience?: string;
@@ -25,13 +25,14 @@ export interface GeneratedFeature {
   description: string; // Benefit-focused description (10-25 words)
 }
 
-export interface FeaturesGeneratorOutput extends AIFeatureOutput {
+export interface FeaturesGeneratorOutput extends FeatureOutput {
   features: GeneratedFeature[];
 }
 
-export class FeaturesGenerator implements AIFeature<FeaturesGeneratorInput, FeaturesGeneratorOutput> {
+export class FeaturesGenerator implements IAIFeature {
   name = 'features_generator';
   description = 'Generate compelling product/service features with icons';
+  requiredCapabilities = ['text-generation'];
 
   constructor(private aiService: AIServiceManager) {}
 

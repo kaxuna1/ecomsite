@@ -59,6 +59,25 @@ export const aiServiceConfig: AIServiceConfig = {
       // Claude Sonnet 4.5 pricing (as of 2025)
       costPerPromptToken: 3.00 / 1000000, // $3.00 per 1M tokens
       costPerCompletionToken: 15.00 / 1000000 // $15.00 per 1M tokens
+    },
+    {
+      name: 'gemini',
+      enabled: true,
+      apiKeyName: 'gemini_api_key', // References key in api_keys table
+      defaultModel: 'gemini-3-flash-preview',
+      availableModels: [
+        'gemini-3-flash-preview',
+        'gemini-3-pro-preview'
+      ],
+      maxRetries: 3,
+      timeout: 60000,
+      rateLimit: {
+        requestsPerMinute: 50,
+        tokensPerMinute: 100000
+      },
+      // Gemini 3 Flash Preview pricing (as of 2025)
+      costPerPromptToken: 0.50 / 1000000, // $0.50 per 1M tokens
+      costPerCompletionToken: 3.00 / 1000000 // $3.00 per 1M tokens
     }
   ],
 
@@ -68,7 +87,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'product_description_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'], // Claude as fallback
+      fallbackProviders: ['anthropic', 'gemini'], // Claude as fallback
       cacheEnabled: true,
       cacheTTL: 7200, // 2 hours - descriptions don't change often
       maxCostPerExecution: 0.50, // $0.50 max per generation
@@ -78,7 +97,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'seo_meta_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 86400, // 24 hours - SEO meta rarely changes
       maxCostPerExecution: 0.25, // $0.25 max per generation
@@ -88,7 +107,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'image_alt_text_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 604800, // 7 days - alt text rarely changes
       maxCostPerExecution: 0.10, // $0.10 max per generation
@@ -98,7 +117,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'product_translator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 604800, // 7 days - translations rarely change
       maxCostPerExecution: 0.50, // $0.50 max per translation
@@ -108,7 +127,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'email_campaign_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 3600, // 1 hour - campaigns are often customized
       maxCostPerExecution: 0.30, // $0.30 max per generation
@@ -118,7 +137,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'faq_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 86400, // 24 hours - FAQs don't change often
       maxCostPerExecution: 0.25, // $0.25 max per generation
@@ -128,7 +147,7 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'navigation_menu_generator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 7200, // 2 hours - menus can be regenerated/refined
       maxCostPerExecution: 0.40, // $0.40 max per generation
@@ -138,17 +157,117 @@ export const aiServiceConfig: AIServiceConfig = {
       name: 'menu_item_translator',
       enabled: true,
       defaultProvider: 'openai',
-      fallbackProviders: ['anthropic'],
+      fallbackProviders: ['anthropic', 'gemini'],
       cacheEnabled: true,
       cacheTTL: 86400, // 24 hours - translations rarely change
       maxCostPerExecution: 0.30, // $0.30 max per translation
       rateLimitPerUser: 30 // 30 translations per hour per admin user
     },
     {
+      name: 'hero_block_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 3600, // 1 hour - headline variants are often refined
+      maxCostPerExecution: 0.20,
+      rateLimitPerUser: 40
+    },
+    {
+      name: 'testimonial_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 86400, // 24 hours
+      maxCostPerExecution: 0.30,
+      rateLimitPerUser: 30
+    },
+    {
+      name: 'features_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 3600, // 1 hour
+      maxCostPerExecution: 0.20,
+      rateLimitPerUser: 40
+    },
+    {
+      name: 'cms_page_translator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 1.00,
+      rateLimitPerUser: 15
+    },
+    {
+      name: 'footer_content_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 86400, // 24 hours
+      maxCostPerExecution: 0.30,
+      rateLimitPerUser: 20
+    },
+    {
+      name: 'footer_translator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 0.50,
+      rateLimitPerUser: 20
+    },
+    {
+      name: 'attribute_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 0.50,
+      rateLimitPerUser: 20
+    },
+    {
+      name: 'variant_options_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 0.40,
+      rateLimitPerUser: 30
+    },
+    {
+      name: 'variant_options_type_generator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 0.40,
+      rateLimitPerUser: 30
+    },
+    {
+      name: 'static_text_translator',
+      enabled: true,
+      defaultProvider: 'openai',
+      fallbackProviders: ['anthropic', 'gemini'],
+      cacheEnabled: true,
+      cacheTTL: 604800, // 7 days
+      maxCostPerExecution: 0.10,
+      rateLimitPerUser: 200
+    },
+    {
       name: 'ai-page-builder',
       enabled: true,
       defaultProvider: 'anthropic', // Claude excels at structured content generation
-      fallbackProviders: ['openai'],
+      fallbackProviders: ['openai', 'gemini'],
       cacheEnabled: false, // Pages should be unique, don't cache
       cacheTTL: 0,
       maxCostPerExecution: 2.00, // $2.00 max per page (structure + multiple blocks)
@@ -221,7 +340,7 @@ export function isFeatureEnabled(featureName: string): boolean {
 export interface ModelPricing {
   id: string;
   name: string;
-  provider: 'openai' | 'anthropic';
+  provider: 'openai' | 'anthropic' | 'gemini';
   description: string;
   inputPricePerMillion: number; // USD per 1M tokens
   outputPricePerMillion: number;
@@ -329,6 +448,28 @@ export const MODEL_PRICING: ModelPricing[] = [
     contextWindow: '200K',
     badge: 'Legacy',
     speed: 'Fastest'
+  },
+  // Gemini Models
+  {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash Preview',
+    provider: 'gemini',
+    description: 'Balanced speed and quality',
+    inputPricePerMillion: 0.50,
+    outputPricePerMillion: 3.00,
+    contextWindow: '1M/64K',
+    badge: 'Recommended',
+    speed: 'Fast'
+  },
+  {
+    id: 'gemini-3-pro-preview',
+    name: 'Gemini 3 Pro Preview',
+    provider: 'gemini',
+    description: 'Highest-quality reasoning model',
+    inputPricePerMillion: 2.00,
+    outputPricePerMillion: 12.00,
+    contextWindow: '1M/64K',
+    speed: 'Medium'
   }
 ];
 

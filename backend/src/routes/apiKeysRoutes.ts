@@ -17,6 +17,7 @@ import {
   validateAPIKeysForFeature,
   getAuditLog
 } from '../services/apiKeysService';
+import { getAIServiceManager } from '../ai';
 
 const router = Router();
 
@@ -37,6 +38,22 @@ function getAuditContext(req: Request) {
     ipAddress: (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress,
     userAgent: req.headers['user-agent']
   };
+}
+
+const AI_PROVIDER_KEYS = new Set(['openai_api_key', 'anthropic_api_key', 'gemini_api_key']);
+
+async function reinitializeAIProvidersIfNeeded(keyNames: string[]) {
+  const shouldReinitialize = keyNames.some((key) => AI_PROVIDER_KEYS.has(key));
+  if (!shouldReinitialize) {
+    return;
+  }
+
+  try {
+    const aiService = await getAIServiceManager();
+    await aiService.reinitialize();
+  } catch (error: any) {
+    console.warn('Failed to reinitialize AI providers after API key update:', error?.message || error);
+  }
 }
 
 /**
@@ -106,6 +123,8 @@ router.put('/', async (req: Request, res: Response) => {
     const adminUserId = (req as any).user?.id;
     
     const count = await setMultipleAPIKeys(keys, adminUserId);
+
+    await reinitializeAIProvidersIfNeeded(Object.keys(keys));
     
     res.json({
       message: `Successfully updated ${count} API key(s)`,
@@ -153,6 +172,8 @@ router.post('/', async (req: Request, res: Response) => {
       auditContext
     );
 
+    await reinitializeAIProvidersIfNeeded([keyName]);
+
     res.json({
       message: 'API key saved successfully',
       key: {
@@ -188,6 +209,8 @@ router.delete('/:keyName', async (req: Request, res: Response) => {
       });
     }
 
+    await reinitializeAIProvidersIfNeeded([keyName]);
+
     res.json({
       message: 'API key deleted successfully'
     });
@@ -216,6 +239,8 @@ router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
         message: 'API key not found'
       });
     }
+
+    await reinitializeAIProvidersIfNeeded([keyName]);
 
     res.json({
       message: 'API key deactivated successfully'
@@ -273,4 +298,3 @@ router.post('/validate/:feature', async (req: Request, res: Response) => {
 });
 
 export default router;
-

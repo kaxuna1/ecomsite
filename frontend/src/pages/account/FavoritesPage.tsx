@@ -96,7 +96,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
         {/* Badges */}
         <div className="absolute left-4 top-4 flex flex-col gap-2">
           {product.isNew && (
-            <span className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+            <span className="flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1.5 text-xs font-semibold text-on-primary backdrop-blur-sm">
               <SparklesIcon className="h-3.5 w-3.5" />
               {t('favorites.new')}
             </span>
@@ -107,7 +107,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
             </span>
           )}
           {hasVariants && (
-            <span className="flex items-center gap-1.5 rounded-full bg-blush/90 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+            <span className="flex items-center gap-1.5 rounded-full bg-blush/90 px-3 py-1.5 text-xs font-semibold text-on-secondary backdrop-blur-sm">
               <Squares2X2Icon className="h-3.5 w-3.5" />
               {variantCount} {variantCount === 1 ? 'Option' : 'Options'}
             </span>
@@ -153,7 +153,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
           disabled={product.inventory === 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-interactive-active px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-interactive-active px-4 py-3 text-sm font-semibold text-on-interactive shadow-lg transition-all hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ShoppingCartIcon className="h-5 w-5" />
           {product.inventory === 0
@@ -230,7 +230,7 @@ export default function FavoritesPage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-interactive-active text-white shadow-lg'
+                      ? 'bg-interactive-active text-on-interactive shadow-lg'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
@@ -271,7 +271,7 @@ export default function FavoritesPage() {
             </p>
             <Link
               to={`/${lang}/products`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-on-interactive rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
               {t('favorites.browseProducts')}

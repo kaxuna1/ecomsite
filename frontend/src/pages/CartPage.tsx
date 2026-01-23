@@ -294,7 +294,7 @@ function CartPage() {
                                   type="button"
                                   onClick={() => handleQuantityChange(product.id, quantity - 1, variant?.id)}
                                   disabled={quantity <= 1}
-                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-text-primary transition-colors hover:bg-primary hover:text-text-inverse disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-text-primary"
+                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-text-primary transition-colors hover:bg-primary hover:text-on-primary disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-text-primary"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
                                 >
@@ -307,7 +307,7 @@ function CartPage() {
                                   type="button"
                                   onClick={() => handleQuantityChange(product.id, quantity + 1, variant?.id)}
                                   disabled={quantity >= itemInventory}
-                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-text-primary transition-colors hover:bg-primary hover:text-text-inverse disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-text-primary"
+                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-text-primary transition-colors hover:bg-primary hover:text-on-primary disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-text-primary"
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
                                 >

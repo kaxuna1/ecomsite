@@ -1,0 +1,625 @@
+{
+  "pages": [
+    {
+      "name": "Homepage",
+      "url": "/en/",
+      "issues": 1,
+      "problems": [
+        {
+          "type": "input",
+          "element": "INPUT",
+          "borderColor": "rgba(255, 255, 255, 0.3)",
+          "bgColor": "rgba(255, 255, 255, 0.1)",
+          "classes": "flex-1 rounded-full border-2 border-white/30 bg-white/10 px-6 py-4 text-white placeholder-white/60 backdrop-blur transition-all focus:border-white focus:bg-white/20 focus:outline-none disabled:opacity-50"
+        }
+      ],
+      "screenshot": "screenshots/homepage.png"
+    },
+    {
+      "name": "Products",
+      "url": "/en/products",
+      "issues": 20,
+      "problems": [
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 300
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 604.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 292
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 596.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 300
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 604.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 2037.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 2342
+          }
+        }
+      ],
+      "screenshot": "screenshots/products.png"
+    },
+    {
+      "name": "Product Detail",
+      "url": "/en/products",
+      "issues": 20,
+      "problems": [
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 300
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 604.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 292
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 596.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 300
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 604.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 884.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 1189
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1203,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1104,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 1531,
+            "y": 1469
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 1432,
+            "y": 1773.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "",
+          "classes": "absolute right-4 top-4 z-10 rounded-full bg-bg-primary/90 p-2 shadow-lg backdrop-blur-sm transition-all hover:bg-bg-primary",
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "textColor": "rgb(45, 52, 54)",
+          "parentBg": "rgb(255, 255, 255)",
+          "position": {
+            "x": 875,
+            "y": 2037.5
+          }
+        },
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Add to Cart",
+          "classes": "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-bold text-on-primary shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:bg-primary/90 hover:shadow-[0_20px_50px_rgba(76,175,80,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-2xl sm:bottom-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-xs md:px-5 md:py-2.5 md:text-sm lg:px-4 lg:py-2 lg:text-xs xl:px-5 xl:py-2.5 xl:text-sm w-[calc(100%-2rem)] max-w-[120px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[120px] xl:max-w-[140px]",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgb(255, 249, 240)",
+          "position": {
+            "x": 776,
+            "y": 2342
+          }
+        }
+      ],
+      "screenshot": "screenshots/product-detail.png"
+    },
+    {
+      "name": "Cart",
+      "url": "/en/cart",
+      "issues": 0,
+      "problems": [],
+      "screenshot": "screenshots/cart.png"
+    },
+    {
+      "name": "Profile",
+      "url": "/en/account/profile",
+      "issues": 1,
+      "problems": [
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Sign In",
+          "classes": "w-full bg-primary text-on-primary py-3 rounded-xl font-semibold shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgba(0, 0, 0, 0)",
+          "position": {
+            "x": 765.1799926757812,
+            "y": 693.52001953125
+          }
+        }
+      ],
+      "screenshot": "screenshots/profile.png"
+    },
+    {
+      "name": "Orders",
+      "url": "/en/account/orders",
+      "issues": 1,
+      "problems": [
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Sign In",
+          "classes": "w-full bg-primary text-on-primary py-3 rounded-xl font-semibold shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgba(0, 0, 0, 0)",
+          "position": {
+            "x": 769,
+            "y": 694
+          }
+        }
+      ],
+      "screenshot": "screenshots/orders.png"
+    },
+    {
+      "name": "Favorites",
+      "url": "/en/account/favorites",
+      "issues": 1,
+      "problems": [
+        {
+          "type": "button",
+          "element": "BUTTON",
+          "text": "Sign In",
+          "classes": "w-full bg-primary text-on-primary py-3 rounded-xl font-semibold shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
+          "bgColor": "rgb(214, 60, 60)",
+          "textColor": "rgb(255, 255, 255)",
+          "parentBg": "rgba(0, 0, 0, 0)",
+          "position": {
+            "x": 769,
+            "y": 694
+          }
+        }
+      ],
+      "screenshot": "screenshots/favorites.png"
+    }
+  ]
+}

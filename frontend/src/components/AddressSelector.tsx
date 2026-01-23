@@ -246,7 +246,7 @@ export default function AddressSelector({ onSelect, selectedAddressId }: Address
                   createMutation.mutate(formData);
                 }}
                 disabled={createMutation.isPending}
-                className="flex-1 rounded-lg bg-jade px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-jade/90 disabled:opacity-50"
+                className="flex-1 rounded-lg bg-jade px-4 py-2 text-sm font-medium text-on-primary transition-colors hover:bg-jade/90 disabled:opacity-50"
               >
                 {createMutation.isPending ? t('address.saving') : t('address.saveAddress')}
               </button>

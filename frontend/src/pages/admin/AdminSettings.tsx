@@ -18,7 +18,7 @@ import {
 import { toast } from 'react-hot-toast';
 import { fetchSettings, updateSettings, uploadLogo, SiteSettings } from '../../api/settings';
 import api from '../../api/client';
-import { OPENAI_MODELS, ANTHROPIC_MODELS, AIModel, getBadgeColor } from '../../data/aiModels';
+import { OPENAI_MODELS, ANTHROPIC_MODELS, GEMINI_MODELS, AIModel, getBadgeColor } from '../../data/aiModels';
 import MediaSelector from '../../components/admin/MediaManager/MediaSelector';
 import type { CMSMedia } from '../../api/media';
 import SaveButton from '../../components/admin/SaveButton';
@@ -165,6 +165,13 @@ const API_KEY_CATEGORIES: APIKeyCategory[] = [
         value: '',
         placeholder: 'sk-ant-...',
         helpText: 'Anthropic Claude API key for AI assistance'
+      },
+      {
+        id: 'gemini_api_key',
+        label: 'Gemini API Key',
+        value: '',
+        placeholder: 'AIza...',
+        helpText: 'Google Gemini API key from Google AI Studio'
       }
     ]
   },
@@ -413,9 +420,10 @@ export default function AdminSettings() {
   const [apiKeysSaved, setApiKeysSaved] = useState(false);
 
   // AI Settings state
-  const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai');
+  const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic' | 'gemini'>('openai');
   const [openaiModel, setOpenaiModel] = useState<string>('gpt-4o');
   const [anthropicModel, setAnthropicModel] = useState<string>('claude-sonnet-4-5-20250929');
+  const [geminiModel, setGeminiModel] = useState<string>('gemini-3-flash-preview');
 
   // Fetch current settings
   const { data: settingsData, isLoading } = useQuery({
@@ -430,9 +438,10 @@ export default function AdminSettings() {
       setLogoText(settingsData.logoText || '');
       setLogoImageUrl(settingsData.logoImageUrl || null);
       setPreviewImage(settingsData.logoImageUrl || null);
-      setAiProvider((settingsData.aiProvider || 'openai') as 'openai' | 'anthropic');
+      setAiProvider((settingsData.aiProvider || 'openai') as 'openai' | 'anthropic' | 'gemini');
       setOpenaiModel(settingsData.openaiModel || 'gpt-4o');
       setAnthropicModel(settingsData.anthropicModel || 'claude-sonnet-4-5-20250929');
+      setGeminiModel(settingsData.geminiModel || 'gemini-3-flash-preview');
     }
   }, [settingsData]);
 
@@ -530,7 +539,8 @@ export default function AdminSettings() {
     updateMutation.mutate({
       aiProvider,
       openaiModel,
-      anthropicModel
+      anthropicModel,
+      geminiModel
     });
   };
 
@@ -668,6 +678,7 @@ export default function AdminSettings() {
                       <div className="text-xs opacity-70 mt-1">Upload an image</div>
                     </button>
                   </div>
+
                 </div>
 
                 {/* Text Logo Configuration */}
@@ -992,6 +1003,96 @@ export default function AdminSettings() {
                                   <p className="text-xs text-champagne/60">{model.description}</p>
                                 </div>
                                 {openaiModel === model.id && aiProvider === 'openai' && (
+                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                )}
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 mt-3">
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Input</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Output</div>
+                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                </div>
+                                <div className="bg-white/5 rounded px-2 py-1">
+                                  <div className="text-xs text-champagne/50">Context</div>
+                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Gemini Provider Card */}
+                  <div
+                    className={`rounded-2xl border-2 transition-all ${
+                      aiProvider === 'gemini'
+                        ? 'border-blush bg-blush/10'
+                        : 'border-white/20 bg-white/5'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setAiProvider('gemini')}
+                      className="w-full text-left p-6"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="text-4xl">✨</div>
+                          <div>
+                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                              Google Gemini
+                              {aiProvider === 'gemini' && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                  <CheckCircleIcon className="h-4 w-4" />
+                                  Active
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-sm text-champagne/60">Fast, capable multimodal models</p>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Model Selector for Gemini */}
+                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                      aiProvider !== 'gemini' ? 'opacity-50 pointer-events-none' : ''
+                    }`}>
+                      <label className="block text-sm font-semibold text-champagne mb-2">
+                        Select Model:
+                      </label>
+                      <div className="space-y-2">
+                        {GEMINI_MODELS.map((model) => (
+                          <button
+                            key={model.id}
+                            type="button"
+                            onClick={() => aiProvider === 'gemini' && setGeminiModel(model.id)}
+                            disabled={aiProvider !== 'gemini'}
+                            className={`w-full text-left rounded-xl border transition-all ${
+                              geminiModel === model.id && aiProvider === 'gemini'
+                                ? 'border-blush bg-blush/10'
+                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                            } ${aiProvider !== 'gemini' ? 'cursor-not-allowed' : ''}`}
+                          >
+                            <div className="p-4">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    {model.badge && (
+                                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
+                                        {model.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                </div>
+                                {geminiModel === model.id && aiProvider === 'gemini' && (
                                   <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
                                 )}
                               </div>

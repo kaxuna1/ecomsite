@@ -98,7 +98,7 @@ docker run -d -p 80:80 \
 - **Utilities**: `src/utils/` - Notification templates, image processing helpers
 - **AI Module**: `src/ai/` - Complete AI service architecture
   - `AIServiceManager.ts` - Orchestrator for all AI operations
-  - `providers/` - OpenAI, Anthropic provider implementations
+  - `providers/` - OpenAI, Anthropic, Gemini provider implementations
   - `features/` - 18 AI feature generators (descriptions, translations, SEO, etc.)
   - `infrastructure/` - CacheManager, CostTracker, AuditLogger
 
@@ -635,8 +635,9 @@ The platform includes a comprehensive AI service layer with provider abstraction
 **Supported AI Providers:**
 - **OpenAI GPT-4**: Primary provider for all AI features
 - **Anthropic Claude**: Alternative provider (configured)
+- **Google Gemini**: Alternative provider via Google Gen AI SDK
 
-**Available AI Features (18 generators):**
+**Available AI Features (19 generators):**
 
 | Feature | Endpoint | Description |
 |---------|----------|-------------|
@@ -650,12 +651,14 @@ The platform includes a comprehensive AI service layer with provider abstraction
 | Testimonials | `/api/admin/ai/generate-testimonials` | Generate realistic testimonials |
 | Email Campaigns | `/api/admin/ai/generate-email` | Generate marketing emails |
 | CMS Page Translation | `/api/admin/ai/translate-cms-page` | Translate entire CMS pages |
-| Navigation Generation | `/api/admin/ai/generate-navigation` | Generate menu structures |
-| Menu Item Translation | `/api/admin/ai/translate-menu-item` | Translate navigation labels |
+| Navigation Generation | `/api/navigation/generate` | Generate menu structures |
+| Menu Item Translation | `/api/navigation/items/translate-batch` | Translate navigation labels |
 | Footer Generation | `/api/admin/ai/generate-footer` | Generate footer content |
 | Footer Translation | `/api/admin/ai/translate-footer` | Translate footer content |
 | Attribute Generation | `/api/admin/ai/generate-attributes` | Generate product attributes |
-| Variant Options | `/api/admin/ai/generate-variant-options` | Generate variant option values |
+| Variant Option Types | `/api/admin/ai/generate-variant-options` | Generate variant option types |
+| Variant Option Values | `/api/admin/ai/generate-variant-values` | Generate variant option values |
+| Static Text Translation | `/api/admin/ai/translate-static-text` | Translate static UI strings |
 | AI Page Builder | `/api/admin/ai/page-builder/generate` | Generate complete CMS pages from prompts |
 
 **AI Infrastructure:**
@@ -765,7 +768,7 @@ The platform supports a comprehensive theming system with customizable design to
 **Supported Service Categories:**
 - **Payment Gateways**: Stripe, PayPal (5 keys)
 - **Communication**: Twilio SMS, SendGrid, Mailgun (6 keys)
-- **AI & ML**: OpenAI, Anthropic Claude (3 keys)
+- **AI & ML**: OpenAI, Anthropic Claude, Gemini (4 keys)
 - **Analytics**: Google Analytics, Facebook Pixel, TikTok, Mixpanel (5 keys)
 - **Shipping**: Shippo, EasyPost, ShipStation (4 keys)
 - **Storage & CDN**: AWS S3, Cloudflare (6 keys)
@@ -1214,7 +1217,7 @@ cd backend && npm run migrate
 
 - **Backend Services**: 27 modules (services/)
 - **Backend Routes**: 26 routers
-- **Backend AI Features**: 18 generators (in ai/features/)
+- **Backend AI Features**: 19 generators (in ai/features/)
 - **Frontend Pages**: 41 route components
 - **Frontend Components**: 90+ reusable components
 - **Frontend API Modules**: 20+ typed clients

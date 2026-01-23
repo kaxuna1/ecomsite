@@ -154,7 +154,7 @@ function ProductListItem({
           {showElements.badges !== false && (
             <>
               {product.isNew && (
-                <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-on-primary backdrop-blur">
                   New
                 </div>
               )}
@@ -177,7 +177,7 @@ function ProductListItem({
 
           {/* Variant Options Badge */}
           {hasVariants && (
-            <div className="absolute left-3 top-[5.5rem] rounded-full bg-blush/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur flex items-center gap-1">
+            <div className="absolute left-3 top-[5.5rem] rounded-full bg-blush/90 px-3 py-1 text-xs font-semibold text-on-secondary backdrop-blur flex items-center gap-1">
               <Squares2X2Icon className="h-3.5 w-3.5" />
               {variantCount} {variantCount === 1 ? 'Option' : 'Options'}
             </div>
@@ -289,7 +289,7 @@ function ProductListItem({
             <motion.button
               type="button"
               onClick={() => handleQuickAdd(product)}
-              className="flex items-center justify-center gap-2 rounded-full bg-jade px-8 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-jade/90 hover:shadow-xl"
+              className="flex items-center justify-center gap-2 rounded-full bg-jade px-8 py-3 text-base font-semibold text-on-primary shadow-lg transition-all hover:bg-jade/90 hover:shadow-xl"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

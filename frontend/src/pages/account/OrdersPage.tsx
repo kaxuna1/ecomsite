@@ -117,7 +117,7 @@ export default function OrdersPage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-interactive-active text-white shadow-lg'
+                      ? 'bg-interactive-active text-on-interactive shadow-lg'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
@@ -142,7 +142,7 @@ export default function OrdersPage() {
               onClick={() => setSelectedStatus(filter.value)}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 selectedStatus === filter.value
-                  ? 'bg-interactive-active text-white shadow-lg'
+                  ? 'bg-interactive-active text-on-interactive shadow-lg'
                   : 'bg-surface-elevated text-text-secondary border-2 border-border-default hover:border-primary hover:text-primary'
               }`}
             >
@@ -182,7 +182,7 @@ export default function OrdersPage() {
             </p>
             <Link
               to={`/${lang}/products`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-interactive-active text-on-interactive rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
             >
               <ShoppingBagIcon className="h-5 w-5" />
               {t('orders.startShopping')}

@@ -122,7 +122,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                   {/* Close Button */}
                   <button
                     onClick={onClose}
-                    className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-midnight shadow-lg transition-all hover:scale-110 hover:bg-jade hover:text-white"
+                    className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-midnight shadow-lg transition-all hover:scale-110 hover:bg-primary hover:text-on-primary"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
@@ -147,7 +147,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                       {/* Badges */}
                       <div className="absolute left-4 top-4 flex flex-col gap-2">
                         {product.isNew && (
-                          <span className="rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                          <span className="rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-on-primary backdrop-blur">
                             New
                           </span>
                         )}
@@ -278,7 +278,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                       <button
                         onClick={handleAddToCart}
                         disabled={product.inventory === 0}
-                        className="w-full rounded-full bg-jade px-8 py-4 text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-full bg-jade px-8 py-4 text-base font-semibold text-on-primary shadow-lg transition-all hover:scale-105 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {product.inventory === 0 ? 'Out of Stock' : 'Add to Cart'}
                       </button>
@@ -289,7 +289,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                           className={`flex items-center justify-center gap-2 rounded-full border-2 px-4 py-3 text-sm font-semibold transition-all ${
                             isFavorited
                               ? 'border-rose-500 bg-rose-500 text-white hover:bg-rose-600'
-                              : 'border-jade text-jade hover:bg-jade hover:text-white'
+                              : 'border-jade text-jade hover:bg-jade hover:text-on-primary'
                           }`}
                         >
                           {isFavorited ? (

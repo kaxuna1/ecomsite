@@ -141,6 +141,26 @@ export const ANTHROPIC_MODELS: AIModel[] = [
   }
 ];
 
+export const GEMINI_MODELS: AIModel[] = [
+  {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash Preview',
+    description: 'Balanced speed and quality',
+    pricing: { input: 0.50, output: 3.00 },
+    contextWindow: '1M/64K',
+    badge: 'Recommended',
+    speed: 'Fast'
+  },
+  {
+    id: 'gemini-3-pro-preview',
+    name: 'Gemini 3 Pro Preview',
+    description: 'Highest-quality reasoning model',
+    pricing: { input: 2.00, output: 12.00 },
+    contextWindow: '1M/64K',
+    speed: 'Medium'
+  }
+];
+
 /**
  * Get badge color classes for styling
  */

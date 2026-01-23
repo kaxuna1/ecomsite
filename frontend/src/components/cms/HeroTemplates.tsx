@@ -294,7 +294,7 @@ function FullWidthOverlayHero({ content }: HeroTemplateProps) {
           >
             <Link
               to={ctaLink}
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-semibold text-text-primary shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-semibold text-on-primary shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
             >
               <span>{ctaText}</span>
               <ArrowRightIcon className="h-5 w-5" />

@@ -193,7 +193,7 @@ export default function OrderSuccessPage() {
           {isAuthenticated && (
             <Link
               to={`/${lang}/account/orders`}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-jade text-white rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-jade text-on-primary rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
             >
               <UserIcon className="h-5 w-5" />
               View My Orders

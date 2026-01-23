@@ -109,7 +109,7 @@ export default function ProfilePage() {
                   to={tab.href}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     isActive
-                      ? 'bg-interactive-active text-white shadow-lg border-2 border-interactive-active'
+                      ? 'bg-interactive-active text-on-interactive shadow-lg border-2 border-interactive-active'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
                   }`}
                 >
@@ -129,7 +129,7 @@ export default function ProfilePage() {
           className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default overflow-hidden"
         >
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-interactive-active via-primary to-primary px-8 py-12 text-white">
+          <div className="bg-gradient-to-r from-interactive-active via-primary to-primary px-8 py-12 text-on-primary">
             <div className="flex items-center gap-6">
               <div className="h-24 w-24 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border-4 border-white/30">
                 <span className="text-4xl font-display uppercase">
@@ -138,7 +138,7 @@ export default function ProfilePage() {
               </div>
               <div>
                 <h2 className="text-3xl font-display mb-2">{user.name}</h2>
-                <div className="flex items-center gap-2 text-white/80">
+                <div className="flex items-center gap-2 text-on-primary/80">
                   <CalendarIcon className="h-4 w-4" />
                   <span className="text-sm">{t('profile.memberSince')} {memberSince}</span>
                 </div>
@@ -227,7 +227,7 @@ export default function ProfilePage() {
                     onClick={() => setIsEditing(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
+                    className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-on-interactive rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
                   >
                     <PencilIcon className="h-5 w-5" />
                     {t('profile.editProfile')}
@@ -239,7 +239,7 @@ export default function ProfilePage() {
                       disabled={isLoading}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-white rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-on-interactive rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (
                         <>

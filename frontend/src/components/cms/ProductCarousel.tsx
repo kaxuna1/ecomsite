@@ -158,13 +158,13 @@ function ProductSlide({
           />
 
           {/* Quick View Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-midnight/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition-opacity group-hover:opacity-80" />
 
           {/* Badges */}
           {showElements.badges !== false && (
             <>
               {product.isNew && (
-                <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                <div className="absolute left-3 top-3 rounded-full bg-jade/90 px-3 py-1 text-xs font-semibold text-on-primary backdrop-blur">
                   New
                 </div>
               )}
@@ -187,7 +187,7 @@ function ProductSlide({
 
           {/* Variant Options Badge */}
           {hasVariants && (
-            <div className="absolute left-3 top-[5.5rem] rounded-full bg-blush/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur flex items-center gap-1">
+            <div className="absolute left-3 top-[5.5rem] rounded-full bg-blush/90 px-3 py-1 text-xs font-semibold text-on-secondary backdrop-blur flex items-center gap-1">
               <Squares2X2Icon className="h-3.5 w-3.5" />
               {variantCount} {variantCount === 1 ? 'Option' : 'Options'}
             </div>
@@ -517,7 +517,7 @@ export default function ProductCarousel({
       {showArrows && (
         <>
           <button
-            className="swiper-button-prev-custom absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
+            className="swiper-button-prev-custom absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-primary hover:text-on-primary disabled:opacity-50"
             aria-label="Previous products"
           >
             <svg
@@ -535,7 +535,7 @@ export default function ProductCarousel({
             </svg>
           </button>
           <button
-            className="swiper-button-next-custom absolute right-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-jade hover:text-white disabled:opacity-50"
+            className="swiper-button-next-custom absolute right-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-bg-primary shadow-xl transition-all hover:scale-110 hover:bg-primary hover:text-on-primary disabled:opacity-50"
             aria-label="Next products"
           >
             <svg

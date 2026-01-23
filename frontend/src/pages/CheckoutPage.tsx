@@ -180,7 +180,7 @@ function CheckoutPage() {
                     <div className="flex flex-wrap gap-3">
                       <Link
                         to={`/${lang}/login?redirect=/${lang}/checkout`}
-                        className="inline-flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blush/90 hover:shadow-md"
+                        className="inline-flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-on-secondary transition-all hover:bg-blush/90 hover:shadow-md"
                       >
                         <UserIcon className="h-4 w-4" />
                         {t('checkout.logIn')}
@@ -321,7 +321,7 @@ function CheckoutPage() {
             <motion.button
               type="submit"
               disabled={mutation.isPending || isSubmitting}
-              className="w-full rounded-full bg-primary px-8 py-4 text-lg font-semibold text-text-inverse transition-all hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-primary px-8 py-4 text-lg font-semibold text-on-primary transition-all hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
               whileHover={{ scale: mutation.isPending || isSubmitting ? 1 : 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

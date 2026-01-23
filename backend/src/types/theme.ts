@@ -35,6 +35,14 @@ export interface ColorTokens {
       secondary: string;
       tertiary: string;
       inverse: string;
+      onPrimary?: string;
+      onSecondary?: string;
+      onAccent?: string;
+      onInteractive?: string;
+      onSuccess?: string;
+      onWarning?: string;
+      onError?: string;
+      onInfo?: string;
     };
     border: {
       default: string;
