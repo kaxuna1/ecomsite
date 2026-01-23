@@ -93,6 +93,207 @@ CREATE TABLE IF NOT EXISTS product_translations (
 CREATE INDEX IF NOT EXISTS idx_product_translations_product_id ON product_translations(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_translations_language_code ON product_translations(language_code);
 
+-- Admin users table (required for CMS tables)
+CREATE TABLE IF NOT EXISTS admin_users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL DEFAULT '',
+  role VARCHAR(50) DEFAULT 'admin' CHECK (role IN ('admin', 'super_admin')),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_users_email ON admin_users(email);
+CREATE INDEX IF NOT EXISTS idx_admin_users_is_active ON admin_users(is_active);
+
+-- CMS Pages table
+CREATE TABLE IF NOT EXISTS cms_pages (
+  id SERIAL PRIMARY KEY,
+  slug VARCHAR(255) UNIQUE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  meta_description TEXT,
+  meta_keywords TEXT,
+  is_published BOOLEAN DEFAULT false,
+  published_at TIMESTAMP,
+  created_by INTEGER REFERENCES admin_users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_cms_pages_slug ON cms_pages(slug);
+
+-- CMS Blocks table
+CREATE TABLE IF NOT EXISTS cms_blocks (
+  id SERIAL PRIMARY KEY,
+  page_id INTEGER NOT NULL REFERENCES cms_pages(id) ON DELETE CASCADE,
+  block_type VARCHAR(50) NOT NULL,
+  block_key VARCHAR(100) NOT NULL,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  is_enabled BOOLEAN DEFAULT true,
+  content JSONB NOT NULL,
+  settings JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(page_id, block_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_cms_blocks_page_id ON cms_blocks(page_id);
+CREATE INDEX IF NOT EXISTS idx_cms_blocks_display_order ON cms_blocks(page_id, display_order);
+CREATE INDEX IF NOT EXISTS idx_cms_blocks_type ON cms_blocks(block_type);
+
+-- CMS Block Versions table (for content versioning)
+CREATE TABLE IF NOT EXISTS cms_block_versions (
+  id SERIAL PRIMARY KEY,
+  block_id INTEGER NOT NULL REFERENCES cms_blocks(id) ON DELETE CASCADE,
+  content JSONB NOT NULL,
+  settings JSONB,
+  version_number INTEGER NOT NULL,
+  created_by INTEGER REFERENCES admin_users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_cms_block_versions_block_id ON cms_block_versions(block_id);
+
+-- CMS Media table (for image management)
+CREATE TABLE IF NOT EXISTS cms_media (
+  id SERIAL PRIMARY KEY,
+  filename VARCHAR(255) NOT NULL,
+  original_name VARCHAR(255) NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
+  size_bytes INTEGER NOT NULL,
+  width INTEGER,
+  height INTEGER,
+  alt_text TEXT,
+  caption TEXT,
+  file_path TEXT NOT NULL,
+  url VARCHAR(500),
+  uploaded_by INTEGER REFERENCES admin_users(id),
+  admin_user_id INTEGER REFERENCES admin_users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_cms_media_uploaded_by ON cms_media(uploaded_by);
+
+-- Users table (for customers)
+CREATE TABLE IF NOT EXISTS users (
+  id BIGSERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  phone VARCHAR(50),
+  is_active BOOLEAN DEFAULT true,
+  email_verified BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);
+
+-- User addresses table
+CREATE TABLE IF NOT EXISTS user_addresses (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  label VARCHAR(100),
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(50),
+  address_line1 VARCHAR(255) NOT NULL,
+  address_line2 VARCHAR(255),
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100),
+  postal_code VARCHAR(20) NOT NULL,
+  country VARCHAR(100) DEFAULT 'USA',
+  is_default BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_addresses_user_id ON user_addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_addresses_is_default ON user_addresses(user_id, is_default);
+
+-- Favorites (wishlist) table
+CREATE TABLE IF NOT EXISTS favorites (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, product_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_product_id ON favorites(product_id);
+
+-- Promo codes table
+CREATE TABLE IF NOT EXISTS promo_codes (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(50) UNIQUE NOT NULL,
+  description TEXT,
+  discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING')),
+  discount_value DECIMAL(10, 2) NOT NULL,
+  min_order_amount DECIMAL(10, 2),
+  max_discount_amount DECIMAL(10, 2),
+  usage_limit INTEGER,
+  usage_count INTEGER DEFAULT 0,
+  per_user_limit INTEGER,
+  valid_from TIMESTAMP NOT NULL DEFAULT NOW(),
+  valid_until TIMESTAMP NOT NULL DEFAULT (NOW() + INTERVAL '30 days'),
+  is_active BOOLEAN DEFAULT true,
+  created_by INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_promo_codes_code ON promo_codes(code);
+CREATE INDEX IF NOT EXISTS idx_promo_codes_active ON promo_codes(is_active);
+CREATE INDEX IF NOT EXISTS idx_promo_codes_valid_dates ON promo_codes(valid_from, valid_until);
+
+-- Promo code usage tracking table
+CREATE TABLE IF NOT EXISTS promo_code_usage (
+  id SERIAL PRIMARY KEY,
+  promo_code_id INTEGER NOT NULL REFERENCES promo_codes(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+  discount_applied DECIMAL(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_promo_code_usage_promo_id ON promo_code_usage(promo_code_id);
+CREATE INDEX IF NOT EXISTS idx_promo_code_usage_user_id ON promo_code_usage(user_id);
+
+-- Add user_id and promo_code columns to orders table if they don't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'user_id') THEN
+    ALTER TABLE orders ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'promo_code_id') THEN
+    ALTER TABLE orders ADD COLUMN promo_code_id INTEGER REFERENCES promo_codes(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'discount_amount') THEN
+    ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(10, 2) DEFAULT 0;
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_promo_code_id ON orders(promo_code_id);
+
+-- Insert sample promo codes
+INSERT INTO promo_codes (code, description, discount_type, discount_value, min_order_amount, valid_from, valid_until, is_active)
+VALUES
+  ('WELCOME20', 'Welcome discount for new customers', 'PERCENTAGE', 20, 50, NOW(), NOW() + INTERVAL '90 days', true),
+  ('SAVE10', 'Save $10 on orders over $30', 'FIXED_AMOUNT', 10, 30, NOW(), NOW() + INTERVAL '90 days', true),
+  ('FREESHIP', 'Free shipping on all orders', 'FREE_SHIPPING', 0, 25, NOW(), NOW() + INTERVAL '90 days', true)
+ON CONFLICT (code) DO NOTHING;
+
+-- Insert default homepage
+INSERT INTO cms_pages (slug, title, meta_description, is_published)
+VALUES ('home', 'Luxia Premium Scalp Care Products', 'Discover luxury scalp care with scientifically-backed formulas.', true)
+ON CONFLICT (slug) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS cms_page_translations (
   id SERIAL PRIMARY KEY,
   page_id INTEGER NOT NULL REFERENCES cms_pages(id) ON DELETE CASCADE,
@@ -238,6 +439,37 @@ VALUES
 ON CONFLICT (setting_key) DO NOTHING;
 
 CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(setting_key);
+
+-- Footer Settings (main table)
+CREATE TABLE IF NOT EXISTS footer_settings (
+  id SERIAL PRIMARY KEY,
+  brand_name VARCHAR(255) NOT NULL DEFAULT 'LUXIA',
+  brand_tagline TEXT,
+  brand_logo_url VARCHAR(500),
+  footer_columns JSONB DEFAULT '[]'::jsonb,
+  contact_info JSONB DEFAULT '{}'::jsonb,
+  social_links JSONB DEFAULT '[]'::jsonb,
+  newsletter_enabled BOOLEAN DEFAULT true,
+  newsletter_title VARCHAR(255) DEFAULT 'Stay Connected',
+  newsletter_description TEXT DEFAULT 'Subscribe to receive exclusive offers and updates',
+  newsletter_placeholder VARCHAR(255) DEFAULT 'Enter your email',
+  newsletter_button_text VARCHAR(100) DEFAULT 'Subscribe',
+  copyright_text TEXT,
+  bottom_links JSONB DEFAULT '[]'::jsonb,
+  background_color VARCHAR(20) DEFAULT '#1a1d24',
+  text_color VARCHAR(20) DEFAULT '#e8c7c8',
+  accent_color VARCHAR(20) DEFAULT '#8bba9c',
+  layout_type VARCHAR(50) DEFAULT 'multi-column',
+  columns_count INTEGER DEFAULT 3,
+  show_dividers BOOLEAN DEFAULT false,
+  is_published BOOLEAN DEFAULT true,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO footer_settings (brand_name, brand_tagline, copyright_text)
+VALUES ('LUXIA', 'Luxury scalp care crafted with precision', 'Crafted with care')
+ON CONFLICT DO NOTHING;
 
 -- Footer Settings Translations
 CREATE TABLE IF NOT EXISTS footer_settings_translations (
@@ -589,7 +821,7 @@ CREATE TABLE IF NOT EXISTS review_helpfulness (
   is_helpful BOOLEAN NOT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
 
-  CONSTRAINT unique_review_helpfulness UNIQUE NULLS NOT DISTINCT(review_id, user_id, session_id)
+  CONSTRAINT unique_review_helpfulness UNIQUE (review_id, user_id, session_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_review_helpfulness_review ON review_helpfulness(review_id);
@@ -985,6 +1217,296 @@ INSERT INTO theme_presets (
     5
   )
 ON CONFLICT (name) DO NOTHING;
+
+-- ============================================================================
+-- CUSTOM PRODUCT ATTRIBUTES SYSTEM
+-- ============================================================================
+
+-- Product attribute definitions (custom product attributes schema)
+CREATE TABLE IF NOT EXISTS product_attribute_definitions (
+  id SERIAL PRIMARY KEY,
+  attribute_key VARCHAR(100) UNIQUE NOT NULL,
+  attribute_label VARCHAR(255) NOT NULL,
+  data_type VARCHAR(50) NOT NULL, -- text, number, boolean, select, multiselect, date
+  is_searchable BOOLEAN DEFAULT FALSE,
+  is_filterable BOOLEAN DEFAULT FALSE,
+  is_required BOOLEAN DEFAULT FALSE,
+  validation_rules JSONB DEFAULT '{}'::jsonb,
+  options JSONB, -- For select/multiselect: [{"value": "50ml", "label": "50ml"}]
+  category_ids INTEGER[] DEFAULT '{}',
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_attributes_filterable
+ON product_attribute_definitions(is_filterable) WHERE is_filterable = TRUE;
+
+-- Add custom_attributes JSONB column to products
+ALTER TABLE products ADD COLUMN IF NOT EXISTS custom_attributes JSONB DEFAULT '{}'::jsonb;
+
+-- Create GIN index for querying custom attributes
+CREATE INDEX IF NOT EXISTS idx_products_custom_attributes ON products USING gin (custom_attributes);
+
+-- Function to validate custom attributes against definitions
+CREATE OR REPLACE FUNCTION validate_custom_attributes()
+RETURNS TRIGGER AS $$
+DECLARE
+  attr_key TEXT;
+  attr_value JSONB;
+  definition RECORD;
+BEGIN
+  -- Skip validation if custom_attributes is null or empty
+  IF NEW.custom_attributes IS NULL OR NEW.custom_attributes = '{}'::jsonb THEN
+    RETURN NEW;
+  END IF;
+
+  -- Iterate through custom attributes
+  FOR attr_key, attr_value IN SELECT * FROM jsonb_each(NEW.custom_attributes)
+  LOOP
+    -- Check if attribute definition exists
+    SELECT * INTO definition
+    FROM product_attribute_definitions
+    WHERE attribute_key = attr_key;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Unknown attribute: %', attr_key;
+    END IF;
+
+    -- Validate data type
+    CASE definition.data_type
+      WHEN 'number' THEN
+        IF jsonb_typeof(attr_value) != 'number' THEN
+          RAISE EXCEPTION 'Attribute % must be a number', attr_key;
+        END IF;
+      WHEN 'boolean' THEN
+        IF jsonb_typeof(attr_value) != 'boolean' THEN
+          RAISE EXCEPTION 'Attribute % must be a boolean', attr_key;
+        END IF;
+      WHEN 'text' THEN
+        IF jsonb_typeof(attr_value) != 'string' THEN
+          RAISE EXCEPTION 'Attribute % must be a string', attr_key;
+        END IF;
+      WHEN 'select' THEN
+        -- Validate against options
+        IF definition.options IS NOT NULL THEN
+          IF NOT EXISTS (
+            SELECT 1 FROM jsonb_array_elements(definition.options) AS opt
+            WHERE opt->>'value' = attr_value#>>'{}'
+          ) THEN
+            RAISE EXCEPTION 'Invalid option for attribute %: %', attr_key, attr_value;
+          END IF;
+        END IF;
+      WHEN 'multiselect' THEN
+        -- Validate all values against options
+        IF jsonb_typeof(attr_value) != 'array' THEN
+          RAISE EXCEPTION 'Attribute % must be an array', attr_key;
+        END IF;
+        IF definition.options IS NOT NULL THEN
+          -- Check each value in the array
+          IF EXISTS (
+            SELECT 1 FROM jsonb_array_elements_text(attr_value) AS val
+            WHERE NOT EXISTS (
+              SELECT 1 FROM jsonb_array_elements(definition.options) AS opt
+              WHERE opt->>'value' = val
+            )
+          ) THEN
+            RAISE EXCEPTION 'Invalid options for attribute %', attr_key;
+          END IF;
+        END IF;
+    END CASE;
+  END LOOP;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for attribute validation
+DROP TRIGGER IF EXISTS validate_product_attributes_trigger ON products;
+CREATE TRIGGER validate_product_attributes_trigger
+BEFORE INSERT OR UPDATE OF custom_attributes ON products
+FOR EACH ROW
+EXECUTE FUNCTION validate_custom_attributes();
+
+-- Function to get filterable attributes for a category
+CREATE OR REPLACE FUNCTION get_filterable_attributes(category_filter TEXT DEFAULT NULL)
+RETURNS TABLE(
+  id INTEGER,
+  attribute_key VARCHAR(100),
+  attribute_label VARCHAR(255),
+  data_type VARCHAR(50),
+  options JSONB,
+  display_order INTEGER
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    pad.id,
+    pad.attribute_key,
+    pad.attribute_label,
+    pad.data_type,
+    pad.options,
+    pad.display_order
+  FROM product_attribute_definitions pad
+  WHERE pad.is_filterable = TRUE
+    AND (category_filter IS NULL OR pad.category_ids = '{}' OR category_filter = ANY(pad.category_ids::TEXT[]))
+  ORDER BY pad.display_order, pad.attribute_label;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Insert default attribute definitions for hair/scalp care products
+INSERT INTO product_attribute_definitions
+  (attribute_key, attribute_label, data_type, is_searchable, is_filterable, display_order, options)
+VALUES
+  ('volume', 'Volume', 'select', FALSE, TRUE, 1,
+   '[{"value": "50ml", "label": "50ml"}, {"value": "100ml", "label": "100ml"}, {"value": "200ml", "label": "200ml"}, {"value": "250ml", "label": "250ml"}]'::jsonb),
+
+  ('hair_type', 'Hair Type', 'multiselect', TRUE, TRUE, 2,
+   '[{"value": "dry", "label": "Dry"}, {"value": "oily", "label": "Oily"}, {"value": "normal", "label": "Normal"}, {"value": "damaged", "label": "Damaged"}, {"value": "color-treated", "label": "Color-Treated"}]'::jsonb),
+
+  ('scalp_type', 'Scalp Type', 'multiselect', TRUE, TRUE, 3,
+   '[{"value": "sensitive", "label": "Sensitive"}, {"value": "itchy", "label": "Itchy"}, {"value": "flaky", "label": "Flaky"}, {"value": "oily", "label": "Oily"}]'::jsonb),
+
+  ('scent', 'Scent', 'select', TRUE, TRUE, 4,
+   '[{"value": "lavender", "label": "Lavender"}, {"value": "rose", "label": "Rose"}, {"value": "mint", "label": "Mint"}, {"value": "citrus", "label": "Citrus"}, {"value": "unscented", "label": "Unscented"}]'::jsonb),
+
+  ('ingredients', 'Key Ingredients', 'multiselect', TRUE, FALSE, 5,
+   '[{"value": "argan-oil", "label": "Argan Oil"}, {"value": "keratin", "label": "Keratin"}, {"value": "biotin", "label": "Biotin"}, {"value": "collagen", "label": "Collagen"}, {"value": "tea-tree", "label": "Tea Tree"}]'::jsonb),
+
+  ('organic', 'Organic', 'boolean', TRUE, TRUE, 6, NULL),
+  ('vegan', 'Vegan', 'boolean', TRUE, TRUE, 7, NULL),
+  ('paraben_free', 'Paraben Free', 'boolean', TRUE, TRUE, 8, NULL),
+  ('sulfate_free', 'Sulfate Free', 'boolean', TRUE, TRUE, 9, NULL),
+  ('cruelty_free', 'Cruelty Free', 'boolean', TRUE, TRUE, 10, NULL),
+
+  ('application_method', 'Application Method', 'select', FALSE, TRUE, 11,
+   '[{"value": "spray", "label": "Spray"}, {"value": "pump", "label": "Pump"}, {"value": "dropper", "label": "Dropper"}, {"value": "direct", "label": "Direct Application"}]'::jsonb),
+
+  ('texture', 'Texture', 'select', TRUE, FALSE, 12,
+   '[{"value": "liquid", "label": "Liquid"}, {"value": "cream", "label": "Cream"}, {"value": "gel", "label": "Gel"}, {"value": "serum", "label": "Serum"}, {"value": "oil", "label": "Oil"}]'::jsonb)
+
+ON CONFLICT (attribute_key) DO NOTHING;
+
+-- ============================================================================
+-- PRODUCT VARIANTS SYSTEM
+-- ============================================================================
+
+-- Variant option types (e.g., Size, Color, Material)
+CREATE TABLE IF NOT EXISTS variant_options (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Variant option values (e.g., Small, Medium, Large for Size)
+CREATE TABLE IF NOT EXISTS variant_option_values (
+  id SERIAL PRIMARY KEY,
+  option_id INTEGER NOT NULL REFERENCES variant_options(id) ON DELETE CASCADE,
+  value VARCHAR(100) NOT NULL,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(option_id, value)
+);
+
+CREATE INDEX IF NOT EXISTS idx_variant_option_values_option_id ON variant_option_values(option_id);
+
+-- Product variants (specific combinations of options for a product)
+CREATE TABLE IF NOT EXISTS product_variants (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  sku VARCHAR(100) NOT NULL UNIQUE,
+  price DECIMAL(10,2),
+  sale_price DECIMAL(10,2),
+  inventory INTEGER NOT NULL DEFAULT 0,
+  weight DECIMAL(10,3),
+  dimensions_length DECIMAL(10,2),
+  dimensions_width DECIMAL(10,2),
+  dimensions_height DECIMAL(10,2),
+  is_active BOOLEAN DEFAULT TRUE,
+  is_default BOOLEAN DEFAULT FALSE,
+  image_url TEXT,
+  sales_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON product_variants(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_variants_sku ON product_variants(sku);
+CREATE INDEX IF NOT EXISTS idx_product_variants_is_active ON product_variants(is_active);
+
+-- Junction table linking variants to their option values
+CREATE TABLE IF NOT EXISTS product_variant_options (
+  id SERIAL PRIMARY KEY,
+  variant_id INTEGER NOT NULL REFERENCES product_variants(id) ON DELETE CASCADE,
+  option_value_id INTEGER NOT NULL REFERENCES variant_option_values(id) ON DELETE RESTRICT,
+  UNIQUE(variant_id, option_value_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_variant_options_variant_id ON product_variant_options(variant_id);
+CREATE INDEX IF NOT EXISTS idx_product_variant_options_value_id ON product_variant_options(option_value_id);
+
+-- Function to get product variants with their options
+CREATE OR REPLACE FUNCTION get_product_variants(p_product_id INTEGER)
+RETURNS TABLE (
+  variant_id INTEGER,
+  product_id INTEGER,
+  sku VARCHAR(100),
+  price DECIMAL(10,2),
+  sale_price DECIMAL(10,2),
+  inventory INTEGER,
+  weight DECIMAL(10,3),
+  dimensions_length DECIMAL(10,2),
+  dimensions_width DECIMAL(10,2),
+  dimensions_height DECIMAL(10,2),
+  is_active BOOLEAN,
+  is_default BOOLEAN,
+  image_url TEXT,
+  sales_count INTEGER,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  options JSONB
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    pv.id as variant_id,
+    pv.product_id,
+    pv.sku,
+    pv.price,
+    pv.sale_price,
+    pv.inventory,
+    pv.weight,
+    pv.dimensions_length,
+    pv.dimensions_width,
+    pv.dimensions_height,
+    pv.is_active,
+    pv.is_default,
+    pv.image_url,
+    pv.sales_count,
+    pv.created_at,
+    pv.updated_at,
+    COALESCE(
+      jsonb_agg(
+        jsonb_build_object(
+          'optionId', vo.id,
+          'optionName', vo.name,
+          'valueId', vov.id,
+          'value', vov.value
+        ) ORDER BY vo.display_order
+      ) FILTER (WHERE vo.id IS NOT NULL),
+      '[]'::jsonb
+    ) as options
+  FROM product_variants pv
+  LEFT JOIN product_variant_options pvo ON pv.id = pvo.variant_id
+  LEFT JOIN variant_option_values vov ON pvo.option_value_id = vov.id
+  LEFT JOIN variant_options vo ON vov.option_id = vo.id
+  WHERE pv.product_id = p_product_id
+  GROUP BY pv.id
+  ORDER BY pv.is_default DESC, pv.created_at;
+END;
+$$ LANGUAGE plpgsql;
 `;
 
 async function seedTranslations() {
