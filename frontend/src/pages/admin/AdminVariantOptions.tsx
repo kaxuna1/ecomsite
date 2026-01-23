@@ -169,7 +169,7 @@ function AdminVariantOptions() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl uppercase tracking-[0.3em] text-champagne">
             Variant Options
@@ -178,7 +178,7 @@ function AdminVariantOptions() {
             Manage product variant option types (Size, Color, etc.) and their values
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <AIVariantOptionsTypeGenerator
             existingOptions={options.map(o => o.name)}
             onOptionsGenerated={handleAIOptionsGenerated}
@@ -186,7 +186,7 @@ function AdminVariantOptions() {
           <motion.button
             type="button"
             onClick={() => setShowOptionModal(true)}
-            className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

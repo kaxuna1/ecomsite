@@ -144,8 +144,8 @@ export default function AdminCMSInlineEditor() {
     <div className="min-h-screen bg-white relative">
       {/* Fixed Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-b border-jade/30 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Link
               to="/admin/cms"
               className="flex items-center gap-2 text-champagne/70 hover:text-champagne transition-colors"
@@ -153,14 +153,14 @@ export default function AdminCMSInlineEditor() {
               <ArrowLeftIcon className="h-5 w-5" />
               <span>Back to CMS</span>
             </Link>
-            <div className="w-px h-6 bg-champagne/20" />
+            <div className="hidden h-6 w-px bg-champagne/20 sm:block" />
             <div>
               <h1 className="font-display text-xl text-champagne">{page.title}</h1>
               <p className="text-xs text-champagne/60">/{page.slug}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsAddingBlock(true)}
               className="flex items-center gap-2 px-4 py-2 bg-jade/20 text-jade hover:bg-jade/30 rounded-lg transition-colors font-medium text-sm"

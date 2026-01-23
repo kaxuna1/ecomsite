@@ -143,7 +143,7 @@ export default function AdminCMSPageEditor() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link
             to="/admin/cms"
@@ -156,7 +156,7 @@ export default function AdminCMSPageEditor() {
           </h1>
           <p className="text-champagne/60 mt-1">/{page.slug}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setShowPreview(!showPreview)}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
@@ -248,9 +248,9 @@ export default function AdminCMSPageEditor() {
                 key={block.id}
                 className="bg-white/5 border border-white/10 rounded-lg p-6"
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="font-display text-lg text-champagne">{block.blockKey}</h3>
                       <span className="px-3 py-1 bg-jade/20 text-jade rounded-full text-xs font-semibold">
                         {block.blockType}
@@ -263,24 +263,24 @@ export default function AdminCMSPageEditor() {
                     </div>
                     <p className="text-sm text-champagne/60">Position: {block.displayOrder}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handleMoveBlock(block.id, 'up')}
                       disabled={index === 0}
-                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
                     >
                       ↑
                     </button>
                     <button
                       onClick={() => handleMoveBlock(block.id, 'down')}
                       disabled={index === blocks.length - 1}
-                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
                     >
                       ↓
                     </button>
                     <button
                       onClick={() => setEditingBlockId(block.id)}
-                      className="px-3 py-1 bg-jade/20 text-jade rounded hover:bg-jade/30 transition-colors text-sm"
+                      className="px-3 py-1 bg-jade/20 text-jade rounded hover:bg-jade/30 transition-colors text-xs sm:text-sm"
                     >
                       Edit
                     </button>
@@ -291,13 +291,13 @@ export default function AdminCMSPageEditor() {
                           data: { isEnabled: !block.isEnabled }
                         })
                       }
-                      className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-sm"
+                      className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-xs sm:text-sm"
                     >
                       {block.isEnabled ? 'Disable' : 'Enable'}
                     </button>
                     <button
                       onClick={() => handleDeleteBlock(block.id)}
-                      className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors text-sm"
+                      className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors text-xs sm:text-sm"
                     >
                       Delete
                     </button>

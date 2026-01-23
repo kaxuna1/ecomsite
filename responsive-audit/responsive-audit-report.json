@@ -1,0 +1,3396 @@
+{
+  "generatedAt": "2026-01-23T22:18:17.194Z",
+  "baseUrl": "http://localhost:5173",
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "customer": [
+        {
+          "name": "Home",
+          "url": "/en/",
+          "screenshot": "responsive-audit/desktop/home.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Products",
+          "url": "/en/products",
+          "screenshot": "responsive-audit/desktop/products.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Search",
+          "url": "/en/search",
+          "screenshot": "responsive-audit/desktop/search.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "New Arrivals",
+          "url": "/en/new-arrivals",
+          "screenshot": "responsive-audit/desktop/new-arrivals.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Best Sellers",
+          "url": "/en/best-sellers",
+          "screenshot": "responsive-audit/desktop/best-sellers.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Sale",
+          "url": "/en/sale",
+          "screenshot": "responsive-audit/desktop/sale.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Product Detail",
+          "url": "/en/products/10",
+          "screenshot": "responsive-audit/desktop/product-detail.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Cart",
+          "url": "/en/cart",
+          "screenshot": "responsive-audit/desktop/cart.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Checkout",
+          "url": "/en/checkout",
+          "screenshot": "responsive-audit/desktop/checkout.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Order Success",
+          "url": "/en/order-success",
+          "screenshot": "responsive-audit/desktop/order-success.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Profile",
+          "url": "/en/account/profile",
+          "screenshot": "responsive-audit/desktop/account-profile.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Orders",
+          "url": "/en/account/orders",
+          "screenshot": "responsive-audit/desktop/account-orders.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Favorites",
+          "url": "/en/account/favorites",
+          "screenshot": "responsive-audit/desktop/account-favorites.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Reviews",
+          "url": "/en/account/reviews",
+          "screenshot": "responsive-audit/desktop/account-reviews.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ],
+      "admin": [
+        {
+          "name": "Admin Dashboard",
+          "url": "/admin",
+          "screenshot": "responsive-audit/desktop/admin-dashboard.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Products",
+          "url": "/admin/products",
+          "screenshot": "responsive-audit/desktop/admin-products.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": [
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Lightweight finishing oil with 24k gold flakes and rose essence.",
+              "scrollWidth": 406,
+              "clientWidth": 396
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Revitalize the scalp with a cold-pressed botanical concentrate.",
+              "scrollWidth": 404,
+              "clientWidth": 397
+            }
+          ]
+        },
+        {
+          "name": "Admin Product New",
+          "url": "/admin/products/new",
+          "screenshot": "responsive-audit/desktop/admin-product-new.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Product Edit",
+          "url": "/admin/products/10/edit",
+          "screenshot": "responsive-audit/desktop/admin-product-edit.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Attributes",
+          "url": "/admin/attributes",
+          "screenshot": "responsive-audit/desktop/admin-attributes.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Variant Options",
+          "url": "/admin/variant-options",
+          "screenshot": "responsive-audit/desktop/admin-variant-options.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Media",
+          "url": "/admin/media",
+          "screenshot": "responsive-audit/desktop/admin-media.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Orders",
+          "url": "/admin/orders",
+          "screenshot": "responsive-audit/desktop/admin-orders.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Reviews",
+          "url": "/admin/reviews",
+          "screenshot": "responsive-audit/desktop/admin-reviews.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Promo Codes",
+          "url": "/admin/promo-codes",
+          "screenshot": "responsive-audit/desktop/admin-promo-codes.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS",
+          "url": "/admin/cms",
+          "screenshot": "responsive-audit/desktop/admin-cms.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Edit",
+          "url": "/admin/cms/edit/1",
+          "screenshot": "responsive-audit/desktop/admin-cms-edit.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": [
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"hero\",\n  \"ctaLink\": \"/products\",\n  \"ctaText\": \"Shop Now\",\n  \"headli",
+              "scrollWidth": 1332,
+              "clientWidth": 956
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"testimonials\",\n  \"title\": \"Loved by Thousands\",\n  \"subtitle\": \"Real",
+              "scrollWidth": 1123,
+              "clientWidth": 956
+            }
+          ]
+        },
+        {
+          "name": "Admin CMS Inline Edit",
+          "url": "/admin/cms/inline-edit/1",
+          "screenshot": "responsive-audit/desktop/admin-cms-inline-edit.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Users",
+          "url": "/admin/admin-users",
+          "screenshot": "responsive-audit/desktop/admin-users.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Customers",
+          "url": "/admin/customers",
+          "screenshot": "responsive-audit/desktop/admin-customers.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Navigation",
+          "url": "/admin/navigation",
+          "screenshot": "responsive-audit/desktop/admin-navigation.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Settings",
+          "url": "/admin/settings",
+          "screenshot": "responsive-audit/desktop/admin-settings.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Languages",
+          "url": "/admin/languages",
+          "screenshot": "responsive-audit/desktop/admin-languages.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Translations",
+          "url": "/admin/translations",
+          "screenshot": "responsive-audit/desktop/admin-translations.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Translations",
+          "url": "/admin/cms-translations",
+          "screenshot": "responsive-audit/desktop/admin-cms-translations.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Static Translations",
+          "url": "/admin/static-translations",
+          "screenshot": "responsive-audit/desktop/admin-static-translations.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Newsletter",
+          "url": "/admin/newsletter",
+          "screenshot": "responsive-audit/desktop/admin-newsletter.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Themes",
+          "url": "/admin/themes",
+          "screenshot": "responsive-audit/desktop/admin-themes.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ]
+    },
+    {
+      "name": "ipad",
+      "width": 834,
+      "height": 1112,
+      "customer": [
+        {
+          "name": "Home",
+          "url": "/en/",
+          "screenshot": "responsive-audit/ipad/home.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Products",
+          "url": "/en/products",
+          "screenshot": "responsive-audit/ipad/products.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Search",
+          "url": "/en/search",
+          "screenshot": "responsive-audit/ipad/search.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "New Arrivals",
+          "url": "/en/new-arrivals",
+          "screenshot": "responsive-audit/ipad/new-arrivals.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Best Sellers",
+          "url": "/en/best-sellers",
+          "screenshot": "responsive-audit/ipad/best-sellers.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Sale",
+          "url": "/en/sale",
+          "screenshot": "responsive-audit/ipad/sale.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Product Detail",
+          "url": "/en/products/10",
+          "screenshot": "responsive-audit/ipad/product-detail.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "IMG",
+              "id": null,
+              "className": "h-full w-full object-cover aspect-square",
+              "text": "",
+              "rect": {
+                "left": 8,
+                "top": 171,
+                "right": 1644,
+                "bottom": 1807,
+                "width": 1636,
+                "height": 1636
+              }
+            }
+          ],
+          "clippedText": []
+        },
+        {
+          "name": "Cart",
+          "url": "/en/cart",
+          "screenshot": "responsive-audit/ipad/cart.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Checkout",
+          "url": "/en/checkout",
+          "screenshot": "responsive-audit/ipad/checkout.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Order Success",
+          "url": "/en/order-success",
+          "screenshot": "responsive-audit/ipad/order-success.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Profile",
+          "url": "/en/account/profile",
+          "screenshot": "responsive-audit/ipad/account-profile.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Orders",
+          "url": "/en/account/orders",
+          "screenshot": "responsive-audit/ipad/account-orders.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Favorites",
+          "url": "/en/account/favorites",
+          "screenshot": "responsive-audit/ipad/account-favorites.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Reviews",
+          "url": "/en/account/reviews",
+          "screenshot": "responsive-audit/ipad/account-reviews.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ],
+      "admin": [
+        {
+          "name": "Admin Dashboard",
+          "url": "/admin",
+          "screenshot": "responsive-audit/ipad/admin-dashboard.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Products",
+          "url": "/admin/products",
+          "screenshot": "responsive-audit/ipad/admin-products.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": [
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Tea Tree Scalp Treatment",
+              "scrollWidth": 210,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Purifying treatment for itchy, irritated scalp.",
+              "scrollWidth": 280,
+              "clientWidth": 103
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Color Protect Hair Treatment",
+              "scrollWidth": 241,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "UV protection and color lock for vibrant, long-lasting color.",
+              "scrollWidth": 379,
+              "clientWidth": 103
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Hydrating Cream Conditioner",
+              "scrollWidth": 247,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Daily moisture with shea butter and coconut milk.",
+              "scrollWidth": 318,
+              "clientWidth": 103
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Clarifying Charcoal Shampoo",
+              "scrollWidth": 243,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Detoxifying cleanser with activated charcoal and mint.",
+              "scrollWidth": 348,
+              "clientWidth": 103
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Midnight Recovery Hair Serum",
+              "scrollWidth": 255,
+              "clientWidth": 97
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Overnight repair treatment with ceramides and peptides.",
+              "scrollWidth": 365,
+              "clientWidth": 97
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Volumizing Root Spray",
+              "scrollWidth": 188,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Lightweight lift with bamboo extract and biotin.",
+              "scrollWidth": 304,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Lightweight finishing oil with 24k gold flakes and rose essence.",
+              "scrollWidth": 406,
+              "clientWidth": 94
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Botanical Scalp Scrub",
+              "scrollWidth": 179,
+              "clientWidth": 104
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Gentle exfoliating treatment with sea salt and essential oils.",
+              "scrollWidth": 382,
+              "clientWidth": 104
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Silk Protein Hair Mask",
+              "scrollWidth": 186,
+              "clientWidth": 103
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Deep conditioning treatment with hydrolyzed silk proteins.",
+              "scrollWidth": 376,
+              "clientWidth": 103
+            },
+            {
+              "tag": "H3",
+              "id": null,
+              "className": "mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors",
+              "text": "Luminescent Scalp Renewal Elixir",
+              "scrollWidth": 279,
+              "clientWidth": 95
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "truncate text-sm text-champagne/60",
+              "text": "Revitalize the scalp with a cold-pressed botanical concentrate.",
+              "scrollWidth": 404,
+              "clientWidth": 95
+            }
+          ]
+        },
+        {
+          "name": "Admin Product New",
+          "url": "/admin/products/new",
+          "screenshot": "responsive-audit/ipad/admin-product-new.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Product Edit",
+          "url": "/admin/products/10/edit",
+          "screenshot": "responsive-audit/ipad/admin-product-edit.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Attributes",
+          "url": "/admin/attributes",
+          "screenshot": "responsive-audit/ipad/admin-attributes.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Variant Options",
+          "url": "/admin/variant-options",
+          "screenshot": "responsive-audit/ipad/admin-variant-options.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Media",
+          "url": "/admin/media",
+          "screenshot": "responsive-audit/ipad/admin-media.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Orders",
+          "url": "/admin/orders",
+          "screenshot": "responsive-audit/ipad/admin-orders.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Reviews",
+          "url": "/admin/reviews",
+          "screenshot": "responsive-audit/ipad/admin-reviews.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Promo Codes",
+          "url": "/admin/promo-codes",
+          "screenshot": "responsive-audit/ipad/admin-promo-codes.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS",
+          "url": "/admin/cms",
+          "screenshot": "responsive-audit/ipad/admin-cms.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Edit",
+          "url": "/admin/cms/edit/1",
+          "screenshot": "responsive-audit/ipad/admin-cms-edit.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": [
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"hero\",\n  \"ctaLink\": \"/products\",\n  \"ctaText\": \"Shop Now\",\n  \"headli",
+              "scrollWidth": 1332,
+              "clientWidth": 654
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"features\",\n  \"title\": \"Why Choose Luxia\",\n  \"columns\": 4,\n  \"featur",
+              "scrollWidth": 742,
+              "clientWidth": 654
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"testimonials\",\n  \"title\": \"Loved by Thousands\",\n  \"subtitle\": \"Real",
+              "scrollWidth": 1123,
+              "clientWidth": 654
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"newsletter\",\n  \"title\": \"Get 15% Off Your First Order\",\n  \"buttonTe",
+              "scrollWidth": 835,
+              "clientWidth": 654
+            }
+          ]
+        },
+        {
+          "name": "Admin CMS Inline Edit",
+          "url": "/admin/cms/inline-edit/1",
+          "screenshot": "responsive-audit/ipad/admin-cms-inline-edit.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Users",
+          "url": "/admin/admin-users",
+          "screenshot": "responsive-audit/ipad/admin-users.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "min-w-full divide-y divide-champagne/20",
+              "text": "NameEmailRoleStatusLast LoginActionsAdminadmin@luxia.localAdminActiveJan 23, 202",
+              "rect": {
+                "left": 57,
+                "top": 234,
+                "right": 840,
+                "bottom": 339,
+                "width": 783,
+                "height": 105
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-midnight/80",
+              "text": "NameEmailRoleStatusLast LoginActions",
+              "rect": {
+                "left": 57,
+                "top": 234,
+                "right": 840,
+                "bottom": 277,
+                "width": 783,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "NameEmailRoleStatusLast LoginActions",
+              "rect": {
+                "left": 57,
+                "top": 234,
+                "right": 840,
+                "bottom": 277,
+                "width": 783,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Actions",
+              "rect": {
+                "left": 734,
+                "top": 234,
+                "right": 840,
+                "bottom": 277,
+                "width": 106,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "bg-midnight/30 divide-y divide-champagne/10",
+              "text": "Adminadmin@luxia.localAdminActiveJan 23, 2026, 10:20 PM",
+              "rect": {
+                "left": 57,
+                "top": 277,
+                "right": 840,
+                "bottom": 339,
+                "width": 783,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-jade/10 transition-colors",
+              "text": "Adminadmin@luxia.localAdminActiveJan 23, 2026, 10:20 PM",
+              "rect": {
+                "left": 57,
+                "top": 277,
+                "right": 840,
+                "bottom": 339,
+                "width": 783,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-sm font-medium",
+              "text": "",
+              "rect": {
+                "left": 734,
+                "top": 277,
+                "right": 840,
+                "bottom": 339,
+                "width": 106,
+                "height": 63
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl overflow-hidden",
+              "text": "NameEmailRoleStatusLast LoginActionsAdminadmin@luxia.localAdminActiveJan 23, 202",
+              "scrollWidth": 783,
+              "clientWidth": 720
+            }
+          ]
+        },
+        {
+          "name": "Admin Customers",
+          "url": "/admin/customers",
+          "screenshot": "responsive-audit/ipad/admin-customers.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Navigation",
+          "url": "/admin/navigation",
+          "screenshot": "responsive-audit/ipad/admin-navigation.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Settings",
+          "url": "/admin/settings",
+          "screenshot": "responsive-audit/ipad/admin-settings.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Languages",
+          "url": "/admin/languages",
+          "screenshot": "responsive-audit/ipad/admin-languages.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "min-w-full divide-y divide-white/10",
+              "text": "CodeNameNative NameStatusDefaultOrderActionsENEnglishEnglishEnabledDefault1EditK",
+              "rect": {
+                "left": 25,
+                "top": 203,
+                "right": 876,
+                "bottom": 373,
+                "width": 851,
+                "height": 170
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-white/5",
+              "text": "CodeNameNative NameStatusDefaultOrderActions",
+              "rect": {
+                "left": 25,
+                "top": 203,
+                "right": 876,
+                "bottom": 254,
+                "width": 851,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "CodeNameNative NameStatusDefaultOrderActions",
+              "rect": {
+                "left": 25,
+                "top": 203,
+                "right": 876,
+                "bottom": 254,
+                "width": 851,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-right text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap",
+              "text": "Actions",
+              "rect": {
+                "left": 743,
+                "top": 203,
+                "right": 876,
+                "bottom": 254,
+                "width": 132,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "divide-y divide-white/10",
+              "text": "ENEnglishEnglishEnabledDefault1EditKAGeorgianქართულიEnabled2EditDelete",
+              "rect": {
+                "left": 25,
+                "top": 254,
+                "right": 876,
+                "bottom": 373,
+                "width": 851,
+                "height": 120
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-white/5 transition-colors",
+              "text": "ENEnglishEnglishEnabledDefault1Edit",
+              "rect": {
+                "left": 25,
+                "top": 254,
+                "right": 876,
+                "bottom": 314,
+                "width": 851,
+                "height": 60
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
+              "text": "Edit",
+              "rect": {
+                "left": 743,
+                "top": 254,
+                "right": 876,
+                "bottom": 314,
+                "width": 132,
+                "height": 60
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center justify-end gap-4",
+              "text": "Edit",
+              "rect": {
+                "left": 767,
+                "top": 273,
+                "right": 852,
+                "bottom": 294,
+                "width": 84,
+                "height": 21
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-blush hover:text-blush/80 transition-colors",
+              "text": "Edit",
+              "rect": {
+                "left": 826,
+                "top": 273,
+                "right": 852,
+                "bottom": 294,
+                "width": 26,
+                "height": 21
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-white/5 transition-colors",
+              "text": "KAGeorgianქართულიEnabled2EditDelete",
+              "rect": {
+                "left": 25,
+                "top": 314,
+                "right": 876,
+                "bottom": 373,
+                "width": 851,
+                "height": 60
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
+              "text": "EditDelete",
+              "rect": {
+                "left": 743,
+                "top": 314,
+                "right": 876,
+                "bottom": 373,
+                "width": 132,
+                "height": 60
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center justify-end gap-4",
+              "text": "EditDelete",
+              "rect": {
+                "left": 767,
+                "top": 333,
+                "right": 852,
+                "bottom": 354,
+                "width": 84,
+                "height": 21
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-red-400 hover:text-red-300 transition-colors",
+              "text": "Delete",
+              "rect": {
+                "left": 809,
+                "top": 333,
+                "right": 852,
+                "bottom": 354,
+                "width": 43,
+                "height": 21
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "overflow-x-auto",
+              "text": "CodeNameNative NameStatusDefaultOrderActionsENEnglishEnglishEnabledDefault1EditK",
+              "scrollWidth": 851,
+              "clientWidth": 784
+            }
+          ]
+        },
+        {
+          "name": "Admin Translations",
+          "url": "/admin/translations",
+          "screenshot": "responsive-audit/ipad/admin-translations.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Translations",
+          "url": "/admin/cms-translations",
+          "screenshot": "responsive-audit/ipad/admin-cms-translations.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Static Translations",
+          "url": "/admin/static-translations",
+          "screenshot": "responsive-audit/ipad/admin-static-translations.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Newsletter",
+          "url": "/admin/newsletter",
+          "screenshot": "responsive-audit/ipad/admin-newsletter.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Themes",
+          "url": "/admin/themes",
+          "screenshot": "responsive-audit/ipad/admin-themes.png",
+          "viewport": {
+            "width": 834,
+            "height": 1112
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ]
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "customer": [
+        {
+          "name": "Home",
+          "url": "/en/",
+          "screenshot": "responsive-audit/mobile/home.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "absolute -top-40 right-10 h-96 w-96 rounded-full blur-3xl",
+              "text": "",
+              "rect": {
+                "left": -42,
+                "top": -22,
+                "right": 358,
+                "bottom": 378,
+                "width": 401,
+                "height": 401
+              }
+            }
+          ],
+          "clippedText": []
+        },
+        {
+          "name": "Products",
+          "url": "/en/products",
+          "screenshot": "responsive-audit/mobile/products.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Search",
+          "url": "/en/search",
+          "screenshot": "responsive-audit/mobile/search.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "New Arrivals",
+          "url": "/en/new-arrivals",
+          "screenshot": "responsive-audit/mobile/new-arrivals.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Best Sellers",
+          "url": "/en/best-sellers",
+          "screenshot": "responsive-audit/mobile/best-sellers.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Sale",
+          "url": "/en/sale",
+          "screenshot": "responsive-audit/mobile/sale.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Product Detail",
+          "url": "/en/products/10",
+          "screenshot": "responsive-audit/mobile/product-detail.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Cart",
+          "url": "/en/cart",
+          "screenshot": "responsive-audit/mobile/cart.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Checkout",
+          "url": "/en/checkout",
+          "screenshot": "responsive-audit/mobile/checkout.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Order Success",
+          "url": "/en/order-success",
+          "screenshot": "responsive-audit/mobile/order-success.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "absolute -top-40 right-10 h-96 w-96 rounded-full blur-3xl",
+              "text": "",
+              "rect": {
+                "left": -42,
+                "top": -22,
+                "right": 358,
+                "bottom": 379,
+                "width": 401,
+                "height": 401
+              }
+            }
+          ],
+          "clippedText": []
+        },
+        {
+          "name": "Account Profile",
+          "url": "/en/account/profile",
+          "screenshot": "responsive-audit/mobile/account-profile.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Orders",
+          "url": "/en/account/orders",
+          "screenshot": "responsive-audit/mobile/account-orders.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Favorites",
+          "url": "/en/account/favorites",
+          "screenshot": "responsive-audit/mobile/account-favorites.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Account Reviews",
+          "url": "/en/account/reviews",
+          "screenshot": "responsive-audit/mobile/account-reviews.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ],
+      "admin": [
+        {
+          "name": "Admin Dashboard",
+          "url": "/admin",
+          "screenshot": "responsive-audit/mobile/admin-dashboard.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Products",
+          "url": "/admin/products",
+          "screenshot": "responsive-audit/mobile/admin-products.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Product New",
+          "url": "/admin/products/new",
+          "screenshot": "responsive-audit/mobile/admin-product-new.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm",
+              "text": "Variants & SKUs",
+              "rect": {
+                "left": 276,
+                "top": 351,
+                "right": 403,
+                "bottom": 393,
+                "width": 128,
+                "height": 42
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm",
+              "text": "Translations",
+              "rect": {
+                "left": 407,
+                "top": 351,
+                "right": 512,
+                "bottom": 393,
+                "width": 105,
+                "height": 42
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "text-champagne/60 hover:text-champagne",
+              "text": "Translations",
+              "rect": {
+                "left": 423,
+                "top": 364,
+                "right": 496,
+                "bottom": 379,
+                "width": 73,
+                "height": 15
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "-mx-4 flex gap-1 overflow-x-auto pb-2 px-4 sm:mx-0 sm:pb-0 sm:px-0",
+              "text": "Product DetailsMedia GalleryVariants & SKUsTranslations",
+              "scrollWidth": 512,
+              "clientWidth": 358
+            }
+          ]
+        },
+        {
+          "name": "Admin Product Edit",
+          "url": "/admin/products/10/edit",
+          "screenshot": "responsive-audit/mobile/admin-product-edit.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm",
+              "text": "Variants & SKUs",
+              "rect": {
+                "left": 276,
+                "top": 387,
+                "right": 403,
+                "bottom": 429,
+                "width": 128,
+                "height": 42
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm",
+              "text": "Translations",
+              "rect": {
+                "left": 407,
+                "top": 387,
+                "right": 512,
+                "bottom": 429,
+                "width": 105,
+                "height": 42
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "text-champagne/60 hover:text-champagne",
+              "text": "Translations",
+              "rect": {
+                "left": 423,
+                "top": 400,
+                "right": 496,
+                "bottom": 415,
+                "width": 73,
+                "height": 15
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "-mx-4 flex gap-1 overflow-x-auto pb-2 px-4 sm:mx-0 sm:pb-0 sm:px-0",
+              "text": "Product DetailsMedia GalleryVariants & SKUsTranslations",
+              "scrollWidth": 512,
+              "clientWidth": 358
+            }
+          ]
+        },
+        {
+          "name": "Admin Attributes",
+          "url": "/admin/attributes",
+          "screenshot": "responsive-audit/mobile/admin-attributes.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Variant Options",
+          "url": "/admin/variant-options",
+          "screenshot": "responsive-audit/mobile/admin-variant-options.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Media",
+          "url": "/admin/media",
+          "screenshot": "responsive-audit/mobile/admin-media.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Orders",
+          "url": "/admin/orders",
+          "screenshot": "responsive-audit/mobile/admin-orders.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "w-full",
+              "text": "OrderCustomerItemsTotalStatusActionsNo orders foundOrders will appear here once ",
+              "rect": {
+                "left": 17,
+                "top": 1012,
+                "right": 616,
+                "bottom": 1438,
+                "width": 599,
+                "height": 426
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "border-b border-white/10 bg-white/5",
+              "text": "OrderCustomerItemsTotalStatusActions",
+              "rect": {
+                "left": 17,
+                "top": 1012,
+                "right": 616,
+                "bottom": 1063,
+                "width": 599,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "OrderCustomerItemsTotalStatusActions",
+              "rect": {
+                "left": 17,
+                "top": 1012,
+                "right": 616,
+                "bottom": 1063,
+                "width": 599,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60 ",
+              "text": "Total",
+              "rect": {
+                "left": 320,
+                "top": 1012,
+                "right": 410,
+                "bottom": 1063,
+                "width": 90,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-champagne/60 ",
+              "text": "Status",
+              "rect": {
+                "left": 410,
+                "top": 1012,
+                "right": 509,
+                "bottom": 1063,
+                "width": 99,
+                "height": 51
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center gap-2",
+              "text": "Status",
+              "rect": {
+                "left": 434,
+                "top": 1028,
+                "right": 485,
+                "bottom": 1046,
+                "width": 51,
+                "height": 18
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-champagne/60 ",
+              "text": "Actions",
+              "rect": {
+                "left": 509,
+                "top": 1012,
+                "right": 616,
+                "bottom": 1063,
+                "width": 107,
+                "height": 51
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center gap-2",
+              "text": "Actions",
+              "rect": {
+                "left": 533,
+                "top": 1028,
+                "right": 592,
+                "bottom": 1046,
+                "width": 59,
+                "height": 18
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "divide-y divide-white/10",
+              "text": "No orders foundOrders will appear here once customers make purchases",
+              "rect": {
+                "left": 17,
+                "top": 1063,
+                "right": 616,
+                "bottom": 1438,
+                "width": 599,
+                "height": 376
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "No orders foundOrders will appear here once customers make purchases",
+              "rect": {
+                "left": 17,
+                "top": 1063,
+                "right": 616,
+                "bottom": 1438,
+                "width": 599,
+                "height": 376
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-12",
+              "text": "No orders foundOrders will appear here once customers make purchases",
+              "rect": {
+                "left": 17,
+                "top": 1063,
+                "right": 616,
+                "bottom": 1438,
+                "width": 599,
+                "height": 376
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10 bg-white/5 px-8 py-16 text-center",
+              "text": "No orders foundOrders will appear here once customers make purchases",
+              "rect": {
+                "left": 41,
+                "top": 1111,
+                "right": 592,
+                "bottom": 1390,
+                "width": 551,
+                "height": 279
+              }
+            },
+            {
+              "tag": "P",
+              "id": null,
+              "className": "mt-2 max-w-md text-sm text-champagne/60",
+              "text": "Orders will appear here once customers make purchases",
+              "rect": {
+                "left": 133,
+                "top": 1303,
+                "right": 500,
+                "bottom": 1324,
+                "width": 366,
+                "height": 21
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "overflow-x-auto",
+              "text": "OrderCustomerItemsTotalStatusActionsNo orders foundOrders will appear here once ",
+              "scrollWidth": 599,
+              "clientWidth": 356
+            }
+          ]
+        },
+        {
+          "name": "Admin Reviews",
+          "url": "/admin/reviews",
+          "screenshot": "responsive-audit/mobile/admin-reviews.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Promo Codes",
+          "url": "/admin/promo-codes",
+          "screenshot": "responsive-audit/mobile/admin-promo-codes.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS",
+          "url": "/admin/cms",
+          "screenshot": "responsive-audit/mobile/admin-cms.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Edit",
+          "url": "/admin/cms/edit/1",
+          "screenshot": "responsive-audit/mobile/admin-cms-edit.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": [
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"hero\",\n  \"ctaLink\": \"/products\",\n  \"ctaText\": \"Shop Now\",\n  \"headli",
+              "scrollWidth": 1332,
+              "clientWidth": 226
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"features\",\n  \"title\": \"Why Choose Luxia\",\n  \"columns\": 4,\n  \"featur",
+              "scrollWidth": 742,
+              "clientWidth": 226
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"products\",\n  \"title\": \"Our Bestsellers\",\n  \"ctaLink\": \"/products\",\n",
+              "scrollWidth": 432,
+              "clientWidth": 226
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"testimonials\",\n  \"title\": \"Loved by Thousands\",\n  \"subtitle\": \"Real",
+              "scrollWidth": 1123,
+              "clientWidth": 226
+            },
+            {
+              "tag": "PRE",
+              "id": null,
+              "className": "text-xs text-champagne/60 overflow-auto",
+              "text": "{\n  \"type\": \"newsletter\",\n  \"title\": \"Get 15% Off Your First Order\",\n  \"buttonTe",
+              "scrollWidth": 835,
+              "clientWidth": 226
+            }
+          ]
+        },
+        {
+          "name": "Admin CMS Inline Edit",
+          "url": "/admin/cms/inline-edit/1",
+          "screenshot": "responsive-audit/mobile/admin-cms-inline-edit.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "absolute top-4 right-4 z-50 flex items-center gap-2 bg-midnight/95 backdrop-blur-xl border border-jade/50 rounded-lg shadow-2xl p-2",
+              "text": "heroEditHide",
+              "rect": {
+                "left": -5,
+                "top": 112,
+                "right": 358,
+                "bottom": 167,
+                "width": 363,
+                "height": 55
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "absolute -top-40 right-10 h-96 w-96 rounded-full blur-3xl",
+              "text": "",
+              "rect": {
+                "left": -58,
+                "top": -59,
+                "right": 342,
+                "bottom": 342,
+                "width": 401,
+                "height": 401
+              }
+            }
+          ],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Users",
+          "url": "/admin/admin-users",
+          "screenshot": "responsive-audit/mobile/admin-users.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "min-w-full divide-y divide-champagne/20",
+              "text": "NameEmailRoleStatusLast LoginActionsAdminadmin@luxia.localAdminActiveJan 23, 202",
+              "rect": {
+                "left": 49,
+                "top": 327,
+                "right": 829,
+                "bottom": 432,
+                "width": 780,
+                "height": 105
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-midnight/80",
+              "text": "NameEmailRoleStatusLast LoginActions",
+              "rect": {
+                "left": 49,
+                "top": 327,
+                "right": 829,
+                "bottom": 370,
+                "width": 780,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "NameEmailRoleStatusLast LoginActions",
+              "rect": {
+                "left": 49,
+                "top": 327,
+                "right": 829,
+                "bottom": 370,
+                "width": 780,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Role",
+              "rect": {
+                "left": 303,
+                "top": 327,
+                "right": 414,
+                "bottom": 370,
+                "width": 111,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Status",
+              "rect": {
+                "left": 414,
+                "top": 327,
+                "right": 525,
+                "bottom": 370,
+                "width": 111,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Last Login",
+              "rect": {
+                "left": 525,
+                "top": 327,
+                "right": 724,
+                "bottom": 370,
+                "width": 199,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Actions",
+              "rect": {
+                "left": 724,
+                "top": 327,
+                "right": 829,
+                "bottom": 370,
+                "width": 106,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "bg-midnight/30 divide-y divide-champagne/10",
+              "text": "Adminadmin@luxia.localAdminActiveJan 23, 2026, 10:21 PM",
+              "rect": {
+                "left": 49,
+                "top": 370,
+                "right": 829,
+                "bottom": 432,
+                "width": 780,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-jade/10 transition-colors",
+              "text": "Adminadmin@luxia.localAdminActiveJan 23, 2026, 10:21 PM",
+              "rect": {
+                "left": 49,
+                "top": 370,
+                "right": 829,
+                "bottom": 432,
+                "width": 780,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "Admin",
+              "rect": {
+                "left": 303,
+                "top": 370,
+                "right": 414,
+                "bottom": 432,
+                "width": 111,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "Active",
+              "rect": {
+                "left": 414,
+                "top": 370,
+                "right": 525,
+                "bottom": 432,
+                "width": 111,
+                "height": 63
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-jade/20 text-jade border border-jade/30",
+              "text": "Active",
+              "rect": {
+                "left": 438,
+                "top": 386,
+                "right": 501,
+                "bottom": 416,
+                "width": 63,
+                "height": 30
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-sm text-champagne/70",
+              "text": "Jan 23, 2026, 10:21 PM",
+              "rect": {
+                "left": 525,
+                "top": 370,
+                "right": 724,
+                "bottom": 432,
+                "width": 199,
+                "height": 63
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-sm font-medium",
+              "text": "",
+              "rect": {
+                "left": 724,
+                "top": 370,
+                "right": 829,
+                "bottom": 432,
+                "width": 106,
+                "height": 63
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex gap-2",
+              "text": "",
+              "rect": {
+                "left": 748,
+                "top": 391,
+                "right": 805,
+                "bottom": 411,
+                "width": 58,
+                "height": 20
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-jade hover:text-jade/80 transition-colors",
+              "text": "",
+              "rect": {
+                "left": 748,
+                "top": 391,
+                "right": 768,
+                "bottom": 411,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "svg",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 748,
+                "top": 391,
+                "right": 768,
+                "bottom": 411,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "path",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 750,
+                "top": 393,
+                "right": 766,
+                "bottom": 409,
+                "width": 16,
+                "height": 16
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-blush hover:text-blush/80 transition-colors",
+              "text": "",
+              "rect": {
+                "left": 776,
+                "top": 391,
+                "right": 796,
+                "bottom": 411,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "svg",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 776,
+                "top": 391,
+                "right": 796,
+                "bottom": 411,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "path",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 779,
+                "top": 393,
+                "right": 793,
+                "bottom": 409,
+                "width": 14,
+                "height": 16
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl overflow-hidden",
+              "text": "NameEmailRoleStatusLast LoginActionsAdminadmin@luxia.localAdminActiveJan 23, 202",
+              "scrollWidth": 780,
+              "clientWidth": 292
+            }
+          ]
+        },
+        {
+          "name": "Admin Customers",
+          "url": "/admin/customers",
+          "screenshot": "responsive-audit/mobile/admin-customers.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "min-w-full divide-y divide-champagne/20",
+              "text": "NameEmailOrdersTotal SpentJoined ↓ActionsK Gk@k.ge0$0.00Jan 23, 2026",
+              "rect": {
+                "left": 49,
+                "top": 764,
+                "right": 660,
+                "bottom": 878,
+                "width": 611,
+                "height": 114
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-midnight/80",
+              "text": "NameEmailOrdersTotal SpentJoined ↓Actions",
+              "rect": {
+                "left": 49,
+                "top": 764,
+                "right": 660,
+                "bottom": 825,
+                "width": 611,
+                "height": 61
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "NameEmailOrdersTotal SpentJoined ↓Actions",
+              "rect": {
+                "left": 49,
+                "top": 764,
+                "right": 660,
+                "bottom": 825,
+                "width": 611,
+                "height": 61
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10",
+              "text": "Total Spent",
+              "rect": {
+                "left": 331,
+                "top": 764,
+                "right": 422,
+                "bottom": 825,
+                "width": 91,
+                "height": 61
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10",
+              "text": "Joined ↓",
+              "rect": {
+                "left": 422,
+                "top": 764,
+                "right": 555,
+                "bottom": 825,
+                "width": 133,
+                "height": 61
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider",
+              "text": "Actions",
+              "rect": {
+                "left": 555,
+                "top": 764,
+                "right": 660,
+                "bottom": 825,
+                "width": 106,
+                "height": 61
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "bg-midnight/30 divide-y divide-champagne/10",
+              "text": "K Gk@k.ge0$0.00Jan 23, 2026",
+              "rect": {
+                "left": 49,
+                "top": 825,
+                "right": 660,
+                "bottom": 878,
+                "width": 611,
+                "height": 54
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-jade/10 transition-colors",
+              "text": "K Gk@k.ge0$0.00Jan 23, 2026",
+              "rect": {
+                "left": 49,
+                "top": 825,
+                "right": 660,
+                "bottom": 878,
+                "width": 611,
+                "height": 54
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "$0.00",
+              "rect": {
+                "left": 331,
+                "top": 825,
+                "right": 422,
+                "bottom": 878,
+                "width": 91,
+                "height": 54
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "text-sm font-semibold text-jade",
+              "text": "$0.00",
+              "rect": {
+                "left": 355,
+                "top": 841,
+                "right": 398,
+                "bottom": 862,
+                "width": 43,
+                "height": 21
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-sm text-champagne/70",
+              "text": "Jan 23, 2026",
+              "rect": {
+                "left": 422,
+                "top": 825,
+                "right": 555,
+                "bottom": 878,
+                "width": 133,
+                "height": 54
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-sm font-medium",
+              "text": "",
+              "rect": {
+                "left": 555,
+                "top": 825,
+                "right": 660,
+                "bottom": 878,
+                "width": 106,
+                "height": 54
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex gap-2",
+              "text": "",
+              "rect": {
+                "left": 579,
+                "top": 842,
+                "right": 636,
+                "bottom": 862,
+                "width": 58,
+                "height": 20
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-jade hover:text-jade/80 transition-colors",
+              "text": "",
+              "rect": {
+                "left": 579,
+                "top": 842,
+                "right": 599,
+                "bottom": 862,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "svg",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 579,
+                "top": 842,
+                "right": 599,
+                "bottom": 862,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "path",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 580,
+                "top": 843,
+                "right": 597,
+                "bottom": 860,
+                "width": 16,
+                "height": 16
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-blush hover:text-blush/80 transition-colors",
+              "text": "",
+              "rect": {
+                "left": 607,
+                "top": 842,
+                "right": 627,
+                "bottom": 862,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "svg",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 607,
+                "top": 842,
+                "right": 627,
+                "bottom": 862,
+                "width": 20,
+                "height": 20
+              }
+            },
+            {
+              "tag": "path",
+              "id": null,
+              "className": {},
+              "text": "",
+              "rect": {
+                "left": 610,
+                "top": 843,
+                "right": 623,
+                "bottom": 860,
+                "width": 14,
+                "height": 16
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "overflow-x-auto",
+              "text": "NameEmailOrdersTotal SpentJoined ↓ActionsK Gk@k.ge0$0.00Jan 23, 2026",
+              "scrollWidth": 611,
+              "clientWidth": 292
+            }
+          ]
+        },
+        {
+          "name": "Admin Navigation",
+          "url": "/admin/navigation",
+          "screenshot": "responsive-audit/mobile/admin-navigation.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Settings",
+          "url": "/admin/settings",
+          "screenshot": "responsive-audit/mobile/admin-settings.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Languages",
+          "url": "/admin/languages",
+          "screenshot": "responsive-audit/mobile/admin-languages.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "min-w-full divide-y divide-white/10",
+              "text": "CodeNameNative NameStatusDefaultOrderActionsENEnglishEnglishEnabledDefault1EditK",
+              "rect": {
+                "left": 17,
+                "top": 306,
+                "right": 868,
+                "bottom": 476,
+                "width": 851,
+                "height": 170
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-white/5",
+              "text": "CodeNameNative NameStatusDefaultOrderActions",
+              "rect": {
+                "left": 17,
+                "top": 306,
+                "right": 868,
+                "bottom": 357,
+                "width": 851,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "CodeNameNative NameStatusDefaultOrderActions",
+              "rect": {
+                "left": 17,
+                "top": 306,
+                "right": 868,
+                "bottom": 357,
+                "width": 851,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap",
+              "text": "Status",
+              "rect": {
+                "left": 371,
+                "top": 306,
+                "right": 504,
+                "bottom": 357,
+                "width": 133,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap",
+              "text": "Default",
+              "rect": {
+                "left": 504,
+                "top": 306,
+                "right": 634,
+                "bottom": 357,
+                "width": 130,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap",
+              "text": "Order",
+              "rect": {
+                "left": 634,
+                "top": 306,
+                "right": 735,
+                "bottom": 357,
+                "width": 101,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-4 text-right text-xs font-medium uppercase tracking-[0.2em] text-champagne/60 whitespace-nowrap",
+              "text": "Actions",
+              "rect": {
+                "left": 735,
+                "top": 306,
+                "right": 868,
+                "bottom": 357,
+                "width": 132,
+                "height": 51
+              }
+            },
+            {
+              "tag": "TBODY",
+              "id": null,
+              "className": "divide-y divide-white/10",
+              "text": "ENEnglishEnglishEnabledDefault1EditKAGeorgianქართულიEnabled2EditDelete",
+              "rect": {
+                "left": 17,
+                "top": 357,
+                "right": 868,
+                "bottom": 476,
+                "width": 851,
+                "height": 120
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-white/5 transition-colors",
+              "text": "ENEnglishEnglishEnabledDefault1Edit",
+              "rect": {
+                "left": 17,
+                "top": 357,
+                "right": 868,
+                "bottom": 417,
+                "width": 851,
+                "height": 60
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "Enabled",
+              "rect": {
+                "left": 371,
+                "top": 357,
+                "right": 504,
+                "bottom": 417,
+                "width": 133,
+                "height": 60
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors bg-jade/20 text-jade",
+              "text": "Enabled",
+              "rect": {
+                "left": 395,
+                "top": 374,
+                "right": 480,
+                "bottom": 400,
+                "width": 85,
+                "height": 26
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "Default",
+              "rect": {
+                "left": 504,
+                "top": 357,
+                "right": 634,
+                "bottom": 417,
+                "width": 130,
+                "height": 60
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider bg-blush/20 text-blush",
+              "text": "Default",
+              "rect": {
+                "left": 528,
+                "top": 377,
+                "right": 610,
+                "bottom": 400,
+                "width": 82,
+                "height": 23
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "1",
+              "rect": {
+                "left": 634,
+                "top": 357,
+                "right": 735,
+                "bottom": 417,
+                "width": 101,
+                "height": 60
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "text-sm text-champagne",
+              "text": "1",
+              "rect": {
+                "left": 658,
+                "top": 379,
+                "right": 664,
+                "bottom": 396,
+                "width": 6,
+                "height": 17
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
+              "text": "Edit",
+              "rect": {
+                "left": 735,
+                "top": 357,
+                "right": 868,
+                "bottom": 417,
+                "width": 132,
+                "height": 60
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center justify-end gap-4",
+              "text": "Edit",
+              "rect": {
+                "left": 759,
+                "top": 376,
+                "right": 844,
+                "bottom": 397,
+                "width": 84,
+                "height": 21
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-blush hover:text-blush/80 transition-colors",
+              "text": "Edit",
+              "rect": {
+                "left": 818,
+                "top": 376,
+                "right": 844,
+                "bottom": 397,
+                "width": 26,
+                "height": 21
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": "hover:bg-white/5 transition-colors",
+              "text": "KAGeorgianქართულიEnabled2EditDelete",
+              "rect": {
+                "left": 17,
+                "top": 417,
+                "right": 868,
+                "bottom": 476,
+                "width": 851,
+                "height": 60
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "Enabled",
+              "rect": {
+                "left": 371,
+                "top": 417,
+                "right": 504,
+                "bottom": 476,
+                "width": 133,
+                "height": 60
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors bg-jade/20 text-jade",
+              "text": "Enabled",
+              "rect": {
+                "left": 395,
+                "top": 434,
+                "right": 480,
+                "bottom": 460,
+                "width": 85,
+                "height": 26
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "",
+              "rect": {
+                "left": 504,
+                "top": 417,
+                "right": 634,
+                "bottom": 476,
+                "width": 130,
+                "height": 60
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap",
+              "text": "2",
+              "rect": {
+                "left": 634,
+                "top": 417,
+                "right": 735,
+                "bottom": 476,
+                "width": 101,
+                "height": 60
+              }
+            },
+            {
+              "tag": "SPAN",
+              "id": null,
+              "className": "text-sm text-champagne",
+              "text": "2",
+              "rect": {
+                "left": 658,
+                "top": 439,
+                "right": 666,
+                "bottom": 456,
+                "width": 8,
+                "height": 17
+              }
+            },
+            {
+              "tag": "TD",
+              "id": null,
+              "className": "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
+              "text": "EditDelete",
+              "rect": {
+                "left": 735,
+                "top": 417,
+                "right": 868,
+                "bottom": 476,
+                "width": 132,
+                "height": 60
+              }
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "flex items-center justify-end gap-4",
+              "text": "EditDelete",
+              "rect": {
+                "left": 759,
+                "top": 436,
+                "right": 844,
+                "bottom": 457,
+                "width": 84,
+                "height": 21
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-blush hover:text-blush/80 transition-colors",
+              "text": "Edit",
+              "rect": {
+                "left": 759,
+                "top": 436,
+                "right": 785,
+                "bottom": 457,
+                "width": 26,
+                "height": 21
+              }
+            },
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "text-red-400 hover:text-red-300 transition-colors",
+              "text": "Delete",
+              "rect": {
+                "left": 801,
+                "top": 436,
+                "right": 844,
+                "bottom": 457,
+                "width": 43,
+                "height": 21
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "overflow-x-auto",
+              "text": "CodeNameNative NameStatusDefaultOrderActionsENEnglishEnglishEnabledDefault1EditK",
+              "scrollWidth": 851,
+              "clientWidth": 356
+            }
+          ]
+        },
+        {
+          "name": "Admin Translations",
+          "url": "/admin/translations",
+          "screenshot": "responsive-audit/mobile/admin-translations.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin CMS Translations",
+          "url": "/admin/cms-translations",
+          "screenshot": "responsive-audit/mobile/admin-cms-translations.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        },
+        {
+          "name": "Admin Static Translations",
+          "url": "/admin/static-translations",
+          "screenshot": "responsive-audit/mobile/admin-static-translations.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "BUTTON",
+              "id": null,
+              "className": "flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne",
+              "text": "Missing Translations",
+              "rect": {
+                "left": 289,
+                "top": 277,
+                "right": 460,
+                "bottom": 332,
+                "width": 171,
+                "height": 55
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "NAV",
+              "id": null,
+              "className": "-mb-px flex gap-6 overflow-x-auto pb-2",
+              "text": "Browse & EditStatisticsMissing Translations",
+              "scrollWidth": 444,
+              "clientWidth": 358
+            }
+          ]
+        },
+        {
+          "name": "Admin Newsletter",
+          "url": "/admin/newsletter",
+          "screenshot": "responsive-audit/mobile/admin-newsletter.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [
+            {
+              "tag": "TABLE",
+              "id": null,
+              "className": "w-full",
+              "text": "EmailNameStatusSourceSubscribedActions",
+              "rect": {
+                "left": 41,
+                "top": 1486,
+                "right": 650,
+                "bottom": 1529,
+                "width": 609,
+                "height": 43
+              }
+            },
+            {
+              "tag": "THEAD",
+              "id": null,
+              "className": "bg-white/5 border-b border-white/10",
+              "text": "EmailNameStatusSourceSubscribedActions",
+              "rect": {
+                "left": 41,
+                "top": 1486,
+                "right": 650,
+                "bottom": 1529,
+                "width": 609,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TR",
+              "id": null,
+              "className": null,
+              "text": "EmailNameStatusSourceSubscribedActions",
+              "rect": {
+                "left": 41,
+                "top": 1486,
+                "right": 650,
+                "bottom": 1529,
+                "width": 609,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne/60 uppercase tracking-wider",
+              "text": "Source",
+              "rect": {
+                "left": 312,
+                "top": 1486,
+                "right": 414,
+                "bottom": 1529,
+                "width": 102,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-left text-xs font-medium text-champagne/60 uppercase tracking-wider",
+              "text": "Subscribed",
+              "rect": {
+                "left": 414,
+                "top": 1486,
+                "right": 544,
+                "bottom": 1529,
+                "width": 131,
+                "height": 43
+              }
+            },
+            {
+              "tag": "TH",
+              "id": null,
+              "className": "px-6 py-3 text-right text-xs font-medium text-champagne/60 uppercase tracking-wider",
+              "text": "Actions",
+              "rect": {
+                "left": 544,
+                "top": 1486,
+                "right": 650,
+                "bottom": 1529,
+                "width": 106,
+                "height": 43
+              }
+            }
+          ],
+          "clippedText": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "className": "overflow-x-auto",
+              "text": "EmailNameStatusSourceSubscribedActions",
+              "scrollWidth": 609,
+              "clientWidth": 308
+            }
+          ]
+        },
+        {
+          "name": "Admin Themes",
+          "url": "/admin/themes",
+          "screenshot": "responsive-audit/mobile/admin-themes.png",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "bodyOverflow": false,
+          "overflowElements": [],
+          "clippedText": []
+        }
+      ]
+    }
+  ]
+}

@@ -595,7 +595,7 @@ export default function AdminNavigation() {
     <div className="min-h-screen bg-midnight p-6">
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="font-display text-3xl text-champagne">Navigation Menu</h1>
             <p className="mt-1 text-sm text-champagne/60">
@@ -603,7 +603,7 @@ export default function AdminNavigation() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {/* AI Generate Button */}
             <button
               onClick={handleOpenAIModal}
@@ -630,7 +630,7 @@ export default function AdminNavigation() {
         </div>
 
         {/* Location Tabs */}
-        <div className="flex gap-2 border-b border-white/10 pb-4">
+        <div className="-mx-2 flex gap-2 overflow-x-auto border-b border-white/10 pb-4 px-2">
           {locations.filter(location => !['footer', 'mobile'].includes(location.code)).map(location => (
             <button
               key={location.id}
@@ -638,7 +638,7 @@ export default function AdminNavigation() {
                 setSelectedLocationId(location.id);
                 resetForm();
               }}
-              className={`rounded-xl px-6 py-2.5 font-semibold transition-all ${
+              className={`shrink-0 rounded-xl px-6 py-2.5 font-semibold transition-all ${
                 selectedLocationId === location.id
                   ? 'bg-blush text-midnight shadow-lg'
                   : 'bg-white/5 text-champagne/70 hover:bg-white/10 hover:text-champagne'
@@ -650,9 +650,9 @@ export default function AdminNavigation() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Left: Menu Tree */}
-          <aside className="col-span-5">
+          <aside className="col-span-1 lg:col-span-5">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-display text-lg text-champagne">Menu Items</h2>
@@ -713,7 +713,7 @@ export default function AdminNavigation() {
           </aside>
 
           {/* Right: Edit Form */}
-          <main className="col-span-7">
+          <main className="col-span-1 lg:col-span-7">
             {selectedItemId || isCreatingNew ? (
               <form onSubmit={handleSubmit} className="rounded-3xl border border-white/10 bg-white/5 p-6">
                 <div className="mb-6 flex items-center justify-between">

@@ -266,17 +266,17 @@ export default function AdminThemes() {
 
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="font-display text-3xl text-champagne">Theme Management</h1>
             <p className="mt-1 text-sm text-champagne/70">
               Customize your store's visual identity with themes
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleImportTheme}
-              className="flex items-center gap-2 px-5 py-3 bg-white/10 text-champagne border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition-colors"
+              className="flex w-full items-center justify-center gap-2 px-5 py-3 bg-white/10 text-champagne border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition-colors sm:w-auto"
             >
               <ArrowUpTrayIcon className="h-5 w-5" />
               Import Theme
@@ -286,7 +286,7 @@ export default function AdminThemes() {
                 setSelectedTheme(null);
                 setShowEditor(true);
               }}
-              className="flex items-center gap-2 px-6 py-3 bg-blush text-midnight rounded-xl font-semibold hover:bg-blush/90 transition-colors"
+              className="flex w-full items-center justify-center gap-2 px-6 py-3 bg-blush text-midnight rounded-xl font-semibold hover:bg-blush/90 transition-colors sm:w-auto"
             >
               <PlusIcon className="h-5 w-5" />
               Create Theme
@@ -301,7 +301,7 @@ export default function AdminThemes() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6"
           >
-            <div className="flex items-start gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
               <div className="rounded-xl bg-emerald-500/20 p-3">
                 <CheckCircleIcon className="h-6 w-6 text-emerald-400" />
               </div>

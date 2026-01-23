@@ -449,7 +449,7 @@ export default function AdminStaticTranslations() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-display uppercase tracking-wider text-champagne">
             Static Translations
@@ -459,11 +459,11 @@ export default function AdminStaticTranslations() {
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleBulkTranslate}
             disabled={bulkTranslateMutation.isPending}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-xs font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:w-auto sm:text-sm"
           >
             <SparklesIcon className={`h-4 w-4 ${bulkTranslateMutation.isPending ? 'animate-spin' : ''}`} />
             {bulkTranslateMutation.isPending ? 'Translating...' : 'Bulk AI Translate'}
@@ -474,7 +474,7 @@ export default function AdminStaticTranslations() {
               queryClient.invalidateQueries({ queryKey: ['static-translations'] });
               toast.success('Translations reloaded');
             }}
-            className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-champagne hover:bg-white/20"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-champagne hover:bg-white/20 sm:w-auto sm:text-sm"
           >
             <ArrowPathIcon className="h-4 w-4" />
             Reload
@@ -484,10 +484,10 @@ export default function AdminStaticTranslations() {
 
       {/* Tabs */}
       <div className="border-b border-white/10">
-        <nav className="-mb-px flex space-x-8">
+        <nav className="-mb-px flex gap-6 overflow-x-auto pb-2">
           <button
             onClick={() => setActiveTab('browse')}
-            className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'browse'
                 ? 'border-blush text-blush'
                 : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
@@ -499,7 +499,7 @@ export default function AdminStaticTranslations() {
 
           <button
             onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'stats'
                 ? 'border-blush text-blush'
                 : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
@@ -511,7 +511,7 @@ export default function AdminStaticTranslations() {
 
           <button
             onClick={() => setActiveTab('missing')}
-            className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'missing'
                 ? 'border-blush text-blush'
                 : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
@@ -525,9 +525,9 @@ export default function AdminStaticTranslations() {
 
       {/* Browse & Edit Tab */}
       {activeTab === 'browse' && (
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Sidebar: Namespace & Keys */}
-          <div className="col-span-4 space-y-4">
+          <div className="col-span-1 space-y-4 lg:col-span-4">
             {/* Namespace Selector */}
             <div>
               <label className="block text-sm font-medium text-champagne mb-2">
@@ -634,10 +634,10 @@ export default function AdminStaticTranslations() {
           </div>
 
           {/* Main Content: Translation Editor */}
-          <div className="col-span-8">
+          <div className="col-span-1 lg:col-span-8">
             {selectedKey ? (
               <div className="space-y-6 rounded-2xl border border-white/20 bg-white/5 p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-champagne">
                       Edit Translation
@@ -645,7 +645,7 @@ export default function AdminStaticTranslations() {
                     <p className="text-sm text-champagne/60 font-mono">{selectedKey}</p>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleAITranslate}

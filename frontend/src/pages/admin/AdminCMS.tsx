@@ -243,9 +243,9 @@ export default function AdminCMS() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="font-display text-3xl uppercase tracking-wider">CMS Management</h1>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleOpenFooterEditor}
             className="px-4 py-2 bg-champagne/20 text-champagne rounded-lg hover:bg-champagne/30 transition-colors font-semibold"

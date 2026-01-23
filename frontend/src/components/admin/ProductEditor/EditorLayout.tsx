@@ -52,8 +52,8 @@ export default function EditorLayout({
       <div className="sticky top-0 z-40 border-b border-white/10 bg-midnight/95 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Title Bar */}
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <button
                 onClick={onCancel}
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
@@ -63,7 +63,7 @@ export default function EditorLayout({
               </button>
               <div>
                 <h1 className="font-display text-2xl text-champagne">{title}</h1>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex flex-wrap items-center gap-3 text-xs">
                   {isDirty && (
                     <p className="text-champagne/60">
                       Unsaved changes
@@ -90,17 +90,17 @@ export default function EditorLayout({
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
                 onClick={onCancel}
-                className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-champagne transition-colors hover:bg-white/10"
+                className="w-full rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-champagne transition-colors hover:bg-white/10 sm:w-auto"
               >
                 Cancel
               </button>
               <button
                 onClick={onSave}
                 disabled={isSaving}
-                className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50 sm:w-auto"
               >
                 {isSaving ? (
                   <>
@@ -118,12 +118,12 @@ export default function EditorLayout({
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-1">
+          <div className="-mx-4 flex gap-1 overflow-x-auto pb-2 px-4 sm:mx-0 sm:pb-0 sm:px-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className="relative px-6 py-3 text-sm font-semibold transition-colors"
+                className="relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm"
               >
                 <span
                   className={

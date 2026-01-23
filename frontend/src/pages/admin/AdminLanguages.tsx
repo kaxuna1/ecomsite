@@ -212,7 +212,7 @@ export default function AdminLanguages() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Language Management</h1>
           <p className="mt-2 text-sm text-champagne/60">
@@ -221,7 +221,7 @@ export default function AdminLanguages() {
         </div>
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
         >
           Add Language
         </button>

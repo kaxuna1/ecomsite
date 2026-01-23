@@ -87,7 +87,7 @@ function AdminPromoCodes() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Promo Codes</h1>
           <p className="mt-2 text-sm text-champagne/60">
@@ -97,7 +97,7 @@ function AdminPromoCodes() {
         <motion.button
           type="button"
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -222,9 +222,9 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
         transition={{ delay: index * 0.05 }}
         className="group rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur"
       >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h3 className="font-display text-2xl uppercase tracking-wider text-blush">
               {promo.code}
             </h3>
@@ -279,7 +279,7 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 sm:flex-nowrap">
           <motion.button
             type="button"
             onClick={onViewStats}
