@@ -290,6 +290,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'user_id') THEN
     ALTER TABLE orders ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'address_id') THEN
+    ALTER TABLE orders ADD COLUMN address_id INTEGER REFERENCES user_addresses(id) ON DELETE SET NULL;
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'promo_code_id') THEN
     ALTER TABLE orders ADD COLUMN promo_code_id INTEGER REFERENCES promo_codes(id) ON DELETE SET NULL;
   END IF;
@@ -299,6 +302,7 @@ BEGIN
 END $$;
 
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_address_id ON orders(address_id);
 CREATE INDEX IF NOT EXISTS idx_orders_promo_code_id ON orders(promo_code_id);
 
 -- Insert sample promo codes

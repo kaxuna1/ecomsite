@@ -100,7 +100,11 @@ function CheckoutPage() {
         variantId: variant?.id
       })),
       total: finalTotal,
-      promoCode: promoCode?.code,
+      promoCode: promoCode ? {
+        id: promoCode.id,
+        code: promoCode.code,
+        discount
+      } : undefined,
       addressId: selectedAddress?.id
     });
   };

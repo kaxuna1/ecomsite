@@ -109,17 +109,21 @@ export const orderService = {
         );
       }
 
-      // Record promo code usage if applied
-      if (payload.promoCode) {
-        await promoCodeService.recordUsage(
-          payload.promoCode.id,
-          orderId,
-          payload.promoCode.discount,
-          userId
-        );
-      }
-
       await client.query('COMMIT');
+
+      // Record promo code usage after the order commit so the order_id FK is valid.
+      if (payload.promoCode) {
+        try {
+          await promoCodeService.recordUsage(
+            payload.promoCode.id,
+            orderId,
+            payload.promoCode.discount,
+            userId
+          );
+        } catch (error) {
+          console.error('Failed to record promo code usage:', error);
+        }
+      }
 
       // Fetch and return the complete order
       const finalOrderResult = await pool.query('SELECT * FROM orders WHERE id = $1', [orderId]);

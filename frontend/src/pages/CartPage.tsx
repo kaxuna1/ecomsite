@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -29,6 +29,8 @@ function CartPage() {
   const [promoInput, setPromoInput] = useState('');
   const [promoError, setPromoError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+  const promoValidationTimeoutRef = useRef<number | null>(null);
+  const promoValidationIdRef = useRef(0);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const discountedSubtotal = Math.max(subtotal - discount, 0);
@@ -51,36 +53,75 @@ function CartPage() {
     updateQuantity(productId, newQuantity, variantId);
   };
 
-  const handlePromoCodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    return () => {
+      promoValidationIdRef.current += 1;
+      if (promoValidationTimeoutRef.current) {
+        window.clearTimeout(promoValidationTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handlePromoCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const code = e.target.value.toUpperCase();
     setPromoInput(code);
     setPromoError('');
 
-    if (code.length >= 3) {
-      setIsValidating(true);
+    promoValidationIdRef.current += 1;
+    const validationId = promoValidationIdRef.current;
+
+    if (promoValidationTimeoutRef.current) {
+      window.clearTimeout(promoValidationTimeoutRef.current);
+      promoValidationTimeoutRef.current = null;
+    }
+
+    if (code.length < 3) {
+      setIsValidating(false);
+      removePromoCode();
+      return;
+    }
+
+    setIsValidating(true);
+    promoValidationTimeoutRef.current = window.setTimeout(async () => {
       try {
         const result = await validatePromoCode(code, subtotal);
+        if (promoValidationIdRef.current !== validationId) {
+          return;
+        }
         if (result.valid && result.promoCode && result.discount !== undefined) {
           applyPromoCode(result.promoCode, result.discount);
           setToastMessage(t('cart.promoCodeAppliedSuccess', { discount: result.discount.toFixed(2) }));
           setShowToast(true);
           setPromoError('');
         } else {
-          setPromoError(result.message);
+          setPromoError(result.message || t('cart.invalidPromoCode'));
           removePromoCode();
         }
       } catch (error) {
+        if (promoValidationIdRef.current !== validationId) {
+          return;
+        }
         setPromoError(t('cart.invalidPromoCode'));
         removePromoCode();
       } finally {
-        setIsValidating(false);
+        if (promoValidationIdRef.current === validationId) {
+          setIsValidating(false);
+        }
       }
-    } else if (promoCode) {
-      removePromoCode();
+    }, 500);
+  };
+
+  const clearPromoValidation = () => {
+    promoValidationIdRef.current += 1;
+    if (promoValidationTimeoutRef.current) {
+      window.clearTimeout(promoValidationTimeoutRef.current);
+      promoValidationTimeoutRef.current = null;
     }
+    setIsValidating(false);
   };
 
   const handleRemovePromo = () => {
+    clearPromoValidation();
     removePromoCode();
     setPromoInput('');
     setPromoError('');
@@ -408,6 +449,7 @@ function CartPage() {
                             <button
                               type="button"
                               onClick={() => {
+                                clearPromoValidation();
                                 setShowPromoInput(false);
                                 setPromoInput('');
                                 setPromoError('');

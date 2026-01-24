@@ -71,7 +71,12 @@ export interface OrderPayload {
     address: string;
   };
   total: number;
-  promoCode?: string;
+  addressId?: number;
+  promoCode?: {
+    id: number;
+    code: string;
+    discount: number;
+  };
 }
 
 export interface Order extends OrderPayload {

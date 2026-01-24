@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -229,19 +229,22 @@ function AdminAttributes() {
 }
 
 // Attribute Card Component
-function AttributeCard({
-  attribute,
-  index,
-  onEdit,
-  onDelete
-}: {
+interface AttributeCardProps {
   attribute: AttributeDefinition;
   index: number;
   onEdit: () => void;
   onDelete: () => void;
-}) {
+}
+
+const AttributeCard = forwardRef<HTMLDivElement, AttributeCardProps>(function AttributeCard({
+  attribute,
+  index,
+  onEdit,
+  onDelete
+}, ref) {
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -315,7 +318,9 @@ function AttributeCard({
       </div>
     </motion.div>
   );
-}
+});
+
+AttributeCard.displayName = 'AttributeCard';
 
 // Attribute Modal Component
 function AttributeModal({

@@ -30,13 +30,15 @@ router.post(
 
       res.json({
         valid: true,
+        message: 'Promo code applied',
         promoCode: {
           id: validation.promoCode!.id,
           code: validation.promoCode!.code,
           discountType: validation.promoCode!.discountType,
           discountValue: validation.promoCode!.discountValue
         },
-        discountAmount: validation.discountAmount
+        discountAmount: validation.discountAmount,
+        discount: validation.discountAmount
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message ?? 'Internal server error' });

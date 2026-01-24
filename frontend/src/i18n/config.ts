@@ -19,23 +19,20 @@ const fetchSupportedLanguages = async (): Promise<string[]> => {
   return ['en', 'ka'];
 };
 
-// Initialize i18next with dynamic language support
-(async () => {
-  const supportedLanguages = await fetchSupportedLanguages();
-  console.log('Supported languages:', supportedLanguages);
+const defaultLanguages = ['en', 'ka'];
 
-  i18n
-    // Load translations using http backend
-    .use(Backend)
-    // Detect user language
-    .use(LanguageDetector)
-    // Pass the i18n instance to react-i18next
-    .use(initReactI18next)
-    // Initialize i18next
-    .init({
-      fallbackLng: 'en',
-      supportedLngs: supportedLanguages,
-      debug: import.meta.env.DEV,
+const initPromise = i18n
+  // Load translations using http backend
+  .use(Backend)
+  // Detect user language
+  .use(LanguageDetector)
+  // Pass the i18n instance to react-i18next
+  .use(initReactI18next)
+  // Initialize i18next
+  .init({
+    fallbackLng: 'en',
+    supportedLngs: defaultLanguages,
+    debug: import.meta.env.DEV,
 
     // Namespace organization
     ns: ['common', 'products', 'cart', 'checkout', 'admin', 'account'],
@@ -113,7 +110,23 @@ const fetchSupportedLanguages = async (): Promise<string[]> => {
       // Wait for translations to load before rendering
       useSuspense: true,
     },
-  });
-})();
+});
+
+const updateSupportedLanguages = async () => {
+  const supportedLanguages = await fetchSupportedLanguages();
+  if (import.meta.env.DEV) {
+    console.log('Supported languages:', supportedLanguages);
+  }
+
+  i18n.options.supportedLngs = supportedLanguages;
+  if (i18n.services?.languageUtils) {
+    i18n.services.languageUtils.supportedLngs = supportedLanguages;
+  }
+};
+
+updateSupportedLanguages().catch((error) => {
+  console.warn('Failed to update supported languages:', error);
+});
 
 export default i18n;
+export { initPromise };
