@@ -256,38 +256,65 @@ const API_KEY_CATEGORIES: APIKeyCategory[] = [
   },
   {
     id: 'storage',
-    name: 'Storage & CDN',
-    description: 'Cloud storage and content delivery',
+    name: 'S3 Storage (Required)',
+    description: 'Configure S3-compatible storage (AWS S3, DigitalOcean Spaces, MinIO, etc.)',
     icon: '☁️',
     keys: [
       {
-        id: 'aws_access_key_id',
-        label: 'AWS Access Key ID',
+        id: 's3_access_key',
+        label: 'Access Key ID',
         value: '',
-        placeholder: 'AKIA...',
-        helpText: 'AWS IAM access key for S3 and other services'
+        placeholder: 'AKIA... or your provider key',
+        helpText: 'Access key for S3-compatible storage',
+        required: true
       },
       {
-        id: 'aws_secret_access_key',
-        label: 'AWS Secret Access Key',
+        id: 's3_secret_key',
+        label: 'Secret Access Key',
         value: '',
         placeholder: 'Your secret key',
-        helpText: 'AWS IAM secret access key'
+        helpText: 'Secret access key for S3-compatible storage',
+        required: true
       },
       {
-        id: 'aws_s3_bucket',
-        label: 'AWS S3 Bucket Name',
+        id: 's3_endpoint',
+        label: 'Endpoint URL',
+        value: '',
+        placeholder: 'https://s3.amazonaws.com or https://nyc3.digitaloceanspaces.com',
+        helpText: 'S3 endpoint URL. Use your provider\'s endpoint (e.g., https://nyc3.digitaloceanspaces.com for DigitalOcean)',
+        required: true
+      },
+      {
+        id: 's3_region',
+        label: 'Region',
+        value: '',
+        placeholder: 'us-east-1 or nyc3',
+        helpText: 'Region for your S3 bucket (e.g., us-east-1 for AWS, nyc3 for DigitalOcean)',
+        required: true
+      },
+      {
+        id: 's3_bucket',
+        label: 'Bucket Name',
         value: '',
         placeholder: 'my-bucket',
-        helpText: 'S3 bucket name for file storage'
+        helpText: 'Name of your S3 bucket',
+        required: true
       },
       {
-        id: 'aws_region',
-        label: 'AWS Region',
+        id: 's3_public_url',
+        label: 'Public URL (Optional)',
         value: '',
-        placeholder: 'us-east-1',
-        helpText: 'AWS region where your resources are located'
-      },
+        placeholder: 'https://cdn.example.com',
+        helpText: 'Custom CDN URL for serving files (leave empty to use default S3 URLs)'
+      }
+    ]
+  },
+  {
+    id: 'cdn',
+    name: 'CDN & Security',
+    description: 'Content delivery and security services',
+    icon: '🛡️',
+    keys: [
       {
         id: 'cloudflare_api_token',
         label: 'Cloudflare API Token',
@@ -419,6 +446,11 @@ export default function AdminSettings() {
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [apiKeysSaved, setApiKeysSaved] = useState(false);
 
+  // S3 Storage state
+  const [s3Testing, setS3Testing] = useState(false);
+  const [s3TestResult, setS3TestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [storageStatus, setStorageStatus] = useState<{ configured: boolean; provider: string | null; bucket: string | null } | null>(null);
+
   // AI Settings state
   const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic' | 'gemini'>('openai');
   const [openaiModel, setOpenaiModel] = useState<string>('gpt-4o');
@@ -543,6 +575,48 @@ export default function AdminSettings() {
       geminiModel
     });
   };
+
+  // Test S3 connection
+  const handleTestS3Connection = async () => {
+    setS3Testing(true);
+    setS3TestResult(null);
+    
+    try {
+      const response = await api.post('/admin/api-keys/test-s3');
+      setS3TestResult(response.data);
+      
+      if (response.data.success) {
+        toast.success('S3 connection successful!');
+        // Refresh storage status
+        fetchStorageStatus();
+      } else {
+        toast.error(response.data.message || 'S3 connection failed');
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to test S3 connection';
+      setS3TestResult({ success: false, message });
+      toast.error(message);
+    } finally {
+      setS3Testing(false);
+    }
+  };
+
+  // Fetch storage status
+  const fetchStorageStatus = async () => {
+    try {
+      const response = await api.get('/admin/api-keys/storage-status');
+      setStorageStatus(response.data);
+    } catch (error) {
+      console.error('Failed to fetch storage status:', error);
+    }
+  };
+
+  // Fetch storage status on mount and when API keys tab is active
+  React.useEffect(() => {
+    if (activeTab === 'api-keys') {
+      fetchStorageStatus();
+    }
+  }, [activeTab]);
 
   // Toggle key visibility
   const toggleKeyVisibility = (keyId: string) => {
@@ -811,6 +885,45 @@ export default function AdminSettings() {
                         <p className="text-sm text-text-secondary">{category.description}</p>
                       </div>
 
+                      {/* Storage Status Banner (only for storage category) */}
+                      {category.id === 'storage' && (
+                        <div className={`mb-4 p-4 rounded-xl border ${
+                          storageStatus?.configured 
+                            ? 'bg-emerald-500/10 border-emerald-500/30' 
+                            : 'bg-amber-500/10 border-amber-500/30'
+                        }`}>
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-lg ${
+                              storageStatus?.configured 
+                                ? 'bg-emerald-500/20' 
+                                : 'bg-amber-500/20'
+                            }`}>
+                              {storageStatus?.configured ? (
+                                <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
+                              ) : (
+                                <ExclamationTriangleIcon className="h-5 w-5 text-amber-400" />
+                              )}
+                            </div>
+                            <div>
+                              <p className={`text-sm font-medium ${
+                                storageStatus?.configured 
+                                  ? 'text-emerald-400' 
+                                  : 'text-amber-400'
+                              }`}>
+                                {storageStatus?.configured 
+                                  ? `Connected to ${storageStatus.provider}` 
+                                  : 'S3 Storage Not Configured'}
+                              </p>
+                              <p className="text-xs text-text-secondary">
+                                {storageStatus?.configured 
+                                  ? `Bucket: ${storageStatus.bucket}` 
+                                  : 'Configure S3 storage to enable file uploads'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Keys */}
                       <div className="space-y-4">
                         {category.keys.map((key) => {
@@ -879,6 +992,64 @@ export default function AdminSettings() {
                           );
                         })}
                       </div>
+
+                      {/* Test Connection Button (only for storage category) */}
+                      {category.id === 'storage' && (
+                        <div className="mt-6 pt-4 border-t border-border-default">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-text-primary">Test Connection</p>
+                              <p className="text-xs text-text-secondary">
+                                Save your credentials first, then test the connection
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleTestS3Connection}
+                              disabled={s3Testing}
+                              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                                s3Testing
+                                  ? 'bg-bg-secondary text-text-secondary cursor-not-allowed'
+                                  : 'bg-primary/20 text-primary hover:bg-primary/30'
+                              }`}
+                            >
+                              {s3Testing ? (
+                                <span className="flex items-center gap-2">
+                                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                  </svg>
+                                  Testing...
+                                </span>
+                              ) : (
+                                'Test S3 Connection'
+                              )}
+                            </button>
+                          </div>
+                          
+                          {/* Test Result */}
+                          {s3TestResult && (
+                            <div className={`mt-3 p-3 rounded-lg ${
+                              s3TestResult.success 
+                                ? 'bg-emerald-500/10 border border-emerald-500/30' 
+                                : 'bg-red-500/10 border border-red-500/30'
+                            }`}>
+                              <div className="flex items-center gap-2">
+                                {s3TestResult.success ? (
+                                  <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
+                                ) : (
+                                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+                                )}
+                                <p className={`text-sm ${
+                                  s3TestResult.success ? 'text-emerald-400' : 'text-red-400'
+                                }`}>
+                                  {s3TestResult.message}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
 

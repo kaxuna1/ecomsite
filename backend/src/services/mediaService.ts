@@ -1,9 +1,6 @@
 // Media Service Layer
-// Business logic for managing CMS media uploads
+// Business logic for managing CMS media uploads with S3 storage
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import { pool } from '../db/client';
 import {
@@ -12,13 +9,16 @@ import {
   UpdateMediaPayload,
   MediaQueryFilters
 } from '../types/cms';
-import { getMediaUrl as getAbsoluteMediaUrl } from '../utils/urlHelper';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import {
+  uploadImageToS3,
+  deleteFromS3,
+  getS3Config,
+  generateUniqueKey,
+  getPublicUrl,
+  isS3Configured
+} from './storageService';
 
 // Configuration
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads/cms');
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -28,15 +28,6 @@ const ALLOWED_MIME_TYPES = [
   'image/avif',
   'image/svg+xml'
 ];
-
-// Ensure upload directory exists
-async function ensureUploadDir() {
-  try {
-    await fs.access(UPLOAD_DIR);
-  } catch {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  }
-}
 
 // ============================================================================
 // MEDIA MANAGEMENT
@@ -114,7 +105,7 @@ export async function getMediaById(mediaId: number): Promise<CMSMedia | null> {
 }
 
 /**
- * Upload a new media file
+ * Upload a new media file to S3
  */
 export async function uploadMedia(
   file: Express.Multer.File,
@@ -122,6 +113,12 @@ export async function uploadMedia(
   caption?: string,
   adminId?: number
 ): Promise<MediaUploadResponse> {
+  // Check if S3 is configured
+  const s3Configured = await isS3Configured();
+  if (!s3Configured) {
+    throw new Error('S3 storage is not configured. Please configure S3 credentials in Settings > API Keys > Storage.');
+  }
+
   // Validate file
   if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     throw new Error(`Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`);
@@ -131,57 +128,49 @@ export async function uploadMedia(
     throw new Error(`File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`);
   }
 
-  // Ensure upload directory exists
-  await ensureUploadDir();
+  // Generate unique S3 key
+  const originalName = file.originalname.replace(/\.[^/.]+$/, ''); // Remove extension
+  const s3Key = generateUniqueKey(originalName + '.webp', 'cms');
 
-  // Generate unique filename with .webp extension for optimization
-  const timestamp = Date.now();
-  const randomString = Math.random().toString(36).substring(2, 8);
-  const originalName = path.parse(file.originalname).name;
-  const filename = `${timestamp}-${randomString}-${originalName}.webp`;
-  const filePath = path.join(UPLOAD_DIR, filename);
-
-  // Optimize and save image
   let width: number | null = null;
   let height: number | null = null;
+  let url: string;
   let actualMimeType = file.mimetype;
+  let finalKey = s3Key;
 
-  if (file.mimetype.startsWith('image/')) {
+  if (file.mimetype.startsWith('image/') && file.mimetype !== 'image/svg+xml') {
     try {
-      // Optimize image: resize if too large, convert to webp, get dimensions
-      const image = sharp(file.buffer);
-      const metadata = await image.metadata();
+      // Upload and optimize image to S3
+      const result = await uploadImageToS3(s3Key, file.buffer, {
+        maxWidth: 2560,
+        maxHeight: 2560,
+        quality: 90,
+        format: 'webp'
+      });
 
-      width = metadata.width || null;
-      height = metadata.height || null;
-
-      // Optimize and save
-      await image
-        .resize(2560, 2560, {
-          fit: 'inside',
-          withoutEnlargement: true
-        })
-        .webp({
-          quality: 90,
-          effort: 4
-        })
-        .toFile(filePath);
-
-      actualMimeType = 'image/webp';
+      url = result.url;
+      width = result.width;
+      height = result.height;
+      actualMimeType = result.mimeType;
+      finalKey = result.key;
     } catch (error) {
-      console.error('Error optimizing image:', error);
-      // Fallback to original if optimization fails
-      await fs.writeFile(filePath, file.buffer);
+      console.error('Error uploading optimized image to S3:', error);
+      throw new Error('Failed to upload image to S3 storage.');
     }
   } else {
-    // Non-image files: save as-is
-    await fs.writeFile(filePath, file.buffer);
+    // For SVG or non-image files, upload as-is
+    const { uploadToS3 } = await import('./storageService');
+    url = await uploadToS3(s3Key, file.buffer, file.mimetype);
+    finalKey = s3Key;
   }
+
+  // Extract filename from S3 key
+  const filename = finalKey.split('/').pop() || finalKey;
 
   // Save to database
   const result = await pool.query(
-    `INSERT INTO cms_media (filename, original_name, mime_type, size_bytes, width, height, alt_text, caption, file_path, uploaded_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    `INSERT INTO cms_media (filename, original_name, mime_type, size_bytes, width, height, alt_text, caption, file_path, uploaded_by, s3_key, s3_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      RETURNING *`,
     [
       filename,
@@ -192,15 +181,14 @@ export async function uploadMedia(
       height,
       altText || null,
       caption || null,
-      filePath,
-      adminId || null
+      finalKey, // Store S3 key as file_path for compatibility
+      adminId || null,
+      finalKey, // S3 key
+      url // Full S3 URL
     ]
   );
 
   const media = mapMediaFromDb(result.rows[0]);
-
-  // Generate URL - use absolute URL for cross-port compatibility
-  const url = getAbsoluteMediaUrl(filename);
 
   return { ...media, url };
 }
@@ -244,7 +232,7 @@ export async function updateMedia(
 }
 
 /**
- * Delete a media file (soft delete if in use, hard delete otherwise)
+ * Delete a media file from S3 (soft delete if in use, hard delete otherwise)
  */
 export async function deleteMedia(mediaId: number): Promise<boolean> {
   const media = await getMediaById(mediaId);
@@ -259,18 +247,23 @@ export async function deleteMedia(mediaId: number): Promise<boolean> {
   const usageCount = usageResult.rows[0]?.usage_count || 0;
 
   if (usageCount > 0) {
-    // Soft delete - mark as deleted but don't remove
+    // Soft delete - mark as deleted but don't remove from S3
     const result = await pool.query(
       'UPDATE cms_media SET is_deleted = TRUE, deleted_at = NOW() WHERE id = $1',
       [mediaId]
     );
     return result.rowCount !== null && result.rowCount > 0;
   } else {
-    // Hard delete - remove file and database record
-    try {
-      await fs.unlink(media.filePath);
-    } catch (error) {
-      console.error('Error deleting file:', error);
+    // Hard delete - remove from S3 and database
+    const s3Key = media.filePath; // filePath now stores S3 key
+    
+    if (s3Key) {
+      try {
+        await deleteFromS3(s3Key);
+      } catch (error) {
+        console.error('Error deleting from S3:', error);
+        // Continue with database deletion even if S3 deletion fails
+      }
     }
 
     const result = await pool.query('DELETE FROM cms_media WHERE id = $1', [mediaId]);
@@ -376,20 +369,44 @@ export async function createOrGetTag(name: string): Promise<{ id: number; name: 
 }
 
 /**
- * Get media URL - returns absolute URL for cross-port compatibility
+ * Get media URL - returns S3 URL from database
  */
-export function getMediaUrl(filename: string): string {
-  return getAbsoluteMediaUrl(filename);
+export async function getMediaUrl(mediaId: number): Promise<string | null> {
+  const result = await pool.query(
+    'SELECT s3_url, filename FROM cms_media WHERE id = $1',
+    [mediaId]
+  );
+  
+  if (result.rows.length === 0) return null;
+  
+  // Return stored S3 URL
+  return result.rows[0].s3_url || null;
+}
+
+/**
+ * Get media URL by filename - for backward compatibility
+ */
+export async function getMediaUrlByFilename(filename: string): Promise<string | null> {
+  const result = await pool.query(
+    'SELECT s3_url FROM cms_media WHERE filename = $1',
+    [filename]
+  );
+  
+  if (result.rows.length === 0) return null;
+  
+  return result.rows[0].s3_url || null;
 }
 
 /**
  * Get media with URL
  */
 export async function getMediaWithUrl(mediaId: number): Promise<MediaUploadResponse | null> {
-  const media = await getMediaById(mediaId);
-  if (!media) return null;
+  const result = await pool.query('SELECT * FROM cms_media WHERE id = $1', [mediaId]);
+  if (result.rows.length === 0) return null;
 
-  const url = getMediaUrl(media.filename);
+  const media = mapMediaFromDb(result.rows[0]);
+  const url = result.rows[0].s3_url || '';
+  
   return { ...media, url };
 }
 
@@ -399,10 +416,65 @@ export async function getMediaWithUrl(mediaId: number): Promise<MediaUploadRespo
 export async function getAllMediaWithUrls(
   filters: MediaQueryFilters = {}
 ): Promise<MediaUploadResponse[]> {
-  const mediaList = await getAllMedia(filters);
-  return mediaList.map((media) => ({
-    ...media,
-    url: getMediaUrl(media.filename)
+  const {
+    mimeType,
+    uploadedBy,
+    minWidth,
+    minHeight,
+    limit = 100,
+    offset = 0,
+    includeDeleted = false,
+    categoryId,
+    search
+  } = filters;
+
+  let query = 'SELECT * FROM cms_media WHERE 1=1';
+  const params: any[] = [];
+  let paramCount = 1;
+
+  if (!includeDeleted) {
+    query += ` AND (is_deleted = FALSE OR is_deleted IS NULL)`;
+  }
+
+  if (mimeType !== undefined) {
+    query += ` AND mime_type = $${paramCount++}`;
+    params.push(mimeType);
+  }
+
+  if (uploadedBy !== undefined) {
+    query += ` AND uploaded_by = $${paramCount++}`;
+    params.push(uploadedBy);
+  }
+
+  if (minWidth !== undefined) {
+    query += ` AND width >= $${paramCount++}`;
+    params.push(minWidth);
+  }
+
+  if (minHeight !== undefined) {
+    query += ` AND height >= $${paramCount++}`;
+    params.push(minHeight);
+  }
+
+  if (categoryId !== undefined) {
+    query += ` AND category_id = $${paramCount++}`;
+    params.push(categoryId);
+  }
+
+  if (search) {
+    query += ` AND (filename ILIKE $${paramCount} OR alt_text ILIKE $${paramCount} OR original_name ILIKE $${paramCount})`;
+    params.push(`%${search}%`);
+    paramCount++;
+  }
+
+  query += ` ORDER BY created_at DESC LIMIT $${paramCount++} OFFSET $${paramCount++}`;
+  params.push(limit, offset);
+
+  const result = await pool.query(query, params);
+  
+  return result.rows.map(row => ({
+    ...mapMediaFromDb(row),
+    url: row.s3_url || ''
   }));
 }
 
@@ -426,7 +498,9 @@ function mapMediaFromDb(row: any): CMSMedia {
     caption: row.caption,
     filePath: row.file_path,
     uploadedBy: row.uploaded_by,
-    createdAt: row.created_at
+    createdAt: row.created_at,
+    s3Key: row.s3_key,
+    s3Url: row.s3_url
   };
 }
 
@@ -448,6 +522,43 @@ export function formatFileSize(bytes: number): string {
  */
 export function isValidFileExtension(filename: string): boolean {
   const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
-  const ext = path.extname(filename).toLowerCase();
+  const ext = filename.toLowerCase().match(/\.[^/.]+$/)?.[0] || '';
   return validExtensions.includes(ext);
+}
+
+/**
+ * Check if S3 storage is properly configured
+ */
+export async function checkStorageStatus(): Promise<{
+  configured: boolean;
+  provider: string | null;
+  bucket: string | null;
+}> {
+  const config = await getS3Config();
+  
+  if (!config) {
+    return {
+      configured: false,
+      provider: null,
+      bucket: null
+    };
+  }
+
+  // Detect provider from endpoint
+  let provider = 'S3-Compatible';
+  if (config.endpoint.includes('digitaloceanspaces.com')) {
+    provider = 'DigitalOcean Spaces';
+  } else if (config.endpoint.includes('amazonaws.com')) {
+    provider = 'AWS S3';
+  } else if (config.endpoint.includes('backblazeb2.com')) {
+    provider = 'Backblaze B2';
+  } else if (config.endpoint.includes('wasabisys.com')) {
+    provider = 'Wasabi';
+  }
+
+  return {
+    configured: true,
+    provider,
+    bucket: config.bucket
+  };
 }

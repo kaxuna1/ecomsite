@@ -18,6 +18,8 @@ import {
   getAuditLog
 } from '../services/apiKeysService';
 import { getAIServiceManager } from '../ai';
+import { testS3Connection, clearS3ClientCache } from '../services/storageService';
+import { checkStorageStatus } from '../services/mediaService';
 
 const router = Router();
 
@@ -41,6 +43,14 @@ function getAuditContext(req: Request) {
 }
 
 const AI_PROVIDER_KEYS = new Set(['openai_api_key', 'anthropic_api_key', 'gemini_api_key']);
+const S3_KEYS = new Set(['s3_access_key', 's3_secret_key', 's3_endpoint', 's3_region', 's3_bucket', 's3_public_url']);
+
+async function clearS3CacheIfNeeded(keyNames: string[]) {
+  const shouldClear = keyNames.some((key) => S3_KEYS.has(key));
+  if (shouldClear) {
+    clearS3ClientCache();
+  }
+}
 
 async function reinitializeAIProvidersIfNeeded(keyNames: string[]) {
   const shouldReinitialize = keyNames.some((key) => AI_PROVIDER_KEYS.has(key));
@@ -70,6 +80,51 @@ router.get('/', async (req: Request, res: Response) => {
     console.error('Error fetching API keys:', error);
     res.status(500).json({
       message: 'Failed to fetch API keys',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/api-keys/audit-log
+ * Get audit log entries for API key access and modifications
+ * NOTE: This route must be defined BEFORE /:keyName to avoid being caught by it
+ */
+router.get('/audit-log', async (req: Request, res: Response) => {
+  try {
+    const { keyName, limit } = req.query;
+
+    const entries = await getAuditLog(
+      keyName as string | undefined,
+      limit ? parseInt(limit as string) : 100
+    );
+
+    res.json(entries);
+  } catch (error: any) {
+    console.error('Error fetching audit log:', error);
+    res.status(500).json({
+      message: 'Failed to fetch audit log',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/api-keys/storage-status
+ * Get current storage configuration status
+ * NOTE: This route must be defined BEFORE /:keyName to avoid being caught by it
+ */
+router.get('/storage-status', async (req: Request, res: Response) => {
+  try {
+    const status = await checkStorageStatus();
+    
+    res.json(status);
+  } catch (error: any) {
+    console.error('Error checking storage status:', error);
+    res.status(500).json({
+      configured: false,
+      provider: null,
+      bucket: null,
       error: error.message
     });
   }
@@ -124,7 +179,9 @@ router.put('/', async (req: Request, res: Response) => {
     
     const count = await setMultipleAPIKeys(keys, adminUserId);
 
-    await reinitializeAIProvidersIfNeeded(Object.keys(keys));
+    const keyNames = Object.keys(keys);
+    await reinitializeAIProvidersIfNeeded(keyNames);
+    await clearS3CacheIfNeeded(keyNames);
     
     res.json({
       message: `Successfully updated ${count} API key(s)`,
@@ -173,6 +230,7 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     await reinitializeAIProvidersIfNeeded([keyName]);
+    await clearS3CacheIfNeeded([keyName]);
 
     res.json({
       message: 'API key saved successfully',
@@ -255,29 +313,6 @@ router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/admin/api-keys/audit-log
- * Get audit log entries for API key access and modifications
- */
-router.get('/audit-log', async (req: Request, res: Response) => {
-  try {
-    const { keyName, limit } = req.query;
-
-    const entries = await getAuditLog(
-      keyName as string | undefined,
-      limit ? parseInt(limit as string) : 100
-    );
-
-    res.json(entries);
-  } catch (error: any) {
-    console.error('Error fetching audit log:', error);
-    res.status(500).json({
-      message: 'Failed to fetch audit log',
-      error: error.message
-    });
-  }
-});
-
-/**
  * POST /api/admin/api-keys/validate/:feature
  * Validate if required API keys are configured for a specific feature
  */
@@ -293,6 +328,24 @@ router.post('/validate/:feature', async (req: Request, res: Response) => {
     res.status(500).json({
       message: 'Failed to validate API keys',
       error: error.message
+    });
+  }
+});
+
+/**
+ * POST /api/admin/api-keys/test-s3
+ * Test S3 connection with current configuration
+ */
+router.post('/test-s3', async (req: Request, res: Response) => {
+  try {
+    const result = await testS3Connection();
+    
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error testing S3 connection:', error);
+    res.status(500).json({
+      success: false,
+      message: `Connection test failed: ${error.message}`
     });
   }
 });

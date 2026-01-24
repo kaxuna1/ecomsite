@@ -61,6 +61,9 @@ export interface CMSMedia {
   filePath: string;
   uploadedBy: number | null;
   createdAt: Date;
+  // S3 storage fields
+  s3Key?: string | null;
+  s3Url?: string | null;
 }
 
 export interface CMSBlockVersion {

@@ -21,6 +21,9 @@ export interface CMSMedia {
   usageCount?: number;
   isDeleted?: boolean;
   tags?: Array<{ id: number; name: string; slug: string }>;
+  // S3 storage fields
+  s3Key?: string | null;
+  s3Url?: string | null;
 }
 
 export interface MediaCategory {

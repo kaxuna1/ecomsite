@@ -1558,6 +1558,44 @@ BEGIN
   ORDER BY pv.is_default DESC, pv.created_at;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Add S3 storage columns to cms_media table
+DO $$
+BEGIN
+    -- Add s3_key column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 's3_key') THEN
+        ALTER TABLE cms_media ADD COLUMN s3_key TEXT;
+    END IF;
+    
+    -- Add s3_url column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 's3_url') THEN
+        ALTER TABLE cms_media ADD COLUMN s3_url TEXT;
+    END IF;
+    
+    -- Add is_deleted column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 'is_deleted') THEN
+        ALTER TABLE cms_media ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+    END IF;
+    
+    -- Add deleted_at column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 'deleted_at') THEN
+        ALTER TABLE cms_media ADD COLUMN deleted_at TIMESTAMP;
+    END IF;
+    
+    -- Add usage_count column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 'usage_count') THEN
+        ALTER TABLE cms_media ADD COLUMN usage_count INTEGER DEFAULT 0;
+    END IF;
+    
+    -- Add category_id column if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cms_media' AND column_name = 'category_id') THEN
+        ALTER TABLE cms_media ADD COLUMN category_id INTEGER;
+    END IF;
+END $$;
+
+-- Create index on s3_key for faster lookups
+CREATE INDEX IF NOT EXISTS idx_cms_media_s3_key ON cms_media(s3_key);
+CREATE INDEX IF NOT EXISTS idx_cms_media_is_deleted ON cms_media(is_deleted);
 `;
 
 async function seedTranslations() {

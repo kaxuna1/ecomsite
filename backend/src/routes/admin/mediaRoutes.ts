@@ -3,6 +3,7 @@ import multer from 'multer';
 import { authenticate, AuthenticatedRequest } from '../../middleware/authMiddleware';
 import * as mediaService from '../../services/mediaService';
 import { pool } from '../../db/client';
+import { checkStorageStatus } from '../../services/mediaService';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -216,6 +217,25 @@ router.post('/:id/restore', async (req, res) => {
   } catch (error: any) {
     console.error('Error restoring media:', error);
     res.status(500).json({ message: error.message || 'Failed to restore media' });
+  }
+});
+
+/**
+ * GET /api/admin/media/storage-status
+ * Check if S3 storage is properly configured
+ */
+router.get('/storage-status', async (req, res) => {
+  try {
+    const status = await checkStorageStatus();
+    res.json(status);
+  } catch (error: any) {
+    console.error('Error checking storage status:', error);
+    res.status(500).json({ 
+      configured: false, 
+      provider: null, 
+      bucket: null,
+      error: error.message 
+    });
   }
 });
 
