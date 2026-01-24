@@ -27,44 +27,56 @@ function AdminLogin() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-midnight text-champagne">
+    <div className="flex min-h-screen items-center justify-center bg-bg-primary text-text-primary">
       <Helmet>
         <title>Admin Login — Luxia</title>
       </Helmet>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-sm space-y-6 rounded-3xl bg-white/10 p-8 shadow-2xl backdrop-blur"
+        className="w-full max-w-sm space-y-6 rounded-3xl bg-bg-elevated/80 border border-border-default/40 p-8 shadow-2xl backdrop-blur"
       >
         <div className="text-center">
-          <h1 className="font-display text-2xl uppercase tracking-[0.4em]">Admin</h1>
-          <p className="mt-2 text-sm text-champagne/70">Sign in to manage products and orders.</p>
+          <h1 className="font-display text-2xl uppercase tracking-[0.4em] text-text-primary">Admin</h1>
+          <p className="mt-2 text-sm text-text-secondary">Sign in to manage products and orders.</p>
         </div>
         <div>
-          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-champagne/70">
+          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
             Email
             <input
               type="email"
-              className="mt-2 w-full rounded-full border border-white/20 bg-midnight px-4 py-3 text-champagne"
+              className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                errors.email
+                  ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
+                  : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
+              }`}
               {...register('email', { required: 'Email is required' })}
             />
           </label>
-          {errors.email && <p className="mt-1 text-xs text-rose-200">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1 text-xs text-error">{errors.email.message}</p>}
         </div>
         <div>
-          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-champagne/70">
+          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
             Password
             <input
               type="password"
-              className="mt-2 w-full rounded-full border border-white/20 bg-midnight px-4 py-3 text-champagne"
+              className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                errors.password
+                  ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
+                  : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
+              }`}
               {...register('password', { required: 'Password is required' })}
             />
           </label>
-          {errors.password && <p className="mt-1 text-xs text-rose-200">{errors.password.message}</p>}
+          {errors.password && <p className="mt-1 text-xs text-error">{errors.password.message}</p>}
         </div>
-        <button type="submit" className="btn-primary w-full bg-blush text-midnight hover:bg-champagne" disabled={mutation.isPending}>
+        <button
+          type="submit"
+          className="w-full rounded-full bg-interactive-default px-4 py-3 font-semibold text-on-interactive transition-colors hover:bg-interactive-hover focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={mutation.isPending}
+        >
           {mutation.isPending ? 'Signing in…' : 'Sign in'}
         </button>
-        {mutation.isError && <p className="text-center text-xs text-rose-200">Invalid credentials. Try again.</p>}
+        {mutation.isError && <p className="text-center text-xs text-error">Invalid credentials. Try again.</p>}
       </form>
     </div>
   );

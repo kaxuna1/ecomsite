@@ -308,20 +308,20 @@ export default function AdminCMSTranslations() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-3xl text-champagne">CMS Translations</h1>
-        <p className="mt-1 text-sm text-champagne/70">
+        <h1 className="font-display text-3xl text-text-primary">CMS Translations</h1>
+        <p className="mt-1 text-sm text-text-primary/70">
           Manage translations for CMS pages and blocks
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-white/10">
+      <div className="flex gap-2 border-b border-border-default">
         <button
           onClick={() => setActiveTab('pages')}
           className={`px-6 py-3 font-semibold text-sm uppercase tracking-wider transition-colors ${
             activeTab === 'pages'
-              ? 'text-blush border-b-2 border-blush'
-              : 'text-champagne/60 hover:text-champagne'
+              ? 'text-primary border-b-2 border-blush'
+              : 'text-text-primary/60 hover:text-text-primary'
           }`}
         >
           Page Translations
@@ -330,8 +330,8 @@ export default function AdminCMSTranslations() {
           onClick={() => setActiveTab('blocks')}
           className={`px-6 py-3 font-semibold text-sm uppercase tracking-wider transition-colors ${
             activeTab === 'blocks'
-              ? 'text-blush border-b-2 border-blush'
-              : 'text-champagne/60 hover:text-champagne'
+              ? 'text-primary border-b-2 border-blush'
+              : 'text-text-primary/60 hover:text-text-primary'
           }`}
         >
           Block Translations
@@ -343,10 +343,10 @@ export default function AdminCMSTranslations() {
         <div className="grid grid-cols-12 gap-6">
           {/* Pages Sidebar */}
           <aside className="col-span-3">
-            <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-              <h2 className="font-display text-lg text-champagne mb-4">CMS Pages</h2>
+            <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+              <h2 className="font-display text-lg text-text-primary mb-4">CMS Pages</h2>
               {pagesLoading ? (
-                <p className="text-champagne/60">Loading...</p>
+                <p className="text-text-primary/60">Loading...</p>
               ) : (
                 <div className="space-y-2">
                   {pages?.map((page) => (
@@ -355,8 +355,8 @@ export default function AdminCMSTranslations() {
                       onClick={() => setSelectedPage(page)}
                       className={`w-full text-left px-4 py-3 rounded-xl transition-colors text-sm ${
                         selectedPage?.id === page.id
-                          ? 'bg-blush text-midnight font-semibold'
-                          : 'text-champagne hover:bg-white/10'
+                          ? 'bg-interactive-default text-on-interactive font-semibold'
+                          : 'text-text-primary hover:bg-bg-elevated'
                       }`}
                     >
                       {page.title}
@@ -371,23 +371,23 @@ export default function AdminCMSTranslations() {
           {/* Page Translation Editor */}
           <main className="col-span-9">
             {selectedPage ? (
-              <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
                 {/* Language Selector & AI Translate Button */}
                 <div className="mb-6 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <label className="font-semibold text-sm text-champagne">
+                    <label className="font-semibold text-sm text-text-primary">
                       Target Language:
                     </label>
                     {languagesLoading ? (
-                      <p className="text-champagne/60">Loading languages...</p>
+                      <p className="text-text-primary/60">Loading languages...</p>
                     ) : (
                       <select
                         value={pageLanguage}
                         onChange={(e) => setPageLanguage(e.target.value)}
-                        className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                        className="bg-bg-secondary border border-border-default rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         {languages.map((lang) => (
-                          <option key={lang.code} value={lang.code} className="bg-midnight">
+                          <option key={lang.code} value={lang.code} className="bg-bg-primary">
                             {lang.name} ({lang.nativeName})
                           </option>
                         ))}
@@ -404,8 +404,8 @@ export default function AdminCMSTranslations() {
                     whileTap={canTranslate && !translatePageMutation.isPending ? { scale: 0.98 } : {}}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm transition-all ${
                       canTranslate && !translatePageMutation.isPending
-                        ? 'bg-gradient-to-r from-blush to-champagne text-midnight hover:shadow-lg hover:shadow-blush/20'
-                        : 'bg-white/10 text-champagne/40 cursor-not-allowed'
+                        ? 'bg-gradient-to-r from-primary to-primary text-on-interactive hover:shadow-lg hover:shadow-primary/20'
+                        : 'bg-bg-secondary text-text-primary/40 cursor-not-allowed'
                     }`}
                   >
                     {translatePageMutation.isPending ? (
@@ -430,32 +430,32 @@ export default function AdminCMSTranslations() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* Original Column */}
                     <div>
-                      <h3 className="font-display text-lg mb-4 text-champagne">
+                      <h3 className="font-display text-lg mb-4 text-text-primary">
                         Original (English)
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Title
                           </label>
-                          <p className="p-3 bg-white/5 rounded-xl border border-white/10 text-champagne">
+                          <p className="p-3 bg-bg-elevated rounded-xl border border-border-default text-text-primary">
                             {selectedPage.title}
                           </p>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Slug
                           </label>
-                          <p className="p-3 bg-white/5 rounded-xl border border-white/10 text-champagne text-sm">
+                          <p className="p-3 bg-bg-elevated rounded-xl border border-border-default text-text-primary text-sm">
                             {selectedPage.slug}
                           </p>
                         </div>
                         {selectedPage.metaDescription && (
                           <div>
-                            <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                               Meta Description
                             </label>
-                            <p className="p-3 bg-white/5 rounded-xl border border-white/10 text-champagne text-sm">
+                            <p className="p-3 bg-bg-elevated rounded-xl border border-border-default text-text-primary text-sm">
                               {selectedPage.metaDescription}
                             </p>
                           </div>
@@ -465,54 +465,54 @@ export default function AdminCMSTranslations() {
 
                     {/* Translation Column */}
                     <div>
-                      <h3 className="font-display text-lg mb-4 text-champagne">
+                      <h3 className="font-display text-lg mb-4 text-text-primary">
                         Translation ({pageLanguage.toUpperCase()})
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Title *
                           </label>
                           <input
                             type="text"
                             value={pageFormData.title}
                             onChange={(e) => setPageFormData({ ...pageFormData, title: e.target.value })}
-                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                            className="w-full bg-bg-secondary border border-border-default rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Slug *
                           </label>
                           <input
                             type="text"
                             value={pageFormData.slug}
                             onChange={(e) => setPageFormData({ ...pageFormData, slug: e.target.value })}
-                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-champagne text-sm focus:outline-none focus:ring-2 focus:ring-blush font-mono"
+                            className="w-full bg-bg-secondary border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Meta Title
                           </label>
                           <input
                             type="text"
                             value={pageFormData.metaTitle}
                             onChange={(e) => setPageFormData({ ...pageFormData, metaTitle: e.target.value })}
-                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-champagne text-sm focus:outline-none focus:ring-2 focus:ring-blush"
+                            className="w-full bg-bg-secondary border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                             placeholder="SEO title for this page"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-champagne/70 mb-2 uppercase tracking-wider">
+                          <label className="block text-xs font-semibold text-text-primary/70 mb-2 uppercase tracking-wider">
                             Meta Description
                           </label>
                           <textarea
                             value={pageFormData.metaDescription}
                             onChange={(e) => setPageFormData({ ...pageFormData, metaDescription: e.target.value })}
-                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-champagne text-sm focus:outline-none focus:ring-2 focus:ring-blush"
+                            className="w-full bg-bg-secondary border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                             rows={3}
                             placeholder="SEO description for this page"
                           />
@@ -522,11 +522,11 @@ export default function AdminCMSTranslations() {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+                  <div className="flex justify-end gap-3 pt-6 border-t border-border-default">
                     <button
                       type="button"
                       onClick={() => setSelectedPage(null)}
-                      className="px-6 py-2.5 rounded-full border border-white/20 text-champagne hover:bg-white/10 transition-colors"
+                      className="px-6 py-2.5 rounded-full border border-border-default text-text-primary hover:bg-bg-elevated transition-colors"
                     >
                       Cancel
                     </button>
@@ -543,8 +543,8 @@ export default function AdminCMSTranslations() {
                 </form>
               </div>
             ) : (
-              <div className="rounded-3xl bg-white/5 border border-white/10 p-12 text-center">
-                <p className="text-champagne/70 text-lg">
+              <div className="rounded-3xl bg-bg-elevated border border-border-default p-12 text-center">
+                <p className="text-text-primary/70 text-lg">
                   Select a page from the left to manage translations
                 </p>
               </div>
@@ -559,10 +559,10 @@ export default function AdminCMSTranslations() {
           {/* Pages & Blocks Sidebar */}
           <aside className="col-span-3 space-y-4">
             {/* Page Selection */}
-            <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-              <h2 className="font-display text-lg text-champagne mb-4">Select Page</h2>
+            <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+              <h2 className="font-display text-lg text-text-primary mb-4">Select Page</h2>
               {pagesLoading ? (
-                <p className="text-champagne/60">Loading...</p>
+                <p className="text-text-primary/60">Loading...</p>
               ) : (
                 <div className="space-y-2">
                   {pages?.map((page) => (
@@ -574,8 +574,8 @@ export default function AdminCMSTranslations() {
                       }}
                       className={`w-full text-left px-4 py-3 rounded-xl transition-colors text-sm ${
                         selectedBlockPage?.id === page.id
-                          ? 'bg-blush text-midnight font-semibold'
-                          : 'text-champagne hover:bg-white/10'
+                          ? 'bg-interactive-default text-on-interactive font-semibold'
+                          : 'text-text-primary hover:bg-bg-elevated'
                       }`}
                     >
                       {page.title}
@@ -587,10 +587,10 @@ export default function AdminCMSTranslations() {
 
             {/* Block Selection */}
             {selectedBlockPage && (
-              <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-                <h2 className="font-display text-lg text-champagne mb-4">Blocks</h2>
+              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+                <h2 className="font-display text-lg text-text-primary mb-4">Blocks</h2>
                 {blocksLoading ? (
-                  <p className="text-champagne/60">Loading...</p>
+                  <p className="text-text-primary/60">Loading...</p>
                 ) : blocks && blocks.length > 0 ? (
                   <div className="space-y-2">
                     {blocks.map((block) => (
@@ -599,8 +599,8 @@ export default function AdminCMSTranslations() {
                         onClick={() => setSelectedBlock(block)}
                         className={`w-full text-left px-4 py-3 rounded-xl transition-colors text-sm ${
                           selectedBlock?.id === block.id
-                            ? 'bg-blush text-midnight font-semibold'
-                            : 'text-champagne hover:bg-white/10'
+                            ? 'bg-interactive-default text-on-interactive font-semibold'
+                            : 'text-text-primary hover:bg-bg-elevated'
                         }`}
                       >
                         <div>{block.blockKey}</div>
@@ -609,7 +609,7 @@ export default function AdminCMSTranslations() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-champagne/60 text-sm">No blocks found</p>
+                  <p className="text-text-primary/60 text-sm">No blocks found</p>
                 )}
               </div>
             )}
@@ -618,22 +618,22 @@ export default function AdminCMSTranslations() {
           {/* Block Translation Editor */}
           <main className="col-span-9">
             {selectedBlock ? (
-              <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
                 {/* Language Selector */}
                 <div className="mb-6 flex items-center gap-4">
-                  <label className="font-semibold text-sm text-champagne">
+                  <label className="font-semibold text-sm text-text-primary">
                     Target Language:
                   </label>
                   {languagesLoading ? (
-                    <p className="text-champagne/60">Loading languages...</p>
+                    <p className="text-text-primary/60">Loading languages...</p>
                   ) : (
                     <select
                       value={blockLanguage}
                       onChange={(e) => setBlockLanguage(e.target.value)}
-                      className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-champagne focus:outline-none focus:ring-2 focus:ring-blush"
+                      className="bg-bg-secondary border border-border-default rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       {languages.map((lang) => (
-                        <option key={lang.code} value={lang.code} className="bg-midnight">
+                        <option key={lang.code} value={lang.code} className="bg-bg-primary">
                           {lang.name} ({lang.nativeName})
                         </option>
                       ))}
@@ -655,11 +655,11 @@ export default function AdminCMSTranslations() {
                   />
 
                   {/* Submit Button */}
-                  <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+                  <div className="flex justify-end gap-3 pt-6 border-t border-border-default">
                     <button
                       type="button"
                       onClick={() => setSelectedBlock(null)}
-                      className="px-6 py-2.5 rounded-full border border-white/20 text-champagne hover:bg-white/10 transition-colors"
+                      className="px-6 py-2.5 rounded-full border border-border-default text-text-primary hover:bg-bg-elevated transition-colors"
                     >
                       Cancel
                     </button>
@@ -676,8 +676,8 @@ export default function AdminCMSTranslations() {
                 </form>
               </div>
             ) : (
-              <div className="rounded-3xl bg-white/5 border border-white/10 p-12 text-center">
-                <p className="text-champagne/70 text-lg">
+              <div className="rounded-3xl bg-bg-elevated border border-border-default p-12 text-center">
+                <p className="text-text-primary/70 text-lg">
                   {selectedBlockPage
                     ? 'Select a block from the left to manage translations'
                     : 'Select a page first, then choose a block to translate'

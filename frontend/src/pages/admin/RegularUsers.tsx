@@ -60,33 +60,33 @@ const EditUserModal = ({ isOpen, onClose, onSave, user }: EditUserModalProps) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-midnight border-2 border-jade/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-champagne mb-6">Edit Customer</h2>
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
+        <h2 className="text-2xl font-bold text-text-primary mb-6">Edit Customer</h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Email *
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Name *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -96,14 +96,14 @@ const EditUserModal = ({ isOpen, onClose, onSave, user }: EditUserModalProps) =>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-champagne/30 text-champagne rounded-md hover:bg-champagne/10 transition-colors"
+              className="flex-1 px-4 py-2 border border-border-default text-text-primary rounded-md hover:bg-bg-secondary transition-colors"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-jade text-midnight rounded-md hover:bg-jade/90 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-interactive-default text-on-interactive rounded-md hover:bg-interactive-hover transition-colors disabled:opacity-50"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Saving...' : 'Update'}
@@ -126,22 +126,22 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, userName }: DeleteConf
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-midnight border-2 border-blush/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-champagne mb-4">Confirm Delete</h2>
-        <p className="text-champagne/80 mb-6">
-          Are you sure you want to delete customer <strong className="text-blush">{userName}</strong>? This action cannot be undone.
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
+        <h2 className="text-2xl font-bold text-text-primary mb-4">Confirm Delete</h2>
+        <p className="text-text-primary mb-6">
+          Are you sure you want to delete customer <strong className="text-red-400">{userName}</strong>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-champagne/30 text-champagne rounded-md hover:bg-champagne/10 transition-colors"
+            className="flex-1 px-4 py-2 border border-border-default text-text-primary rounded-md hover:bg-bg-secondary transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-blush text-midnight rounded-md hover:bg-blush/90 transition-colors"
+            className="flex-1 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
           >
             Delete
           </button>
@@ -283,43 +283,43 @@ export default function RegularUsers() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-midnight flex items-center gap-2">
+        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-2">
           <UsersIcon className="h-8 w-8" />
           Customers
         </h1>
-        <p className="text-midnight/70 mt-1">Manage customer accounts and view statistics</p>
+        <p className="text-text-secondary mt-1">Manage customer accounts and view statistics</p>
       </div>
 
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl p-6">
+          <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-champagne/70">Total Customers</p>
-                <p className="text-3xl font-bold text-champagne mt-1">{stats.totalUsers}</p>
+                <p className="text-sm text-text-secondary">Total Customers</p>
+                <p className="text-3xl font-bold text-text-primary mt-1">{stats.totalUsers}</p>
               </div>
-              <UsersIcon className="h-12 w-12 text-jade/50" />
+              <UsersIcon className="h-12 w-12 text-primary/50" />
             </div>
           </div>
 
-          <div className="bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl p-6">
+          <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-champagne/70">Active Users (30d)</p>
-                <p className="text-3xl font-bold text-jade mt-1">{stats.activeUsers}</p>
+                <p className="text-sm text-text-secondary">Active Users (30d)</p>
+                <p className="text-3xl font-bold text-emerald-400 mt-1">{stats.activeUsers}</p>
               </div>
-              <UsersIcon className="h-12 w-12 text-jade/50" />
+              <UsersIcon className="h-12 w-12 text-emerald-400/50" />
             </div>
           </div>
 
-          <div className="bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl p-6">
+          <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-champagne/70">New Users (30d)</p>
-                <p className="text-3xl font-bold text-blush mt-1">{stats.newUsers}</p>
+                <p className="text-sm text-text-secondary">New Users (30d)</p>
+                <p className="text-3xl font-bold text-primary mt-1">{stats.newUsers}</p>
               </div>
-              <UsersIcon className="h-12 w-12 text-blush/50" />
+              <UsersIcon className="h-12 w-12 text-primary/50" />
             </div>
           </div>
         </div>
@@ -328,92 +328,92 @@ export default function RegularUsers() {
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-champagne/40" />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-text-tertiary" />
           <input
             type="text"
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-midnight border border-champagne/30 text-champagne placeholder-champagne/40 rounded-md focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+            className="w-full pl-10 pr-4 py-2 bg-bg-elevated border border-border-default text-text-primary placeholder:text-text-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
       </div>
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-jade"></div>
-          <p className="text-midnight/70 mt-2">Loading customers...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-text-secondary mt-2">Loading customers...</p>
         </div>
       ) : (
-        <div className="bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl overflow-hidden">
+        <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-champagne/20">
               <thead className="bg-midnight/80">
                 <tr>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10"
+                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
                     onClick={() => handleSort('name')}
                   >
                     Name{getSortIcon('name')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                     Email
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10"
+                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
                     onClick={() => handleSort('orderCount')}
                   >
                     Orders{getSortIcon('orderCount')}
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10"
+                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
                     onClick={() => handleSort('totalSpent')}
                   >
                     Total Spent{getSortIcon('totalSpent')}
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider cursor-pointer hover:bg-jade/10"
+                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
                     onClick={() => handleSort('createdAt')}
                   >
                     Joined{getSortIcon('createdAt')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-midnight/30 divide-y divide-champagne/10">
+              <tbody className="bg-bg-elevated divide-y divide-border-default">
                 {filteredAndSortedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-jade/10 transition-colors">
+                  <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-champagne">{user.name}</div>
+                      <div className="text-sm font-medium text-text-primary">{user.name}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-champagne/70">{user.email}</div>
+                      <div className="text-sm text-text-secondary">{user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-champagne">{user.orderCount}</div>
+                      <div className="text-sm text-text-primary">{user.orderCount}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-jade">
+                      <div className="text-sm font-semibold text-emerald-400">
                         {formatCurrency(user.totalSpent)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-champagne/70">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                       {formatDate(user.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(user)}
-                          className="text-jade hover:text-jade/80 transition-colors"
+                          className="text-primary hover:text-primary/80 transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm({ isOpen: true, user })}
-                          className="text-blush hover:text-blush/80 transition-colors"
+                          className="text-red-400 hover:text-red-300 transition-colors"
                           title="Delete"
                         >
                           <TrashIcon className="h-5 w-5" />
@@ -428,8 +428,8 @@ export default function RegularUsers() {
 
           {filteredAndSortedUsers.length === 0 && (
             <div className="text-center py-12">
-              <UsersIcon className="mx-auto h-12 w-12 text-champagne/30" />
-              <p className="text-champagne/70 mt-2">
+              <UsersIcon className="mx-auto h-12 w-12 text-text-tertiary" />
+              <p className="text-text-secondary mt-2">
                 {searchQuery ? 'No customers found matching your search' : 'No customers found'}
               </p>
             </div>

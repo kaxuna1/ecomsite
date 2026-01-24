@@ -233,7 +233,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm transition-opacity" />
+          <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -246,15 +246,15 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-white/10 overflow-hidden rounded-3xl border border-white/10 bg-midnight shadow-2xl transition-all">
+            <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-border-default overflow-hidden rounded-3xl border border-border-default bg-bg-elevated shadow-2xl transition-all">
               <Combobox onChange={(command: CommandItem | null) => command?.action()}>
                 <div className="relative">
                   <MagnifyingGlassIcon
-                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-champagne/40"
+                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-text-tertiary"
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-champagne placeholder:text-champagne/40 focus:ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-text-primary placeholder:text-text-tertiary focus:ring-0 sm:text-sm"
                     placeholder="Search commands..."
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -267,7 +267,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                   >
                     {groupedCommands.navigation.length > 0 && (
                       <li>
-                        <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                        <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-text-secondary">
                           Navigation
                         </h2>
                         <ul className="space-y-1">
@@ -277,22 +277,22 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                               value={command}
                               className={({ active }) =>
                                 `flex cursor-pointer select-none items-center gap-3 rounded-2xl px-3 py-2 ${
-                                  active ? 'bg-blush text-midnight' : 'text-champagne'
+                                  active ? 'bg-interactive-default text-on-interactive' : 'text-text-primary'
                                 }`
                               }
                             >
                               {({ active }) => (
                                 <>
                                   <command.icon
-                                    className={`h-6 w-6 ${active ? 'text-midnight' : 'text-champagne/70'}`}
+                                    className={`h-6 w-6 ${active ? 'text-on-interactive' : 'text-text-secondary'}`}
                                     aria-hidden="true"
                                   />
                                   <div className="flex-1">
-                                    <p className={`text-sm font-medium ${active ? 'text-midnight' : 'text-champagne'}`}>
+                                    <p className={`text-sm font-medium ${active ? 'text-on-interactive' : 'text-text-primary'}`}>
                                       {command.name}
                                     </p>
                                     {command.description && (
-                                      <p className={`text-xs ${active ? 'text-midnight/70' : 'text-champagne/60'}`}>
+                                      <p className={`text-xs ${active ? 'text-on-interactive/70' : 'text-text-secondary'}`}>
                                         {command.description}
                                       </p>
                                     )}
@@ -307,7 +307,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
 
                     {groupedCommands.actions.length > 0 && (
                       <li className="mt-2">
-                        <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                        <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-text-secondary">
                           Actions
                         </h2>
                         <ul className="space-y-1">
@@ -317,22 +317,22 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                               value={command}
                               className={({ active }) =>
                                 `flex cursor-pointer select-none items-center gap-3 rounded-2xl px-3 py-2 ${
-                                  active ? 'bg-blush text-midnight' : 'text-champagne'
+                                  active ? 'bg-interactive-default text-on-interactive' : 'text-text-primary'
                                 }`
                               }
                             >
                               {({ active }) => (
                                 <>
                                   <command.icon
-                                    className={`h-6 w-6 ${active ? 'text-midnight' : 'text-champagne/70'}`}
+                                    className={`h-6 w-6 ${active ? 'text-on-interactive' : 'text-text-secondary'}`}
                                     aria-hidden="true"
                                   />
                                   <div className="flex-1">
-                                    <p className={`text-sm font-medium ${active ? 'text-midnight' : 'text-champagne'}`}>
+                                    <p className={`text-sm font-medium ${active ? 'text-on-interactive' : 'text-text-primary'}`}>
                                       {command.name}
                                     </p>
                                     {command.description && (
-                                      <p className={`text-xs ${active ? 'text-midnight/70' : 'text-champagne/60'}`}>
+                                      <p className={`text-xs ${active ? 'text-on-interactive/70' : 'text-text-secondary'}`}>
                                         {command.description}
                                       </p>
                                     )}
@@ -349,18 +349,18 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
 
                 {query !== '' && filteredCommands.length === 0 && (
                   <div className="px-6 py-14 text-center sm:px-14">
-                    <p className="text-sm text-champagne/70">
+                    <p className="text-sm text-text-secondary">
                       No commands found for "{query}". Try a different search.
                     </p>
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center gap-2 border-t border-white/10 bg-white/5 px-4 py-3 text-xs text-champagne/50">
-                  <kbd className="rounded border border-white/20 bg-white/10 px-2 py-1 font-mono">↑↓</kbd>
+                <div className="flex flex-wrap items-center gap-2 border-t border-border-default bg-bg-secondary px-4 py-3 text-xs text-text-tertiary">
+                  <kbd className="rounded border border-border-default bg-bg-elevated px-2 py-1 font-mono">↑↓</kbd>
                   <span>to navigate</span>
-                  <kbd className="rounded border border-white/20 bg-white/10 px-2 py-1 font-mono">↵</kbd>
+                  <kbd className="rounded border border-border-default bg-bg-elevated px-2 py-1 font-mono">↵</kbd>
                   <span>to select</span>
-                  <kbd className="rounded border border-white/20 bg-white/10 px-2 py-1 font-mono">esc</kbd>
+                  <kbd className="rounded border border-border-default bg-bg-elevated px-2 py-1 font-mono">esc</kbd>
                   <span>to close</span>
                 </div>
               </Combobox>

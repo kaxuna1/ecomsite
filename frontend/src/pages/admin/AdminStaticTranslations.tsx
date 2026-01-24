@@ -452,10 +452,10 @@ export default function AdminStaticTranslations() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-display uppercase tracking-wider text-champagne">
+          <h1 className="text-2xl font-display uppercase tracking-wider text-text-primary">
             Static Translations
           </h1>
-          <p className="mt-1 text-sm text-champagne/60">
+          <p className="mt-1 text-sm text-text-primary/60">
             Manage UI text translations across all languages
           </p>
         </div>
@@ -475,7 +475,7 @@ export default function AdminStaticTranslations() {
               queryClient.invalidateQueries({ queryKey: ['static-translations'] });
               toast.success('Translations reloaded');
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-champagne hover:bg-white/20 sm:w-auto sm:text-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-secondary px-4 py-2 text-xs font-semibold text-text-primary hover:bg-bg-elevated sm:w-auto sm:text-sm"
           >
             <ArrowPathIcon className="h-4 w-4" />
             Reload
@@ -484,14 +484,14 @@ export default function AdminStaticTranslations() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-border-default">
         <nav className="-mb-px flex gap-6 overflow-x-auto pb-2">
           <button
             onClick={() => setActiveTab('browse')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'browse'
-                ? 'border-blush text-blush'
-                : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
+                ? 'border-blush text-primary'
+                : 'border-transparent text-text-primary/60 hover:border-champagne/30 hover:text-text-primary'
             }`}
           >
             <LanguageIcon className="h-5 w-5" />
@@ -502,8 +502,8 @@ export default function AdminStaticTranslations() {
             onClick={() => setActiveTab('stats')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'stats'
-                ? 'border-blush text-blush'
-                : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
+                ? 'border-blush text-primary'
+                : 'border-transparent text-text-primary/60 hover:border-champagne/30 hover:text-text-primary'
             }`}
           >
             <ChartBarIcon className="h-5 w-5" />
@@ -514,8 +514,8 @@ export default function AdminStaticTranslations() {
             onClick={() => setActiveTab('missing')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'missing'
-                ? 'border-blush text-blush'
-                : 'border-transparent text-champagne/60 hover:border-champagne/30 hover:text-champagne'
+                ? 'border-blush text-primary'
+                : 'border-transparent text-text-primary/60 hover:border-champagne/30 hover:text-text-primary'
             }`}
           >
             <ExclamationTriangleIcon className="h-5 w-5" />
@@ -529,7 +529,7 @@ export default function AdminStaticTranslations() {
         <div className="space-y-4">
           {/* Mobile Sidebar Toggle */}
           <button
-            className="lg:hidden w-full px-4 py-2 bg-white/10 text-champagne rounded-lg flex items-center justify-center gap-2 border border-white/20 hover:bg-white/20 transition-colors"
+            className="lg:hidden w-full px-4 py-2 bg-bg-secondary text-text-primary rounded-lg flex items-center justify-center gap-2 border border-border-default hover:bg-bg-elevated transition-colors"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <LanguageIcon className="h-5 w-5" />
@@ -541,7 +541,7 @@ export default function AdminStaticTranslations() {
             <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block col-span-1 space-y-4 lg:col-span-4`}>
             {/* Namespace Selector */}
             <div>
-              <label className="block text-sm font-medium text-champagne mb-2">
+              <label className="block text-sm font-medium text-text-primary mb-2">
                 Namespace
               </label>
               <select
@@ -550,7 +550,7 @@ export default function AdminStaticTranslations() {
                   setSelectedNamespace(e.target.value);
                   setSelectedKey(null);
                 }}
-                className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/50"
+                className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-2 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
                 {namespaces.map(ns => (
                   <option key={ns} value={ns}>{ns}</option>
@@ -560,39 +560,39 @@ export default function AdminStaticTranslations() {
 
             {/* Search */}
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/60" />
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-primary/60" />
               <input
                 type="text"
                 placeholder="Search keys..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-2xl border border-white/20 bg-white/5 pl-12 pr-4 py-2 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/50"
+                className="w-full rounded-2xl border border-border-default bg-bg-elevated pl-12 pr-4 py-2 text-text-primary placeholder:text-text-tertiary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
 
             {/* Add New Key */}
             <button
               onClick={() => setShowAddKey(!showAddKey)}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold text-champagne hover:bg-white/10"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border-default bg-bg-elevated px-4 py-3 text-sm font-semibold text-text-primary hover:bg-bg-secondary"
             >
               <PlusIcon className="h-5 w-5" />
               Add New Key
             </button>
 
             {showAddKey && (
-              <div className="space-y-2 rounded-2xl border border-white/20 bg-white/5 p-4">
+              <div className="space-y-2 rounded-2xl border border-border-default bg-bg-elevated p-4">
                 <input
                   type="text"
                   placeholder="translation.key.name"
                   value={newKey}
                   onChange={(e) => setNewKey(e.target.value)}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none"
+                  className="w-full rounded-xl border border-border-default bg-bg-elevated px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary/40 focus:border-primary focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={handleAddKey}
                     disabled={!newKey.trim() || addKeyMutation.isPending}
-                    className="flex-1 rounded-xl bg-blush px-3 py-2 text-sm font-semibold text-midnight hover:bg-champagne disabled:opacity-50"
+                    className="flex-1 rounded-xl bg-interactive-default px-3 py-2 text-sm font-semibold text-on-interactive hover:bg-bg-elevated disabled:opacity-50"
                   >
                     {addKeyMutation.isPending ? 'Adding...' : 'Add'}
                   </button>
@@ -601,7 +601,7 @@ export default function AdminStaticTranslations() {
                       setShowAddKey(false);
                       setNewKey('');
                     }}
-                    className="flex-1 rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-champagne hover:bg-white/20"
+                    className="flex-1 rounded-xl bg-bg-secondary px-3 py-2 text-sm font-semibold text-text-primary hover:bg-bg-elevated"
                   >
                     Cancel
                   </button>
@@ -610,19 +610,19 @@ export default function AdminStaticTranslations() {
             )}
 
             {/* Translation Keys List */}
-            <div className="space-y-1 max-h-[600px] overflow-y-auto rounded-2xl border border-white/20 bg-white/5 p-2">
+            <div className="space-y-1 max-h-[600px] overflow-y-auto rounded-2xl border border-border-default bg-bg-elevated p-2">
               {keysLoading ? (
-                <div className="p-4 text-center text-champagne/60">Loading keys...</div>
+                <div className="p-4 text-center text-text-primary/60">Loading keys...</div>
               ) : filteredKeys.length === 0 ? (
-                <div className="p-4 text-center text-champagne/60">No keys found</div>
+                <div className="p-4 text-center text-text-primary/60">No keys found</div>
               ) : (
                 filteredKeys.map(key => (
                   <div
                     key={key}
                     className={`group flex items-center justify-between rounded-xl px-3 py-2 text-sm cursor-pointer transition-colors ${
                       selectedKey === key
-                        ? 'bg-blush text-midnight'
-                        : 'text-champagne hover:bg-white/10'
+                        ? 'bg-interactive-default text-on-interactive'
+                        : 'text-text-primary hover:bg-bg-secondary'
                     }`}
                     onClick={() => setSelectedKey(key)}
                   >
@@ -647,13 +647,13 @@ export default function AdminStaticTranslations() {
             {/* Main Content: Translation Editor */}
             <div className="col-span-1 lg:col-span-8">
             {selectedKey ? (
-              <div className="space-y-6 rounded-2xl border border-white/20 bg-white/5 p-6">
+              <div className="space-y-6 rounded-2xl border border-border-default bg-bg-elevated p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-champagne">
+                    <h2 className="text-lg font-semibold text-text-primary">
                       Edit Translation
                     </h2>
-                    <p className="text-sm text-champagne/60 font-mono">{selectedKey}</p>
+                    <p className="text-sm text-text-primary/60 font-mono">{selectedKey}</p>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -681,10 +681,10 @@ export default function AdminStaticTranslations() {
                 <div className="space-y-4">
                   {languages.map(lang => (
                     <div key={lang.code}>
-                      <label className="block text-sm font-medium text-champagne mb-2">
+                      <label className="block text-sm font-medium text-text-primary mb-2">
                         {lang.nativeName} ({lang.code.toUpperCase()})
                         {lang.code === 'en' && (
-                          <span className="ml-2 text-xs text-blush">(Source Language)</span>
+                          <span className="ml-2 text-xs text-primary">(Source Language)</span>
                         )}
                       </label>
                       <textarea
@@ -694,7 +694,7 @@ export default function AdminStaticTranslations() {
                           [lang.code]: e.target.value
                         }))}
                         rows={3}
-                        className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/50"
+                        className="w-full rounded-xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                         placeholder={`Enter ${lang.nativeName} translation...`}
                       />
                     </div>
@@ -702,13 +702,13 @@ export default function AdminStaticTranslations() {
                 </div>
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/20 bg-white/5 p-12">
+              <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-border-default bg-bg-elevated p-12">
                 <div className="text-center">
-                  <LanguageIcon className="mx-auto h-12 w-12 text-champagne/40" />
-                  <h3 className="mt-4 text-lg font-semibold text-champagne/60">
+                  <LanguageIcon className="mx-auto h-12 w-12 text-text-primary/40" />
+                  <h3 className="mt-4 text-lg font-semibold text-text-primary/60">
                     Select a translation key
                   </h3>
-                  <p className="mt-2 text-sm text-champagne/40">
+                  <p className="mt-2 text-sm text-text-primary/40">
                     Choose a key from the list to edit its translations
                   </p>
                 </div>
@@ -726,19 +726,19 @@ export default function AdminStaticTranslations() {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="rounded-2xl border border-white/20 bg-white/5 p-6"
+                className="rounded-2xl border border-border-default bg-bg-elevated p-6"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-champagne/60">{stat.namespace}</p>
-                    <p className="text-2xl font-bold text-champagne mt-1">
+                    <p className="text-sm text-text-primary/60">{stat.namespace}</p>
+                    <p className="text-2xl font-bold text-text-primary mt-1">
                       {stat.translation_count}
                     </p>
-                    <p className="text-xs text-champagne/40 mt-1">
+                    <p className="text-xs text-text-primary/40 mt-1">
                       {stat.language_code.toUpperCase()} • {stat.unique_keys} unique keys
                     </p>
                   </div>
-                  <ChartBarIcon className="h-8 w-8 text-blush/40" />
+                  <ChartBarIcon className="h-8 w-8 text-primary/40" />
                 </div>
               </div>
             ))}
@@ -750,8 +750,8 @@ export default function AdminStaticTranslations() {
       {activeTab === 'missing' && (
         <div className="space-y-6">
           {missingTranslations.map((item, index) => (
-            <div key={index} className="rounded-2xl border border-white/20 bg-white/5 p-6">
-              <h3 className="text-lg font-semibold text-champagne mb-4">
+            <div key={index} className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Missing in {item.language.toUpperCase()}: {item.missing.length} keys
               </h3>
 
@@ -760,7 +760,7 @@ export default function AdminStaticTranslations() {
                   {item.missing.slice(0, 20).map((missing, idx) => (
                     <div
                       key={idx}
-                      className="rounded-xl bg-white/5 px-3 py-2 text-sm text-champagne/80 font-mono cursor-pointer hover:bg-white/10"
+                      className="rounded-xl bg-bg-elevated px-3 py-2 text-sm text-text-primary/80 font-mono cursor-pointer hover:bg-bg-secondary"
                       onClick={() => {
                         setActiveTab('browse');
                         setSelectedNamespace(missing.namespace);
@@ -771,13 +771,13 @@ export default function AdminStaticTranslations() {
                     </div>
                   ))}
                   {item.missing.length > 20 && (
-                    <div className="text-sm text-champagne/60 px-3 py-2">
+                    <div className="text-sm text-text-primary/60 px-3 py-2">
                       +{item.missing.length - 20} more...
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-champagne/60">All keys translated!</p>
+                <p className="text-sm text-text-primary/60">All keys translated!</p>
               )}
             </div>
           ))}
@@ -796,7 +796,7 @@ export default function AdminStaticTranslations() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -810,12 +810,12 @@ export default function AdminStaticTranslations() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-sm sm:max-w-md transform overflow-hidden rounded-3xl border border-white/20 bg-midnight p-4 md:p-6 shadow-xl transition-all">
-                  <Dialog.Title className="text-lg font-semibold text-champagne mb-4">
+                <Dialog.Panel className="w-full max-w-sm sm:max-w-md transform overflow-hidden rounded-3xl border border-border-default bg-bg-primary p-4 md:p-6 shadow-xl transition-all">
+                  <Dialog.Title className="text-lg font-semibold text-text-primary mb-4">
                     Select Target Language
                   </Dialog.Title>
 
-                  <p className="text-sm text-champagne/60 mb-6">
+                  <p className="text-sm text-text-primary/60 mb-6">
                     Choose which language to translate all keys in the <strong>{selectedNamespace}</strong> namespace to.
                     Only keys with English text that don't already have translations will be translated.
                   </p>
@@ -827,8 +827,8 @@ export default function AdminStaticTranslations() {
                         onClick={() => setSelectedTargetLanguage(lang.code)}
                         className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${
                           selectedTargetLanguage === lang.code
-                            ? 'bg-blush text-midnight'
-                            : 'bg-white/5 text-champagne hover:bg-white/10'
+                            ? 'bg-interactive-default text-on-interactive'
+                            : 'bg-bg-elevated text-text-primary hover:bg-bg-secondary'
                         }`}
                       >
                         <div className="font-semibold">{lang.nativeName}</div>
@@ -840,7 +840,7 @@ export default function AdminStaticTranslations() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => setShowBulkTranslateModal(false)}
-                      className="flex-1 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-champagne hover:bg-white/20"
+                      className="flex-1 rounded-xl bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-primary hover:bg-bg-elevated"
                     >
                       Cancel
                     </button>
@@ -871,7 +871,7 @@ export default function AdminStaticTranslations() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -885,20 +885,20 @@ export default function AdminStaticTranslations() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-sm sm:max-w-md md:max-w-4xl transform overflow-hidden rounded-3xl border border-white/20 bg-midnight shadow-xl transition-all">
-                  <div className="border-b border-white/10 p-6">
+                <Dialog.Panel className="w-full max-w-sm sm:max-w-md md:max-w-4xl transform overflow-hidden rounded-3xl border border-border-default bg-bg-primary shadow-xl transition-all">
+                  <div className="border-b border-border-default p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <Dialog.Title className="text-lg font-semibold text-champagne">
+                        <Dialog.Title className="text-lg font-semibold text-text-primary">
                           Review AI Translations
                         </Dialog.Title>
-                        <p className="mt-1 text-sm text-champagne/60">
+                        <p className="mt-1 text-sm text-text-primary/60">
                           {bulkTranslations.length} translations to {languages.find(l => l.code === selectedTargetLanguage)?.nativeName}
                         </p>
                       </div>
                       <button
                         onClick={() => setShowPreviewModal(false)}
-                        className="rounded-full p-2 text-champagne/60 hover:bg-white/10 hover:text-champagne"
+                        className="rounded-full p-2 text-text-primary/60 hover:bg-bg-secondary hover:text-text-primary"
                       >
                         <XMarkIcon className="h-5 w-5" />
                       </button>
@@ -908,14 +908,14 @@ export default function AdminStaticTranslations() {
                     {bulkTranslateMutation.isPending && translationProgress.total > 0 && (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-champagne/70">
+                          <span className="text-text-primary/70">
                             Translating {translationProgress.current} of {translationProgress.total}...
                           </span>
-                          <span className="text-blush font-semibold">
+                          <span className="text-primary font-semibold">
                             {Math.round((translationProgress.current / translationProgress.total) * 100)}%
                           </span>
                         </div>
-                        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-2 rounded-full bg-bg-secondary overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
                             style={{ width: `${(translationProgress.current / translationProgress.total) * 100}%` }}
@@ -936,31 +936,31 @@ export default function AdminStaticTranslations() {
 
                   <div className="max-h-[60vh] overflow-y-auto p-6 space-y-4">
                     {bulkTranslations.map((item, index) => (
-                      <div key={item.key} className="rounded-2xl border border-white/20 bg-white/5 p-4">
+                      <div key={item.key} className="rounded-2xl border border-border-default bg-bg-elevated p-4">
                         <div className="mb-2 flex items-start justify-between">
-                          <span className="text-xs font-mono text-champagne/60">{item.key}</span>
-                          <span className="text-xs text-champagne/40">#{index + 1}</span>
+                          <span className="text-xs font-mono text-text-primary/60">{item.key}</span>
+                          <span className="text-xs text-text-primary/40">#{index + 1}</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs font-medium text-champagne/60 mb-2">
+                            <label className="block text-xs font-medium text-text-primary/60 mb-2">
                               English (Source)
                             </label>
-                            <div className="rounded-xl bg-white/5 px-3 py-2 text-sm text-champagne/80">
+                            <div className="rounded-xl bg-bg-elevated px-3 py-2 text-sm text-text-primary/80">
                               {item.sourceText}
                             </div>
                           </div>
 
                           <div>
-                            <label className="block text-xs font-medium text-champagne/60 mb-2">
+                            <label className="block text-xs font-medium text-text-primary/60 mb-2">
                               {languages.find(l => l.code === selectedTargetLanguage)?.nativeName} (Translation)
                             </label>
                             <textarea
                               value={item.translatedText}
                               onChange={(e) => handleUpdateBulkTranslation(item.key, e.target.value)}
                               rows={2}
-                              className="w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/50"
+                              className="w-full rounded-xl border border-border-default bg-bg-elevated px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                             />
                           </div>
                         </div>
@@ -968,14 +968,14 @@ export default function AdminStaticTranslations() {
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-white/10 p-6">
+                  <div className="flex items-center justify-between border-t border-border-default p-6">
                     <button
                       onClick={() => {
                         setShowPreviewModal(false);
                         setBulkTranslations([]);
                         setSelectedTargetLanguage('');
                       }}
-                      className="rounded-xl bg-white/10 px-6 py-2 text-sm font-semibold text-champagne hover:bg-white/20"
+                      className="rounded-xl bg-bg-secondary px-6 py-2 text-sm font-semibold text-text-primary hover:bg-bg-elevated"
                     >
                       Cancel
                     </button>

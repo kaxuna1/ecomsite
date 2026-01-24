@@ -93,7 +93,7 @@ function AdminDashboard() {
       case 'cancelled':
         return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
       default:
-        return 'bg-white/10 text-champagne border-white/20';
+        return 'bg-bg-elevated text-text-primary border-border-default';
     }
   };
 
@@ -126,15 +126,15 @@ function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl text-champagne">Dashboard Overview</h1>
-          <p className="mt-1 text-sm text-champagne/70">
+          <h1 className="font-display text-3xl text-text-primary">Dashboard Overview</h1>
+          <p className="mt-1 text-sm text-text-secondary">
             Monitor your store performance and manage operations
           </p>
         </div>
         <div className="flex gap-3">
           <Link
             to="/admin/products"
-            className="flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
+            className="flex items-center gap-2 rounded-full bg-interactive-default px-5 py-2.5 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
           >
             <PlusIcon className="h-4 w-4" />
             Add Product
@@ -185,12 +185,12 @@ function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Recent Orders - Takes 2 columns */}
         <div className="lg:col-span-2">
-          <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-xl text-champagne">Recent Orders</h2>
+              <h2 className="font-display text-xl text-text-primary">Recent Orders</h2>
               <Link
                 to="/admin/orders"
-                className="flex items-center gap-1 text-sm text-blush hover:text-champagne transition-colors"
+                className="flex items-center gap-1 text-sm text-primary hover:text-text-primary transition-colors"
               >
                 View All
                 <ArrowRightIcon className="h-4 w-4" />
@@ -198,7 +198,7 @@ function AdminDashboard() {
             </div>
 
             {metrics.recentOrders.length === 0 ? (
-              <div className="py-12 text-center text-champagne/60">No orders yet</div>
+              <div className="py-12 text-center text-text-secondary">No orders yet</div>
             ) : (
               <div className="space-y-4">
                 {metrics.recentOrders.map((order) => {
@@ -213,13 +213,13 @@ function AdminDashboard() {
                       key={order.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between rounded-2xl bg-white/5 p-4 transition-colors hover:bg-white/10"
+                      className="flex items-center justify-between rounded-2xl bg-bg-elevated p-4 transition-colors hover:bg-bg-secondary"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
                           <Link
                             to={`/admin/orders`}
-                            className="font-semibold text-champagne hover:text-blush"
+                            className="font-semibold text-text-primary hover:text-primary"
                           >
                             Order #{order.id}
                           </Link>
@@ -227,16 +227,16 @@ function AdminDashboard() {
                             {order.status}
                           </Badge>
                         </div>
-                        <p className="mt-1 text-sm text-champagne/70">{order.customerName}</p>
-                        <p className="mt-1 text-xs text-champagne/50">{formatDate(order.createdAt)}</p>
+                        <p className="mt-1 text-sm text-text-secondary">{order.customerName}</p>
+                        <p className="mt-1 text-xs text-text-tertiary">{formatDate(order.createdAt)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-champagne">${order.total.toFixed(2)}</p>
+                        <p className="font-semibold text-text-primary">${order.total.toFixed(2)}</p>
                         {order.status === 'pending' && (
                           <button
                             onClick={() => updateStatusMutation.mutate({ id: order.id, status: 'confirmed' })}
                             disabled={updateStatusMutation.isPending}
-                            className="mt-2 rounded-full bg-blush px-3 py-1 text-xs font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50"
+                            className="mt-2 rounded-full bg-interactive-default px-3 py-1 text-xs font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50"
                           >
                             Confirm
                           </button>
@@ -253,14 +253,14 @@ function AdminDashboard() {
         {/* Right Sidebar - Alerts & Quick Stats */}
         <div className="space-y-6">
           {/* Inventory Alerts */}
-          <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
             <div className="mb-4 flex items-center gap-2">
               <ExclamationTriangleIcon className="h-5 w-5 text-amber-400" />
-              <h2 className="font-display text-lg text-champagne">Inventory Alerts</h2>
+              <h2 className="font-display text-lg text-text-primary">Inventory Alerts</h2>
             </div>
 
             {isLoading ? (
-              <div className="py-6 text-center text-sm text-champagne/60">Loading...</div>
+              <div className="py-6 text-center text-sm text-text-secondary">Loading...</div>
             ) : (
               <div className="space-y-4">
                 {/* Out of Stock */}
@@ -270,7 +270,7 @@ function AdminDashboard() {
                       <XCircleIcon className="h-5 w-5 text-rose-400" />
                       <div>
                         <p className="text-sm font-semibold text-rose-400">Out of Stock</p>
-                        <p className="text-xs text-champagne/60">
+                        <p className="text-xs text-text-secondary">
                           {metrics.outOfStockProducts.length} {metrics.outOfStockProducts.length === 1 ? 'product' : 'products'}
                         </p>
                       </div>
@@ -285,7 +285,7 @@ function AdminDashboard() {
                       <ExclamationTriangleIcon className="h-5 w-5 text-amber-400" />
                       <div>
                         <p className="text-sm font-semibold text-amber-400">Low Stock</p>
-                        <p className="text-xs text-champagne/60">
+                        <p className="text-xs text-text-secondary">
                           {metrics.lowStockProducts.length} {metrics.lowStockProducts.length === 1 ? 'product' : 'products'} (≤10 units)
                         </p>
                       </div>
@@ -299,7 +299,7 @@ function AdminDashboard() {
                       <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
                       <div>
                         <p className="text-sm font-semibold text-emerald-400">All Good</p>
-                        <p className="text-xs text-champagne/60">No inventory issues</p>
+                        <p className="text-xs text-text-secondary">No inventory issues</p>
                       </div>
                     </div>
                   </div>
@@ -309,54 +309,54 @@ function AdminDashboard() {
           </div>
 
           {/* Product Categories */}
-          <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-            <h2 className="mb-4 font-display text-lg text-champagne">Product Categories</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+            <h2 className="mb-4 font-display text-lg text-text-primary">Product Categories</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <SparklesIcon className="h-4 w-4 text-jade" />
-                  <span className="text-sm text-champagne">New Arrivals</span>
+                  <SparklesIcon className="h-4 w-4 text-primary" />
+                  <span className="text-sm text-text-primary">New Arrivals</span>
                 </div>
-                <span className="font-semibold text-champagne">{metrics.newProducts.length}</span>
+                <span className="font-semibold text-text-primary">{metrics.newProducts.length}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FireIcon className="h-4 w-4 text-red-400" />
-                  <span className="text-sm text-champagne">Best Sellers</span>
+                  <span className="text-sm text-text-primary">Best Sellers</span>
                 </div>
-                <span className="font-semibold text-champagne">{metrics.featuredProducts.length}</span>
+                <span className="font-semibold text-text-primary">{metrics.featuredProducts.length}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TagIcon className="h-4 w-4 text-rose-400" />
-                  <span className="text-sm text-champagne">On Sale</span>
+                  <span className="text-sm text-text-primary">On Sale</span>
                 </div>
-                <span className="font-semibold text-champagne">{metrics.saleProducts.length}</span>
+                <span className="font-semibold text-text-primary">{metrics.saleProducts.length}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
-            <h2 className="mb-4 font-display text-lg text-champagne">Quick Actions</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+            <h2 className="mb-4 font-display text-lg text-text-primary">Quick Actions</h2>
             <div className="space-y-3">
               <Link
                 to="/admin/products"
-                className="flex w-full items-center justify-between rounded-xl bg-white/5 p-3 text-sm text-champagne transition-colors hover:bg-white/10"
+                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
               >
                 <span>Manage Products</span>
                 <ArrowRightIcon className="h-4 w-4" />
               </Link>
               <Link
                 to="/admin/orders"
-                className="flex w-full items-center justify-between rounded-xl bg-white/5 p-3 text-sm text-champagne transition-colors hover:bg-white/10"
+                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
               >
                 <span>View All Orders</span>
                 <ArrowRightIcon className="h-4 w-4" />
               </Link>
               <Link
                 to="/admin/translations"
-                className="flex w-full items-center justify-between rounded-xl bg-white/5 p-3 text-sm text-champagne transition-colors hover:bg-white/10"
+                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
               >
                 <div className="flex items-center gap-2">
                   <LanguageIcon className="h-4 w-4" />
@@ -371,38 +371,38 @@ function AdminDashboard() {
 
       {/* Order Status Summary */}
       <div className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-amber-500/20 p-3">
               <ClockIcon className="h-5 w-5 text-amber-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-champagne">{metrics.pendingOrders}</p>
-              <p className="text-xs text-champagne/60">Pending</p>
+              <p className="text-2xl font-bold text-text-primary">{metrics.pendingOrders}</p>
+              <p className="text-xs text-text-secondary">Pending</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-blue-500/20 p-3">
               <CheckCircleIcon className="h-5 w-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-champagne">{metrics.confirmedOrders}</p>
-              <p className="text-xs text-champagne/60">Confirmed</p>
+              <p className="text-2xl font-bold text-text-primary">{metrics.confirmedOrders}</p>
+              <p className="text-xs text-text-secondary">Confirmed</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-3xl bg-white/5 border border-white/10 p-6">
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-emerald-500/20 p-3">
               <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-champagne">{metrics.completedOrders}</p>
-              <p className="text-xs text-champagne/60">Completed</p>
+              <p className="text-2xl font-bold text-text-primary">{metrics.completedOrders}</p>
+              <p className="text-xs text-text-secondary">Completed</p>
             </div>
           </div>
         </div>

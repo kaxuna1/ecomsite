@@ -121,7 +121,7 @@ export default function AdminCMSInlineEditor() {
 
   if (pageLoading || blocksLoading) {
     return (
-      <div className="min-h-screen bg-midnight flex items-center justify-center">
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jade"></div>
       </div>
     );
@@ -129,10 +129,10 @@ export default function AdminCMSInlineEditor() {
 
   if (!page) {
     return (
-      <div className="min-h-screen bg-midnight flex items-center justify-center">
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-display text-champagne mb-4">Page not found</h2>
-          <Link to="/admin/cms" className="text-jade hover:underline">
+          <h2 className="text-2xl font-display text-text-primary mb-4">Page not found</h2>
+          <Link to="/admin/cms" className="text-primary hover:underline">
             Back to CMS
           </Link>
         </div>
@@ -143,27 +143,27 @@ export default function AdminCMSInlineEditor() {
   return (
     <div className="min-h-screen bg-white relative">
       {/* Fixed Top Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-b border-jade/30 shadow-2xl">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-bg-primary/95 backdrop-blur-xl border-b border-primary/30 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Link
               to="/admin/cms"
-              className="flex items-center gap-2 text-champagne/70 hover:text-champagne transition-colors"
+              className="flex items-center gap-2 text-text-primary/70 hover:text-text-primary transition-colors"
             >
               <ArrowLeftIcon className="h-5 w-5" />
               <span>Back to CMS</span>
             </Link>
-            <div className="hidden h-6 w-px bg-champagne/20 sm:block" />
+            <div className="hidden h-6 w-px bg-text-secondary/20 sm:block" />
             <div>
-              <h1 className="font-display text-xl text-champagne">{page.title}</h1>
-              <p className="text-xs text-champagne/60">/{page.slug}</p>
+              <h1 className="font-display text-xl text-text-primary">{page.title}</h1>
+              <p className="text-xs text-text-primary/60">/{page.slug}</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsAddingBlock(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-jade/20 text-jade hover:bg-jade/30 rounded-lg transition-colors font-medium text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-interactive-default/20 text-primary hover:bg-primary/30 rounded-lg transition-colors font-medium text-sm"
             >
               <PlusIcon className="h-4 w-4" />
               Add Block
@@ -172,8 +172,8 @@ export default function AdminCMSInlineEditor() {
               onClick={handleTogglePublish}
               className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
                 page.isPublished
-                  ? 'bg-champagne/20 text-champagne hover:bg-champagne/30'
-                  : 'bg-jade text-midnight hover:bg-jade/90'
+                  ? 'bg-text-secondary/20 text-text-primary hover:bg-bg-elevated'
+                  : 'bg-interactive-default text-on-interactive hover:bg-interactive-default/90'
               }`}
             >
               {page.isPublished ? 'Published' : 'Draft'}
@@ -181,7 +181,7 @@ export default function AdminCMSInlineEditor() {
             <Link
               to={`/en/${page.slug}`}
               target="_blank"
-              className="px-4 py-2 bg-white/10 text-champagne rounded-lg hover:bg-white/20 transition-colors font-medium text-sm"
+              className="px-4 py-2 bg-bg-secondary text-text-primary rounded-lg hover:bg-bg-elevated transition-colors font-medium text-sm"
             >
               View Live
             </Link>
@@ -194,10 +194,10 @@ export default function AdminCMSInlineEditor() {
         {blocks.length === 0 ? (
           <div className="min-h-[60vh] flex items-center justify-center">
             <div className="text-center">
-              <p className="text-midnight/50 mb-4">No blocks yet. Add your first block to get started!</p>
+              <p className="text-text-tertiary mb-4">No blocks yet. Add your first block to get started!</p>
               <button
                 onClick={() => setIsAddingBlock(true)}
-                className="px-6 py-3 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+                className="px-6 py-3 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-default/90 transition-colors font-semibold"
               >
                 Add First Block
               </button>
@@ -239,7 +239,7 @@ export default function AdminCMSInlineEditor() {
                 setEditingBlockId(null);
                 setIsAddingBlock(false);
               }}
-              className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm z-[60]"
             />
 
             {/* Editor Panel */}
@@ -248,16 +248,16 @@ export default function AdminCMSInlineEditor() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-midnight border-l border-jade/30 shadow-2xl z-[70] overflow-hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-bg-primary border-l border-primary/30 shadow-2xl z-[70] overflow-hidden flex flex-col"
             >
               {/* Panel Header */}
-              <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/10 bg-midnight/50 backdrop-blur-xl">
+              <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border-default bg-bg-primary/50 backdrop-blur-xl">
                 <div>
-                  <h2 className="font-display text-xl text-champagne">
+                  <h2 className="font-display text-xl text-text-primary">
                     {isAddingBlock ? 'Add New Block' : 'Edit Block'}
                   </h2>
                   {editingBlock && (
-                    <p className="text-sm text-champagne/60 mt-1">
+                    <p className="text-sm text-text-primary/60 mt-1">
                       {editingBlock.blockKey} • {editingBlock.blockType}
                     </p>
                   )}
@@ -267,7 +267,7 @@ export default function AdminCMSInlineEditor() {
                     setEditingBlockId(null);
                     setIsAddingBlock(false);
                   }}
-                  className="p-2 text-champagne/70 hover:text-champagne hover:bg-white/10 rounded-lg transition-all"
+                  className="p-2 text-text-primary/70 hover:text-text-primary hover:bg-bg-secondary rounded-lg transition-all"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -369,50 +369,50 @@ function NewBlockForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-jade/10 border border-jade/30 rounded-lg p-4">
-        <p className="text-sm text-champagne/80">
+      <div className="bg-interactive-default/10 border border-primary/30 rounded-lg p-4">
+        <p className="text-sm text-text-primary/80">
           Select a block type to add to your page. A template will be loaded automatically with sample content.
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-champagne mb-2">Block Type</label>
+          <label className="block text-sm font-medium text-text-primary mb-2">Block Type</label>
           <select
             value={blockType}
             onChange={(e) => handleBlockTypeChange(e.target.value)}
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+            className="w-full px-4 py-3 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
           >
             {blockTypes.map((type) => (
-              <option key={type} value={type} className="bg-midnight">
+              <option key={type} value={type} className="bg-bg-primary">
                 {type}
               </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-champagne mb-2">Block Key</label>
+          <label className="block text-sm font-medium text-text-primary mb-2">Block Key</label>
           <input
             type="text"
             value={blockKey}
             onChange={(e) => setBlockKey(e.target.value)}
             placeholder="e.g., hero-main"
             required
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/30 focus:outline-none focus:border-jade"
+            className="w-full px-4 py-3 bg-bg-elevated border border-border-default rounded-lg text-text-primary placeholder:text-text-tertiary/30 focus:outline-none focus:border-primary"
           />
         </div>
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-champagne">Initial Content</label>
+          <label className="block text-sm font-medium text-text-primary">Initial Content</label>
           <button
             type="button"
             onClick={() => handleTemplateToggle(!useTemplate)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               useTemplate
-                ? 'bg-jade/20 text-jade border border-jade/40'
-                : 'bg-white/5 text-champagne/70 border border-white/10 hover:bg-white/10'
+                ? 'bg-interactive-default/20 text-primary border border-jade/40'
+                : 'bg-bg-elevated text-text-primary/70 border border-border-default hover:bg-bg-secondary'
             }`}
           >
             {useTemplate ? '✓ Using Template' : 'Use Template'}
@@ -422,10 +422,10 @@ function NewBlockForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={12}
-          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne font-mono text-sm focus:outline-none focus:border-jade"
+          className="w-full px-4 py-3 bg-bg-elevated border border-border-default rounded-lg text-text-primary font-mono text-sm focus:outline-none focus:border-primary"
           placeholder='{}'
         />
-        <p className="text-xs text-champagne/50">
+        <p className="text-xs text-text-primary/50">
           {useTemplate
             ? 'Template loaded with sample content. You can edit it or customize after creation.'
             : 'Enter custom JSON or leave empty to use the default template.'}
@@ -435,14 +435,14 @@ function NewBlockForm({
       <div className="flex gap-3 pt-4">
         <button
           type="submit"
-          className="flex-1 px-6 py-3 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+          className="flex-1 px-6 py-3 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-default/90 transition-colors font-semibold"
         >
           Create Block
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 bg-white/10 text-champagne rounded-lg hover:bg-white/20 transition-colors"
+          className="px-6 py-3 bg-bg-secondary text-text-primary rounded-lg hover:bg-bg-elevated transition-colors"
         >
           Cancel
         </button>

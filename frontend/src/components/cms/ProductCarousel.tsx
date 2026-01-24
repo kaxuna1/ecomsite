@@ -132,7 +132,7 @@ function ProductSlide({
 
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden border-2 border-border-default/40 bg-bg-primary transition-all hover:border-jade/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]}`}
+      className={`group relative flex flex-col overflow-hidden border-2 border-border-default/40 bg-bg-primary transition-all hover:border-primary/40 ${borderRadiusClasses[borderRadius as keyof typeof borderRadiusClasses]} ${cardStyleClasses[cardStyle as keyof typeof cardStyleClasses]}`}
     >
       {/* Product Image */}
       {showElements.image !== false && (
@@ -198,7 +198,7 @@ function ProductSlide({
             <motion.button
               type="button"
               onClick={(e) => handleFavoriteClick(e, product.id)}
-              className="absolute right-3 top-3 z-10 rounded-full bg-bg-primary p-2 shadow-lg transition-all hover:scale-110"
+              className="absolute right-3 top-3 z-10 rounded-full bg-bg-elevated/90 backdrop-blur-sm p-2 shadow-lg transition-all hover:scale-110 border border-border-default/20"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               title={favorites?.some(fav => fav.productId === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -220,7 +220,7 @@ function ProductSlide({
                   e.preventDefault();
                   onQuickView(product);
                 }}
-                className="flex items-center gap-2 rounded-full bg-bg-primary px-4 py-3 text-sm font-semibold text-text-primary shadow-xl"
+                className="flex items-center gap-2 rounded-full bg-bg-elevated/95 backdrop-blur-sm px-4 py-3 text-sm font-semibold text-text-primary shadow-xl border border-border-default/20"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Quick View"
@@ -238,7 +238,7 @@ function ProductSlide({
                   e.preventDefault();
                   handleQuickAdd(product, hasVariants);
                 }}
-                className="flex items-center gap-2 rounded-full bg-bg-primary px-6 py-3 text-sm font-semibold text-text-primary shadow-xl"
+                className="flex items-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-sm font-semibold text-on-interactive shadow-xl hover:bg-interactive-hover transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

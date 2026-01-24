@@ -90,7 +90,7 @@ function AdminLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-midnight text-champagne">
+    <div className="min-h-screen bg-bg-primary text-text-primary">
       {/* Mobile sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
@@ -103,7 +103,7 @@ function AdminLayout() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 flex">
@@ -133,14 +133,14 @@ function AdminLayout() {
                       onClick={() => setSidebarOpen(false)}
                     >
                       <span className="sr-only">Close sidebar</span>
-                      <XMarkIcon className="h-6 w-6 text-champagne" aria-hidden="true" />
+                      <XMarkIcon className="h-6 w-6 text-text-primary" aria-hidden="true" />
                     </button>
                   </div>
                 </Transition.Child>
 
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 bg-midnight px-6 pb-4">
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-default bg-bg-elevated px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
-                    <span className="font-display text-xl uppercase tracking-[0.3em] text-champagne">
+                    <span className="font-display text-xl uppercase tracking-[0.3em] text-text-primary">
                       Luxia Admin
                     </span>
                   </div>
@@ -160,14 +160,14 @@ function AdminLayout() {
                                   onClick={() => setSidebarOpen(false)}
                                   className={`group flex gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 transition-colors ${
                                     isActive
-                                      ? 'bg-blush text-midnight'
-                                      : 'text-champagne hover:bg-white/10 hover:text-blush'
+                                      ? 'bg-interactive-default text-on-interactive'
+                                      : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                                   }`}
                                 >
                                   <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                   {item.name}
                                   {item.badge !== undefined && (
-                                    <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-jade text-xs font-bold text-midnight">
+                                    <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
                                       {item.badge}
                                     </span>
                                   )}
@@ -181,7 +181,7 @@ function AdminLayout() {
                         <button
                           type="button"
                           onClick={logout}
-                          className="group -mx-2 flex w-full gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 text-champagne transition-colors hover:bg-white/10 hover:text-blush"
+                          className="group -mx-2 flex w-full gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 text-text-secondary transition-colors hover:bg-bg-elevated hover:text-error"
                         >
                           <ArrowRightOnRectangleIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
                           Sign Out
@@ -202,14 +202,14 @@ function AdminLayout() {
           sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'
         }`}
       >
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 bg-midnight/80 backdrop-blur px-6 pb-4">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-default bg-bg-elevated/80 backdrop-blur px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center justify-between">
             {!sidebarCollapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="font-display text-xl uppercase tracking-[0.3em] text-champagne"
+                className="font-display text-xl uppercase tracking-[0.3em] text-text-primary"
               >
                 Luxia
               </motion.span>
@@ -217,7 +217,7 @@ function AdminLayout() {
             <button
               type="button"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="rounded-full p-2 text-champagne/60 hover:bg-white/10 hover:text-champagne"
+              className="rounded-full p-2 text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
             >
               {sidebarCollapsed ? (
                 <ChevronRightIcon className="h-5 w-5" />
@@ -241,8 +241,8 @@ function AdminLayout() {
                           to={item.href}
                           className={`group flex gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 transition-all ${
                             isActive
-                              ? 'bg-blush text-midnight shadow-lg shadow-blush/20'
-                              : 'text-champagne hover:bg-white/10 hover:text-blush'
+                              ? 'bg-interactive-default text-on-interactive shadow-lg shadow-primary/20'
+                              : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                           } ${sidebarCollapsed ? 'justify-center' : ''}`}
                           title={sidebarCollapsed ? item.name : undefined}
                         >
@@ -251,14 +251,14 @@ function AdminLayout() {
                             <>
                               <span className="truncate">{item.name}</span>
                               {item.badge !== undefined && (
-                                <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-jade text-xs font-bold text-midnight">
+                                <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
                                   {item.badge}
                                 </span>
                               )}
                             </>
                           )}
                           {sidebarCollapsed && item.badge !== undefined && (
-                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-jade text-xs font-bold text-midnight">
+                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
                               {item.badge}
                             </span>
                           )}
@@ -272,7 +272,7 @@ function AdminLayout() {
                 <button
                   type="button"
                   onClick={logout}
-                  className={`group -mx-2 flex w-full gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 text-champagne transition-colors hover:bg-white/10 hover:text-rose-400 ${
+                  className={`group -mx-2 flex w-full gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 text-text-secondary transition-colors hover:bg-bg-elevated hover:text-error ${
                     sidebarCollapsed ? 'justify-center' : ''
                   }`}
                   title={sidebarCollapsed ? 'Sign Out' : undefined}
@@ -293,10 +293,10 @@ function AdminLayout() {
         }`}
       >
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-white/10 bg-midnight/80 px-4 backdrop-blur sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border-default bg-bg-elevated/80 px-4 backdrop-blur sm:gap-x-6 sm:px-6 lg:px-8">
           <button
             type="button"
-            className="-m-2.5 p-2.5 text-champagne lg:hidden"
+            className="-m-2.5 p-2.5 text-text-primary lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
@@ -304,14 +304,14 @@ function AdminLayout() {
           </button>
 
           {/* Separator */}
-          <div className="h-6 w-px bg-white/10 lg:hidden" aria-hidden="true" />
+          <div className="h-6 w-px bg-border-default lg:hidden" aria-hidden="true" />
 
           <div className="flex flex-1 items-center justify-between gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex items-center gap-3">
               {currentPage && (
                 <>
-                  <currentPage.icon className="h-6 w-6 text-blush" />
-                  <h1 className="font-display text-lg uppercase tracking-wider text-champagne">
+                  <currentPage.icon className="h-6 w-6 text-primary" />
+                  <h1 className="font-display text-lg uppercase tracking-wider text-text-primary">
                     {currentPage.name}
                   </h1>
                 </>
@@ -323,11 +323,11 @@ function AdminLayout() {
               <button
                 type="button"
                 onClick={() => setCommandPaletteOpen(true)}
-                className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary"
               >
                 <MagnifyingGlassIcon className="h-4 w-4" />
                 <span className="hidden sm:inline">Search</span>
-                <kbd className="hidden rounded border border-white/20 bg-white/10 px-2 py-0.5 text-xs font-mono sm:inline">
+                <kbd className="hidden rounded border border-border-default bg-bg-primary px-2 py-0.5 text-xs font-mono sm:inline">
                   {navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'}K
                 </kbd>
               </button>

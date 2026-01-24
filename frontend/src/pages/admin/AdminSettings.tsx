@@ -581,7 +581,7 @@ export default function AdminSettings() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blush"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -595,14 +595,14 @@ export default function AdminSettings() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="font-display text-3xl text-champagne">Settings</h1>
-          <p className="mt-1 text-sm text-champagne/70">
+          <h1 className="font-display text-3xl text-text-primary">Settings</h1>
+          <p className="mt-1 text-sm text-text-secondary">
             Configure your site settings and integrations
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-white/10">
+        <div className="flex gap-2 border-b border-border-default">
           {[
             { id: 'general', label: 'General', icon: Cog6ToothIcon },
             { id: 'api-keys', label: 'API Keys', icon: KeyIcon },
@@ -615,8 +615,8 @@ export default function AdminSettings() {
                 onClick={() => setActiveTab(tab.id as TabType)}
                 className={`relative flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.id
-                    ? 'text-champagne'
-                    : 'text-champagne/50 hover:text-champagne/80'
+                    ? 'text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -624,7 +624,7 @@ export default function AdminSettings() {
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blush"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                     transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                   />
                 )}
@@ -645,18 +645,18 @@ export default function AdminSettings() {
               transition={{ duration: 0.2 }}
               className="max-w-3xl"
             >
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-6">
+              <div className="rounded-2xl border border-border-default bg-bg-elevated p-6 space-y-6">
                 {/* Logo Type Selection */}
                 <div>
-                  <label className="block text-champagne font-semibold mb-3">Logo Type</label>
+                  <label className="block text-text-primary font-semibold mb-3">Logo Type</label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setLogoType('text')}
                       className={`flex flex-col items-center px-6 py-4 rounded-xl border-2 transition-all ${
                         logoType === 'text'
-                          ? 'border-blush bg-blush/10 text-blush'
-                          : 'border-white/20 text-champagne/60 hover:border-white/40'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border-default text-text-secondary hover:border-border-default'
                       }`}
                     >
                       <div className="text-3xl mb-2">📝</div>
@@ -669,8 +669,8 @@ export default function AdminSettings() {
                       onClick={() => setLogoType('image')}
                       className={`flex flex-col items-center px-6 py-4 rounded-xl border-2 transition-all ${
                         logoType === 'image'
-                          ? 'border-blush bg-blush/10 text-blush'
-                          : 'border-white/20 text-champagne/60 hover:border-white/40'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border-default text-text-secondary hover:border-border-default'
                       }`}
                     >
                       <div className="text-3xl mb-2">🖼️</div>
@@ -688,7 +688,7 @@ export default function AdminSettings() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <label htmlFor="logoText" className="block text-champagne font-semibold mb-2">
+                    <label htmlFor="logoText" className="block text-text-primary font-semibold mb-2">
                       Logo Text
                     </label>
                     <input
@@ -697,16 +697,16 @@ export default function AdminSettings() {
                       value={logoText}
                       onChange={(e) => setLogoText(e.target.value)}
                       placeholder="Enter your brand name"
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-champagne placeholder-champagne/40 focus:outline-none focus:border-blush focus:ring-2 focus:ring-blush/20"
+                      className="w-full px-4 py-3 bg-bg-elevated border border-border-default rounded-xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                     />
-                    <p className="text-champagne/60 text-sm mt-2">
+                    <p className="text-text-secondary text-sm mt-2">
                       This text will appear in your site header
                     </p>
 
                     {/* Preview */}
-                    <div className="mt-4 p-6 bg-white/5 border border-white/10 rounded-xl">
-                      <p className="text-champagne/60 text-xs mb-3 uppercase tracking-wider">Preview:</p>
-                      <div className="text-3xl font-display text-champagne tracking-wider">
+                    <div className="mt-4 p-6 bg-bg-secondary border border-border-default rounded-xl">
+                      <p className="text-text-secondary text-xs mb-3 uppercase tracking-wider">Preview:</p>
+                      <div className="text-3xl font-display text-text-primary tracking-wider">
                         {logoText || 'Your Brand'}
                       </div>
                     </div>
@@ -720,12 +720,12 @@ export default function AdminSettings() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <label className="block text-champagne font-semibold mb-2">Logo Image</label>
+                    <label className="block text-text-primary font-semibold mb-2">Logo Image</label>
 
                     {/* Preview */}
                     {previewImage && (
-                      <div className="mb-4 p-6 bg-white/5 border border-white/10 rounded-xl">
-                        <p className="text-champagne/60 text-xs mb-3 uppercase tracking-wider">Preview:</p>
+                      <div className="mb-4 p-6 bg-bg-secondary border border-border-default rounded-xl">
+                        <p className="text-text-secondary text-xs mb-3 uppercase tracking-wider">Preview:</p>
                         <img
                           src={previewImage}
                           alt="Logo preview"
@@ -739,12 +739,12 @@ export default function AdminSettings() {
                       <button
                         type="button"
                         onClick={() => setShowMediaSelector(true)}
-                        className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-champagne hover:bg-white/20 transition-colors flex items-center gap-2"
+                        className="px-6 py-3 bg-bg-secondary border border-border-default rounded-xl text-text-primary hover:bg-bg-elevated transition-colors flex items-center gap-2"
                       >
                         <PhotoIcon className="h-5 w-5" />
                         <span>{previewImage ? 'Change Logo' : 'Select Logo from Media Library'}</span>
                       </button>
-                      <p className="text-champagne/60 text-sm mt-2">
+                      <p className="text-text-secondary text-sm mt-2">
                         Select an image from your media library to use as your site logo
                       </p>
                     </div>
@@ -752,7 +752,7 @@ export default function AdminSettings() {
                 )}
 
                 {/* Save Button */}
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-4 border-t border-border-default">
                   <SaveButton
                     fullWidth
                     onClick={handleSave}
@@ -793,22 +793,22 @@ export default function AdminSettings() {
 
               {apiKeysLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blush"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {API_KEY_CATEGORIES.map((category) => (
                     <div
                       key={category.id}
-                      className="rounded-2xl border border-white/10 bg-white/5 p-6"
+                      className="rounded-2xl border border-border-default bg-bg-elevated p-6"
                     >
                       {/* Category Header */}
                       <div className="mb-6">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-3xl">{category.icon}</span>
-                          <h3 className="text-xl font-display text-champagne">{category.name}</h3>
+                          <h3 className="text-xl font-display text-text-primary">{category.name}</h3>
                         </div>
-                        <p className="text-sm text-champagne/60">{category.description}</p>
+                        <p className="text-sm text-text-secondary">{category.description}</p>
                       </div>
 
                       {/* Keys */}
@@ -821,7 +821,7 @@ export default function AdminSettings() {
                           return (
                             <div key={keyId} className="space-y-2">
                               <div className="flex items-center justify-between">
-                                <label className="flex items-center gap-2 text-sm font-semibold text-champagne">
+                                <label className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                                   {key.label}
                                   {key.required && (
                                     <span className="text-rose-400">*</span>
@@ -832,7 +832,7 @@ export default function AdminSettings() {
                                     <button
                                       type="button"
                                       onClick={() => copyToClipboard(value)}
-                                      className="rounded-lg p-1.5 text-champagne/60 hover:bg-white/10 hover:text-champagne transition-colors"
+                                      className="rounded-lg p-1.5 text-text-secondary hover:bg-bg-secondary hover:text-text-primary transition-colors"
                                       title="Copy to clipboard"
                                     >
                                       <DocumentDuplicateIcon className="h-4 w-4" />
@@ -857,12 +857,12 @@ export default function AdminSettings() {
                                     [keyId]: e.target.value
                                   }))}
                                   placeholder={key.placeholder}
-                                  className="w-full px-4 py-2.5 pr-12 bg-white/10 border border-white/20 rounded-xl text-champagne placeholder-champagne/40 font-mono text-sm focus:outline-none focus:border-blush focus:ring-2 focus:ring-blush/20"
+                                  className="w-full px-4 py-2.5 pr-12 bg-bg-elevated border border-border-default rounded-xl text-text-primary placeholder:text-text-tertiary font-mono text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
                                 />
                                 <button
                                   type="button"
                                   onClick={() => toggleKeyVisibility(keyId)}
-                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-champagne/60 hover:text-champagne transition-colors"
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
                                   title={isVisible ? 'Hide key' : 'Show key'}
                                 >
                                   {isVisible ? (
@@ -873,7 +873,7 @@ export default function AdminSettings() {
                                 </button>
                               </div>
                               {key.helpText && (
-                                <p className="text-xs text-champagne/60">{key.helpText}</p>
+                                <p className="text-xs text-text-secondary">{key.helpText}</p>
                               )}
                             </div>
                           );
@@ -883,7 +883,7 @@ export default function AdminSettings() {
                   ))}
 
                   {/* Save Button */}
-                  <div className="sticky bottom-6 rounded-2xl border border-white/10 bg-midnight/95 p-4 shadow-2xl backdrop-blur-sm">
+                  <div className="sticky bottom-6 rounded-2xl border border-border-default bg-bg-elevated/95 p-4 shadow-2xl backdrop-blur-sm">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         {apiKeysSaved && (
@@ -927,10 +927,10 @@ export default function AdminSettings() {
               className="max-w-4xl space-y-6"
             >
               {/* AI Provider Configuration */}
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-display text-champagne mb-2">AI Provider & Model Configuration</h2>
-                  <p className="text-sm text-champagne/60">
+                  <h2 className="text-2xl font-display text-text-primary mb-2">AI Provider & Model Configuration</h2>
+                  <p className="text-sm text-text-secondary">
                     Choose your preferred AI provider and specific model for generating product descriptions, SEO metadata, and other AI-powered features.
                   </p>
                 </div>
@@ -941,8 +941,8 @@ export default function AdminSettings() {
                   <div
                     className={`rounded-2xl border-2 transition-all ${
                       aiProvider === 'openai'
-                        ? 'border-blush bg-blush/10'
-                        : 'border-white/20 bg-white/5'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border-default bg-bg-secondary'
                     }`}
                   >
                     <button
@@ -954,16 +954,16 @@ export default function AdminSettings() {
                         <div className="flex items-center gap-4">
                           <div className="text-4xl">🤖</div>
                           <div>
-                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                            <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               OpenAI
                               {aiProvider === 'openai' && (
-                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
                                   <CheckCircleIcon className="h-4 w-4" />
                                   Active
                                 </span>
                               )}
                             </h3>
-                            <p className="text-sm text-champagne/60">Industry-leading language models</p>
+                            <p className="text-sm text-text-secondary">Industry-leading language models</p>
                           </div>
                         </div>
                       </div>
@@ -973,7 +973,7 @@ export default function AdminSettings() {
                     <div className={`px-6 pb-6 space-y-3 transition-opacity ${
                       aiProvider !== 'openai' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
-                      <label className="block text-sm font-semibold text-champagne mb-2">
+                      <label className="block text-sm font-semibold text-text-primary mb-2">
                         Select Model:
                       </label>
                       <div className="space-y-2">
@@ -985,39 +985,39 @@ export default function AdminSettings() {
                             disabled={aiProvider !== 'openai'}
                             className={`w-full text-left rounded-xl border transition-all ${
                               openaiModel === model.id && aiProvider === 'openai'
-                                ? 'border-blush bg-blush/10'
-                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border-default bg-bg-secondary hover:border-border-default hover:bg-bg-elevated'
                             } ${aiProvider !== 'openai' ? 'cursor-not-allowed' : ''}`}
                           >
                             <div className="p-4">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    <h4 className="text-sm font-semibold text-text-primary">{model.name}</h4>
                                     {model.badge && (
                                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
                                         {model.badge}
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                  <p className="text-xs text-text-secondary">{model.description}</p>
                                 </div>
                                 {openaiModel === model.id && aiProvider === 'openai' && (
-                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0 ml-2" />
                                 )}
                               </div>
                               <div className="grid grid-cols-3 gap-2 mt-3">
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Input</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Input</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.input}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Output</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Output</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.output}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Context</div>
-                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Context</div>
+                                  <div className="text-xs font-medium text-text-primary">{model.contextWindow}</div>
                                 </div>
                               </div>
                             </div>
@@ -1031,8 +1031,8 @@ export default function AdminSettings() {
                   <div
                     className={`rounded-2xl border-2 transition-all ${
                       aiProvider === 'gemini'
-                        ? 'border-blush bg-blush/10'
-                        : 'border-white/20 bg-white/5'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border-default bg-bg-secondary'
                     }`}
                   >
                     <button
@@ -1044,16 +1044,16 @@ export default function AdminSettings() {
                         <div className="flex items-center gap-4">
                           <div className="text-4xl">✨</div>
                           <div>
-                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                            <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               Google Gemini
                               {aiProvider === 'gemini' && (
-                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
                                   <CheckCircleIcon className="h-4 w-4" />
                                   Active
                                 </span>
                               )}
                             </h3>
-                            <p className="text-sm text-champagne/60">Fast, capable multimodal models</p>
+                            <p className="text-sm text-text-secondary">Fast, capable multimodal models</p>
                           </div>
                         </div>
                       </div>
@@ -1063,7 +1063,7 @@ export default function AdminSettings() {
                     <div className={`px-6 pb-6 space-y-3 transition-opacity ${
                       aiProvider !== 'gemini' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
-                      <label className="block text-sm font-semibold text-champagne mb-2">
+                      <label className="block text-sm font-semibold text-text-primary mb-2">
                         Select Model:
                       </label>
                       <div className="space-y-2">
@@ -1075,39 +1075,39 @@ export default function AdminSettings() {
                             disabled={aiProvider !== 'gemini'}
                             className={`w-full text-left rounded-xl border transition-all ${
                               geminiModel === model.id && aiProvider === 'gemini'
-                                ? 'border-blush bg-blush/10'
-                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border-default bg-bg-secondary hover:border-border-default hover:bg-bg-elevated'
                             } ${aiProvider !== 'gemini' ? 'cursor-not-allowed' : ''}`}
                           >
                             <div className="p-4">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    <h4 className="text-sm font-semibold text-text-primary">{model.name}</h4>
                                     {model.badge && (
                                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
                                         {model.badge}
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                  <p className="text-xs text-text-secondary">{model.description}</p>
                                 </div>
                                 {geminiModel === model.id && aiProvider === 'gemini' && (
-                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0 ml-2" />
                                 )}
                               </div>
                               <div className="grid grid-cols-3 gap-2 mt-3">
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Input</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Input</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.input}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Output</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Output</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.output}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Context</div>
-                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Context</div>
+                                  <div className="text-xs font-medium text-text-primary">{model.contextWindow}</div>
                                 </div>
                               </div>
                             </div>
@@ -1121,8 +1121,8 @@ export default function AdminSettings() {
                   <div
                     className={`rounded-2xl border-2 transition-all ${
                       aiProvider === 'anthropic'
-                        ? 'border-blush bg-blush/10'
-                        : 'border-white/20 bg-white/5'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border-default bg-bg-secondary'
                     }`}
                   >
                     <button
@@ -1134,16 +1134,16 @@ export default function AdminSettings() {
                         <div className="flex items-center gap-4">
                           <div className="text-4xl">🧠</div>
                           <div>
-                            <h3 className="text-xl font-display text-champagne mb-1 flex items-center gap-2">
+                            <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               Anthropic Claude
                               {aiProvider === 'anthropic' && (
-                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blush">
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
                                   <CheckCircleIcon className="h-4 w-4" />
                                   Active
                                 </span>
                               )}
                             </h3>
-                            <p className="text-sm text-champagne/60">Advanced AI with superior reasoning</p>
+                            <p className="text-sm text-text-secondary">Advanced AI with superior reasoning</p>
                           </div>
                         </div>
                       </div>
@@ -1153,7 +1153,7 @@ export default function AdminSettings() {
                     <div className={`px-6 pb-6 space-y-3 transition-opacity ${
                       aiProvider !== 'anthropic' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
-                      <label className="block text-sm font-semibold text-champagne mb-2">
+                      <label className="block text-sm font-semibold text-text-primary mb-2">
                         Select Model:
                       </label>
                       <div className="space-y-2">
@@ -1165,39 +1165,39 @@ export default function AdminSettings() {
                             disabled={aiProvider !== 'anthropic'}
                             className={`w-full text-left rounded-xl border transition-all ${
                               anthropicModel === model.id && aiProvider === 'anthropic'
-                                ? 'border-blush bg-blush/10'
-                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border-default bg-bg-secondary hover:border-border-default hover:bg-bg-elevated'
                             } ${aiProvider !== 'anthropic' ? 'cursor-not-allowed' : ''}`}
                           >
                             <div className="p-4">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h4 className="text-sm font-semibold text-champagne">{model.name}</h4>
+                                    <h4 className="text-sm font-semibold text-text-primary">{model.name}</h4>
                                     {model.badge && (
                                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getBadgeColor(model.badge)}`}>
                                         {model.badge}
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-xs text-champagne/60">{model.description}</p>
+                                  <p className="text-xs text-text-secondary">{model.description}</p>
                                 </div>
                                 {anthropicModel === model.id && aiProvider === 'anthropic' && (
-                                  <CheckCircleIcon className="h-5 w-5 text-blush flex-shrink-0 ml-2" />
+                                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0 ml-2" />
                                 )}
                               </div>
                               <div className="grid grid-cols-3 gap-2 mt-3">
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Input</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.input}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Input</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.input}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Output</div>
-                                  <div className="text-xs font-medium text-champagne">${model.pricing.output}/M</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Output</div>
+                                  <div className="text-xs font-medium text-text-primary">${model.pricing.output}/M</div>
                                 </div>
-                                <div className="bg-white/5 rounded px-2 py-1">
-                                  <div className="text-xs text-champagne/50">Context</div>
-                                  <div className="text-xs font-medium text-champagne">{model.contextWindow}</div>
+                                <div className="bg-bg-secondary rounded px-2 py-1">
+                                  <div className="text-xs text-text-tertiary">Context</div>
+                                  <div className="text-xs font-medium text-text-primary">{model.contextWindow}</div>
                                 </div>
                               </div>
                             </div>
@@ -1225,7 +1225,7 @@ export default function AdminSettings() {
                 </div>
 
                 {/* Save Button */}
-                <div className="mt-6 pt-6 border-t border-white/10">
+                <div className="mt-6 pt-6 border-t border-border-default">
                   <SaveButton
                     fullWidth
                     onClick={handleSaveAISettings}

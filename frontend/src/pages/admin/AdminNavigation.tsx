@@ -531,8 +531,8 @@ export default function AdminNavigation() {
         <div
           className={`group flex items-center gap-2 rounded-xl px-3 py-2.5 transition-colors cursor-pointer ${
             isSelected
-              ? 'bg-blush/20 text-blush'
-              : 'text-champagne/70 hover:bg-white/5 hover:text-champagne'
+              ? 'bg-interactive-default/20 text-primary'
+              : 'text-text-primary/70 hover:bg-bg-elevated hover:text-text-primary'
           }`}
           style={{ paddingLeft: `${depth * 1.5 + 0.75}rem` }}
           onClick={() => {
@@ -543,7 +543,7 @@ export default function AdminNavigation() {
           <Icon className="h-4 w-4 flex-shrink-0" />
           <span className="flex-1 text-sm font-medium truncate">{item.label}</span>
           {!item.isEnabled && (
-            <span className="text-xs text-champagne/40">(disabled)</span>
+            <span className="text-xs text-text-primary/40">(disabled)</span>
           )}
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
@@ -552,7 +552,7 @@ export default function AdminNavigation() {
                 e.stopPropagation();
                 handleMoveUp(item);
               }}
-              className="p-1 hover:text-blush transition-colors"
+              className="p-1 hover:text-primary transition-colors"
               title="Move up"
             >
               <ChevronUpIcon className="h-3.5 w-3.5" />
@@ -563,7 +563,7 @@ export default function AdminNavigation() {
                 e.stopPropagation();
                 handleMoveDown(item);
               }}
-              className="p-1 hover:text-blush transition-colors"
+              className="p-1 hover:text-primary transition-colors"
               title="Move down"
             >
               <ChevronDownIcon className="h-3.5 w-3.5" />
@@ -592,13 +592,13 @@ export default function AdminNavigation() {
   const availableParents = getAvailableParents();
 
   return (
-    <div className="min-h-screen bg-midnight p-6">
+    <div className="min-h-screen bg-bg-primary p-6">
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-3xl text-champagne">Navigation Menu</h1>
-            <p className="mt-1 text-sm text-champagne/60">
+            <h1 className="font-display text-3xl text-text-primary">Navigation Menu</h1>
+            <p className="mt-1 text-sm text-text-primary/60">
               Manage navigation menus across your site
             </p>
           </div>
@@ -621,7 +621,7 @@ export default function AdminNavigation() {
                 setSelectedLanguage('en'); // Always create new items in English
                 resetFormData();
               }}
-              className="flex items-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 hover:shadow-lg"
+              className="flex items-center gap-2 rounded-full bg-interactive-default px-6 py-3 font-semibold text-on-interactive transition-all hover:bg-interactive-default/90 hover:shadow-lg"
             >
               <PlusIcon className="h-5 w-5" />
               Add Menu Item
@@ -630,7 +630,7 @@ export default function AdminNavigation() {
         </div>
 
         {/* Location Tabs */}
-        <div className="-mx-2 flex gap-2 overflow-x-auto border-b border-white/10 pb-4 px-2">
+        <div className="-mx-2 flex gap-2 overflow-x-auto border-b border-border-default pb-4 px-2">
           {locations.filter(location => !['footer', 'mobile'].includes(location.code)).map(location => (
             <button
               key={location.id}
@@ -640,8 +640,8 @@ export default function AdminNavigation() {
               }}
               className={`shrink-0 rounded-xl px-6 py-2.5 font-semibold transition-all ${
                 selectedLocationId === location.id
-                  ? 'bg-blush text-midnight shadow-lg'
-                  : 'bg-white/5 text-champagne/70 hover:bg-white/10 hover:text-champagne'
+                  ? 'bg-interactive-default text-on-interactive shadow-lg'
+                  : 'bg-bg-elevated text-text-primary/70 hover:bg-bg-secondary hover:text-text-primary'
               }`}
             >
               {location.name}
@@ -653,11 +653,11 @@ export default function AdminNavigation() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Left: Menu Tree */}
           <aside className="col-span-1 lg:col-span-5">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <div className="rounded-3xl border border-border-default bg-bg-elevated p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-display text-lg text-champagne">Menu Items</h2>
+                <h2 className="font-display text-lg text-text-primary">Menu Items</h2>
                 {itemsLoading && (
-                  <ArrowPathIcon className="h-5 w-5 animate-spin text-champagne/40" />
+                  <ArrowPathIcon className="h-5 w-5 animate-spin text-text-primary/40" />
                 )}
               </div>
 
@@ -670,8 +670,8 @@ export default function AdminNavigation() {
                       onClick={() => setSelectedLanguage(lang.code)}
                       className={`flex-1 min-w-[120px] rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                         selectedLanguage === lang.code
-                          ? 'bg-blush text-midnight'
-                          : 'bg-white/10 text-champagne/70 hover:bg-white/20'
+                          ? 'bg-interactive-default text-on-interactive'
+                          : 'bg-bg-secondary text-text-primary/70 hover:bg-bg-elevated'
                       }`}
                       title={lang.name}
                     >
@@ -702,8 +702,8 @@ export default function AdminNavigation() {
               <div className="space-y-1">
                 {menuTree.length === 0 ? (
                   <div className="py-12 text-center">
-                    <p className="text-sm text-champagne/40">No menu items yet</p>
-                    <p className="mt-1 text-xs text-champagne/30">Click "Add Menu Item" to create one</p>
+                    <p className="text-sm text-text-primary/40">No menu items yet</p>
+                    <p className="mt-1 text-xs text-text-primary/30">Click "Add Menu Item" to create one</p>
                   </div>
                 ) : (
                   menuTree.map(item => renderTreeItem(item))
@@ -715,15 +715,15 @@ export default function AdminNavigation() {
           {/* Right: Edit Form */}
           <main className="col-span-1 lg:col-span-7">
             {selectedItemId || isCreatingNew ? (
-              <form onSubmit={handleSubmit} className="rounded-3xl border border-white/10 bg-white/5 p-6">
+              <form onSubmit={handleSubmit} className="rounded-3xl border border-border-default bg-bg-elevated p-6">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="font-display text-xl text-champagne">
+                  <h2 className="font-display text-xl text-text-primary">
                     {isCreatingNew ? 'New Menu Item' : 'Edit Menu Item'}
                   </h2>
                   <button
                     type="button"
                     onClick={resetForm}
-                    className="text-champagne/40 transition-colors hover:text-champagne"
+                    className="text-text-primary/40 transition-colors hover:text-text-primary"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
@@ -732,14 +732,14 @@ export default function AdminNavigation() {
                 <div className="space-y-6">
                   {/* Label */}
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-champagne">
-                      Label <span className="text-blush">*</span>
+                    <label className="mb-2 block text-sm font-semibold text-text-primary">
+                      Label <span className="text-primary">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.label}
                       onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                      className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne placeholder-champagne/40 transition-all focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary placeholder:text-text-tertiary/40 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                       placeholder="Enter menu label"
                       required
                     />
@@ -748,7 +748,7 @@ export default function AdminNavigation() {
                         type="button"
                         onClick={handleSaveTranslation}
                         disabled={translationMutation.isPending}
-                        className="mt-2 text-xs text-blush hover:underline"
+                        className="mt-2 text-xs text-primary hover:underline"
                       >
                         {translationMutation.isPending ? 'Saving...' : 'Save translation only'}
                       </button>
@@ -757,8 +757,8 @@ export default function AdminNavigation() {
 
                   {/* Link Type */}
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-champagne">
-                      Link Type <span className="text-blush">*</span>
+                    <label className="mb-2 block text-sm font-semibold text-text-primary">
+                      Link Type <span className="text-primary">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       {(['internal', 'external', 'cms_page', 'none'] as LinkType[]).map(type => (
@@ -768,8 +768,8 @@ export default function AdminNavigation() {
                           onClick={() => setFormData({ ...formData, linkType: type })}
                           className={`rounded-lg px-4 py-2.5 text-sm font-semibold capitalize transition-colors ${
                             formData.linkType === type
-                              ? 'bg-blush text-midnight'
-                              : 'bg-white/10 text-champagne/70 hover:bg-white/20'
+                              ? 'bg-interactive-default text-on-interactive'
+                              : 'bg-bg-secondary text-text-primary/70 hover:bg-bg-elevated'
                           }`}
                         >
                           {type.replace('_', ' ')}
@@ -781,14 +781,14 @@ export default function AdminNavigation() {
                   {/* Conditional Fields Based on Link Type */}
                   {formData.linkType === 'internal' && (
                     <div>
-                      <label className="mb-2 block text-sm font-semibold text-champagne">
-                        Internal URL <span className="text-blush">*</span>
+                      <label className="mb-2 block text-sm font-semibold text-text-primary">
+                        Internal URL <span className="text-primary">*</span>
                       </label>
                       <input
                         type="text"
                         value={formData.linkUrl}
                         onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne placeholder-champagne/40 transition-all focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary placeholder:text-text-tertiary/40 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         placeholder="/products"
                         list="page-suggestions"
                       />
@@ -801,20 +801,20 @@ export default function AdminNavigation() {
                             </option>
                           ))}
                       </datalist>
-                      <p className="mt-1 text-xs text-champagne/40">e.g., /products, /about</p>
+                      <p className="mt-1 text-xs text-text-primary/40">e.g., /products, /about</p>
                     </div>
                   )}
 
                   {formData.linkType === 'external' && (
                     <div>
-                      <label className="mb-2 block text-sm font-semibold text-champagne">
-                        External URL <span className="text-blush">*</span>
+                      <label className="mb-2 block text-sm font-semibold text-text-primary">
+                        External URL <span className="text-primary">*</span>
                       </label>
                       <input
                         type="url"
                         value={formData.linkUrl}
                         onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne placeholder-champagne/40 transition-all focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary placeholder:text-text-tertiary/40 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         placeholder="https://example.com"
                       />
                     </div>
@@ -822,13 +822,13 @@ export default function AdminNavigation() {
 
                   {formData.linkType === 'cms_page' && (
                     <div>
-                      <label className="mb-2 block text-sm font-semibold text-champagne">
-                        CMS Page <span className="text-blush">*</span>
+                      <label className="mb-2 block text-sm font-semibold text-text-primary">
+                        CMS Page <span className="text-primary">*</span>
                       </label>
                       <select
                         value={formData.cmsPageId || ''}
                         onChange={(e) => setFormData({ ...formData, cmsPageId: Number(e.target.value) || null })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne transition-all focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
                         <option value="">Select a page...</option>
                         {cmsPages.map(page => (
@@ -842,13 +842,13 @@ export default function AdminNavigation() {
 
                   {/* Parent Item */}
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-champagne">
+                    <label className="mb-2 block text-sm font-semibold text-text-primary">
                       Parent Item (Optional)
                     </label>
                     <select
                       value={formData.parentId || ''}
                       onChange={(e) => setFormData({ ...formData, parentId: Number(e.target.value) || null })}
-                      className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne transition-all focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
                       <option value="">None (root level)</option>
                       {availableParents.map(parent => (
@@ -857,7 +857,7 @@ export default function AdminNavigation() {
                         </option>
                       ))}
                     </select>
-                    <p className="mt-1 text-xs text-champagne/40">Select a parent to nest this item</p>
+                    <p className="mt-1 text-xs text-text-primary/40">Select a parent to nest this item</p>
                   </div>
 
                   {/* Open in New Tab */}
@@ -868,9 +868,9 @@ export default function AdminNavigation() {
                         id="openInNewTab"
                         checked={formData.openInNewTab}
                         onChange={(e) => setFormData({ ...formData, openInNewTab: e.target.checked })}
-                        className="h-5 w-5 rounded border-white/20 bg-white/10 text-blush focus:ring-2 focus:ring-blush/20"
+                        className="h-5 w-5 rounded border-border-default bg-bg-secondary text-primary focus:ring-2 focus:ring-primary/20"
                       />
-                      <label htmlFor="openInNewTab" className="text-sm font-medium text-champagne">
+                      <label htmlFor="openInNewTab" className="text-sm font-medium text-text-primary">
                         Open in new tab
                       </label>
                     </div>
@@ -883,19 +883,19 @@ export default function AdminNavigation() {
                       id="enabled"
                       checked={formData.isEnabled}
                       onChange={(e) => setFormData({ ...formData, isEnabled: e.target.checked })}
-                      className="h-5 w-5 rounded border-white/20 bg-white/10 text-blush focus:ring-2 focus:ring-blush/20"
+                      className="h-5 w-5 rounded border-border-default bg-bg-secondary text-primary focus:ring-2 focus:ring-primary/20"
                     />
-                    <label htmlFor="enabled" className="text-sm font-medium text-champagne">
+                    <label htmlFor="enabled" className="text-sm font-medium text-text-primary">
                       Enabled (visible on site)
                     </label>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 border-t border-white/10 pt-6">
+                  <div className="flex gap-3 border-t border-border-default pt-6">
                     <button
                       type="submit"
                       disabled={createMutation.isPending || updateMutation.isPending}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 disabled:opacity-50"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 font-semibold text-on-interactive transition-all hover:bg-interactive-default/90 disabled:opacity-50"
                     >
                       {createMutation.isPending || updateMutation.isPending ? (
                         <>
@@ -925,11 +925,11 @@ export default function AdminNavigation() {
                 </div>
               </form>
             ) : (
-              <div className="flex h-96 items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-12 text-center">
+              <div className="flex h-96 items-center justify-center rounded-3xl border border-border-default bg-bg-elevated p-12 text-center">
                 <div>
-                  <ChevronRightIcon className="mx-auto h-12 w-12 text-champagne/20" />
-                  <p className="mt-4 text-champagne/70">Select a menu item to edit</p>
-                  <p className="mt-1 text-sm text-champagne/40">or click "Add Menu Item" to create a new one</p>
+                  <ChevronRightIcon className="mx-auto h-12 w-12 text-text-primary/20" />
+                  <p className="mt-4 text-text-primary/70">Select a menu item to edit</p>
+                  <p className="mt-1 text-sm text-text-primary/40">or click "Add Menu Item" to create a new one</p>
                 </div>
               </div>
             )}
@@ -939,22 +939,22 @@ export default function AdminNavigation() {
         {/* AI Generation Modal */}
         {showAIModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-midnight p-8">
+            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border-default bg-bg-primary p-8">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
                     <SparklesIcon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="font-display text-2xl text-champagne">Generate Navigation with AI</h2>
-                    <p className="text-sm text-champagne/60">
+                    <h2 className="font-display text-2xl text-text-primary">Generate Navigation with AI</h2>
+                    <p className="text-sm text-text-primary/60">
                       AI will analyze your site and create a logical menu structure
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowAIModal(false)}
-                  className="text-champagne/40 transition-colors hover:text-champagne"
+                  className="text-text-primary/40 transition-colors hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -962,7 +962,7 @@ export default function AdminNavigation() {
 
               {/* Style Selector */}
               <div className="mb-6">
-                <label className="mb-3 block text-sm font-semibold text-champagne">Style</label>
+                <label className="mb-3 block text-sm font-semibold text-text-primary">Style</label>
                 <div className="grid grid-cols-3 gap-3">
                   {(['minimal', 'balanced', 'comprehensive'] as const).map(style => (
                     <button
@@ -970,15 +970,15 @@ export default function AdminNavigation() {
                       onClick={() => setAiStyle(style)}
                       className={`rounded-xl px-4 py-3 text-sm font-semibold capitalize transition-all ${
                         aiStyle === style
-                          ? 'bg-blush text-midnight shadow-lg'
-                          : 'bg-white/5 text-champagne/70 hover:bg-white/10'
+                          ? 'bg-interactive-default text-on-interactive shadow-lg'
+                          : 'bg-bg-elevated text-text-primary/70 hover:bg-bg-secondary'
                       }`}
                     >
                       {style}
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-champagne/50">
+                <p className="mt-2 text-xs text-text-primary/50">
                   {aiStyle === 'minimal' && 'Essential pages only, flat structure (5-6 items)'}
                   {aiStyle === 'balanced' && 'Important pages with logical grouping (6-8 items)'}
                   {aiStyle === 'comprehensive' && 'Most pages included, use nesting (8-12 items)'}
@@ -1011,36 +1011,36 @@ export default function AdminNavigation() {
                 <div className="space-y-6">
                   {/* AI Reasoning */}
                   {aiReasoning && (
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <h3 className="mb-2 text-sm font-semibold text-champagne">AI Reasoning:</h3>
-                      <p className="text-sm text-champagne/70">{aiReasoning}</p>
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-4">
+                      <h3 className="mb-2 text-sm font-semibold text-text-primary">AI Reasoning:</h3>
+                      <p className="text-sm text-text-primary/70">{aiReasoning}</p>
                     </div>
                   )}
 
                   {/* Menu Preview */}
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                    <h3 className="mb-4 text-sm font-semibold text-champagne">
+                  <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <h3 className="mb-4 text-sm font-semibold text-text-primary">
                       Generated Menu ({generatedMenuItems.length} top-level items)
                     </h3>
                     <div className="space-y-2">
                       {generatedMenuItems.map((item, index) => (
-                        <div key={index} className="rounded-lg bg-white/5 p-3">
+                        <div key={index} className="rounded-lg bg-bg-elevated p-3">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-champagne">{item.label}</span>
-                            <span className="rounded bg-white/10 px-2 py-0.5 text-xs text-champagne/60">
+                            <span className="text-sm font-semibold text-text-primary">{item.label}</span>
+                            <span className="rounded bg-bg-secondary px-2 py-0.5 text-xs text-text-primary/60">
                               {item.linkType}
                             </span>
                             {item.linkUrl && (
-                              <span className="text-xs text-champagne/40">{item.linkUrl}</span>
+                              <span className="text-xs text-text-primary/40">{item.linkUrl}</span>
                             )}
                           </div>
                           {item.reasoning && (
-                            <p className="mt-1 text-xs text-champagne/50">{item.reasoning}</p>
+                            <p className="mt-1 text-xs text-text-primary/50">{item.reasoning}</p>
                           )}
                           {item.children && item.children.length > 0 && (
-                            <div className="ml-4 mt-2 space-y-1 border-l-2 border-white/10 pl-3">
+                            <div className="ml-4 mt-2 space-y-1 border-l-2 border-border-default pl-3">
                               {item.children.map((child, childIndex) => (
-                                <div key={childIndex} className="text-sm text-champagne/70">
+                                <div key={childIndex} className="text-sm text-text-primary/70">
                                   → {child.label}
                                 </div>
                               ))}
@@ -1055,7 +1055,7 @@ export default function AdminNavigation() {
                   <div className="flex gap-3">
                     <button
                       onClick={handleApplyGeneratedMenu}
-                      className="flex-1 flex items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 font-semibold text-midnight transition-all hover:bg-blush/90 hover:shadow-lg"
+                      className="flex-1 flex items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 font-semibold text-on-interactive transition-all hover:bg-interactive-default/90 hover:shadow-lg"
                     >
                       <CheckIcon className="h-5 w-5" />
                       Apply This Menu
@@ -1063,7 +1063,7 @@ export default function AdminNavigation() {
                     <button
                       onClick={handleGenerateMenu}
                       disabled={aiGenerateMutation.isPending}
-                      className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 font-semibold text-champagne transition-all hover:bg-white/20 disabled:opacity-50"
+                      className="flex items-center gap-2 rounded-full bg-bg-secondary px-6 py-3 font-semibold text-text-primary transition-all hover:bg-bg-elevated disabled:opacity-50"
                     >
                       <ArrowPathIcon className="h-5 w-5" />
                       Regenerate
@@ -1073,7 +1073,7 @@ export default function AdminNavigation() {
                         setShowAIModal(false);
                         setGeneratedMenuItems(null);
                       }}
-                      className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 font-semibold text-champagne transition-all hover:bg-white/20"
+                      className="flex items-center gap-2 rounded-full bg-bg-secondary px-6 py-3 font-semibold text-text-primary transition-all hover:bg-bg-elevated"
                     >
                       Cancel
                     </button>

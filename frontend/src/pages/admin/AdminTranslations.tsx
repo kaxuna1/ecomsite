@@ -334,7 +334,7 @@ export default function AdminTranslations() {
   // Character count helpers
   const getCharCount = (text: string) => text.length;
   const getCharCountColor = (count: number, ideal: number, max: number) => {
-    if (count === 0) return 'text-champagne/40';
+    if (count === 0) return 'text-text-primary/40';
     if (count < ideal) return 'text-amber-400';
     if (count > max) return 'text-rose-400';
     return 'text-emerald-400';
@@ -350,8 +350,8 @@ export default function AdminTranslations() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex-1">
-            <h1 className="font-display text-3xl text-champagne">Product Translations</h1>
-            <p className="mt-1 text-sm text-champagne/70">
+            <h1 className="font-display text-3xl text-text-primary">Product Translations</h1>
+            <p className="mt-1 text-sm text-text-primary/70">
               Manage product translations for different languages
             </p>
           </div>
@@ -360,14 +360,14 @@ export default function AdminTranslations() {
           <div className="flex flex-col gap-3 sm:items-end">
             {!languagesLoading && (
               <div className="flex items-center gap-3">
-                <GlobeAltIcon className="h-5 w-5 text-champagne/60" />
+                <GlobeAltIcon className="h-5 w-5 text-text-primary/60" />
                 <select
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
-                  className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="rounded-xl border border-border-default bg-bg-secondary px-4 py-2 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
                   {languages.map((lang) => (
-                    <option key={lang.code} value={lang.code} className="bg-midnight">
+                    <option key={lang.code} value={lang.code} className="bg-bg-primary">
                       {lang.nativeName} ({lang.code.toUpperCase()})
                     </option>
                   ))}
@@ -377,11 +377,11 @@ export default function AdminTranslations() {
             
             {products && products.length > 0 && (
               <div className="flex items-center gap-2 text-sm">
-                <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5">
+                <div className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-3 py-1.5">
                   <CheckCircleSolidIcon className="h-4 w-4 text-emerald-400" />
-                  <span className="text-champagne/80">{overallCompletionPercentage}% Complete</span>
+                  <span className="text-text-primary/80">{overallCompletionPercentage}% Complete</span>
                 </div>
-                <div className="rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-champagne/80">
+                <div className="rounded-full border border-border-default bg-bg-elevated px-3 py-1.5 text-text-primary/80">
                   {translationStatuses.filter(s => s.completionPercentage === 100).length} / {products.length}
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default function AdminTranslations() {
         </div>
 
         {/* Auto-save toggle */}
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-border-default bg-bg-elevated px-4 py-3">
           <div className="flex items-center gap-3">
             {hasUnsavedChanges && (
               <motion.div
@@ -403,7 +403,7 @@ export default function AdminTranslations() {
               </motion.div>
             )}
             {saveMutation.isPending && (
-              <div className="flex items-center gap-2 text-sm text-blush">
+              <div className="flex items-center gap-2 text-sm text-primary">
                 <ArrowPathIcon className="h-4 w-4 animate-spin" />
                 <span>Saving...</span>
               </div>
@@ -421,9 +421,9 @@ export default function AdminTranslations() {
               type="checkbox"
               checked={autoSaveEnabled}
               onChange={(e) => setAutoSaveEnabled(e.target.checked)}
-              className="rounded border-white/20 bg-white/10 text-blush focus:ring-2 focus:ring-blush/20"
+              className="rounded border-border-default bg-bg-secondary text-primary focus:ring-2 focus:ring-primary/20"
             />
-            <span className="text-sm text-champagne/80">Auto-save</span>
+            <span className="text-sm text-text-primary/80">Auto-save</span>
           </label>
         </div>
 
@@ -434,26 +434,26 @@ export default function AdminTranslations() {
             <div className="sticky top-6 space-y-4">
               {/* Search */}
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-primary/40" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full rounded-xl border border-white/20 bg-white/5 py-2.5 pl-11 pr-4 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="w-full rounded-xl border border-border-default bg-bg-elevated py-2.5 pl-11 pr-4 text-text-primary placeholder:text-text-tertiary/40 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               {/* Product List */}
-              <div className="max-h-[calc(100vh-300px)] overflow-y-auto rounded-2xl border border-white/10 bg-white/5">
+              <div className="max-h-[calc(100vh-300px)] overflow-y-auto rounded-2xl border border-border-default bg-bg-elevated">
                 <div className="p-3">
-                  <h2 className="mb-3 px-3 text-sm font-semibold uppercase tracking-wider text-champagne/60">
+                  <h2 className="mb-3 px-3 text-sm font-semibold uppercase tracking-wider text-text-primary/60">
                     Products ({filteredProducts.length})
                   </h2>
                   {productsLoading ? (
                     <div className="space-y-2">
                       {[...Array(5)].map((_, i) => (
-                        <div key={i} className="h-12 animate-pulse rounded-xl bg-white/10" />
+                        <div key={i} className="h-12 animate-pulse rounded-xl bg-bg-secondary" />
                       ))}
                     </div>
                   ) : (
@@ -478,8 +478,8 @@ export default function AdminTranslations() {
                             }}
                             className={`group relative w-full rounded-xl px-3 py-2.5 text-left transition-all ${
                               isSelected
-                                ? 'bg-blush text-midnight shadow-lg'
-                                : 'text-champagne hover:bg-white/10'
+                                ? 'bg-interactive-default text-on-interactive shadow-lg'
+                                : 'text-text-primary hover:bg-bg-secondary'
                             }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
@@ -491,7 +491,7 @@ export default function AdminTranslations() {
                               {status && status.completionPercentage > 0 && (
                                 <div className="flex items-center gap-1">
                                   <span className={`text-xs font-medium ${
-                                    isSelected ? 'text-midnight' :
+                                    isSelected ? 'text-on-interactive' :
                                     status.completionPercentage === 100 ? 'text-emerald-400' : 'text-yellow-400'
                                   }`}>
                                     {status.completionPercentage}%
@@ -499,7 +499,7 @@ export default function AdminTranslations() {
                                   {status.completionPercentage === 100 && (
                                     <CheckCircleSolidIcon
                                       className={`h-4 w-4 flex-shrink-0 ${
-                                        isSelected ? 'text-midnight' : 'text-emerald-400'
+                                        isSelected ? 'text-on-interactive' : 'text-emerald-400'
                                       }`}
                                     />
                                   )}
@@ -527,12 +527,12 @@ export default function AdminTranslations() {
                 className="space-y-6"
               >
                 {/* Product Header with Navigation */}
-                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center justify-between rounded-2xl border border-border-default bg-bg-elevated p-4">
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate font-display text-xl text-champagne">
+                    <h2 className="truncate font-display text-xl text-text-primary">
                       {selectedProduct.name}
                     </h2>
-                    <p className="mt-1 text-sm text-champagne/60">
+                    <p className="mt-1 text-sm text-text-primary/60">
                       Translating to {languages.find(l => l.code === selectedLanguage)?.nativeName}
                     </p>
                   </div>
@@ -542,18 +542,18 @@ export default function AdminTranslations() {
                     <button
                       onClick={goToPrevious}
                       disabled={!canGoPrevious}
-                      className="rounded-full border border-white/20 bg-white/5 p-2 text-champagne transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      className="rounded-full border border-border-default bg-bg-elevated p-2 text-text-primary transition-colors hover:bg-bg-secondary disabled:cursor-not-allowed disabled:opacity-30"
                       title="Previous product (←)"
                     >
                       <ChevronLeftIcon className="h-5 w-5" />
                     </button>
-                    <span className="text-sm text-champagne/60">
+                    <span className="text-sm text-text-primary/60">
                       {currentProductIndex + 1} / {products?.length || 0}
                     </span>
                     <button
                       onClick={goToNext}
                       disabled={!canGoNext}
-                      className="rounded-full border border-white/20 bg-white/5 p-2 text-champagne transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      className="rounded-full border border-border-default bg-bg-elevated p-2 text-text-primary transition-colors hover:bg-bg-secondary disabled:cursor-not-allowed disabled:opacity-30"
                       title="Next product (→)"
                     >
                       <ChevronRightIcon className="h-5 w-5" />
@@ -565,22 +565,22 @@ export default function AdminTranslations() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name */}
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Original Name</span>
                       </label>
-                      <p className="rounded-xl border border-white/10 bg-white/5 p-4 text-champagne">
+                      <p className="rounded-xl border border-border-default bg-bg-elevated p-4 text-text-primary">
                         {selectedProduct.name}
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Name *</span>
                         <button
                           type="button"
                           onClick={() => copyFromOriginal('name')}
-                          className="flex items-center gap-1 rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-champagne/80 transition-colors hover:bg-white/10"
+                          className="flex items-center gap-1 rounded-lg border border-border-default bg-bg-elevated px-2 py-1 text-xs text-text-primary/80 transition-colors hover:bg-bg-secondary"
                         >
                           <DocumentDuplicateIcon className="h-3 w-3" />
                           Copy
@@ -590,7 +590,7 @@ export default function AdminTranslations() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         required
                         placeholder="Enter translated name..."
                       />
@@ -598,29 +598,29 @@ export default function AdminTranslations() {
                         <span className={getCharCountColor(getCharCount(formData.name), 40, 60)}>
                           {getCharCount(formData.name)} characters
                         </span>
-                        <span className="text-champagne/40">Ideal: 40-60</span>
+                        <span className="text-text-primary/40">Ideal: 40-60</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Short Description */}
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Short Description
                       </label>
-                      <p className="whitespace-pre-wrap rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-champagne/90">
+                      <p className="whitespace-pre-wrap rounded-xl border border-border-default bg-bg-elevated p-4 text-sm text-text-primary/90">
                         {selectedProduct.shortDescription}
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Short Description *</span>
                         <button
                           type="button"
                           onClick={() => copyFromOriginal('shortDescription')}
-                          className="flex items-center gap-1 rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-champagne/80 transition-colors hover:bg-white/10"
+                          className="flex items-center gap-1 rounded-lg border border-border-default bg-bg-elevated px-2 py-1 text-xs text-text-primary/80 transition-colors hover:bg-bg-secondary"
                         >
                           <DocumentDuplicateIcon className="h-3 w-3" />
                           Copy
@@ -629,7 +629,7 @@ export default function AdminTranslations() {
                       <textarea
                         value={formData.shortDescription}
                         onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-sm text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         rows={3}
                         required
                         placeholder="Enter translated short description..."
@@ -638,29 +638,29 @@ export default function AdminTranslations() {
                         <span className={getCharCountColor(getCharCount(formData.shortDescription), 120, 160)}>
                           {getCharCount(formData.shortDescription)} characters
                         </span>
-                        <span className="text-champagne/40">Ideal: 120-160</span>
+                        <span className="text-text-primary/40">Ideal: 120-160</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Description */}
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Description
                       </label>
-                      <p className="whitespace-pre-wrap rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed text-champagne/90">
+                      <p className="whitespace-pre-wrap rounded-xl border border-border-default bg-bg-elevated p-4 text-sm leading-relaxed text-text-primary/90">
                         {selectedProduct.description}
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Description *</span>
                         <button
                           type="button"
                           onClick={() => copyFromOriginal('description')}
-                          className="flex items-center gap-1 rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-champagne/80 transition-colors hover:bg-white/10"
+                          className="flex items-center gap-1 rounded-lg border border-border-default bg-bg-elevated px-2 py-1 text-xs text-text-primary/80 transition-colors hover:bg-bg-secondary"
                         >
                           <DocumentDuplicateIcon className="h-3 w-3" />
                           Copy
@@ -669,12 +669,12 @@ export default function AdminTranslations() {
                       <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-sm text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         rows={6}
                         required
                         placeholder="Enter translated description..."
                       />
-                      <div className="mt-2 text-xs text-champagne/60">
+                      <div className="mt-2 text-xs text-text-primary/60">
                         {getCharCount(formData.description)} characters
                       </div>
                     </div>
@@ -682,8 +682,8 @@ export default function AdminTranslations() {
 
                   {/* Highlights */}
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Highlights
                       </label>
                       {selectedProduct.highlights && selectedProduct.highlights.length > 0 ? (
@@ -691,7 +691,7 @@ export default function AdminTranslations() {
                           {selectedProduct.highlights.map((h, i) => (
                             <li
                               key={i}
-                              className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-champagne/90"
+                              className="flex items-start gap-2 rounded-xl border border-border-default bg-bg-elevated p-3 text-sm text-text-primary/90"
                             >
                               <CheckCircleSolidIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
                               <span>{h}</span>
@@ -699,12 +699,12 @@ export default function AdminTranslations() {
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm italic text-champagne/40">No highlights</p>
+                        <p className="text-sm italic text-text-primary/40">No highlights</p>
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Translated Highlights
                       </label>
                       <AnimatePresence mode="popLayout">
@@ -720,7 +720,7 @@ export default function AdminTranslations() {
                               type="text"
                               value={highlight}
                               onChange={(e) => updateHighlight(index, e.target.value)}
-                              className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                              className="flex-1 rounded-xl border border-border-default bg-bg-secondary px-4 py-2.5 text-sm text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                               placeholder={`Highlight ${index + 1}...`}
                             />
                             <button
@@ -737,7 +737,7 @@ export default function AdminTranslations() {
                       <button
                         type="button"
                         onClick={addHighlight}
-                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold text-champagne transition-colors hover:border-blush hover:bg-white/10"
+                        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border-default bg-bg-elevated px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-blush hover:bg-bg-secondary"
                       >
                         <PlusIcon className="h-4 w-4" />
                         Add Highlight
@@ -747,27 +747,27 @@ export default function AdminTranslations() {
 
                   {/* Usage */}
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Usage
                       </label>
                       {selectedProduct.usage ? (
-                        <p className="whitespace-pre-wrap rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-champagne/90">
+                        <p className="whitespace-pre-wrap rounded-xl border border-border-default bg-bg-elevated p-4 text-sm text-text-primary/90">
                           {selectedProduct.usage}
                         </p>
                       ) : (
-                        <p className="text-sm italic text-champagne/40">No usage instructions</p>
+                        <p className="text-sm italic text-text-primary/40">No usage instructions</p>
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                      <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Usage</span>
                         {selectedProduct.usage && (
                           <button
                             type="button"
                             onClick={() => copyFromOriginal('usage')}
-                            className="flex items-center gap-1 rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-champagne/80 transition-colors hover:bg-white/10"
+                            className="flex items-center gap-1 rounded-lg border border-border-default bg-bg-elevated px-2 py-1 text-xs text-text-primary/80 transition-colors hover:bg-bg-secondary"
                           >
                             <DocumentDuplicateIcon className="h-3 w-3" />
                             Copy
@@ -777,7 +777,7 @@ export default function AdminTranslations() {
                       <textarea
                         value={formData.usage}
                         onChange={(e) => setFormData({ ...formData, usage: e.target.value })}
-                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-sm text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                         rows={4}
                         placeholder="Enter translated usage instructions..."
                       />
@@ -785,58 +785,58 @@ export default function AdminTranslations() {
                   </div>
 
                   {/* SEO Metadata */}
-                  <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 p-6">
-                    <h3 className="mb-4 flex items-center gap-2 text-lg font-display text-champagne">
-                      <SparklesIcon className="h-5 w-5 text-blush" />
+                  <div className="rounded-2xl border border-border-default bg-gradient-to-br from-white/5 to-white/10 p-6">
+                    <h3 className="mb-4 flex items-center gap-2 text-lg font-display text-text-primary">
+                      <SparklesIcon className="h-5 w-5 text-primary" />
                       SEO Metadata
                     </h3>
                     <div className="grid gap-6 lg:grid-cols-2">
                       <div>
-                        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                           Meta Title
                         </label>
                         <input
                           type="text"
                           value={formData.metaTitle}
                           onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
-                          className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                          className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                           placeholder="SEO title for this product"
                         />
                         <div className="mt-2 flex items-center justify-between text-xs">
                           <span className={getCharCountColor(getCharCount(formData.metaTitle), 50, 60)}>
                             {getCharCount(formData.metaTitle)} characters
                           </span>
-                          <span className="text-champagne/40">Ideal: 50-60</span>
+                          <span className="text-text-primary/40">Ideal: 50-60</span>
                         </div>
                       </div>
                       <div>
-                        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                           Meta Description
                         </label>
                         <input
                           type="text"
                           value={formData.metaDescription}
                           onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
-                          className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-champagne transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                          className="w-full rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                           placeholder="SEO description for this product"
                         />
                         <div className="mt-2 flex items-center justify-between text-xs">
                           <span className={getCharCountColor(getCharCount(formData.metaDescription), 150, 160)}>
                             {getCharCount(formData.metaDescription)} characters
                           </span>
-                          <span className="text-champagne/40">Ideal: 150-160</span>
+                          <span className="text-text-primary/40">Ideal: 150-160</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="sticky bottom-6 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-midnight/95 p-4 shadow-2xl backdrop-blur-sm">
+                  <div className="sticky bottom-6 flex items-center justify-between gap-3 rounded-2xl border border-border-default bg-bg-primary/95 p-4 shadow-2xl backdrop-blur-sm">
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => setSelectedProduct(null)}
-                        className="rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-champagne transition-colors hover:bg-white/10"
+                        className="rounded-full border border-border-default px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-secondary"
                       >
                         Close
                       </button>
@@ -845,7 +845,7 @@ export default function AdminTranslations() {
                       <button
                         type="button"
                         onClick={() => setShowMobileProductList(true)}
-                        className="flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-champagne transition-colors hover:bg-white/10 lg:hidden"
+                        className="flex items-center gap-2 rounded-full border border-border-default px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-secondary lg:hidden"
                       >
                         All Products
                       </button>
@@ -854,7 +854,7 @@ export default function AdminTranslations() {
                     <button
                       type="submit"
                       disabled={saveMutation.isPending || !hasUnsavedChanges}
-                      className="flex items-center gap-2 rounded-full bg-blush px-6 py-2.5 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex items-center gap-2 rounded-full bg-interactive-default px-6 py-2.5 text-sm font-semibold text-on-interactive transition-colors hover:bg-champagne disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {saveMutation.isPending ? (
                         <>
@@ -875,21 +875,21 @@ export default function AdminTranslations() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex min-h-[500px] items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-12 text-center"
+                className="flex min-h-[500px] items-center justify-center rounded-3xl border border-border-default bg-bg-elevated p-12 text-center"
               >
                 <div>
-                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/5">
-                    <GlobeAltIcon className="h-10 w-10 text-champagne/40" />
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-border-default bg-bg-elevated">
+                    <GlobeAltIcon className="h-10 w-10 text-text-primary/40" />
                   </div>
-                  <h3 className="mb-2 text-xl font-display text-champagne">
+                  <h3 className="mb-2 text-xl font-display text-text-primary">
                     Select a Product
                   </h3>
-                  <p className="mx-auto max-w-md text-sm text-champagne/60">
+                  <p className="mx-auto max-w-md text-sm text-text-primary/60">
                     Choose a product from the sidebar to start translating its content to {languages.find(l => l.code === selectedLanguage)?.nativeName || 'another language'}
                   </p>
                   <button
                     onClick={() => setShowMobileProductList(true)}
-                    className="mt-6 rounded-full border border-white/20 bg-blush px-6 py-2.5 text-sm font-semibold text-midnight transition-colors hover:bg-champagne lg:hidden"
+                    className="mt-6 rounded-full border border-border-default bg-interactive-default px-6 py-2.5 text-sm font-semibold text-on-interactive transition-colors hover:bg-champagne lg:hidden"
                   >
                     View Products
                   </button>
@@ -900,8 +900,8 @@ export default function AdminTranslations() {
         </div>
 
         {/* Keyboard shortcuts hint */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="text-center text-xs text-champagne/60">
+        <div className="rounded-xl border border-border-default bg-bg-elevated p-4">
+          <p className="text-center text-xs text-text-primary/60">
             <span className="font-semibold">Keyboard shortcuts:</span> 
             <span className="mx-2">⌘+S / Ctrl+S to save</span>
             <span className="mx-2">← → to navigate products</span>

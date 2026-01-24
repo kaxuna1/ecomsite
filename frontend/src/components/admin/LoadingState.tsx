@@ -10,7 +10,7 @@ export default function LoadingState({ message = 'Loading...', fullScreen = fals
     <div className="flex flex-col items-center justify-center gap-4">
       <div className="relative h-16 w-16">
         <motion.div
-          className="absolute inset-0 rounded-full border-4 border-jade/20"
+          className="absolute inset-0 rounded-full border-4 border-primary/20"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [1, 0.5, 1]
@@ -22,7 +22,7 @@ export default function LoadingState({ message = 'Loading...', fullScreen = fals
           }}
         />
         <motion.div
-          className="absolute inset-0 rounded-full border-4 border-t-jade border-r-transparent border-b-transparent border-l-transparent"
+          className="absolute inset-0 rounded-full border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent"
           animate={{
             rotate: 360
           }}
@@ -33,13 +33,13 @@ export default function LoadingState({ message = 'Loading...', fullScreen = fals
           }}
         />
       </div>
-      <p className="text-sm font-medium text-champagne/70">{message}</p>
+      <p className="text-sm font-medium text-text-secondary">{message}</p>
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-midnight">
+      <div className="flex min-h-screen items-center justify-center bg-bg-primary">
         {content}
       </div>
     );

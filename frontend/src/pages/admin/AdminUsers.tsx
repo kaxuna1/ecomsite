@@ -95,61 +95,61 @@ const AdminUserModal = ({ isOpen, onClose, onSave, user }: AdminUserModalProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-midnight border-2 border-jade/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-champagne mb-6">
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
+        <h2 className="text-2xl font-bold text-text-primary mb-6">
           {user ? 'Edit Admin User' : 'Create Admin User'}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Email *
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Password {!user && '*'}
               </label>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 placeholder={user ? 'Leave blank to keep current password' : ''}
                 required={!user}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Name *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-champagne/80 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Role *
               </label>
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'super_admin' })}
-                className="w-full px-4 py-2 bg-midnight border border-champagne/30 rounded-md text-champagne focus:outline-none focus:ring-2 focus:ring-jade focus:border-jade"
+                className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 required
               >
                 <option value="admin">Admin</option>
@@ -163,9 +163,9 @@ const AdminUserModal = ({ isOpen, onClose, onSave, user }: AdminUserModalProps) 
                 id="isActive"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="h-4 w-4 text-jade focus:ring-jade border-champagne/30 rounded"
+                className="h-4 w-4 text-primary focus:ring-primary border-border-default rounded"
               />
-              <label htmlFor="isActive" className="ml-2 block text-sm text-champagne">
+              <label htmlFor="isActive" className="ml-2 block text-sm text-text-primary">
                 Active
               </label>
             </div>
@@ -175,14 +175,14 @@ const AdminUserModal = ({ isOpen, onClose, onSave, user }: AdminUserModalProps) 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-champagne/30 text-champagne rounded-md hover:bg-champagne/10 transition-colors"
+              className="flex-1 px-4 py-2 border border-border-default text-text-primary rounded-md hover:bg-bg-secondary transition-colors"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-jade text-midnight rounded-md hover:bg-jade/90 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-interactive-default text-on-interactive rounded-md hover:bg-interactive-hover transition-colors disabled:opacity-50"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Saving...' : user ? 'Update' : 'Create'}
@@ -205,22 +205,22 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, userName }: DeleteConf
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-midnight/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-midnight border-2 border-blush/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-champagne mb-4">Confirm Delete</h2>
-        <p className="text-champagne/80 mb-6">
-          Are you sure you want to delete admin user <strong className="text-blush">{userName}</strong>? This action cannot be undone.
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
+        <h2 className="text-2xl font-bold text-text-primary mb-4">Confirm Delete</h2>
+        <p className="text-text-primary mb-6">
+          Are you sure you want to delete admin user <strong className="text-red-400">{userName}</strong>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-champagne/30 text-champagne rounded-md hover:bg-champagne/10 transition-colors"
+            className="flex-1 px-4 py-2 border border-border-default text-text-primary rounded-md hover:bg-bg-secondary transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-blush text-midnight rounded-md hover:bg-blush/90 transition-colors"
+            className="flex-1 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
           >
             Delete
           </button>
@@ -312,18 +312,18 @@ export default function AdminUsers() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-midnight flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-2">
             <UserGroupIcon className="h-8 w-8" />
             Admin Users
           </h1>
-          <p className="text-midnight/70 mt-1">Manage admin user accounts and permissions</p>
+          <p className="text-text-secondary mt-1">Manage admin user accounts and permissions</p>
         </div>
         <button
           onClick={() => {
             setEditingUser(null);
             setIsModalOpen(true);
           }}
-          className="bg-jade text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors flex items-center gap-2"
+          className="bg-interactive-default text-on-interactive px-6 py-2 rounded-md hover:bg-interactive-hover transition-colors flex items-center gap-2"
         >
           <PlusIcon className="h-5 w-5" />
           Create Admin User
@@ -332,49 +332,49 @@ export default function AdminUsers() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-jade"></div>
-          <p className="text-midnight/70 mt-2">Loading admin users...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-text-secondary mt-2">Loading admin users...</p>
         </div>
       ) : (
-        <div className="bg-midnight/50 border border-champagne/20 rounded-lg shadow-xl overflow-hidden">
-          <table className="min-w-full divide-y divide-champagne/20">
-            <thead className="bg-midnight/80">
+        <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl overflow-hidden">
+          <table className="min-w-full divide-y divide-border-default">
+            <thead className="bg-bg-secondary">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Last Login
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-champagne uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-midnight/30 divide-y divide-champagne/10">
+            <tbody className="bg-bg-elevated divide-y divide-border-default">
               {adminUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-jade/10 transition-colors">
+                <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-champagne">{user.name}</div>
+                    <div className="text-sm font-medium text-text-primary">{user.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-champagne/70">{user.email}</div>
+                    <div className="text-sm text-text-secondary">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         user.role === 'super_admin'
-                          ? 'bg-jade/20 text-jade border border-jade/30'
-                          : 'bg-blush/20 text-blush border border-blush/30'
+                          ? 'bg-primary/20 text-primary border border-primary/30'
+                          : 'bg-primary/20 text-primary border border-primary/30'
                       }`}
                     >
                       {user.role === 'super_admin' ? 'Super Admin' : 'Admin'}
@@ -384,28 +384,28 @@ export default function AdminUsers() {
                     <span
                       className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         user.isActive
-                          ? 'bg-jade/20 text-jade border border-jade/30'
-                          : 'bg-blush/20 text-blush border border-blush/30'
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}
                     >
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-champagne/70">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                     {formatDate(user.lastLogin)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(user)}
-                        className="text-jade hover:text-jade/80 transition-colors"
+                        className="text-primary hover:text-primary/80 transition-colors"
                         title="Edit"
                       >
                         <PencilIcon className="h-5 w-5" />
                       </button>
                       <button
                         onClick={() => setDeleteConfirm({ isOpen: true, user })}
-                        className="text-blush hover:text-blush/80 transition-colors"
+                        className="text-red-400 hover:text-red-300 transition-colors"
                         title="Delete"
                       >
                         <TrashIcon className="h-5 w-5" />
@@ -419,8 +419,8 @@ export default function AdminUsers() {
 
           {adminUsers.length === 0 && (
             <div className="text-center py-12">
-              <UserGroupIcon className="mx-auto h-12 w-12 text-champagne/30" />
-              <p className="text-champagne/70 mt-2">No admin users found</p>
+              <UserGroupIcon className="mx-auto h-12 w-12 text-text-tertiary" />
+              <p className="text-text-secondary mt-2">No admin users found</p>
             </div>
           )}
         </div>

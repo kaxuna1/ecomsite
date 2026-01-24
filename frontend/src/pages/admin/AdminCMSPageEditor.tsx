@@ -132,8 +132,8 @@ export default function AdminCMSPageEditor() {
   if (!page) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-display text-champagne mb-4">Page not found</h2>
-        <Link to="/admin/cms" className="text-jade hover:underline">
+        <h2 className="text-2xl font-display text-text-primary mb-4">Page not found</h2>
+        <Link to="/admin/cms" className="text-primary hover:underline">
           Back to CMS
         </Link>
       </div>
@@ -147,22 +147,22 @@ export default function AdminCMSPageEditor() {
         <div>
           <Link
             to="/admin/cms"
-            className="text-sm text-champagne/60 hover:text-champagne mb-2 inline-block"
+            className="text-sm text-text-primary/60 hover:text-text-primary mb-2 inline-block"
           >
             ← Back to CMS
           </Link>
-          <h1 className="font-display text-3xl uppercase tracking-wider text-champagne">
+          <h1 className="font-display text-3xl uppercase tracking-wider text-text-primary">
             Edit Page: {page.title}
           </h1>
-          <p className="text-champagne/60 mt-1">/{page.slug}</p>
+          <p className="text-text-primary/60 mt-1">/{page.slug}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setShowPreview(!showPreview)}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               showPreview
-                ? 'bg-jade text-midnight'
-                : 'bg-white/10 text-champagne hover:bg-white/20'
+                ? 'bg-interactive-default text-on-interactive'
+                : 'bg-bg-secondary text-text-primary hover:bg-bg-elevated'
             }`}
           >
             {showPreview ? '✓ Preview Mode' : 'Show Preview'}
@@ -171,8 +171,8 @@ export default function AdminCMSPageEditor() {
             onClick={handleTogglePublish}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               page.isPublished
-                ? 'bg-champagne/20 text-champagne hover:bg-champagne/30'
-                : 'bg-jade text-midnight hover:bg-jade/90'
+                ? 'bg-text-secondary/20 text-text-primary hover:bg-bg-elevated'
+                : 'bg-interactive-default text-on-interactive hover:bg-interactive-hover'
             }`}
           >
             {page.isPublished ? 'Unpublish' : 'Publish'}
@@ -180,7 +180,7 @@ export default function AdminCMSPageEditor() {
           <Link
             to={`/${page.slug}`}
             target="_blank"
-            className="px-4 py-2 bg-midnight/50 text-champagne rounded-lg hover:bg-midnight/70 transition-colors font-semibold"
+            className="px-4 py-2 bg-bg-primary/50 text-text-primary rounded-lg hover:bg-bg-primary/70 transition-colors font-semibold"
           >
             Open Live Page
           </Link>
@@ -188,57 +188,57 @@ export default function AdminCMSPageEditor() {
       </div>
 
       {/* Page Info */}
-      <div className="bg-midnight/50 rounded-xl border border-white/10 p-6">
-        <h2 className="font-display text-xl uppercase tracking-wide text-champagne mb-4">
+      <div className="bg-bg-primary/50 rounded-xl border border-border-default p-6">
+        <h2 className="font-display text-xl uppercase tracking-wide text-text-primary mb-4">
           Page Information
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-champagne/60 mb-2">Title</label>
+            <label className="block text-sm text-text-primary/60 mb-2">Title</label>
             <input
               type="text"
               value={page.title}
               onChange={(e) => updatePageMutation.mutate({ title: e.target.value })}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+              className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
             />
           </div>
           <div>
-            <label className="block text-sm text-champagne/60 mb-2">Slug</label>
+            <label className="block text-sm text-text-primary/60 mb-2">Slug</label>
             <input
               type="text"
               value={page.slug}
               onChange={(e) => updatePageMutation.mutate({ slug: e.target.value })}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+              className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm text-champagne/60 mb-2">Meta Description</label>
+            <label className="block text-sm text-text-primary/60 mb-2">Meta Description</label>
             <textarea
               value={page.metaDescription || ''}
               onChange={(e) => updatePageMutation.mutate({ metaDescription: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+              className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
             />
           </div>
         </div>
       </div>
 
       {/* Blocks */}
-      <div className="bg-midnight/50 rounded-xl border border-white/10 p-6">
+      <div className="bg-bg-primary/50 rounded-xl border border-border-default p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-xl uppercase tracking-wide text-champagne">
+          <h2 className="font-display text-xl uppercase tracking-wide text-text-primary">
             Page Blocks ({blocks.length})
           </h2>
           <button
             onClick={() => setIsAddingBlock(true)}
-            className="px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+            className="px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
           >
             + Add Block
           </button>
         </div>
 
         {blocks.length === 0 ? (
-          <div className="text-center py-12 text-champagne/50">
+          <div className="text-center py-12 text-text-primary/50">
             No blocks yet. Add your first block to get started!
           </div>
         ) : (
@@ -246,13 +246,13 @@ export default function AdminCMSPageEditor() {
             {blocks.map((block, index) => (
               <div
                 key={block.id}
-                className="bg-white/5 border border-white/10 rounded-lg p-6"
+                className="bg-bg-elevated border border-border-default rounded-lg p-6"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <h3 className="font-display text-lg text-champagne">{block.blockKey}</h3>
-                      <span className="px-3 py-1 bg-jade/20 text-jade rounded-full text-xs font-semibold">
+                      <h3 className="font-display text-lg text-text-primary">{block.blockKey}</h3>
+                      <span className="px-3 py-1 bg-interactive-default/20 text-primary rounded-full text-xs font-semibold">
                         {block.blockType}
                       </span>
                       {!block.isEnabled && (
@@ -261,26 +261,26 @@ export default function AdminCMSPageEditor() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-champagne/60">Position: {block.displayOrder}</p>
+                    <p className="text-sm text-text-primary/60">Position: {block.displayOrder}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handleMoveBlock(block.id, 'up')}
                       disabled={index === 0}
-                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
+                      className="px-3 py-1 bg-bg-secondary text-text-primary rounded hover:bg-bg-elevated transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
                     >
                       ↑
                     </button>
                     <button
                       onClick={() => handleMoveBlock(block.id, 'down')}
                       disabled={index === blocks.length - 1}
-                      className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
+                      className="px-3 py-1 bg-bg-secondary text-text-primary rounded hover:bg-bg-elevated transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-xs sm:text-sm"
                     >
                       ↓
                     </button>
                     <button
                       onClick={() => setEditingBlockId(block.id)}
-                      className="px-3 py-1 bg-jade/20 text-jade rounded hover:bg-jade/30 transition-colors text-xs sm:text-sm"
+                      className="px-3 py-1 bg-interactive-default/20 text-primary rounded hover:bg-interactive-default/30 transition-colors text-xs sm:text-sm"
                     >
                       Edit
                     </button>
@@ -291,7 +291,7 @@ export default function AdminCMSPageEditor() {
                           data: { isEnabled: !block.isEnabled }
                         })
                       }
-                      className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-xs sm:text-sm"
+                      className="px-3 py-1 bg-text-secondary/20 text-text-primary rounded hover:bg-bg-elevated transition-colors text-xs sm:text-sm"
                     >
                       {block.isEnabled ? 'Disable' : 'Enable'}
                     </button>
@@ -305,7 +305,7 @@ export default function AdminCMSPageEditor() {
                 </div>
 
                 {editingBlockId === block.id && (
-                  <div className="mt-4 p-4 bg-midnight/30 rounded-lg border border-white/10">
+                  <div className="mt-4 p-4 bg-bg-primary/30 rounded-lg border border-border-default">
                     <BlockEditor
                       block={block}
                       onSave={(data) =>
@@ -317,8 +317,8 @@ export default function AdminCMSPageEditor() {
                 )}
 
                 {editingBlockId !== block.id && !showPreview && (
-                  <div className="mt-4 p-4 bg-midnight/30 rounded-lg">
-                    <pre className="text-xs text-champagne/60 overflow-auto">
+                  <div className="mt-4 p-4 bg-bg-primary/30 rounded-lg">
+                    <pre className="text-xs text-text-primary/60 overflow-auto">
                       {JSON.stringify(block.content, null, 2)}
                     </pre>
                   </div>
@@ -326,7 +326,7 @@ export default function AdminCMSPageEditor() {
 
                 {editingBlockId !== block.id && showPreview && (
                   <div className="mt-4 bg-white rounded-lg overflow-hidden shadow-2xl">
-                    <div className="p-2 bg-midnight/90 text-champagne/60 text-xs text-center border-b border-white/10">
+                    <div className="p-2 bg-bg-primary/90 text-text-primary/60 text-xs text-center border-b border-border-default">
                       Live Preview
                     </div>
                     <div className="transform scale-90 origin-top">
@@ -340,8 +340,8 @@ export default function AdminCMSPageEditor() {
         )}
 
         {isAddingBlock && (
-          <div className="mt-6 p-6 bg-midnight/30 rounded-lg border border-jade">
-            <h3 className="font-display text-lg text-champagne mb-4">Add New Block</h3>
+          <div className="mt-6 p-6 bg-bg-primary/30 rounded-lg border border-jade">
+            <h3 className="font-display text-lg text-text-primary mb-4">Add New Block</h3>
             <NewBlockForm
               pageId={pageId}
               displayOrder={blocks.length}
@@ -441,19 +441,19 @@ function NewBlockForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-jade/10 border border-jade/30 rounded-lg p-4">
-        <p className="text-sm text-champagne/80">
+      <div className="bg-interactive-default/10 border border-jade/30 rounded-lg p-4">
+        <p className="text-sm text-text-primary/80">
           Select a block type to add to your page. A template will be loaded automatically with sample content.
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-champagne/60 mb-2">Block Type</label>
+          <label className="block text-sm text-text-primary/60 mb-2">Block Type</label>
           <select
             value={blockType}
             onChange={(e) => handleBlockTypeChange(e.target.value)}
-            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+            className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
           >
             {blockTypes.map((type) => (
               <option key={type} value={type}>
@@ -463,27 +463,27 @@ function NewBlockForm({
           </select>
         </div>
         <div>
-          <label className="block text-sm text-champagne/60 mb-2">Block Key</label>
+          <label className="block text-sm text-text-primary/60 mb-2">Block Key</label>
           <input
             type="text"
             value={blockKey}
             onChange={(e) => setBlockKey(e.target.value)}
             placeholder="e.g., hero-main"
             required
-            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-champagne focus:outline-none focus:border-jade"
+            className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
           />
         </div>
       </div>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-sm text-champagne/60">Content (JSON)</label>
+          <label className="block text-sm text-text-primary/60">Content (JSON)</label>
           <button
             type="button"
             onClick={() => handleTemplateToggle(!useTemplate)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               useTemplate
-                ? 'bg-jade/20 text-jade border border-jade/40'
-                : 'bg-white/5 text-champagne/70 border border-white/10 hover:bg-white/10'
+                ? 'bg-interactive-default/20 text-primary border border-jade/40'
+                : 'bg-bg-elevated text-text-primary/70 border border-border-default hover:bg-bg-secondary'
             }`}
           >
             {useTemplate ? '✓ Using Template' : 'Use Template'}
@@ -493,10 +493,10 @@ function NewBlockForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={12}
-          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne font-mono text-sm focus:outline-none focus:border-jade"
+          className="w-full px-4 py-3 bg-bg-elevated border border-border-default rounded-lg text-text-primary font-mono text-sm focus:outline-none focus:border-primary"
           placeholder='{"title": "Example", "description": "..."}'
         />
-        <p className="text-xs text-champagne/50">
+        <p className="text-xs text-text-primary/50">
           {useTemplate
             ? 'Template loaded with sample content. You can edit it or customize after creation.'
             : 'Enter custom JSON or leave empty to use the default template.'}
@@ -505,14 +505,14 @@ function NewBlockForm({
       <div className="flex gap-3">
         <button
           type="submit"
-          className="px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+          className="px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
         >
           Add Block
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 bg-white/10 text-champagne rounded-lg hover:bg-white/20 transition-colors"
+          className="px-4 py-2 bg-bg-secondary text-text-primary rounded-lg hover:bg-bg-elevated transition-colors"
         >
           Cancel
         </button>

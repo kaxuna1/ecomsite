@@ -174,7 +174,7 @@ export default function ProductTable({
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="h-24 animate-pulse rounded-2xl bg-white/5 border border-white/10"
+                        className="h-24 animate-pulse rounded-2xl bg-bg-elevated border border-border-default"
           />
         ))}
       </div>
@@ -183,8 +183,8 @@ export default function ProductTable({
 
   if (products.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
-        <p className="text-champagne/60">No products found</p>
+      <div className="rounded-2xl border border-border-default bg-bg-elevated p-12 text-center">
+        <p className="text-text-secondary">No products found</p>
       </div>
     );
   }
@@ -204,9 +204,9 @@ export default function ProductTable({
                 type="checkbox"
                 checked={selectedIds.length === products.length}
                 onChange={toggleSelectAll}
-                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                        className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
               />
-              <span className="text-sm text-champagne/70">
+              <span className="text-sm text-text-secondary">
                 {selectedIds.length} selected
               </span>
             </motion.div>
@@ -216,21 +216,21 @@ export default function ProductTable({
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleSort('name')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             Name
             <ChevronUpDownIcon className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => handleSort('price')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             Price
             <ChevronUpDownIcon className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => handleSort('inventory')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-champagne/70 transition-colors hover:bg-white/5 hover:text-champagne"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             Stock
             <ChevronUpDownIcon className="h-3.5 w-3.5" />
@@ -264,8 +264,8 @@ export default function ProductTable({
                   <motion.div
                     className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
                       isSelected
-                        ? 'border-blush/50 bg-blush/5 shadow-lg shadow-blush/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl'
+                        ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/10'
+                        : 'border-border-default bg-bg-elevated hover:border-border-strong hover:bg-bg-secondary hover:shadow-xl'
                     }`}
                     whileHover={{ y: -2 }}
                   >
@@ -273,10 +273,10 @@ export default function ProductTable({
                     <div
                       className={`absolute left-0 top-0 bottom-0 w-1 ${
                         status.variant === 'success'
-                          ? 'bg-jade'
+                          ? 'bg-emerald-500'
                           : status.variant === 'warning'
-                          ? 'bg-yellow-400'
-                          : 'bg-rose-400'
+                          ? 'bg-amber-500'
+                          : 'bg-rose-500'
                       }`}
                     />
 
@@ -289,7 +289,7 @@ export default function ProductTable({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(product.id)}
-                              className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-blush transition-all focus:ring-2 focus:ring-blush/20"
+                              className="h-5 w-5 rounded-lg border-border-default bg-bg-elevated text-primary transition-all focus:ring-2 focus:ring-primary/20"
                             />
                           </div>
                         )}
@@ -297,7 +297,7 @@ export default function ProductTable({
                         {/* Product Image */}
                         <div className="flex-shrink-0">
                           {getProductDisplayImage(product) ? (
-                            <div className="relative overflow-hidden rounded-xl ring-1 ring-white/10">
+                            <div className="relative overflow-hidden rounded-xl ring-1 ring-border-default">
                               <img
                                 src={getProductDisplayImage(product)!}
                                 alt={product.name}
@@ -305,8 +305,8 @@ export default function ProductTable({
                               />
                             </div>
                           ) : (
-                            <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10">
-                              <PhotoIcon className="h-8 w-8 text-champagne/20" />
+                            <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-bg-secondary ring-1 ring-border-default">
+                              <PhotoIcon className="h-8 w-8 text-text-tertiary" />
                             </div>
                           )}
                         </div>
@@ -315,10 +315,10 @@ export default function ProductTable({
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex items-start justify-between gap-4">
                             <div className="min-w-0 flex-1">
-                              <h3 className="mb-1 truncate text-lg font-semibold text-champagne group-hover:text-blush transition-colors">
+                              <h3 className="mb-1 truncate text-lg font-semibold text-text-primary group-hover:text-primary transition-colors">
                                 {product.name}
                               </h3>
-                              <p className="truncate text-sm text-champagne/60">
+                              <p className="truncate text-sm text-text-secondary">
                                 {product.shortDescription}
                               </p>
                             </div>
@@ -326,13 +326,13 @@ export default function ProductTable({
                             {/* Badges */}
                             <div className="flex flex-wrap gap-1.5 flex-shrink-0">
                               {product.isNew && (
-                                <span className="flex items-center gap-1 rounded-full bg-jade/20 px-2.5 py-1 text-xs font-semibold text-jade">
+                                <span className="flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">
                                   <StarSolidIcon className="h-3 w-3" />
                                   NEW
                                 </span>
                               )}
                               {product.isFeatured && (
-                                <span className="flex items-center gap-1 rounded-full bg-blush/20 px-2.5 py-1 text-xs font-semibold text-blush">
+                                <span className="flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">
                                   <TagIcon className="h-3 w-3" />
                                   FEATURED
                                 </span>
@@ -345,7 +345,7 @@ export default function ProductTable({
                             {product.categories.map((cat, i) => (
                               <span
                                 key={i}
-                                className="rounded-md bg-white/5 px-2 py-0.5 text-xs text-champagne/60"
+                                className="rounded-md bg-bg-secondary px-2 py-0.5 text-xs text-text-secondary"
                               >
                                 {cat}
                               </span>
@@ -357,7 +357,7 @@ export default function ProductTable({
                         <div className="flex flex-shrink-0 items-center gap-6">
                           {/* Price */}
                           <div className="text-center">
-                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-champagne/50">
+                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-text-tertiary">
                               <CurrencyDollarIcon className="h-3.5 w-3.5" />
                               Price
                             </div>
@@ -366,12 +366,12 @@ export default function ProductTable({
                                 <p className="text-lg font-bold text-rose-400">
                                   ${product.salePrice.toFixed(2)}
                                 </p>
-                                <p className="text-xs text-champagne/40 line-through">
+                                <p className="text-xs text-text-tertiary line-through">
                                   ${product.price.toFixed(2)}
                                 </p>
                               </div>
                             ) : (
-                              <p className="text-lg font-bold text-champagne">
+                              <p className="text-lg font-bold text-text-primary">
                                 ${product.price.toFixed(2)}
                               </p>
                             )}
@@ -379,19 +379,19 @@ export default function ProductTable({
 
                           {/* Stock */}
                           <div className="text-center">
-                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-champagne/50">
+                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-text-tertiary">
                               <CubeIcon className="h-3.5 w-3.5" />
                               Stock
                             </div>
-                            <p className="text-lg font-bold text-champagne">
+                            <p className="text-lg font-bold text-text-primary">
                               {product.inventory}
                             </p>
-                            <p className="text-xs text-champagne/50">units</p>
+                            <p className="text-xs text-text-tertiary">units</p>
                           </div>
 
                           {/* Status */}
                           <div className="text-center">
-                            <div className="mb-1 text-xs text-champagne/50">Status</div>
+                            <div className="mb-1 text-xs text-text-tertiary">Status</div>
                             <Badge variant={status.variant} size="sm">
                               {status.label}
                             </Badge>
@@ -399,39 +399,55 @@ export default function ProductTable({
                         </div>
 
                         {/* Actions - Always Visible */}
-                        <div className="flex flex-shrink-0 items-center gap-1.5 pl-4 border-l border-white/10">
+                        <div className="flex flex-shrink-0 items-center gap-1.5 pl-4 border-l border-border-default">
                           <button
                             onClick={() => onEdit(product)}
-                            className="group/btn flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-blush/20 hover:text-blush hover:scale-110"
-                            title="Edit Product"
+                            className="group/btn relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-primary/20 hover:text-primary hover:scale-110"
                           >
                             <PencilIcon className="h-5 w-5" />
+                            {/* Tooltip */}
+                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/btn:visible group-hover/btn:opacity-100">
+                              Edit Product
+                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                            </div>
                           </button>
 
                           <button
                             onClick={() => onManageVariants(product)}
-                            className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-jade/20 hover:text-jade hover:scale-110"
-                            title="Manage Variants"
+                            className="group/variants relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-emerald-500/20 hover:text-emerald-400 hover:scale-110"
                           >
                             <Squares2X2Icon className="h-5 w-5" />
+                            {/* Tooltip */}
+                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/variants:visible group-hover/variants:opacity-100">
+                              Manage Variants & SKUs
+                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                            </div>
                           </button>
 
                           {onDuplicate && (
                             <button
                               onClick={() => onDuplicate(product)}
-                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-blue-400/20 hover:text-blue-400 hover:scale-110"
-                              title="Duplicate"
+                              className="group/duplicate relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-blue-500/20 hover:text-blue-400 hover:scale-110"
                             >
                               <DocumentDuplicateIcon className="h-5 w-5" />
+                              {/* Tooltip */}
+                              <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/duplicate:visible group-hover/duplicate:opacity-100">
+                                Duplicate Product
+                                <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                              </div>
                             </button>
                           )}
 
                           <button
                             onClick={() => onDelete(product)}
-                            className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-champagne/70 transition-all hover:bg-rose-500/20 hover:text-rose-400 hover:scale-110"
-                            title="Delete"
+                            className="group/delete relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-rose-500/20 hover:text-rose-400 hover:scale-110"
                           >
                             <TrashIcon className="h-5 w-5" />
+                            {/* Tooltip */}
+                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/delete:visible group-hover/delete:opacity-100">
+                              Delete Product
+                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                            </div>
                           </button>
                         </div>
                       </div>
@@ -440,7 +456,7 @@ export default function ProductTable({
                 </div>
 
                 {/* Mobile Card Layout */}
-                <div className="md:hidden rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="md:hidden rounded-2xl border border-border-default bg-bg-elevated p-4">
                   <div className="space-y-4">
                     {/* Header with Image and Selection */}
                     <div className="flex items-start gap-3">
@@ -449,7 +465,7 @@ export default function ProductTable({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelect(product.id)}
-                        className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                        className="mt-1 h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
                       />
                     )}
                     
@@ -457,24 +473,24 @@ export default function ProductTable({
                       <img
                         src={getProductDisplayImage(product)!}
                         alt={product.name}
-                        className="h-20 w-20 rounded-lg object-cover ring-1 ring-white/10"
+                        className="h-20 w-20 rounded-lg object-cover ring-1 ring-border-default"
                       />
                     ) : (
-                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10">
-                        <PhotoIcon className="h-8 w-8 text-champagne/20" />
+                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-bg-secondary ring-1 ring-border-default">
+                        <PhotoIcon className="h-8 w-8 text-text-tertiary" />
                       </div>
                     )}
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-medium text-champagne line-clamp-2">{product.name}</p>
+                        <p className="font-medium text-text-primary line-clamp-2">{product.name}</p>
                         <Badge variant={status.variant} size="sm">{status.label}</Badge>
                       </div>
                       <div className="flex flex-wrap gap-1 mb-1">
                         {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
                         {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
                       </div>
-                      <p className="text-xs text-champagne/40 line-clamp-1">{product.categories.join(' • ')}</p>
+                      <p className="text-xs text-text-tertiary line-clamp-1">{product.categories.join(' • ')}</p>
                     </div>
                   </div>
 
@@ -482,58 +498,74 @@ export default function ProductTable({
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {/* Price */}
                     <div>
-                      <p className="text-xs text-champagne/60 mb-1">Price</p>
+                      <p className="text-xs text-text-secondary mb-1">Price</p>
                       {product.salePrice ? (
                         <div>
                           <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
-                          <p className="text-xs text-champagne/40 line-through">${product.price.toFixed(2)}</p>
+                          <p className="text-xs text-text-tertiary line-through">${product.price.toFixed(2)}</p>
                         </div>
                       ) : (
-                        <p className="font-semibold text-champagne">${product.price.toFixed(2)}</p>
+                        <p className="font-semibold text-text-primary">${product.price.toFixed(2)}</p>
                       )}
                     </div>
 
                     {/* Stock */}
                     <div>
-                      <p className="text-xs text-champagne/60 mb-1">Stock</p>
-                      <p className="font-semibold text-champagne">{product.inventory} units</p>
+                      <p className="text-xs text-text-secondary mb-1">Stock</p>
+                      <p className="font-semibold text-text-primary">{product.inventory} units</p>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border-default">
                     <button
                       onClick={() => onEdit(product)}
-                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blush/10 hover:text-blush"
-                      title="Edit Product"
+                      className="group/edit-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-primary/10 hover:text-primary"
                     >
                       <PencilIcon className="h-5 w-5" />
+                      {/* Tooltip */}
+                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/edit-mobile:visible group-hover/edit-mobile:opacity-100">
+                        Edit Product
+                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                      </div>
                     </button>
 
                     <button
                       onClick={() => onManageVariants(product)}
-                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-jade/10 hover:text-jade"
-                      title="Manage Variants"
+                      className="group/variants-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-emerald-500/10 hover:text-emerald-400"
                     >
                       <Squares2X2Icon className="h-5 w-5" />
+                      {/* Tooltip */}
+                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/variants-mobile:visible group-hover/variants-mobile:opacity-100">
+                        Manage Variants & SKUs
+                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                      </div>
                     </button>
 
                     {onDuplicate && (
                       <button
                         onClick={() => onDuplicate(product)}
-                        className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-blue-500/10 hover:text-blue-400"
-                        title="Duplicate Product"
+                        className="group/duplicate-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-blue-500/10 hover:text-blue-400"
                       >
                         <DocumentDuplicateIcon className="h-5 w-5" />
+                        {/* Tooltip */}
+                        <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/duplicate-mobile:visible group-hover/duplicate-mobile:opacity-100">
+                          Duplicate Product
+                          <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                        </div>
                       </button>
                     )}
 
                     <button
                       onClick={() => onDelete(product)}
-                      className="rounded-lg p-2 text-champagne/70 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
-                      title="Delete Product"
+                      className="group/delete-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-rose-500/10 hover:text-rose-400"
                     >
                       <TrashIcon className="h-5 w-5" />
+                      {/* Tooltip */}
+                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/delete-mobile:visible group-hover/delete-mobile:opacity-100">
+                        Delete Product
+                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                      </div>
                     </button>
                   </div>
                   </div>

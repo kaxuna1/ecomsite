@@ -268,15 +268,15 @@ export default function AdminThemes() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-3xl text-champagne">Theme Management</h1>
-            <p className="mt-1 text-sm text-champagne/70">
+            <h1 className="font-display text-3xl text-text-primary">Theme Management</h1>
+            <p className="mt-1 text-sm text-text-primary/70">
               Customize your store's visual identity with themes
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleImportTheme}
-              className="flex w-full items-center justify-center gap-2 px-5 py-3 bg-white/10 text-champagne border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition-colors sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 px-5 py-3 bg-bg-secondary text-text-primary border border-border-default rounded-xl font-semibold hover:bg-bg-elevated transition-colors sm:w-auto"
             >
               <ArrowUpTrayIcon className="h-5 w-5" />
               Import Theme
@@ -286,7 +286,7 @@ export default function AdminThemes() {
                 setSelectedTheme(null);
                 setShowEditor(true);
               }}
-              className="flex w-full items-center justify-center gap-2 px-6 py-3 bg-blush text-midnight rounded-xl font-semibold hover:bg-blush/90 transition-colors sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 px-6 py-3 bg-interactive-default text-on-interactive rounded-xl font-semibold hover:bg-interactive-default/90 transition-colors sm:w-auto"
             >
               <PlusIcon className="h-5 w-5" />
               Create Theme
@@ -309,24 +309,24 @@ export default function AdminThemes() {
                 <h3 className="text-lg font-semibold text-emerald-400 mb-1">
                   Active Theme
                 </h3>
-                <p className="text-sm text-champagne/80">
+                <p className="text-sm text-text-primary/80">
                   <span className="font-semibold">{activeThemeInfo.name}</span> is currently powering your storefront
                 </p>
               </div>
               {activeTheme && (
                 <div className="flex gap-2">
                   <div
-                    className="h-10 w-10 rounded-lg border-2 border-white/20"
+                    className="h-10 w-10 rounded-lg border-2 border-border-default"
                     style={{ backgroundColor: getPrimaryColor(activeTheme) }}
                     title="Primary Color"
                   />
                   <div
-                    className="h-10 w-10 rounded-lg border-2 border-white/20"
+                    className="h-10 w-10 rounded-lg border-2 border-border-default"
                     style={{ backgroundColor: getSecondaryColor(activeTheme) }}
                     title="Secondary Color"
                   />
                   <div
-                    className="h-10 w-10 rounded-lg border-2 border-white/20"
+                    className="h-10 w-10 rounded-lg border-2 border-border-default"
                     style={{ backgroundColor: getAccentColor(activeTheme) }}
                     title="Accent Color"
                   />
@@ -338,7 +338,7 @@ export default function AdminThemes() {
 
         {/* My Themes Grid */}
         <div>
-          <h2 className="text-2xl font-display text-champagne mb-4">My Themes</h2>
+          <h2 className="text-2xl font-display text-text-primary mb-4">My Themes</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             <AnimatePresence mode="popLayout">
               {themes.map((theme) => (
@@ -352,7 +352,7 @@ export default function AdminThemes() {
                 className={`rounded-2xl border-2 transition-all ${
                   theme.isActive
                     ? 'border-emerald-500 bg-emerald-500/5'
-                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                    : 'border-border-default bg-bg-elevated hover:border-border-default'
                 }`}
               >
                 {/* Color Preview */}
@@ -394,18 +394,18 @@ export default function AdminThemes() {
                 {/* Theme Info */}
                 <div className="p-6 space-y-4">
                   <div>
-                    <h3 className="text-lg font-display text-champagne mb-1">
+                    <h3 className="text-lg font-display text-text-primary mb-1">
                       {theme.displayName}
                     </h3>
                     {theme.description && (
-                      <p className="text-sm text-champagne/60 line-clamp-2">
+                      <p className="text-sm text-text-primary/60 line-clamp-2">
                         {theme.description}
                       </p>
                     )}
                   </div>
 
                   {/* Meta Info */}
-                  <div className="flex items-center gap-4 text-xs text-champagne/50">
+                  <div className="flex items-center gap-4 text-xs text-text-primary/50">
                     <div className="flex items-center gap-1">
                       <ClockIcon className="h-4 w-4" />
                       v{theme.version || 1}
@@ -418,7 +418,7 @@ export default function AdminThemes() {
                   </div>
 
                   {/* Actions */}
-                  <div className="space-y-2 pt-2 border-t border-white/10">
+                  <div className="space-y-2 pt-2 border-t border-border-default">
                     {/* Primary Actions Row */}
                     <div className="flex gap-2">
                       {!theme.isActive && (
@@ -433,7 +433,7 @@ export default function AdminThemes() {
                       )}
                       <button
                         onClick={() => handlePreviewTheme(theme)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white/10 text-champagne border border-white/20 rounded-lg hover:bg-white/20 transition-colors text-sm font-medium"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-bg-secondary text-text-primary border border-border-default rounded-lg hover:bg-bg-elevated transition-colors text-sm font-medium"
                       >
                         <EyeIcon className="h-4 w-4" />
                         Preview
@@ -441,7 +441,7 @@ export default function AdminThemes() {
                       {theme.isActive && (
                         <button
                           onClick={() => handleEditTheme(theme)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blush/20 text-blush border border-blush/30 rounded-lg hover:bg-blush/30 transition-colors text-sm font-medium"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-interactive-default/30 transition-colors text-sm font-medium"
                         >
                           <PencilIcon className="h-4 w-4" />
                           Edit
@@ -490,8 +490,8 @@ export default function AdminThemes() {
         {!isLoadingPresets && presets.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-display text-champagne">Theme Presets</h2>
-              <p className="text-sm text-champagne/60">
+              <h2 className="text-2xl font-display text-text-primary">Theme Presets</h2>
+              <p className="text-sm text-text-primary/60">
                 Professional pre-built themes ready to use
               </p>
             </div>
@@ -504,7 +504,7 @@ export default function AdminThemes() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.2 }}
-                    className="rounded-2xl border-2 border-white/10 bg-white/5 hover:border-blush/30 transition-all overflow-hidden"
+                    className="rounded-2xl border-2 border-border-default bg-bg-elevated hover:border-primary/30 transition-all overflow-hidden"
                   >
                     {/* Color Preview */}
                     <div className="h-32 relative">
@@ -526,7 +526,7 @@ export default function AdminThemes() {
                       {/* Category Badge */}
                       {preset.isFeatured && (
                         <div className="absolute top-3 right-3">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500 text-midnight text-xs font-semibold">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500 text-on-interactive text-xs font-semibold">
                             <SparklesIcon className="h-4 w-4" />
                             Featured
                           </span>
@@ -537,17 +537,17 @@ export default function AdminThemes() {
                     {/* Preset Info */}
                     <div className="p-6 space-y-4">
                       <div>
-                        <h3 className="text-lg font-display text-champagne mb-1">
+                        <h3 className="text-lg font-display text-text-primary mb-1">
                           {preset.displayName}
                         </h3>
-                        <p className="text-sm text-champagne/60 line-clamp-2">
+                        <p className="text-sm text-text-primary/60 line-clamp-2">
                           {preset.description}
                         </p>
                       </div>
 
                       {/* Meta Info */}
-                      <div className="flex items-center gap-2 text-xs text-champagne/50">
-                        <span className="px-2 py-1 rounded-md bg-white/10 capitalize">
+                      <div className="flex items-center gap-2 text-xs text-text-primary/50">
+                        <span className="px-2 py-1 rounded-md bg-bg-secondary capitalize">
                           {preset.category}
                         </span>
                       </div>
@@ -555,7 +555,7 @@ export default function AdminThemes() {
                       {/* Action */}
                       <button
                         onClick={() => handleApplyPreset(preset)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blush/20 text-blush border border-blush/30 rounded-lg hover:bg-blush/30 transition-colors text-sm font-medium"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-interactive-default/30 transition-colors text-sm font-medium"
                       >
                         <SparklesIcon className="h-4 w-4" />
                         Use This Theme
@@ -571,11 +571,11 @@ export default function AdminThemes() {
         {/* Empty State */}
         {themes.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="rounded-full bg-white/5 p-6 mb-4">
-              <PaintBrushIcon className="h-12 w-12 text-champagne/40" />
+            <div className="rounded-full bg-bg-elevated p-6 mb-4">
+              <PaintBrushIcon className="h-12 w-12 text-text-primary/40" />
             </div>
-            <h3 className="text-xl font-display text-champagne mb-2">No themes yet</h3>
-            <p className="text-champagne/60 text-center max-w-md mb-6">
+            <h3 className="text-xl font-display text-text-primary mb-2">No themes yet</h3>
+            <p className="text-text-primary/60 text-center max-w-md mb-6">
               Create your first custom theme to personalize your store's appearance
             </p>
             <button
@@ -583,7 +583,7 @@ export default function AdminThemes() {
                 setSelectedTheme(null);
                 setShowEditor(true);
               }}
-              className="flex items-center gap-2 px-6 py-3 bg-blush text-midnight rounded-xl font-semibold hover:bg-blush/90 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-interactive-default text-on-interactive rounded-xl font-semibold hover:bg-interactive-default/90 transition-colors"
             >
               <PlusIcon className="h-5 w-5" />
               Create Your First Theme

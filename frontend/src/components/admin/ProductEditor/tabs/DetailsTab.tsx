@@ -145,7 +145,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
     const isWarning = current > max * warn;
     const isOver = current > max;
     return (
-      <span className={`text-xs ${isOver ? 'text-rose-400' : isWarning ? 'text-yellow-400' : 'text-champagne/40'}`}>
+      <span className={`text-xs ${isOver ? 'text-rose-400' : isWarning ? 'text-yellow-400' : 'text-text-tertiary'}`}>
         {current}/{max}
       </span>
     );
@@ -154,8 +154,8 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
   return (
     <div className="space-y-8">
       {/* Basic Information */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Basic Information
         </h3>
         <div className="grid gap-6 md:grid-cols-2">
@@ -163,7 +163,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             <div className="mb-2 flex items-center justify-between">
               <label
                 htmlFor="product-name"
-                className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
               >
                 Product Name *
               </label>
@@ -172,7 +172,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             <input
               id="product-name"
               maxLength={100}
-              className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+              className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               placeholder="e.g., Luxia Repair Serum"
               aria-required="true"
               aria-invalid={!!errors.name}
@@ -183,7 +183,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               })}
             />
             {!errors.name && (
-              <p id="name-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="name-hint" className="mt-1 text-xs text-text-tertiary">
                 Clear, descriptive name for your product
               </p>
             )}
@@ -199,7 +199,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             <div className="mb-2 flex items-center justify-between">
               <label
                 htmlFor="inventory"
-                className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
               >
                 Inventory Count *
               </label>
@@ -208,7 +208,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               id="inventory"
               type="number"
               min={0}
-              className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+              className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               placeholder="0"
               aria-required="true"
               aria-invalid={!!errors.inventory}
@@ -220,7 +220,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               })}
             />
             {!errors.inventory && (
-              <p id="inventory-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="inventory-hint" className="mt-1 text-xs text-text-tertiary">
                 Available stock quantity
               </p>
             )}
@@ -246,7 +246,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
           <input
             id="short-description"
             maxLength={150}
-            className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             placeholder="Brief one-line description for product listings"
             aria-required="true"
             aria-invalid={!!errors.shortDescription}
@@ -257,7 +257,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             })}
           />
           {!errors.shortDescription && (
-            <p id="short-desc-hint" className="mt-1 text-xs text-champagne/40">
+            <p id="short-desc-hint" className="mt-1 text-xs text-text-tertiary">
               This appears in product listings and search results
             </p>
           )}
@@ -294,7 +294,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             id="description"
             rows={5}
             maxLength={2000}
-            className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             placeholder="Detailed product description with benefits, features, and usage information"
             aria-required="true"
             aria-invalid={!!errors.description}
@@ -305,7 +305,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             })}
           />
           {!errors.description && (
-            <p id="desc-hint" className="mt-1 text-xs text-champagne/40">
+            <p id="desc-hint" className="mt-1 text-xs text-text-tertiary">
               Comprehensive product information shown on the product page
             </p>
           )}
@@ -319,8 +319,8 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
       </section>
 
       {/* Pricing */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Pricing
         </h3>
         <div className="grid gap-6 md:grid-cols-2">
@@ -332,13 +332,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               Regular Price (USD) *
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-champagne/60">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
               <input
                 id="regular-price"
                 type="number"
                 step="0.01"
                 min={0}
-                className="w-full rounded-full border border-white/20 bg-white/5 pl-8 pr-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                className="w-full rounded-full border border-border-default bg-bg-elevated pl-8 pr-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="0.00"
                 aria-required="true"
                 aria-invalid={!!errors.price}
@@ -351,7 +351,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               />
             </div>
             {!errors.price && (
-              <p id="price-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="price-hint" className="mt-1 text-xs text-text-tertiary">
                 Base price before any discounts
               </p>
             )}
@@ -367,7 +367,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             <div className="mb-2 flex items-center justify-between">
               <label
                 htmlFor="sale-price"
-                className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
               >
                 Sale Price (USD)
               </label>
@@ -378,13 +378,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               )}
             </div>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-champagne/60">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">$</span>
               <input
                 id="sale-price"
                 type="number"
                 step="0.01"
                 min={0}
-                className="w-full rounded-full border border-white/20 bg-white/5 pl-8 pr-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                className="w-full rounded-full border border-border-default bg-bg-elevated pl-8 pr-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="Optional discount price"
                 aria-invalid={!!errors.salePrice}
                 aria-describedby={errors.salePrice ? "sale-price-error" : "sale-price-hint"}
@@ -411,7 +411,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               </div>
             )}
             {!errors.salePrice && !salePrice && (
-              <p id="sale-price-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="sale-price-hint" className="mt-1 text-xs text-text-tertiary">
                 Leave empty if product is not on sale
               </p>
             )}
@@ -426,8 +426,8 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
       </section>
 
       {/* Categories */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Categories *
         </h3>
         <div className="flex gap-2">
@@ -435,13 +435,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             value={categoryInput}
             onChange={(e) => setCategoryInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
-            className="flex-1 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="flex-1 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
             placeholder="Add a category"
           />
           <button
             type="button"
             onClick={addCategory}
-            className="rounded-full bg-blush px-4 py-2 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
+            className="rounded-full bg-interactive-default px-4 py-2 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
           >
             Add
           </button>
@@ -450,13 +450,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
           {categories.map((category) => (
             <span
               key={category}
-              className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-champagne"
+              className="flex items-center gap-2 rounded-full bg-bg-secondary px-3 py-1 text-sm text-text-primary"
             >
               {category}
               <button
                 type="button"
                 onClick={() => removeCategory(category)}
-                className="text-champagne/70 hover:text-champagne"
+                className="text-text-secondary hover:text-text-primary transition-colors"
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>
@@ -467,8 +467,8 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
       </section>
 
       {/* Highlights */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Product Highlights
         </h3>
         <div className="flex gap-2">
@@ -476,13 +476,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             value={highlightInput}
             onChange={(e) => setHighlightInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHighlight())}
-            className="flex-1 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="flex-1 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
             placeholder="Add a highlight"
           />
           <button
             type="button"
             onClick={addHighlight}
-            className="rounded-full bg-blush px-4 py-2 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
+            className="rounded-full bg-interactive-default px-4 py-2 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
           >
             Add
           </button>
@@ -491,13 +491,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
           {highlights.map((highlight) => (
             <span
               key={highlight}
-              className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-champagne"
+              className="flex items-center gap-2 rounded-full bg-bg-secondary px-3 py-1 text-sm text-text-primary"
             >
               {highlight}
               <button
                 type="button"
                 onClick={() => removeHighlight(highlight)}
-                className="text-champagne/70 hover:text-champagne"
+                className="text-text-secondary hover:text-text-primary transition-colors"
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>
@@ -507,21 +507,21 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
       </section>
 
       {/* Usage Instructions */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Usage Instructions
         </h3>
         <textarea
           rows={3}
-          className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+          className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           placeholder="How to use this product"
           {...register('usage')}
         />
       </section>
 
       {/* Product Flags */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
           Product Flags
         </h3>
         <div className="space-y-3">
@@ -529,45 +529,45 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
             <input
               type="checkbox"
               {...register('isNew')}
-              className="h-5 w-5 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+              className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
             />
             <div>
-              <span className="text-sm font-semibold text-champagne">Mark as New</span>
-              <p className="text-xs text-champagne/60">Show "New Arrival" badge on product</p>
+              <span className="text-sm font-semibold text-text-primary">Mark as New</span>
+              <p className="text-xs text-text-secondary">Show "New Arrival" badge on product</p>
             </div>
           </label>
           <label className="flex items-center gap-3">
             <input
               type="checkbox"
               {...register('isFeatured')}
-              className="h-5 w-5 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+              className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
             />
             <div>
-              <span className="text-sm font-semibold text-champagne">Mark as Featured</span>
-              <p className="text-xs text-champagne/60">Highlight product in featured sections</p>
+              <span className="text-sm font-semibold text-text-primary">Mark as Featured</span>
+              <p className="text-xs text-text-secondary">Highlight product in featured sections</p>
             </div>
           </label>
         </div>
       </section>
 
       {/* SEO & Meta Data */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+      <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
         <div className="flex items-start justify-between gap-4">
           <button
             type="button"
             onClick={() => setShowSEO(!showSEO)}
-            className="flex flex-1 items-center justify-between transition-colors hover:text-blush"
+            className="flex flex-1 items-center justify-between transition-colors hover:text-primary"
           >
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-text-primary">
                 SEO & Meta Data
               </h3>
-              <p className="mt-1 text-xs text-champagne/60">
+              <p className="mt-1 text-xs text-text-secondary">
                 Optimize your product for search engines and social media
               </p>
             </div>
             <ChevronDownIcon
-              className={`h-5 w-5 text-champagne transition-transform ${showSEO ? 'rotate-180' : ''}`}
+              className={`h-5 w-5 text-text-primary transition-transform ${showSEO ? 'rotate-180' : ''}`}
             />
           </button>
 
@@ -591,24 +591,24 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               <div className="mb-2 flex items-center justify-between">
                 <label
                   htmlFor="slug"
-                  className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                  className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
                 >
                   URL Slug
                 </label>
                 {slug && (
-                  <span className="text-xs text-champagne/40">
+                  <span className="text-xs text-text-tertiary">
                     /products/{slug}
                   </span>
                 )}
               </div>
               <input
                 id="slug"
-                className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="auto-generated-from-product-name"
                 aria-describedby="slug-hint"
                 {...register('slug')}
               />
-              <p id="slug-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="slug-hint" className="mt-1 text-xs text-text-tertiary">
                 Auto-generated from product name. Edit for custom URLs.
               </p>
             </div>
@@ -618,7 +618,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               <div className="mb-2 flex items-center justify-between">
                 <label
                   htmlFor="meta-title"
-                  className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                  className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
                 >
                   Meta Title
                 </label>
@@ -627,14 +627,14 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               <input
                 id="meta-title"
                 maxLength={60}
-                className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="Leave empty to use product name"
                 aria-describedby="meta-title-hint"
                 {...register('metaTitle', {
                   maxLength: { value: 60, message: 'Meta title should be 60 characters or less' }
                 })}
               />
-              <p id="meta-title-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="meta-title-hint" className="mt-1 text-xs text-text-tertiary">
                 Optimal: 50-60 characters. Appears in search engine results.
               </p>
             </div>
@@ -644,7 +644,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
               <div className="mb-2 flex items-center justify-between">
                 <label
                   htmlFor="meta-description"
-                  className="text-xs font-semibold uppercase tracking-wider text-champagne/60"
+                  className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
                 >
                   Meta Description
                 </label>
@@ -654,14 +654,14 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                 id="meta-description"
                 rows={3}
                 maxLength={160}
-                className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="Compelling description for search results"
                 aria-describedby="meta-desc-hint"
                 {...register('metaDescription', {
                   maxLength: { value: 160, message: 'Meta description should be 160 characters or less' }
                 })}
               />
-              <p id="meta-desc-hint" className="mt-1 text-xs text-champagne/40">
+              <p id="meta-desc-hint" className="mt-1 text-xs text-text-tertiary">
                 Optimal: 150-160 characters. Appears below title in search results.
               </p>
             </div>
@@ -676,13 +676,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                   value={metaKeywordInput}
                   onChange={(e) => setMetaKeywordInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addMetaKeyword())}
-                  className="flex-1 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="flex-1 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Add a keyword"
                 />
                 <button
                   type="button"
                   onClick={addMetaKeyword}
-                  className="rounded-full bg-blush px-4 py-2 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
+                  className="rounded-full bg-interactive-default px-4 py-2 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
                 >
                   Add
                 </button>
@@ -691,13 +691,13 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                 {metaKeywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-champagne"
+                    className="flex items-center gap-2 rounded-full bg-bg-secondary px-3 py-1 text-sm text-text-primary"
                   >
                     {keyword}
                     <button
                       type="button"
                       onClick={() => removeMetaKeyword(keyword)}
-                      className="text-champagne/70 hover:text-champagne"
+                      className="text-text-secondary hover:text-text-primary transition-colors"
                       aria-label={`Remove keyword ${keyword}`}
                     >
                       <XMarkIcon className="h-4 w-4" />
@@ -705,7 +705,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                   </span>
                 ))}
               </div>
-              <p className="mt-1 text-xs text-champagne/40">
+              <p className="mt-1 text-xs text-text-tertiary">
                 Relevant search terms for this product
               </p>
             </div>
@@ -722,12 +722,12 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                 <input
                   id="og-image"
                   type="url"
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://example.com/image.jpg"
                   aria-describedby="og-image-hint"
                   {...register('ogImageUrl')}
                 />
-                <p id="og-image-hint" className="mt-1 text-xs text-champagne/40">
+                <p id="og-image-hint" className="mt-1 text-xs text-text-tertiary">
                   Image shown when shared on social media
                 </p>
               </div>
@@ -743,12 +743,12 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                 <input
                   id="canonical-url"
                   type="url"
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                  className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://example.com/product"
                   aria-describedby="canonical-hint"
                   {...register('canonicalUrl')}
                 />
-                <p id="canonical-hint" className="mt-1 text-xs text-champagne/40">
+                <p id="canonical-hint" className="mt-1 text-xs text-text-tertiary">
                   Preferred URL for duplicate content
                 </p>
               </div>
@@ -759,11 +759,11 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
 
       {/* Custom Attributes */}
       {attributes.length > 0 && (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-champagne">
+        <section className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-primary">
             Custom Attributes
           </h3>
-          <p className="mb-6 text-xs text-champagne/60">
+          <p className="mb-6 text-xs text-text-secondary">
             Additional product properties for filtering and categorization
           </p>
 
@@ -780,7 +780,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                     type="text"
                     value={customAttributes[attr.attributeKey] || ''}
                     onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                    className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                   />
                 )}
 
@@ -790,7 +790,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                     type="number"
                     value={customAttributes[attr.attributeKey] || ''}
                     onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: parseFloat(e.target.value) || '' }, { shouldDirty: true })}
-                    className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                   />
                 )}
 
@@ -801,9 +801,9 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                       type="checkbox"
                       checked={customAttributes[attr.attributeKey] || false}
                       onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.checked }, { shouldDirty: true })}
-                      className="h-5 w-5 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                      className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
                     />
-                    <span className="text-sm text-champagne/80">Enable</span>
+                    <span className="text-sm text-text-primary">Enable</span>
                   </label>
                 )}
 
@@ -812,7 +812,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                   <select
                     value={customAttributes[attr.attributeKey] || ''}
                     onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                    className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                   >
                     <option value="">Select {attr.attributeLabel}</option>
                     {attr.options.map((opt) => (
@@ -838,7 +838,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                               : currentValues.filter((v: string) => v !== opt.value);
                             setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: newValues }, { shouldDirty: true });
                           }}
-                          className="h-5 w-5 rounded border-white/20 bg-white/5 text-blush focus:ring-2 focus:ring-blush/20"
+                          className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
                         />
                         <span className="text-sm text-champagne/80">{opt.label}</span>
                       </label>
@@ -852,7 +852,7 @@ export default function DetailsTab({ form, attributes }: DetailsTabProps) {
                     type="date"
                     value={customAttributes[attr.attributeKey] || ''}
                     onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                    className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                   />
                 )}
               </div>

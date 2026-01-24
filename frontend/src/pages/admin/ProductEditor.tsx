@@ -224,7 +224,7 @@ export default function ProductEditor() {
   if (isLoading && !isNewProduct) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blush border-t-transparent" />
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -246,22 +246,64 @@ export default function ProductEditor() {
           attributes={attributes}
         />
       )}
-      {activeTab === 'media' && !isNewProduct && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="mb-2 text-xl font-bold text-champagne">Product Images</h2>
-            <p className="text-sm text-champagne/60">
-              Manage product images, set featured image, and reorder by dragging
+      {activeTab === 'media' && (
+        isNewProduct ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-border-default bg-bg-elevated p-12 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-bg-secondary">
+              <svg className="h-8 w-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-text-primary">Media Gallery Unavailable</h3>
+            <p className="mb-4 max-w-md text-sm text-text-secondary">
+              Please save the product first to add and manage images. You can upload a main product image in the Product Details tab.
             </p>
           </div>
-          <ProductMediaGallery productId={Number(id)} />
-        </div>
+        ) : (
+          <div className="space-y-6">
+            <div>
+              <h2 className="mb-2 text-xl font-bold text-text-primary">Product Images</h2>
+              <p className="text-sm text-text-secondary">
+                Manage product images, set featured image, and reorder by dragging
+              </p>
+            </div>
+            <ProductMediaGallery productId={Number(id)} />
+          </div>
+        )
       )}
-      {activeTab === 'variants' && !isNewProduct && (
-        <VariantsTab productId={Number(id)} />
+      {activeTab === 'variants' && (
+        isNewProduct ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-border-default bg-bg-elevated p-12 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-bg-secondary">
+              <svg className="h-8 w-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-text-primary">Variants & SKUs Unavailable</h3>
+            <p className="mb-4 max-w-md text-sm text-text-secondary">
+              Please save the product first to create variants with different sizes, colors, or other attributes.
+            </p>
+          </div>
+        ) : (
+          <VariantsTab productId={Number(id)} />
+        )
       )}
-      {activeTab === 'translations' && !isNewProduct && (
-        <TranslationsTab productId={Number(id)} />
+      {activeTab === 'translations' && (
+        isNewProduct ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-border-default bg-bg-elevated p-12 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-bg-secondary">
+              <svg className="h-8 w-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-text-primary">Translations Unavailable</h3>
+            <p className="mb-4 max-w-md text-sm text-text-secondary">
+              Please save the product first to add translations for different languages.
+            </p>
+          </div>
+        ) : (
+          <TranslationsTab productId={Number(id)} />
+        )
       )}
     </EditorLayout>
   );

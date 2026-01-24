@@ -90,14 +90,14 @@ function AdminPromoCodes() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Promo Codes</h1>
-          <p className="mt-2 text-sm text-champagne/60">
+          <p className="mt-2 text-sm text-text-secondary">
             Manage discount codes for your customers
           </p>
         </div>
         <motion.button
           type="button"
           onClick={() => handleOpenModal()}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -108,36 +108,36 @@ function AdminPromoCodes() {
 
       {/* Search */}
       <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search promo codes..."
-          className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+          className="w-full rounded-full border border-border-default bg-bg-elevated py-3 pl-12 pr-4 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
         />
       </div>
 
       {/* Promo Codes List */}
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blush border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       ) : filteredPromoCodes.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10"
+          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
         >
-          <TagIcon className="mb-4 h-16 w-16 text-champagne/40" />
-          <p className="text-lg text-champagne/60">
+          <TagIcon className="mb-4 h-16 w-16 text-text-tertiary" />
+          <p className="text-lg text-text-secondary">
             {searchQuery ? 'No promo codes found' : 'No promo codes yet'}
           </p>
           {!searchQuery && (
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="mt-4 text-sm text-blush hover:underline"
+              className="mt-4 text-sm text-primary hover:underline transition-colors"
             >
               Create your first promo code
             </button>
@@ -220,19 +220,19 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ delay: index * 0.05 }}
-        className="group rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur"
+        className="group rounded-3xl border border-border-default bg-bg-elevated p-6 backdrop-blur"
       >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h3 className="font-display text-2xl uppercase tracking-wider text-blush">
+            <h3 className="font-display text-2xl uppercase tracking-wider text-primary">
               {promo.code}
             </h3>
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wider ${
                 promo.isActive && !isExpired && !isMaxedOut
-                  ? 'bg-jade/20 text-jade'
-                  : 'bg-champagne/20 text-champagne/60'
+                  ? 'bg-primary/20 text-primary'
+                  : 'bg-text-secondary/20 text-text-secondary'
               }`}
             >
               {isExpired ? 'Expired' : isMaxedOut ? 'Maxed Out' : promo.isActive ? 'Active' : 'Inactive'}
@@ -241,8 +241,8 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-xs uppercase tracking-wider text-champagne/60">Discount</p>
-              <p className="mt-1 font-semibold text-champagne">
+              <p className="text-xs uppercase tracking-wider text-text-secondary">Discount</p>
+              <p className="mt-1 font-semibold text-text-primary">
                 {promo.discountType === 'PERCENTAGE'
                   ? `${promo.discountValue}%`
                   : promo.discountType === 'FREE_SHIPPING'
@@ -253,24 +253,24 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
 
             {promo.minimumPurchase && (
               <div>
-                <p className="text-xs uppercase tracking-wider text-champagne/60">Min Purchase</p>
-                <p className="mt-1 font-semibold text-champagne">
+                <p className="text-xs uppercase tracking-wider text-text-secondary">Min Purchase</p>
+                <p className="mt-1 font-semibold text-text-primary">
                   ${promo.minimumPurchase.toFixed(2)}
                 </p>
               </div>
             )}
 
             <div>
-              <p className="text-xs uppercase tracking-wider text-champagne/60">Usage</p>
-              <p className="mt-1 font-semibold text-champagne">
+              <p className="text-xs uppercase tracking-wider text-text-secondary">Usage</p>
+              <p className="mt-1 font-semibold text-text-primary">
                 {promo.usageCount}
                 {promo.maxUsageCount ? ` / ${promo.maxUsageCount}` : ' uses'}
               </p>
             </div>
 
             <div>
-              <p className="text-xs uppercase tracking-wider text-champagne/60">Valid Until</p>
-              <p className="mt-1 font-semibold text-champagne">
+              <p className="text-xs uppercase tracking-wider text-text-secondary">Valid Until</p>
+              <p className="mt-1 font-semibold text-text-primary">
                 {promo.validUntil
                   ? new Date(promo.validUntil).toLocaleDateString()
                   : 'No expiration'}
@@ -283,7 +283,7 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
           <motion.button
             type="button"
             onClick={onViewStats}
-            className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-blush/20 hover:text-blush"
+            className="rounded-full p-2 text-text-secondary transition-colors hover:bg-primary/20 hover:text-primary"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -292,7 +292,7 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
           <motion.button
             type="button"
             onClick={onEdit}
-            className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-blush/20 hover:text-blush"
+            className="rounded-full p-2 text-text-secondary transition-colors hover:bg-primary/20 hover:text-primary"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -301,7 +301,7 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
           <motion.button
             type="button"
             onClick={onDelete}
-            className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-red-500/20 hover:text-red-400"
+            className="rounded-full p-2 text-text-secondary transition-colors hover:bg-red-500/20 hover:text-red-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -349,24 +349,24 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
-        className="w-full max-w-2xl rounded-3xl border border-white/10 bg-midnight p-8"
+        className="w-full max-w-2xl rounded-3xl border border-border-default bg-bg-elevated p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl uppercase tracking-[0.3em]">
+          <h2 className="font-display text-2xl uppercase tracking-[0.3em] text-text-primary">
             {promo ? 'Edit' : 'Create'} Promo Code
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-white/10"
+            className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -374,7 +374,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+            <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
               Code
             </label>
             <input
@@ -384,14 +384,14 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
               onChange={(e) =>
                 setFormData({ ...formData, code: e.target.value.toUpperCase() })
               }
-              className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 uppercase text-champagne focus:border-blush focus:outline-none"
+              className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 uppercase text-text-primary focus:border-primary focus:outline-none transition-colors"
               placeholder="SUMMER2025"
             />
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Discount Type
               </label>
               <select
@@ -399,7 +399,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                 onChange={(e) =>
                   setFormData({ ...formData, discountType: e.target.value as DiscountType })
                 }
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
               >
                 <option value="PERCENTAGE">Percentage</option>
                 <option value="FIXED_AMOUNT">Fixed Amount</option>
@@ -408,7 +408,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             </div>
 
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Discount Value
               </label>
               <input
@@ -420,14 +420,14 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                 onChange={(e) =>
                   setFormData({ ...formData, discountValue: parseFloat(e.target.value) })
                 }
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
               />
             </div>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Min Purchase (Optional)
               </label>
               <input
@@ -441,13 +441,13 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                     minimumPurchase: e.target.value ? parseFloat(e.target.value) : undefined
                   })
                 }
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Max Usage (Optional)
               </label>
               <input
@@ -460,7 +460,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                     maxUsageCount: e.target.value ? parseInt(e.target.value) : undefined
                   })
                 }
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
                 placeholder="Unlimited"
               />
             </div>
@@ -468,7 +468,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Valid From
               </label>
               <input
@@ -476,12 +476,12 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                 required
                 value={formData.validFrom}
                 onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium uppercase tracking-wider text-champagne/80">
+              <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Valid Until (Optional)
               </label>
               <input
@@ -493,7 +493,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
                     validUntil: e.target.value || undefined
                   })
                 }
-                className="mt-2 w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none"
+                className="mt-2 w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -504,9 +504,9 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
               id="isActive"
               checked={formData.isActive}
               onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-              className="h-5 w-5 rounded border-white/10 bg-white/5 text-blush focus:ring-blush"
+              className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
             />
-            <label htmlFor="isActive" className="text-sm text-champagne/80">
+            <label htmlFor="isActive" className="text-sm text-text-primary">
               Active (visible to customers)
             </label>
           </div>
@@ -515,14 +515,14 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-full border border-white/10 py-3 text-sm font-medium uppercase tracking-wider text-champagne transition-colors hover:bg-white/5"
+              className="flex-1 rounded-full border border-border-default py-3 text-sm font-medium uppercase tracking-wider text-text-primary transition-colors hover:bg-bg-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 rounded-full bg-blush py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-colors hover:bg-blush/90 disabled:opacity-50"
+              className="flex-1 rounded-full bg-interactive-default py-3 text-sm font-medium uppercase tracking-wider text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50"
             >
               {isSubmitting ? 'Saving...' : promo ? 'Update' : 'Create'}
             </button>
@@ -545,25 +545,25 @@ function DeleteConfirmModal({ onConfirm, onCancel, isDeleting }: DeleteConfirmMo
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
       onClick={onCancel}
     >
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-midnight p-8"
+        className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-4 font-display text-xl uppercase tracking-[0.3em]">Delete Promo Code</h2>
-        <p className="mb-8 text-sm text-champagne/70">
+        <h2 className="mb-4 font-display text-xl uppercase tracking-[0.3em] text-text-primary">Delete Promo Code</h2>
+        <p className="mb-8 text-sm text-text-secondary">
           Are you sure you want to delete this promo code? This action cannot be undone.
         </p>
         <div className="flex gap-4">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-full border border-white/10 py-3 text-sm font-medium uppercase tracking-wider text-champagne transition-colors hover:bg-white/5"
+            className="flex-1 rounded-full border border-border-default py-3 text-sm font-medium uppercase tracking-wider text-text-primary transition-colors hover:bg-bg-secondary"
           >
             Cancel
           </button>
@@ -598,49 +598,49 @@ function StatsModal({ stats, onClose }: StatsModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-midnight p-8"
+        className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-xl uppercase tracking-[0.3em]">
+          <h2 className="font-display text-xl uppercase tracking-[0.3em] text-text-primary">
             {stats.code} Stats
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-white/10"
+            className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <p className="text-xs uppercase tracking-wider text-champagne/60">Total Uses</p>
-            <p className="mt-2 font-display text-3xl text-blush">{stats.usageCount}</p>
+          <div className="rounded-2xl border border-border-default bg-bg-secondary p-6">
+            <p className="text-xs uppercase tracking-wider text-text-secondary">Total Uses</p>
+            <p className="mt-2 font-display text-3xl text-primary">{stats.usageCount}</p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <p className="text-xs uppercase tracking-wider text-champagne/60">
+          <div className="rounded-2xl border border-border-default bg-bg-secondary p-6">
+            <p className="text-xs uppercase tracking-wider text-text-secondary">
               Total Discount Given
             </p>
-            <p className="mt-2 font-display text-3xl text-blush">
+            <p className="mt-2 font-display text-3xl text-primary">
               ${stats.totalDiscountGiven.toFixed(2)}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <p className="text-xs uppercase tracking-wider text-champagne/60">
+          <div className="rounded-2xl border border-border-default bg-bg-secondary p-6">
+            <p className="text-xs uppercase tracking-wider text-text-secondary">
               Average Order Value
             </p>
-            <p className="mt-2 font-display text-3xl text-blush">
+            <p className="mt-2 font-display text-3xl text-primary">
               ${stats.averageOrderValue.toFixed(2)}
             </p>
           </div>
@@ -649,7 +649,7 @@ function StatsModal({ stats, onClose }: StatsModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="mt-8 w-full rounded-full bg-blush py-3 text-sm font-medium uppercase tracking-wider text-midnight transition-colors hover:bg-blush/90"
+          className="mt-8 w-full rounded-full bg-interactive-default py-3 text-sm font-medium uppercase tracking-wider text-on-interactive transition-colors hover:bg-interactive-hover"
         >
           Close
         </button>

@@ -433,8 +433,8 @@ function AdminProducts() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl text-champagne">Product Management</h1>
-          <p className="mt-1 text-sm text-champagne/70">
+          <h1 className="font-display text-3xl text-text-primary">Product Management</h1>
+          <p className="mt-1 text-sm text-text-secondary">
             {filteredAndSortedProducts.length} of {products.length} products
           </p>
         </div>
@@ -475,11 +475,11 @@ function AdminProducts() {
 
         {/* Filter */}
         <div className="relative">
-          <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+          <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
           <select
             value={filterOption}
             onChange={(e) => setFilterOption(e.target.value as FilterOption)}
-            className="w-full appearance-none rounded-full border border-white/20 bg-midnight px-12 py-3 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated px-12 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           >
             <option value="all">All Products</option>
             <option value="in-stock">In Stock</option>
@@ -495,11 +495,11 @@ function AdminProducts() {
       {/* Sort */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-champagne/70">Sort by:</span>
+          <span className="text-sm text-text-secondary">Sort by:</span>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value as SortOption)}
-            className="rounded-full border border-white/20 bg-midnight px-4 py-2 text-sm text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -560,24 +560,24 @@ function AdminProducts() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/90 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-4"
             onClick={closeModal}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-midnight border border-white/10 p-8 shadow-2xl"
+              className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-bg-elevated border border-border-default p-8 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="font-display text-2xl text-champagne">
+                <h2 className="font-display text-2xl text-text-primary">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
                 </h2>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                  className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -586,7 +586,7 @@ function AdminProducts() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Image Upload */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-3">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">
                     Product Image
                   </label>
                   <div className="flex items-start gap-4">
@@ -597,10 +597,10 @@ function AdminProducts() {
                         className="h-32 w-32 rounded-xl object-cover"
                       />
                     )}
-                    <label className="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5 px-6 py-8 transition-colors hover:border-blush hover:bg-white/10">
-                      <PhotoIcon className="h-12 w-12 text-champagne/40" />
-                      <p className="mt-2 text-sm text-champagne/70">Click to upload image</p>
-                      <p className="mt-1 text-xs text-champagne/40">PNG, JPG up to 10MB</p>
+                    <label className="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-default bg-bg-secondary px-6 py-8 transition-colors hover:border-primary hover:bg-bg-elevated">
+                      <PhotoIcon className="h-12 w-12 text-text-tertiary" />
+                      <p className="mt-2 text-sm text-text-secondary">Click to upload image</p>
+                      <p className="mt-1 text-xs text-text-tertiary">PNG, JPG up to 10MB</p>
                       <input
                         type="file"
                         accept="image/*"
@@ -619,11 +619,11 @@ function AdminProducts() {
                 {/* Basic Information */}
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                       Product Name *
                     </label>
                     <input
-                      className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="e.g., Luxia Repair Serum"
                       {...register('name', { required: 'Product name is required' })}
                     />
@@ -631,13 +631,13 @@ function AdminProducts() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                       Inventory Count *
                     </label>
                     <input
                       type="number"
                       min={0}
-                      className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="0"
                       {...register('inventory', { required: 'Inventory count is required', valueAsNumber: true, min: 0 })}
                     />
@@ -648,14 +648,14 @@ function AdminProducts() {
                 {/* Pricing */}
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                       Regular Price (USD) *
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       min={0}
-                      className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="0.00"
                       {...register('price', { required: 'Price is required', valueAsNumber: true, min: 0 })}
                     />
@@ -663,14 +663,14 @@ function AdminProducts() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                       Sale Price (USD)
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       min={0}
-                      className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="Leave empty for no sale"
                       {...register('salePrice', { valueAsNumber: true })}
                     />
@@ -680,11 +680,11 @@ function AdminProducts() {
 
                 {/* Descriptions */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                     Short Description *
                   </label>
                   <input
-                    className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                     placeholder="Brief one-line description"
                     {...register('shortDescription', { required: 'Short description is required' })}
                   />
@@ -692,12 +692,12 @@ function AdminProducts() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                     Full Description *
                   </label>
                   <textarea
                     rows={5}
-                    className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                     placeholder="Detailed product description"
                     {...register('description', { required: 'Description is required' })}
                   />
@@ -714,7 +714,7 @@ function AdminProducts() {
                       value={categoryInput}
                       onChange={(e) => setCategoryInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
-                      className="flex-1 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="flex-1 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="Add a category"
                     />
                     <button
@@ -755,7 +755,7 @@ function AdminProducts() {
                       value={highlightInput}
                       onChange={(e) => setHighlightInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addHighlight())}
-                      className="flex-1 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="flex-1 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="Add a highlight"
                     />
                     <button
@@ -787,49 +787,49 @@ function AdminProducts() {
 
                 {/* Usage Instructions */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                     Usage Instructions
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                    className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                     placeholder="How to use this product"
                     {...register('usage')}
                   />
                 </div>
 
                 {/* SEO Fields */}
-                <div className="space-y-4 rounded-2xl border border-champagne/20 bg-white/5 p-6">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+                <div className="space-y-4 rounded-2xl border border-border-default bg-bg-secondary p-6">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-text-primary">
                     SEO & Metadata (Optional)
                   </h3>
-                  <p className="text-xs text-champagne/60">
+                  <p className="text-xs text-text-secondary">
                     Optimize product for search engines and social media sharing
                   </p>
 
                   <div className="grid gap-4 md:grid-cols-2">
                     {/* Slug */}
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                         URL Slug
                       </label>
                       <input
                         type="text"
-                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         placeholder="auto-generated-from-name"
                         {...register('slug')}
                       />
-                      <p className="mt-1 text-xs text-champagne/40">Leave empty to auto-generate</p>
+                      <p className="mt-1 text-xs text-text-tertiary">Leave empty to auto-generate</p>
                     </div>
 
                     {/* Meta Title */}
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                         Meta Title
                       </label>
                       <input
                         type="text"
-                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         placeholder="Custom title for search engines"
                         {...register('metaTitle')}
                       />
@@ -838,12 +838,12 @@ function AdminProducts() {
 
                   {/* Meta Description */}
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                       Meta Description
                     </label>
                     <textarea
                       rows={2}
-                      className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                      className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                       placeholder="Description shown in search results"
                       {...register('metaDescription')}
                     />
@@ -852,48 +852,48 @@ function AdminProducts() {
                   <div className="grid gap-4 md:grid-cols-2">
                     {/* OG Image URL */}
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                         Social Share Image URL
                       </label>
                       <input
                         type="url"
-                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         placeholder="https://example.com/image.jpg"
                         {...register('ogImageUrl')}
                       />
-                      <p className="mt-1 text-xs text-champagne/40">Uses product image if empty</p>
+                      <p className="mt-1 text-xs text-text-tertiary">Uses product image if empty</p>
                     </div>
 
                     {/* Canonical URL */}
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-champagne/60 mb-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
                         Canonical URL
                       </label>
                       <input
                         type="url"
-                        className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                        className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         placeholder="https://example.com/products/slug"
                         {...register('canonicalUrl')}
                       />
-                      <p className="mt-1 text-xs text-champagne/40">Auto-generated if empty</p>
+                      <p className="mt-1 text-xs text-text-tertiary">Auto-generated if empty</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Custom Attributes */}
                 {attributes.length > 0 && (
-                  <div className="space-y-4 rounded-2xl border border-champagne/20 bg-white/5 p-6">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne">
+                  <div className="space-y-4 rounded-2xl border border-border-default bg-bg-secondary p-6">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-text-primary">
                       Custom Attributes
                     </h3>
-                    <p className="text-xs text-champagne/60">
+                    <p className="text-xs text-text-secondary">
                       Additional product properties for filtering and categorization
                     </p>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       {attributes.map((attr) => (
                         <div key={attr.id}>
-                          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-text-secondary">
                             {attr.attributeLabel} {attr.isRequired && '*'}
                           </label>
 
@@ -903,7 +903,7 @@ function AdminProducts() {
                               type="text"
                               value={customAttributes[attr.attributeKey] || ''}
                               onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                              className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                             />
                           )}
 
@@ -913,7 +913,7 @@ function AdminProducts() {
                               type="number"
                               value={customAttributes[attr.attributeKey] || ''}
                               onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: parseFloat(e.target.value) || '' }, { shouldDirty: true })}
-                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                              className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                             />
                           )}
 
@@ -924,9 +924,9 @@ function AdminProducts() {
                                 type="checkbox"
                                 checked={customAttributes[attr.attributeKey] || false}
                                 onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.checked }, { shouldDirty: true })}
-                                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                                className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
                               />
-                              <span className="text-sm text-champagne/80">Enable</span>
+                              <span className="text-sm text-text-primary">Enable</span>
                             </label>
                           )}
 
@@ -935,7 +935,7 @@ function AdminProducts() {
                             <select
                               value={customAttributes[attr.attributeKey] || ''}
                               onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                              className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                             >
                               <option value="">Select {attr.attributeLabel}</option>
                               {attr.options.map((opt) => (
@@ -961,9 +961,9 @@ function AdminProducts() {
                                         : currentValues.filter((v: string) => v !== opt.value);
                                       setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: newValues }, { shouldDirty: true });
                                     }}
-                                    className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                                    className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
                                   />
-                                  <span className="text-sm text-champagne/80">{opt.label}</span>
+                                  <span className="text-sm text-text-primary">{opt.label}</span>
                                 </label>
                               ))}
                             </div>
@@ -975,7 +975,7 @@ function AdminProducts() {
                               type="date"
                               value={customAttributes[attr.attributeKey] || ''}
                               onChange={(e) => setValue('customAttributes', { ...customAttributes, [attr.attributeKey]: e.target.value }, { shouldDirty: true })}
-                              className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+                              className="w-full rounded-2xl border border-border-default bg-bg-elevated px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                             />
                           )}
                         </div>
@@ -986,27 +986,27 @@ function AdminProducts() {
 
                 {/* Status Flags */}
                 <div className="grid gap-4 md:grid-cols-2">
-                  <label className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/5 p-4 cursor-pointer transition-colors hover:bg-white/10">
+                  <label className="flex items-center gap-3 rounded-2xl border border-border-default bg-bg-secondary p-4 cursor-pointer transition-colors hover:bg-bg-elevated">
                     <input
                       type="checkbox"
-                      className="h-5 w-5 rounded border-white/20 bg-midnight text-blush focus:ring-2 focus:ring-blush/20"
+                      className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
                       {...register('isNew')}
                     />
                     <div>
-                      <p className="font-semibold text-champagne">Mark as New Arrival</p>
-                      <p className="text-xs text-champagne/60">Show "NEW" badge on storefront</p>
+                      <p className="font-semibold text-text-primary">Mark as New Arrival</p>
+                      <p className="text-xs text-text-secondary">Show "NEW" badge on storefront</p>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/5 p-4 cursor-pointer transition-colors hover:bg-white/10">
+                  <label className="flex items-center gap-3 rounded-2xl border border-border-default bg-bg-secondary p-4 cursor-pointer transition-colors hover:bg-bg-elevated">
                     <input
                       type="checkbox"
-                      className="h-5 w-5 rounded border-white/20 bg-midnight text-blush focus:ring-2 focus:ring-blush/20"
+                      className="h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
                       {...register('isFeatured')}
                     />
                     <div>
-                      <p className="font-semibold text-champagne">Mark as Best Seller</p>
-                      <p className="text-xs text-champagne/60">Feature in Best Sellers section</p>
+                      <p className="font-semibold text-text-primary">Mark as Best Seller</p>
+                      <p className="text-xs text-text-secondary">Feature in Best Sellers section</p>
                     </div>
                   </label>
                 </div>
@@ -1016,14 +1016,14 @@ function AdminProducts() {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-champagne transition-colors hover:bg-white/10"
+                    className="rounded-full border border-border-default px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-secondary"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={createMutation.isPending || updateMutation.isPending || categories.length === 0}
-                    className="rounded-full bg-blush px-6 py-3 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="rounded-full bg-interactive-default px-6 py-3 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {createMutation.isPending || updateMutation.isPending
                       ? 'Saving...'
@@ -1052,29 +1052,29 @@ function AdminProducts() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/90 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-4"
             onClick={() => setVariantProduct(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-midnight border border-white/10 p-8 shadow-2xl"
+              className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-bg-elevated border border-border-default p-8 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="font-display text-2xl text-champagne">
+                  <h2 className="font-display text-2xl text-text-primary">
                     Product Variants
                   </h2>
-                  <p className="mt-1 text-sm text-champagne/70">
+                  <p className="mt-1 text-sm text-text-secondary">
                     Manage variants for {variantProduct.name}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setVariantProduct(null)}
-                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                  className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>

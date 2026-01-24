@@ -161,7 +161,7 @@ function AdminVariantOptions() {
   if (optionsLoading || valuesLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blush border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -171,10 +171,10 @@ function AdminVariantOptions() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl uppercase tracking-[0.3em] text-champagne">
+          <h1 className="font-display text-3xl uppercase tracking-[0.3em] text-text-primary">
             Variant Options
           </h1>
-          <p className="mt-2 text-sm text-champagne/60">
+          <p className="mt-2 text-sm text-text-secondary">
             Manage product variant option types (Size, Color, etc.) and their values
           </p>
         </div>
@@ -186,7 +186,7 @@ function AdminVariantOptions() {
           <motion.button
             type="button"
             onClick={() => setShowOptionModal(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -201,14 +201,14 @@ function AdminVariantOptions() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10"
+          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
         >
-          <Squares2X2Icon className="mb-4 h-16 w-16 text-champagne/40" />
-          <p className="text-lg text-champagne/60">No variant options yet</p>
+          <Squares2X2Icon className="mb-4 h-16 w-16 text-text-tertiary" />
+          <p className="text-lg text-text-secondary">No variant options yet</p>
           <button
             type="button"
             onClick={() => setShowOptionModal(true)}
-            className="mt-4 text-sm text-blush hover:underline"
+            className="mt-4 text-sm text-primary hover:underline transition-colors"
           >
             Create your first option type
           </button>
@@ -223,12 +223,12 @@ function AdminVariantOptions() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+                className="rounded-2xl border border-border-default bg-bg-elevated p-6 backdrop-blur-sm"
               >
                 <div className="mb-4 flex items-start justify-between">
                   <div>
-                    <h3 className="text-xl font-semibold text-champagne">{option.name}</h3>
-                    <p className="mt-1 text-sm text-champagne/60">
+                    <h3 className="text-xl font-semibold text-text-primary">{option.name}</h3>
+                    <p className="mt-1 text-sm text-text-secondary">
                       Display Order: {option.displayOrder}
                     </p>
                   </div>
@@ -242,7 +242,7 @@ function AdminVariantOptions() {
                     />
                     <button
                       onClick={() => handleAddValue(option)}
-                      className="flex items-center gap-2 rounded-lg bg-blush/20 px-4 py-2 text-sm font-medium text-blush transition-colors hover:bg-blush/30"
+                      className="flex items-center gap-2 rounded-lg bg-primary/20 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/30"
                     >
                       <PlusIcon className="h-4 w-4" />
                       Add Value
@@ -256,16 +256,16 @@ function AdminVariantOptions() {
                     {values.map((value) => (
                       <div
                         key={value.id}
-                        className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-1.5"
+                        className="flex items-center gap-2 rounded-lg border border-border-default bg-bg-secondary px-3 py-1.5"
                       >
-                        <TagIcon className="h-4 w-4 text-champagne/60" />
-                        <span className="text-sm font-medium text-champagne">{value.value}</span>
-                        <span className="text-xs text-champagne/40">#{value.displayOrder}</span>
+                        <TagIcon className="h-4 w-4 text-text-secondary" />
+                        <span className="text-sm font-medium text-text-primary">{value.value}</span>
+                        <span className="text-xs text-text-tertiary">#{value.displayOrder}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-champagne/40">No values yet</p>
+                  <p className="text-sm text-text-tertiary">No values yet</p>
                 )}
               </motion.div>
             );
@@ -280,24 +280,24 @@ function AdminVariantOptions() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
             onClick={() => setShowOptionModal(false)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-3xl border border-white/10 bg-midnight p-8"
+              className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="font-display text-2xl uppercase tracking-wider text-champagne">
+                <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
                   Create Option Type
                 </h2>
                 <button
                   type="button"
                   onClick={() => setShowOptionModal(false)}
-                  className="rounded-lg p-2 text-champagne/60 transition-colors hover:bg-white/5 hover:text-champagne"
+                  className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -305,25 +305,25 @@ function AdminVariantOptions() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm text-champagne/80">Name *</label>
+                  <label className="mb-2 block text-sm text-text-primary">Name *</label>
                   <input
                     type="text"
                     value={optionNameInput}
                     onChange={(e) => setOptionNameInput(e.target.value)}
                     placeholder="e.g., Material, Scent, Bundle"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                    className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-champagne/80">Display Order</label>
+                  <label className="mb-2 block text-sm text-text-primary">Display Order</label>
                   <input
                     type="number"
                     value={optionDisplayOrder}
                     onChange={(e) => setOptionDisplayOrder(parseInt(e.target.value) || 0)}
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none"
+                    className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary focus:border-primary focus:outline-none transition-colors"
                   />
-                  <p className="mt-1 text-xs text-champagne/40">Lower numbers appear first</p>
+                  <p className="mt-1 text-xs text-text-tertiary">Lower numbers appear first</p>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -331,14 +331,14 @@ function AdminVariantOptions() {
                     type="button"
                     onClick={handleCreateOption}
                     disabled={!optionNameInput.trim() || createOptionMutation.isPending}
-                    className="flex-1 rounded-full bg-blush px-6 py-3 font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 disabled:opacity-50"
+                    className="flex-1 rounded-full bg-interactive-default px-6 py-3 font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover disabled:opacity-50"
                   >
                     {createOptionMutation.isPending ? 'Creating...' : 'Create'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowOptionModal(false)}
-                    className="rounded-full border border-white/10 px-6 py-3 font-medium uppercase tracking-wider text-champagne transition-all hover:bg-white/5"
+                    className="rounded-full border border-border-default px-6 py-3 font-medium uppercase tracking-wider text-text-primary transition-all hover:bg-bg-secondary"
                   >
                     Cancel
                   </button>
@@ -356,7 +356,7 @@ function AdminVariantOptions() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
             onClick={() => {
               setShowValueModal(false);
               setSelectedOption(null);
@@ -366,15 +366,15 @@ function AdminVariantOptions() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-3xl border border-white/10 bg-midnight p-8"
+              className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="font-display text-2xl uppercase tracking-wider text-champagne">
+                  <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
                     Add Value
                   </h2>
-                  <p className="mt-1 text-sm text-champagne/60">for {selectedOption.name}</p>
+                  <p className="mt-1 text-sm text-text-secondary">for {selectedOption.name}</p>
                 </div>
                 <button
                   type="button"
@@ -382,7 +382,7 @@ function AdminVariantOptions() {
                     setShowValueModal(false);
                     setSelectedOption(null);
                   }}
-                  className="rounded-lg p-2 text-champagne/60 transition-colors hover:bg-white/5 hover:text-champagne"
+                  className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -390,25 +390,25 @@ function AdminVariantOptions() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm text-champagne/80">Value *</label>
+                  <label className="mb-2 block text-sm text-text-primary">Value *</label>
                   <input
                     type="text"
                     value={valueInput}
                     onChange={(e) => setValueInput(e.target.value)}
                     placeholder="e.g., Gold, Lavender, 3-Pack"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                    className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm text-champagne/80">Display Order</label>
+                  <label className="mb-2 block text-sm text-text-primary">Display Order</label>
                   <input
                     type="number"
                     value={valueDisplayOrder}
                     onChange={(e) => setValueDisplayOrder(parseInt(e.target.value) || 0)}
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none"
+                    className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary focus:border-primary focus:outline-none transition-colors"
                   />
-                  <p className="mt-1 text-xs text-champagne/40">Lower numbers appear first</p>
+                  <p className="mt-1 text-xs text-text-tertiary">Lower numbers appear first</p>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -416,7 +416,7 @@ function AdminVariantOptions() {
                     type="button"
                     onClick={handleCreateValue}
                     disabled={!valueInput.trim() || createValueMutation.isPending}
-                    className="flex-1 rounded-full bg-blush px-6 py-3 font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 disabled:opacity-50"
+                    className="flex-1 rounded-full bg-interactive-default px-6 py-3 font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover disabled:opacity-50"
                   >
                     {createValueMutation.isPending ? 'Adding...' : 'Add Value'}
                   </button>
@@ -426,7 +426,7 @@ function AdminVariantOptions() {
                       setShowValueModal(false);
                       setSelectedOption(null);
                     }}
-                    className="rounded-full border border-white/10 px-6 py-3 font-medium uppercase tracking-wider text-champagne transition-all hover:bg-white/5"
+                    className="rounded-full border border-border-default px-6 py-3 font-medium uppercase tracking-wider text-text-primary transition-all hover:bg-bg-secondary"
                   >
                     Cancel
                   </button>

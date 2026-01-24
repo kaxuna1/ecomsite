@@ -236,7 +236,7 @@ export default function AdminCMS() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jade"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AdminCMS() {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleOpenFooterEditor}
-            className="px-4 py-2 bg-champagne/20 text-champagne rounded-lg hover:bg-champagne/30 transition-colors font-semibold"
+            className="px-4 py-2 bg-primary/20 text-text-primary rounded-lg hover:bg-primary/30 transition-colors font-semibold"
           >
             Edit Footer
           </button>
@@ -261,7 +261,7 @@ export default function AdminCMS() {
           </button>
           <button
             onClick={() => setShowNewPageModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold"
+            className="flex items-center gap-2 px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
           >
             <PlusIcon className="h-5 w-5" />
             New Page
@@ -271,31 +271,31 @@ export default function AdminCMS() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pages List */}
-        <div className="bg-midnight/50 rounded-xl border border-white/10 overflow-hidden">
-          <div className="border-b border-white/10 px-6 py-4">
-            <h2 className="font-display text-xl uppercase tracking-wide">Pages</h2>
+        <div className="bg-bg-elevated rounded-xl border border-border-default overflow-hidden">
+          <div className="border-b border-border-default px-6 py-4">
+            <h2 className="font-display text-xl uppercase tracking-wide text-text-primary">Pages</h2>
           </div>
-          <div className="divide-y divide-white/10">
+          <div className="divide-y divide-border-default">
             {pages?.map((page) => (
               <div
                 key={page.id}
                 className={`p-6 cursor-pointer transition-colors ${
-                  selectedPageId === page.id ? 'bg-jade/10' : 'hover:bg-white/5'
+                  selectedPageId === page.id ? 'bg-primary/10' : 'hover:bg-bg-secondary'
                 }`}
                 onClick={() => setSelectedPageId(page.id)}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-champagne">{page.title}</h3>
+                    <h3 className="font-semibold text-text-primary">{page.title}</h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <GlobeAltIcon className="h-4 w-4 text-jade" />
-                      <p className="text-sm text-champagne/70 font-mono">/{page.slug}</p>
+                      <GlobeAltIcon className="h-4 w-4 text-primary" />
+                      <p className="text-sm text-text-secondary font-mono">/{page.slug}</p>
                     </div>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                       page.isPublished
-                        ? 'bg-jade/20 text-jade'
+                        ? 'bg-primary/20 text-primary'
                         : 'bg-amber-500/20 text-amber-400'
                     }`}
                   >
@@ -309,7 +309,7 @@ export default function AdminCMS() {
                         e.stopPropagation();
                         handleViewLive(page.slug);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-jade text-midnight rounded hover:bg-jade/90 transition-colors text-sm font-semibold w-full sm:w-auto justify-center sm:justify-start"
+                      className="flex items-center gap-1.5 px-3 py-1 bg-interactive-default text-on-interactive rounded hover:bg-interactive-hover transition-colors text-sm font-semibold w-full sm:w-auto justify-center sm:justify-start"
                     >
                       <EyeIcon className="h-4 w-4" />
                       View Live
@@ -323,21 +323,21 @@ export default function AdminCMS() {
                     className={`px-3 py-1 rounded hover:bg-opacity-80 transition-colors text-sm w-full sm:w-auto ${
                       page.isPublished
                         ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'
-                        : 'bg-jade/20 text-jade hover:bg-jade/30'
+                        : 'bg-primary/20 text-primary hover:bg-primary/30'
                     }`}
                   >
                     {page.isPublished ? 'Unpublish' : 'Publish'}
                   </button>
                   <Link
                     to={`/admin/cms/inline-edit/${page.id}`}
-                    className="px-3 py-1 bg-champagne/20 text-champagne rounded hover:bg-champagne/30 transition-colors text-sm w-full sm:w-auto text-center"
+                    className="px-3 py-1 bg-primary/20 text-text-primary rounded hover:bg-primary/30 transition-colors text-sm w-full sm:w-auto text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Inline Edit
                   </Link>
                   <Link
                     to={`/admin/cms/edit/${page.id}`}
-                    className="px-3 py-1 bg-white/10 text-champagne rounded hover:bg-white/20 transition-colors text-sm w-full sm:w-auto text-center"
+                    className="px-3 py-1 bg-bg-secondary text-text-primary rounded hover:bg-bg-elevated transition-colors text-sm w-full sm:w-auto text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Advanced
@@ -355,7 +355,7 @@ export default function AdminCMS() {
               </div>
             ))}
             {pages?.length === 0 && (
-              <div className="p-12 text-center text-champagne/50">
+              <div className="p-12 text-center text-text-tertiary">
                 No pages yet. Create your first page!
               </div>
             )}
@@ -363,9 +363,9 @@ export default function AdminCMS() {
         </div>
 
         {/* Blocks Preview */}
-        <div className="bg-midnight/50 rounded-xl border border-white/10 overflow-hidden">
-          <div className="border-b border-white/10 px-6 py-4">
-            <h2 className="font-display text-xl uppercase tracking-wide">Page Blocks</h2>
+        <div className="bg-bg-elevated rounded-xl border border-border-default overflow-hidden">
+          <div className="border-b border-border-default px-6 py-4">
+            <h2 className="font-display text-xl uppercase tracking-wide text-text-primary">Page Blocks</h2>
           </div>
           {selectedPageId ? (
             <div className="p-6">
@@ -374,24 +374,24 @@ export default function AdminCMS() {
                   {blocks.map((block) => (
                     <div
                       key={block.id}
-                      className="p-4 bg-white/5 rounded-lg border border-white/10"
+                      className="p-4 bg-bg-secondary rounded-lg border border-border-default"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-semibold text-champagne">{block.blockKey}</p>
-                          <p className="text-sm text-champagne/60 mt-1">Type: {block.blockType}</p>
+                          <p className="font-semibold text-text-primary">{block.blockKey}</p>
+                          <p className="text-sm text-text-secondary mt-1">Type: {block.blockType}</p>
                         </div>
-                        <span className="text-xs text-champagne/50">Position: {block.displayOrder}</span>
+                        <span className="text-xs text-text-tertiary">Position: {block.displayOrder}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-champagne/50 text-center py-12">No blocks in this page</p>
+                <p className="text-text-tertiary text-center py-12">No blocks in this page</p>
               )}
             </div>
           ) : (
-            <div className="p-12 text-center text-champagne/50">
+            <div className="p-12 text-center text-text-tertiary">
               Select a page to view its blocks
             </div>
           )}

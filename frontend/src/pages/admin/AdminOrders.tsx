@@ -116,8 +116,8 @@ function AdminOrders() {
       sortable: true,
       render: (order) => (
         <div>
-          <p className="font-semibold text-champagne">#{order.id}</p>
-          <p className="text-xs text-champagne/50">{formatDate(order.createdAt)}</p>
+          <p className="font-semibold text-text-primary">#{order.id}</p>
+          <p className="text-xs text-text-tertiary">{formatDate(order.createdAt)}</p>
         </div>
       )
     },
@@ -127,10 +127,10 @@ function AdminOrders() {
       sortable: false,
       render: (order) => (
         <div>
-          <p className="font-medium text-champagne">{order.customer.name}</p>
-          <p className="text-sm text-champagne/60">{order.customer.email}</p>
+          <p className="font-medium text-text-primary">{order.customer.name}</p>
+          <p className="text-sm text-text-secondary">{order.customer.email}</p>
           {order.customer.phone && (
-            <p className="text-xs text-champagne/50">{order.customer.phone}</p>
+            <p className="text-xs text-text-tertiary">{order.customer.phone}</p>
           )}
         </div>
       )
@@ -141,8 +141,8 @@ function AdminOrders() {
       sortable: false,
       render: (order) => (
         <div>
-          <p className="text-champagne">{order.items.length} item(s)</p>
-          <p className="text-xs text-champagne/50">
+          <p className="text-text-primary">{order.items.length} item(s)</p>
+          <p className="text-xs text-text-tertiary">
             {order.items.map(item => item.name || `Product ${item.productId}`).join(', ').slice(0, 50)}
             {order.items.map(item => item.name || `Product ${item.productId}`).join(', ').length > 50 ? '...' : ''}
           </p>
@@ -154,7 +154,7 @@ function AdminOrders() {
       label: 'Total',
       sortable: true,
       render: (order) => (
-        <p className="font-semibold text-champagne">${order.total.toFixed(2)}</p>
+        <p className="font-semibold text-text-primary">${order.total.toFixed(2)}</p>
       )
     },
     {
@@ -213,7 +213,7 @@ function AdminOrders() {
             trigger={
               <button
                 type="button"
-                className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
               >
                 <EllipsisVerticalIcon className="h-5 w-5" />
               </button>
@@ -238,8 +238,8 @@ function AdminOrders() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl text-champagne">Order Management</h1>
-          <p className="mt-1 text-sm text-champagne/70">
+          <h1 className="font-display text-3xl text-text-primary">Order Management</h1>
+          <p className="mt-1 text-sm text-text-secondary">
             {filteredOrders.length} of {orders.length} orders
           </p>
         </div>
@@ -265,11 +265,11 @@ function AdminOrders() {
         </div>
 
         <div className="relative">
-          <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+          <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
           <select
             value={filterOption}
             onChange={(e) => setFilterOption(e.target.value as FilterOption)}
-            className="w-full appearance-none rounded-full border border-white/20 bg-midnight px-12 py-3 text-champagne focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+            className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated px-12 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           >
             <option value="all">All Orders</option>
             <option value="pending">Pending</option>
@@ -282,58 +282,58 @@ function AdminOrders() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
+        <div className="rounded-2xl bg-bg-elevated border border-border-default p-4">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-amber-500/20 p-2">
               <ClockIcon className="h-5 w-5 text-amber-400" />
             </div>
             <div>
-              <p className="text-xl font-bold text-champagne">
+              <p className="text-xl font-bold text-text-primary">
                 {orders.filter(o => o.status === 'pending').length}
               </p>
-              <p className="text-xs text-champagne/60">Pending</p>
+              <p className="text-xs text-text-secondary">Pending</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
+        <div className="rounded-2xl bg-bg-elevated border border-border-default p-4">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-blue-500/20 p-2">
               <CheckCircleIcon className="h-5 w-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-xl font-bold text-champagne">
+              <p className="text-xl font-bold text-text-primary">
                 {orders.filter(o => o.status === 'confirmed').length}
               </p>
-              <p className="text-xs text-champagne/60">Confirmed</p>
+              <p className="text-xs text-text-secondary">Confirmed</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
+        <div className="rounded-2xl bg-bg-elevated border border-border-default p-4">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-emerald-500/20 p-2">
               <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
             </div>
             <div>
-              <p className="text-xl font-bold text-champagne">
+              <p className="text-xl font-bold text-text-primary">
                 {orders.filter(o => o.status === 'completed').length}
               </p>
-              <p className="text-xs text-champagne/60">Completed</p>
+              <p className="text-xs text-text-secondary">Completed</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
+        <div className="rounded-2xl bg-bg-elevated border border-border-default p-4">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-rose-500/20 p-2">
               <XCircleIcon className="h-5 w-5 text-rose-400" />
             </div>
             <div>
-              <p className="text-xl font-bold text-champagne">
+              <p className="text-xl font-bold text-text-primary">
                 {orders.filter(o => o.status === 'cancelled').length}
               </p>
-              <p className="text-xs text-champagne/60">Cancelled</p>
+              <p className="text-xs text-text-secondary">Cancelled</p>
             </div>
           </div>
         </div>
@@ -512,7 +512,7 @@ Total: $${order.total.toFixed(2)}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/95 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/95 p-4 backdrop-blur-sm"
         onClick={onClose}
       >
         <motion.div
@@ -520,22 +520,22 @@ Total: $${order.total.toFixed(2)}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-midnight shadow-2xl"
+          className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-border-default bg-bg-elevated shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex-shrink-0 border-b border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+          <div className="flex-shrink-0 border-b border-border-default bg-bg-secondary px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
-                  <h2 className="font-display text-xl text-champagne sm:text-2xl md:text-3xl">
+                  <h2 className="font-display text-xl text-text-primary sm:text-2xl md:text-3xl">
                     Order #{order.id}
                   </h2>
                   <Badge variant={getStatusBadgeVariant(order.status)} size="lg">
                     {order.status}
                   </Badge>
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-champagne/60 sm:mt-3 sm:gap-3 sm:text-sm md:gap-4">
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-text-secondary sm:mt-3 sm:gap-3 sm:text-sm md:gap-4">
                   <div className="flex items-center gap-1.5 sm:gap-2">
                     <CalendarIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     <span className="hidden sm:inline">{formatDate(order.createdAt)}</span>
@@ -556,14 +556,14 @@ Total: $${order.total.toFixed(2)}
               <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
                 <button
                   onClick={handlePrint}
-                  className="hidden rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne sm:block"
+                  className="hidden rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary sm:block"
                   title="Print order"
                 >
                   <PrinterIcon className="h-5 w-5" />
                 </button>
                 <button
                   onClick={handleCopyOrder}
-                  className="hidden rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne sm:block"
+                  className="hidden rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary sm:block"
                   title="Copy order details"
                 >
                   {copied ? (
@@ -574,7 +574,7 @@ Total: $${order.total.toFixed(2)}
                 </button>
                 <button
                   onClick={onClose}
-                  className="rounded-full p-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                  className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
                   title="Close (Esc)"
                 >
                   <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -583,7 +583,7 @@ Total: $${order.total.toFixed(2)}
             </div>
 
             {/* Tabs */}
-            <div className="mt-4 flex gap-1 border-b border-white/10 sm:mt-6">
+            <div className="mt-4 flex gap-1 border-b border-border-default sm:mt-6">
               {[
                 { id: 'overview', label: 'Overview', icon: ShoppingBagIcon },
                 { id: 'timeline', label: 'Timeline', icon: ClockIcon },
@@ -596,8 +596,8 @@ Total: $${order.total.toFixed(2)}
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`relative flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
                       activeTab === tab.id
-                        ? 'text-champagne'
-                        : 'text-champagne/50 hover:text-champagne/80'
+                        ? 'text-text-primary'
+                        : 'text-text-secondary hover:text-text-primary'
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -605,7 +605,7 @@ Total: $${order.total.toFixed(2)}
                     {activeTab === tab.id && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blush"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                       />
                     )}
@@ -628,33 +628,33 @@ Total: $${order.total.toFixed(2)}
                   className="space-y-6"
                 >
                   {/* Customer Information */}
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                  <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
                     <div className="mb-4 flex items-center gap-2">
-                      <UserIcon className="h-5 w-5 text-champagne/60" />
-                      <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne/60">
+                      <UserIcon className="h-5 w-5 text-text-secondary" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
                         Customer Information
                       </h3>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2">
                       <div>
-                        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-champagne/50">
+                        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-tertiary">
                           Contact Details
                         </p>
                         <div className="space-y-3">
                           <div className="flex items-start gap-3">
-                            <UserIcon className="h-5 w-5 flex-shrink-0 text-champagne/40 mt-0.5" />
+                            <UserIcon className="h-5 w-5 flex-shrink-0 text-text-tertiary mt-0.5" />
                             <div>
-                              <p className="text-sm text-champagne/60">Name</p>
-                              <p className="text-champagne">{order.customer.name}</p>
+                              <p className="text-sm text-text-secondary">Name</p>
+                              <p className="text-text-primary">{order.customer.name}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <EnvelopeIcon className="h-5 w-5 flex-shrink-0 text-champagne/40 mt-0.5" />
+                            <EnvelopeIcon className="h-5 w-5 flex-shrink-0 text-text-tertiary mt-0.5" />
                             <div>
-                              <p className="text-sm text-champagne/60">Email</p>
+                              <p className="text-sm text-text-secondary">Email</p>
                               <a
                                 href={`mailto:${order.customer.email}`}
-                                className="text-blush hover:text-blush/80 transition-colors"
+                                className="text-primary hover:text-primary/80 transition-colors"
                               >
                                 {order.customer.email}
                               </a>
@@ -662,12 +662,12 @@ Total: $${order.total.toFixed(2)}
                           </div>
                           {order.customer.phone && (
                             <div className="flex items-start gap-3">
-                              <PhoneIcon className="h-5 w-5 flex-shrink-0 text-champagne/40 mt-0.5" />
+                              <PhoneIcon className="h-5 w-5 flex-shrink-0 text-text-tertiary mt-0.5" />
                               <div>
-                                <p className="text-sm text-champagne/60">Phone</p>
+                                <p className="text-sm text-text-secondary">Phone</p>
                                 <a
                                   href={`tel:${order.customer.phone}`}
-                                  className="text-blush hover:text-blush/80 transition-colors"
+                                  className="text-primary hover:text-primary/80 transition-colors"
                                 >
                                   {order.customer.phone}
                                 </a>
@@ -677,12 +677,12 @@ Total: $${order.total.toFixed(2)}
                         </div>
                       </div>
                       <div>
-                        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-champagne/50">
+                        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-tertiary">
                           Shipping Address
                         </p>
                         <div className="flex items-start gap-3">
-                          <MapPinIcon className="h-5 w-5 flex-shrink-0 text-champagne/40 mt-0.5" />
-                          <p className="whitespace-pre-line text-champagne/80 leading-relaxed">
+                          <MapPinIcon className="h-5 w-5 flex-shrink-0 text-text-tertiary mt-0.5" />
+                          <p className="whitespace-pre-line text-text-primary leading-relaxed">
                             {order.customer.address}
                           </p>
                         </div>
@@ -693,21 +693,21 @@ Total: $${order.total.toFixed(2)}
                         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-amber-400">
                           Customer Notes
                         </p>
-                        <p className="text-sm text-champagne/80">{order.customer.notes}</p>
+                        <p className="text-sm text-text-primary">{order.customer.notes}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Order Items */}
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                  <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <ShoppingBagIcon className="h-5 w-5 text-champagne/60" />
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne/60">
+                        <ShoppingBagIcon className="h-5 w-5 text-text-secondary" />
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
                           Order Items
                         </h3>
                       </div>
-                      <p className="text-sm text-champagne/60">
+                      <p className="text-sm text-text-secondary">
                         {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                       </p>
                     </div>
@@ -715,18 +715,18 @@ Total: $${order.total.toFixed(2)}
                       {order.items.map((item, index) => (
                         <div
                           key={index}
-                          className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                          className="flex items-center gap-4 rounded-xl border border-border-default bg-bg-secondary p-4 transition-colors hover:bg-bg-elevated"
                         >
                           <div className="flex-1">
-                            <p className="font-medium text-champagne">{item.name || `Product ${item.productId}`}</p>
-                            <div className="mt-1 flex items-center gap-4 text-sm text-champagne/60">
+                            <p className="font-medium text-text-primary">{item.name || `Product ${item.productId}`}</p>
+                            <div className="mt-1 flex items-center gap-4 text-sm text-text-secondary">
                               <span>Qty: {item.quantity}</span>
                               <span>•</span>
                               <span>${item.price?.toFixed(2)} each</span>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-semibold text-champagne">
+                            <p className="text-lg font-semibold text-text-primary">
                               ${item.price !== undefined ? (item.price * item.quantity).toFixed(2) : '—'}
                             </p>
                           </div>
@@ -735,22 +735,22 @@ Total: $${order.total.toFixed(2)}
                     </div>
 
                     {/* Price Breakdown */}
-                    <div className="mt-6 space-y-3 border-t border-white/10 pt-6">
-                      <div className="flex items-center justify-between text-champagne/70">
+                    <div className="mt-6 space-y-3 border-t border-border-default pt-6">
+                      <div className="flex items-center justify-between text-text-secondary">
                         <span>Subtotal</span>
                         <span>${order.total.toFixed(2)}</span>
                       </div>
-                      <div className="flex items-center justify-between text-champagne/70">
+                      <div className="flex items-center justify-between text-text-secondary">
                         <span>Shipping</span>
                         <span className="text-emerald-400">FREE</span>
                       </div>
-                      <div className="flex items-center justify-between text-champagne/70">
+                      <div className="flex items-center justify-between text-text-secondary">
                         <span>Tax</span>
                         <span>Included</span>
                       </div>
-                      <div className="flex items-center justify-between border-t border-white/10 pt-3 text-lg font-bold">
-                        <span className="text-champagne">Total</span>
-                        <span className="font-display text-2xl text-blush">${order.total.toFixed(2)}</span>
+                      <div className="flex items-center justify-between border-t border-border-default pt-3 text-lg font-bold">
+                        <span className="text-text-primary">Total</span>
+                        <span className="font-display text-2xl text-primary">${order.total.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -765,10 +765,10 @@ Total: $${order.total.toFixed(2)}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                  <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
                     <div className="mb-6 flex items-center gap-2">
-                      <ClockIcon className="h-5 w-5 text-champagne/60" />
-                      <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne/60">
+                      <ClockIcon className="h-5 w-5 text-text-secondary" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
                         Order Timeline
                       </h3>
                     </div>
@@ -781,7 +781,7 @@ Total: $${order.total.toFixed(2)}
                             {/* Timeline Line */}
                             {!isLast && (
                               <div className={`absolute left-6 top-12 h-full w-0.5 ${
-                                step.completed ? `bg-${step.color}-500/30` : 'bg-white/10'
+                                step.completed ? `bg-${step.color}-500/30` : 'bg-border-default'
                               }`} />
                             )}
 
@@ -789,10 +789,10 @@ Total: $${order.total.toFixed(2)}
                             <div className={`relative z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
                               step.completed
                                 ? `bg-${step.color}-500/20 ring-4 ring-${step.color}-500/10`
-                                : 'bg-white/5 ring-4 ring-white/5'
+                                : 'bg-bg-secondary ring-4 ring-border-default'
                             }`}>
                               <Icon className={`h-6 w-6 ${
-                                step.completed ? `text-${step.color}-400` : 'text-champagne/40'
+                                step.completed ? `text-${step.color}-400` : 'text-text-tertiary'
                               }`} />
                             </div>
 
@@ -800,18 +800,18 @@ Total: $${order.total.toFixed(2)}
                             <div className="flex-1 pb-6">
                               <div className="flex items-center justify-between">
                                 <p className={`font-semibold ${
-                                  step.completed ? 'text-champagne' : 'text-champagne/40'
+                                  step.completed ? 'text-text-primary' : 'text-text-tertiary'
                                 }`}>
                                   {step.label}
                                 </p>
                                 {step.date && (
-                                  <p className="text-sm text-champagne/50">
+                                  <p className="text-sm text-text-tertiary">
                                     {formatTime(step.date)}
                                   </p>
                                 )}
                               </div>
                               {step.date && (
-                                <p className="mt-1 text-sm text-champagne/60">
+                                <p className="mt-1 text-sm text-text-secondary">
                                   {formatDate(step.date)}
                                 </p>
                               )}
@@ -832,15 +832,15 @@ Total: $${order.total.toFixed(2)}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                  <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
                     <div className="mb-4 flex items-center gap-2">
-                      <PencilIcon className="h-5 w-5 text-champagne/60" />
-                      <h3 className="text-sm font-semibold uppercase tracking-wider text-champagne/60">
+                      <PencilIcon className="h-5 w-5 text-text-secondary" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
                         Internal Notes
                       </h3>
                     </div>
-                    <div className="rounded-xl bg-white/5 p-4 text-center">
-                      <p className="text-sm text-champagne/50">
+                    <div className="rounded-xl bg-bg-secondary p-4 text-center">
+                      <p className="text-sm text-text-tertiary">
                         Internal notes feature coming soon...
                       </p>
                     </div>
@@ -851,7 +851,7 @@ Total: $${order.total.toFixed(2)}
           </div>
 
           {/* Footer Actions */}
-          <div className="flex-shrink-0 border-t border-white/10 bg-white/5 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+          <div className="flex-shrink-0 border-t border-border-default bg-bg-secondary px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
             {/* Mobile Layout (Stacked) */}
             <div className="flex flex-col gap-3 sm:hidden">
               {order.status === 'pending' && (
@@ -970,7 +970,7 @@ Total: $${order.total.toFixed(2)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/90 p-4 backdrop-blur-sm"
+                className="absolute inset-0 z-10 flex items-center justify-center bg-bg-primary/90 p-4 backdrop-blur-sm"
                 onClick={() => setShowConfirmDialog(null)}
               >
                 <motion.div
@@ -978,14 +978,14 @@ Total: $${order.total.toFixed(2)}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0.9, opacity: 0, y: 20 }}
                   transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                  className="w-full max-w-md rounded-2xl border border-white/20 bg-midnight p-6 shadow-2xl"
+                  className="w-full max-w-md rounded-2xl border border-border-default bg-bg-elevated p-6 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h3 className="mb-2 text-xl font-bold text-champagne">
+                  <h3 className="mb-2 text-xl font-bold text-text-primary">
                     Confirm Action
                   </h3>
-                  <p className="mb-6 text-sm leading-relaxed text-champagne/70">
-                    Are you sure you want to <span className="font-semibold text-champagne">{showConfirmDialog.action}</span> this order? This action cannot be undone.
+                  <p className="mb-6 text-sm leading-relaxed text-text-secondary">
+                    Are you sure you want to <span className="font-semibold text-text-primary">{showConfirmDialog.action}</span> this order? This action cannot be undone.
                   </p>
                   
                   {/* Mobile: Stack buttons vertically, Desktop: Side by side */}

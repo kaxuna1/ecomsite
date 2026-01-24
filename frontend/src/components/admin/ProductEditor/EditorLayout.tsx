@@ -47,25 +47,25 @@ export default function EditorLayout({
   children
 }: EditorLayoutProps) {
   return (
-    <div className="min-h-screen bg-midnight">
+    <div className="min-h-screen bg-bg-primary">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-40 border-b border-white/10 bg-midnight/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-40 border-b border-border-default bg-bg-primary/95 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Title Bar */}
           <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <button
                 onClick={onCancel}
-                className="flex items-center gap-2 rounded-full px-4 py-2 text-champagne/70 transition-colors hover:bg-white/10 hover:text-champagne"
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
               >
                 <ArrowLeftIcon className="h-5 w-5" />
                 <span className="text-sm font-semibold">Back</span>
               </button>
               <div>
-                <h1 className="font-display text-2xl text-champagne">{title}</h1>
+                <h1 className="font-display text-2xl text-text-primary">{title}</h1>
                 <div className="flex flex-wrap items-center gap-3 text-xs">
                   {isDirty && (
-                    <p className="text-champagne/60">
+                    <p className="text-text-secondary">
                       Unsaved changes
                     </p>
                   )}
@@ -73,8 +73,8 @@ export default function EditorLayout({
                     <div className="flex items-center gap-1.5">
                       {autoSaveStatus.isSaving ? (
                         <>
-                          <CloudIcon className="h-3.5 w-3.5 animate-pulse text-blush/60" />
-                          <span className="text-blush/60">Saving draft...</span>
+                          <CloudIcon className="h-3.5 w-3.5 animate-pulse text-primary/60" />
+                          <span className="text-primary/60">Saving draft...</span>
                         </>
                       ) : autoSaveStatus.lastSaved ? (
                         <>
@@ -93,18 +93,18 @@ export default function EditorLayout({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
                 onClick={onCancel}
-                className="w-full rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-champagne transition-colors hover:bg-white/10 sm:w-auto"
+                className="w-full rounded-full border border-border-default px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-secondary sm:w-auto"
               >
                 Cancel
               </button>
               <button
                 onClick={onSave}
                 disabled={isSaving}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:opacity-50 sm:w-auto"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50 sm:w-auto"
               >
                 {isSaving ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-midnight border-t-transparent" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-on-interactive border-t-transparent" />
                     Saving...
                   </>
                 ) : (
@@ -128,8 +128,8 @@ export default function EditorLayout({
                 <span
                   className={
                     activeTab === tab.id
-                      ? 'text-blush'
-                      : 'text-champagne/60 hover:text-champagne'
+                      ? 'text-primary'
+                      : 'text-text-secondary hover:text-text-primary'
                   }
                 >
                   {tab.label}
@@ -137,7 +137,7 @@ export default function EditorLayout({
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blush"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

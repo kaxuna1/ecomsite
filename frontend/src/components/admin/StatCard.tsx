@@ -23,7 +23,7 @@ const colorClasses = {
     iconColor: 'text-emerald-400'
   },
   blue: {
-    gradient: 'from-blue-500/20 to-blush/10',
+    gradient: 'from-blue-500/20 to-blue-500/10',
     border: 'border-blue-500/20',
     iconBg: 'bg-blue-500/20',
     iconColor: 'text-blue-400'
@@ -68,12 +68,12 @@ export default function StatCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-champagne/70">
+          <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
             {title}
           </p>
-          <p className="mt-3 font-display text-3xl text-champagne">{value}</p>
+          <p className="mt-3 font-display text-3xl text-text-primary">{value}</p>
           {subtitle && (
-            <p className="mt-2 text-xs text-champagne/60">{subtitle}</p>
+            <p className="mt-2 text-xs text-text-secondary">{subtitle}</p>
           )}
           {trend && (
             <div className="mt-3 flex items-center gap-1.5">
@@ -90,7 +90,7 @@ export default function StatCard({
                 {trend.value >= 0 ? '+' : ''}
                 {trend.value}%
               </span>
-              <span className="text-xs text-champagne/50">{trend.label}</span>
+              <span className="text-xs text-text-tertiary">{trend.label}</span>
             </div>
           )}
         </div>

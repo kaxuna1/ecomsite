@@ -121,7 +121,7 @@ function AdminAttributes() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Product Attributes</h1>
-          <p className="mt-2 text-sm text-champagne/60">
+          <p className="mt-2 text-sm text-text-secondary">
             Define custom attributes for product categorization and filtering
           </p>
         </div>
@@ -133,7 +133,7 @@ function AdminAttributes() {
           <motion.button
             type="button"
             onClick={() => handleOpenModal()}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-blush px-6 py-3 text-xs font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 sm:w-auto sm:text-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -145,36 +145,36 @@ function AdminAttributes() {
 
       {/* Search */}
       <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search attributes..."
-          className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+          className="w-full rounded-full border border-border-default bg-bg-elevated py-3 pl-12 pr-4 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
         />
       </div>
 
       {/* Attributes List */}
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blush border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       ) : filteredAttributes.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10"
+          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
         >
-          <SwatchIcon className="mb-4 h-16 w-16 text-champagne/40" />
-          <p className="text-lg text-champagne/60">
+          <SwatchIcon className="mb-4 h-16 w-16 text-text-tertiary" />
+          <p className="text-lg text-text-secondary">
             {searchQuery ? 'No attributes found' : 'No attributes yet'}
           </p>
           {!searchQuery && (
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="mt-4 text-sm text-blush hover:underline"
+              className="mt-4 text-sm text-primary hover:underline transition-colors"
             >
               Create your first attribute
             </button>
@@ -249,17 +249,17 @@ const AttributeCard = forwardRef<HTMLDivElement, AttributeCardProps>(function At
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.05 }}
-      className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+      className="rounded-2xl border border-border-default bg-bg-elevated p-6 backdrop-blur-sm"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold text-champagne">{attribute.attributeLabel}</h3>
-            <span className="rounded-full bg-blush/20 px-3 py-1 text-xs font-medium text-blush">
+            <h3 className="text-lg font-semibold text-text-primary">{attribute.attributeLabel}</h3>
+            <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary">
               {dataTypeLabels[attribute.dataType]}
             </span>
           </div>
-          <p className="mt-1 text-sm text-champagne/60">Key: {attribute.attributeKey}</p>
+          <p className="mt-1 text-sm text-text-secondary">Key: {attribute.attributeKey}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {attribute.isSearchable && (
@@ -284,12 +284,12 @@ const AttributeCard = forwardRef<HTMLDivElement, AttributeCardProps>(function At
 
           {attribute.options && attribute.options.length > 0 && (
             <div className="mt-3">
-              <p className="mb-1 text-xs text-champagne/40">Options:</p>
+              <p className="mb-1 text-xs text-text-tertiary">Options:</p>
               <div className="flex flex-wrap gap-1">
                 {attribute.options.map((opt, i) => (
                   <span
                     key={i}
-                    className="rounded-md bg-white/5 px-2 py-0.5 text-xs text-champagne/80"
+                    className="rounded-md bg-bg-secondary px-2 py-0.5 text-xs text-text-primary"
                   >
                     {opt.label}
                   </span>
@@ -303,14 +303,14 @@ const AttributeCard = forwardRef<HTMLDivElement, AttributeCardProps>(function At
           <button
             type="button"
             onClick={onEdit}
-            className="rounded-lg bg-white/5 p-2 text-champagne/60 transition-all hover:bg-white/10 hover:text-champagne"
+            className="rounded-lg bg-bg-secondary p-2 text-text-secondary transition-all hover:bg-bg-elevated hover:text-text-primary"
           >
             <PencilIcon className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="rounded-lg bg-white/5 p-2 text-red-400/60 transition-all hover:bg-red-500/10 hover:text-red-400"
+            className="rounded-lg bg-bg-secondary p-2 text-red-400/60 transition-all hover:bg-red-500/10 hover:text-red-400"
           >
             <TrashIcon className="h-5 w-5" />
           </button>
@@ -378,24 +378,24 @@ function AttributeModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-midnight p-8"
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border-default bg-bg-elevated p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl uppercase tracking-wider text-champagne">
+          <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
             {attribute ? 'Edit Attribute' : 'Create Attribute'}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-champagne/60 transition-colors hover:bg-white/5 hover:text-champagne"
+            className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -404,7 +404,7 @@ function AttributeModal({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm text-champagne/80">Attribute Key *</label>
+              <label className="mb-2 block text-sm text-text-primary">Attribute Key *</label>
               <input
                 type="text"
                 value={formData.attributeKey}
@@ -412,30 +412,30 @@ function AttributeModal({
                 disabled={!!attribute}
                 placeholder="e.g., hair_type"
                 required
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none disabled:opacity-50"
+                className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none disabled:opacity-50 transition-colors"
               />
-              <p className="mt-1 text-xs text-champagne/40">Unique identifier (cannot be changed)</p>
+              <p className="mt-1 text-xs text-text-tertiary">Unique identifier (cannot be changed)</p>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-champagne/80">Label *</label>
+              <label className="mb-2 block text-sm text-text-primary">Label *</label>
               <input
                 type="text"
                 value={formData.attributeLabel}
                 onChange={(e) => setFormData({ ...formData, attributeLabel: e.target.value })}
                 placeholder="e.g., Hair Type"
                 required
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-champagne/80">Data Type *</label>
+            <label className="mb-2 block text-sm text-text-primary">Data Type *</label>
             <select
               value={formData.dataType}
               onChange={(e) => setFormData({ ...formData, dataType: e.target.value as any })}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none"
+              className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary focus:border-primary focus:outline-none transition-colors"
             >
               <option value="text">Text</option>
               <option value="number">Number</option>
@@ -448,7 +448,7 @@ function AttributeModal({
 
           {needsOptions && (
             <div>
-              <label className="mb-2 block text-sm text-champagne/80">Options *</label>
+              <label className="mb-2 block text-sm text-text-primary">Options *</label>
               <div className="space-y-2">
                 <div className="flex gap-2">
                   <input
@@ -456,19 +456,19 @@ function AttributeModal({
                     value={optionInput.value}
                     onChange={(e) => setOptionInput({ ...optionInput, value: e.target.value })}
                     placeholder="Value (e.g., dry)"
-                    className="flex-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                    className="flex-1 rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
                   />
                   <input
                     type="text"
                     value={optionInput.label}
                     onChange={(e) => setOptionInput({ ...optionInput, label: e.target.value })}
                     placeholder="Label (e.g., Dry)"
-                    className="flex-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne placeholder:text-champagne/40 focus:border-blush focus:outline-none"
+                    className="flex-1 rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
                   />
                   <button
                     type="button"
                     onClick={addOption}
-                    className="rounded-lg bg-blush px-4 py-2 text-midnight transition-colors hover:bg-blush/90"
+                    className="rounded-lg bg-interactive-default px-4 py-2 text-on-interactive transition-colors hover:bg-interactive-hover"
                   >
                     Add
                   </button>
@@ -479,10 +479,10 @@ function AttributeModal({
                     {formData.options.map((opt, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2"
+                        className="flex items-center justify-between rounded-lg border border-border-default bg-bg-elevated px-3 py-2"
                       >
-                        <span className="text-sm text-champagne">
-                          <span className="text-champagne/60">{opt.value}</span> → {opt.label}
+                        <span className="text-sm text-text-primary">
+                          <span className="text-text-secondary">{opt.value}</span> → {opt.label}
                         </span>
                         <button
                           type="button"
@@ -505,9 +505,9 @@ function AttributeModal({
                 type="checkbox"
                 checked={formData.isSearchable}
                 onChange={(e) => setFormData({ ...formData, isSearchable: e.target.checked })}
-                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
               />
-              <span className="text-sm text-champagne/80">Searchable</span>
+              <span className="text-sm text-text-primary">Searchable</span>
             </label>
 
             <label className="flex cursor-pointer items-center gap-2">
@@ -515,9 +515,9 @@ function AttributeModal({
                 type="checkbox"
                 checked={formData.isFilterable}
                 onChange={(e) => setFormData({ ...formData, isFilterable: e.target.checked })}
-                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
               />
-              <span className="text-sm text-champagne/80">Filterable</span>
+              <span className="text-sm text-text-primary">Filterable</span>
             </label>
 
             <label className="flex cursor-pointer items-center gap-2">
@@ -525,35 +525,35 @@ function AttributeModal({
                 type="checkbox"
                 checked={formData.isRequired}
                 onChange={(e) => setFormData({ ...formData, isRequired: e.target.checked })}
-                className="h-4 w-4 rounded border-white/20 bg-white/5 text-blush focus:ring-blush"
+                className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-primary/20"
               />
-              <span className="text-sm text-champagne/80">Required</span>
+              <span className="text-sm text-text-primary">Required</span>
             </label>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-champagne/80">Display Order</label>
+            <label className="mb-2 block text-sm text-text-primary">Display Order</label>
             <input
               type="number"
               value={formData.displayOrder}
               onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none"
+              className="w-full rounded-lg border border-border-default bg-bg-elevated px-4 py-2 text-text-primary focus:border-primary focus:outline-none transition-colors"
             />
-            <p className="mt-1 text-xs text-champagne/40">Lower numbers appear first</p>
+            <p className="mt-1 text-xs text-text-tertiary">Lower numbers appear first</p>
           </div>
 
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 rounded-full bg-blush px-6 py-3 font-medium uppercase tracking-wider text-midnight transition-all hover:bg-blush/90 disabled:opacity-50"
+              className="flex-1 rounded-full bg-interactive-default px-6 py-3 font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover disabled:opacity-50"
             >
               {isSubmitting ? 'Saving...' : attribute ? 'Update Attribute' : 'Create Attribute'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-white/10 px-6 py-3 font-medium uppercase tracking-wider text-champagne transition-all hover:bg-white/5"
+              className="rounded-full border border-border-default px-6 py-3 font-medium uppercase tracking-wider text-text-primary transition-all hover:bg-bg-secondary"
             >
               Cancel
             </button>
@@ -579,20 +579,20 @@ function DeleteConfirmModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
       onClick={onCancel}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-midnight p-8"
+        className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-4 font-display text-xl uppercase tracking-wider text-champagne">
+        <h3 className="mb-4 font-display text-xl uppercase tracking-wider text-text-primary">
           Delete Attribute?
         </h3>
-        <p className="mb-6 text-champagne/60">
+        <p className="mb-6 text-text-secondary">
           This will permanently delete this attribute definition and remove it from all products that use it.
           Products will not be deleted, only the attribute data will be removed.
         </p>
@@ -611,7 +611,7 @@ function DeleteConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-full border border-white/10 px-6 py-3 font-medium uppercase tracking-wider text-champagne transition-all hover:bg-white/5"
+            className="flex-1 rounded-full border border-border-default px-6 py-3 font-medium uppercase tracking-wider text-text-primary transition-all hover:bg-bg-secondary"
           >
             Cancel
           </button>
