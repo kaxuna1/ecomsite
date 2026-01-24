@@ -21,6 +21,7 @@ import {
 import { StarIcon as StarIconSolid, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import type { CMSBlock } from '../../types/cms';
 import HeroBlock from './HeroBlock';
+import AnnouncementBlock from './AnnouncementBlock';
 import ProductCarousel from './ProductCarousel';
 import ProductList from './ProductList';
 import QuickViewModal from './QuickViewModal';
@@ -50,6 +51,9 @@ export default function BlockRenderer({ block }: BlockRendererProps) {
   switch (blockType) {
     case 'hero':
       return <HeroBlock content={content as any} />;
+
+    case 'announcement':
+      return <AnnouncementBlock content={content as any} blockId={(block as any).id} />;
 
     case 'features':
       return <FeaturesBlock content={content as any} />;

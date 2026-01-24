@@ -431,85 +431,94 @@ function AdminProducts() {
       </Helmet>
 
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl text-text-primary">Product Management</h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h1 className="font-display text-2xl sm:text-3xl text-text-primary">Product Management</h1>
           <p className="mt-1 text-sm text-text-secondary">
             {filteredAndSortedProducts.length} of {products.length} products
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3 sm:flex-nowrap">
           <Button
             variant="secondary"
-            size="md"
-            icon={<ArrowDownTrayIcon />}
+            size="sm"
+            icon={<ArrowDownTrayIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
             onClick={() => {
               // Export functionality placeholder
               alert('Export functionality coming soon!');
             }}
+            className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-5 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            Export
+            <span className="whitespace-nowrap">Export</span>
           </Button>
           <Button
             variant="primary"
-            size="md"
-            icon={<PlusIcon />}
+            size="sm"
+            icon={<PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
             onClick={openCreateModal}
+            className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-6 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
           >
-            Add Product
+            <span className="whitespace-nowrap">
+              <span className="hidden sm:inline">Add Product</span>
+              <span className="sm:hidden">Add</span>
+            </span>
           </Button>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="space-y-4">
         {/* Search */}
-        <div className="lg:col-span-2">
+        <div>
           <SearchInput
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => setSearchQuery('')}
             placeholder="Search products by name, description, or category..."
+            className="w-full"
           />
         </div>
 
-        {/* Filter */}
-        <div className="relative">
-          <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
-          <select
-            value={filterOption}
-            onChange={(e) => setFilterOption(e.target.value as FilterOption)}
-            className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated px-12 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
-          >
-            <option value="all">All Products</option>
-            <option value="in-stock">In Stock</option>
-            <option value="low-stock">Low Stock</option>
-            <option value="out-of-stock">Out of Stock</option>
-            <option value="new">New Arrivals</option>
-            <option value="featured">Best Sellers</option>
-            <option value="on-sale">On Sale</option>
-          </select>
-        </div>
-      </div>
+        {/* Filters and Sort - Responsive Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:grid-cols-3">
+          {/* Filter */}
+          <div className="relative sm:col-span-1">
+            <FunnelIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary pointer-events-none z-10" />
+            <select
+              value={filterOption}
+              onChange={(e) => setFilterOption(e.target.value as FilterOption)}
+              className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated pl-12 pr-4 py-3 text-sm sm:text-base text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+            >
+              <option value="all">All Products</option>
+              <option value="in-stock">In Stock</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+              <option value="new">New Arrivals</option>
+              <option value="featured">Best Sellers</option>
+              <option value="on-sale">On Sale</option>
+            </select>
+          </div>
 
-      {/* Sort */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-text-secondary">Sort by:</span>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value as SortOption)}
-            className="rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
-          >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="price-asc">Price (Low to High)</option>
-            <option value="price-desc">Price (High to Low)</option>
-            <option value="stock-asc">Stock (Low to High)</option>
-            <option value="stock-desc">Stock (High to Low)</option>
-          </select>
+          {/* Sort */}
+          <div className="relative sm:col-span-1 lg:col-span-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-sm text-text-secondary whitespace-nowrap flex-shrink-0">Sort by:</span>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value as SortOption)}
+                className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-sm sm:text-base text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-desc">Price (High to Low)</option>
+                <option value="stock-asc">Stock (Low to High)</option>
+                <option value="stock-desc">Stock (High to Low)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -170,6 +170,17 @@ export const BLOCK_TEMPLATES: Record<string, any> = {
         category: 'Payment'
       }
     ]
+  },
+
+  announcement: {
+    type: 'announcement',
+    message: 'FREE SHIPPING OVER $50 | NEW CUSTOMER? GET 10% OFF WITH CODE: WELCOME10',
+    linkText: 'Shop Now',
+    linkUrl: '/products',
+    icon: 'truck',
+    backgroundColor: '#1e293b',
+    textColor: '#ffffff',
+    dismissible: true
   }
 };
 

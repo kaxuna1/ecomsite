@@ -1,10 +1,56 @@
 // CMS API Client
 // Fetch CMS page content from backend
 
-import type { CMSPageResponse } from '../types/cms';
+import type { CMSPageResponse, GlobalBlock, PageType } from '../types/cms';
 import api from './client';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+
+// ============================================================================
+// GLOBAL BLOCKS (Promotions/Announcements)
+// ============================================================================
+
+export interface GlobalBlocksContext {
+  path?: string;
+  pageType?: PageType;
+  cmsSlug?: string;
+}
+
+/**
+ * Fetch global blocks for a location (header/footer)
+ * These are promotional banners managed via CMS
+ */
+export async function fetchGlobalBlocks(
+  location: 'header' | 'footer',
+  lang?: string,
+  context?: GlobalBlocksContext
+): Promise<GlobalBlock[]> {
+  const url = new URL(`${API_BASE_URL}/api/cms/global-blocks`);
+  url.searchParams.set('location', location);
+  
+  if (lang) {
+    url.searchParams.set('lang', lang);
+  }
+  if (context?.path) {
+    url.searchParams.set('path', context.path);
+  }
+  if (context?.pageType) {
+    url.searchParams.set('pageType', context.pageType);
+  }
+  if (context?.cmsSlug) {
+    url.searchParams.set('cmsSlug', context.cmsSlug);
+  }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    // Return empty array on error to fallback gracefully
+    console.warn(`Failed to fetch global blocks: ${response.statusText}`);
+    return [];
+  }
+
+  return response.json();
+}
 
 /**
  * Fetch published page content by slug

@@ -11,7 +11,8 @@ export type BlockType =
   | 'text_image'
   | 'stats'
   | 'faq'
-  | 'social_proof';
+  | 'social_proof'
+  | 'announcement';
 
 // Page metadata
 export interface CMSPage {
@@ -39,7 +40,8 @@ export type BlockContent =
   | CTAContent
   | TextImageContent
   | StatsContent
-  | SocialProofContent;
+  | SocialProofContent
+  | AnnouncementContent;
 
 // Hero Block
 export interface HeroContent {
@@ -173,6 +175,45 @@ export interface SocialProofContent {
   displayStyle?: 'grid' | 'marquee';
 }
 
+// Announcement/Promotion Bar Block
+export interface AnnouncementContent {
+  type: 'announcement';
+  message: string;
+  linkText?: string;
+  linkUrl?: string;
+  icon?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  dismissible?: boolean;
+}
+
+// Targeting types for global blocks
+export type PageType = 'home' | 'products' | 'productDetail' | 'cms' | 'cart' | 'checkout' | 'account';
+
+export interface BlockTargeting {
+  enabled: boolean;
+  include?: {
+    pageTypes?: PageType[];
+    routePrefixes?: string[];
+    cmsSlugs?: string[];
+  };
+  exclude?: {
+    pageTypes?: PageType[];
+    routePrefixes?: string[];
+    cmsSlugs?: string[];
+  };
+}
+
+// Global block from API
+export interface GlobalBlock {
+  id: number;
+  blockType: BlockType;
+  blockKey: string;
+  content: BlockContent;
+  settings: BlockSettings | null;
+  displayOrder: number;
+}
+
 // Block settings
 export interface BlockSettings {
   marginTop?: 'none' | 'small' | 'medium' | 'large' | 'xlarge';
@@ -192,6 +233,7 @@ export interface BlockSettings {
   showOnDesktop?: boolean;
   customCss?: string;
   customClasses?: string;
+  targeting?: BlockTargeting;
 }
 
 // API response

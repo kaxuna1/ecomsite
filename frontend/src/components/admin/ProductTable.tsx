@@ -14,7 +14,9 @@ import {
   EllipsisVerticalIcon,
   CurrencyDollarIcon,
   CubeIcon,
-  TagIcon
+  TagIcon,
+  ChartBarIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import type { Product } from '../../types/product';
@@ -192,48 +194,48 @@ export default function ProductTable({
   return (
     <div>
       {/* Desktop: Sort & Selection Controls */}
-      <div className="hidden md:flex items-center justify-between mb-4 px-2">
-        <div className="flex items-center gap-4">
+      <div className="hidden md:flex items-center justify-between mb-4 px-2 flex-wrap gap-3">
+        <div className="flex items-center gap-4 min-w-0">
           {onSelectionChange && selectedIds.length > 0 && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
             >
               <input
                 type="checkbox"
                 checked={selectedIds.length === products.length}
                 onChange={toggleSelectAll}
-                        className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
+                className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20 flex-shrink-0"
               />
-              <span className="text-sm text-text-secondary">
+              <span className="text-sm text-text-secondary whitespace-nowrap">
                 {selectedIds.length} selected
               </span>
             </motion.div>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => handleSort('name')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
           >
             Name
-            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
           </button>
           <button
             onClick={() => handleSort('price')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
           >
             Price
-            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
           </button>
           <button
             onClick={() => handleSort('inventory')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
           >
             Stock
-            <ChevronUpDownIcon className="h-3.5 w-3.5" />
+            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
           </button>
         </div>
       </div>
@@ -255,321 +257,216 @@ export default function ProductTable({
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 layout
               >
-                {/* Desktop Card Layout */}
-                <div
-                  className="hidden md:block"
+                {/* Unified Card Layout - Stacked structure for all screen sizes */}
+                <motion.div
+                  className={`group relative rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isSelected
+                      ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/10'
+                      : 'border-border-default bg-bg-elevated hover:border-border-strong hover:bg-bg-secondary hover:shadow-xl'
+                  }`}
                   onMouseEnter={() => setHoveredRow(product.id)}
                   onMouseLeave={() => setHoveredRow(null)}
+                  whileHover={{ y: -2 }}
                 >
-                  <motion.div
-                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
-                      isSelected
-                        ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/10'
-                        : 'border-border-default bg-bg-elevated hover:border-border-strong hover:bg-bg-secondary hover:shadow-xl'
+                  {/* Status Indicator Strip */}
+                  <div
+                    className={`absolute left-0 top-0 bottom-0 w-1 ${
+                      status.variant === 'success'
+                        ? 'bg-emerald-500'
+                        : status.variant === 'warning'
+                        ? 'bg-amber-500'
+                        : 'bg-rose-500'
                     }`}
-                    whileHover={{ y: -2 }}
-                  >
-                    {/* Status Indicator Strip */}
-                    <div
-                      className={`absolute left-0 top-0 bottom-0 w-1 ${
-                        status.variant === 'success'
-                          ? 'bg-emerald-500'
-                          : status.variant === 'warning'
-                          ? 'bg-amber-500'
-                          : 'bg-rose-500'
-                      }`}
-                    />
+                  />
 
-                    <div className="p-5 pl-7">
-                      <div className="flex items-center gap-5">
-                        {/* Checkbox */}
-                        {onSelectionChange && (
-                          <div className="flex-shrink-0">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleSelect(product.id)}
-                              className="h-5 w-5 rounded-lg border-border-default bg-bg-elevated text-primary transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </div>
-                        )}
+                  <div className="p-4 sm:p-5 pl-5 sm:pl-6 space-y-4">
+                    {/* Row 1: Product Info */}
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      {/* Checkbox */}
+                      {onSelectionChange && (
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelect(product.id)}
+                          title="Select product"
+                          className="mt-1 h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20 flex-shrink-0"
+                        />
+                      )}
 
-                        {/* Product Image */}
-                        <div className="flex-shrink-0">
-                          {getProductDisplayImage(product) ? (
-                            <div className="relative overflow-hidden rounded-xl ring-1 ring-border-default">
-                              <img
-                                src={getProductDisplayImage(product)!}
-                                alt={product.name}
-                                className="h-20 w-20 object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                            </div>
-                          ) : (
-                            <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-bg-secondary ring-1 ring-border-default">
-                              <PhotoIcon className="h-8 w-8 text-text-tertiary" />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-2 flex items-start justify-between gap-4">
-                            <div className="min-w-0 flex-1">
-                              <h3 className="mb-1 truncate text-lg font-semibold text-text-primary group-hover:text-primary transition-colors">
-                                {product.name}
-                              </h3>
-                              <p className="truncate text-sm text-text-secondary">
-                                {product.shortDescription}
-                              </p>
-                            </div>
-
-                            {/* Badges */}
-                            <div className="flex flex-wrap gap-1.5 flex-shrink-0">
-                              {product.isNew && (
-                                <span className="flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">
-                                  <StarSolidIcon className="h-3 w-3" />
-                                  NEW
-                                </span>
-                              )}
-                              {product.isFeatured && (
-                                <span className="flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">
-                                  <TagIcon className="h-3 w-3" />
-                                  FEATURED
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Categories */}
-                          <div className="flex flex-wrap gap-1.5">
-                            {product.categories.map((cat, i) => (
-                              <span
-                                key={i}
-                                className="rounded-md bg-bg-secondary px-2 py-0.5 text-xs text-text-secondary"
-                              >
-                                {cat}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Stats Grid */}
-                        <div className="flex flex-shrink-0 items-center gap-6">
-                          {/* Price */}
-                          <div className="text-center">
-                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-text-tertiary">
-                              <CurrencyDollarIcon className="h-3.5 w-3.5" />
-                              Price
-                            </div>
-                            {product.salePrice ? (
-                              <div className="text-center">
-                                <p className="text-lg font-bold text-rose-400">
-                                  ${product.salePrice.toFixed(2)}
-                                </p>
-                                <p className="text-xs text-text-tertiary line-through">
-                                  ${product.price.toFixed(2)}
-                                </p>
-                              </div>
-                            ) : (
-                              <p className="text-lg font-bold text-text-primary">
-                                ${product.price.toFixed(2)}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Stock */}
-                          <div className="text-center">
-                            <div className="mb-1 flex items-center justify-center gap-1 text-xs text-text-tertiary">
-                              <CubeIcon className="h-3.5 w-3.5" />
-                              Stock
-                            </div>
-                            <p className="text-lg font-bold text-text-primary">
-                              {product.inventory}
-                            </p>
-                            <p className="text-xs text-text-tertiary">units</p>
-                          </div>
-
-                          {/* Status */}
-                          <div className="text-center">
-                            <div className="mb-1 text-xs text-text-tertiary">Status</div>
-                            <Badge variant={status.variant} size="sm">
-                              {status.label}
-                            </Badge>
-                          </div>
-                        </div>
-
-                        {/* Actions - Always Visible */}
-                        <div className="flex flex-shrink-0 items-center gap-1.5 pl-4 border-l border-border-default">
-                          <button
-                            onClick={() => onEdit(product)}
-                            className="group/btn relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-primary/20 hover:text-primary hover:scale-110"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                            {/* Tooltip */}
-                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/btn:visible group-hover/btn:opacity-100">
-                              Edit Product
-                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                            </div>
-                          </button>
-
-                          <button
-                            onClick={() => onManageVariants(product)}
-                            className="group/variants relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-emerald-500/20 hover:text-emerald-400 hover:scale-110"
-                          >
-                            <Squares2X2Icon className="h-5 w-5" />
-                            {/* Tooltip */}
-                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/variants:visible group-hover/variants:opacity-100">
-                              Manage Variants & SKUs
-                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                            </div>
-                          </button>
-
-                          {onDuplicate && (
-                            <button
-                              onClick={() => onDuplicate(product)}
-                              className="group/duplicate relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-blue-500/20 hover:text-blue-400 hover:scale-110"
-                            >
-                              <DocumentDuplicateIcon className="h-5 w-5" />
-                              {/* Tooltip */}
-                              <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/duplicate:visible group-hover/duplicate:opacity-100">
-                                Duplicate Product
-                                <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                              </div>
-                            </button>
-                          )}
-
-                          <button
-                            onClick={() => onDelete(product)}
-                            className="group/delete relative flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-secondary transition-all hover:bg-rose-500/20 hover:text-rose-400 hover:scale-110"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                            {/* Tooltip */}
-                            <div className="invisible absolute right-full top-1/2 z-50 mr-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/delete:visible group-hover/delete:opacity-100">
-                              Delete Product
-                              <div className="absolute left-full top-1/2 -ml-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Mobile Card Layout */}
-                <div className="md:hidden rounded-2xl border border-border-default bg-bg-elevated p-4">
-                  <div className="space-y-4">
-                    {/* Header with Image and Selection */}
-                    <div className="flex items-start gap-3">
-                    {onSelectionChange && (
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleSelect(product.id)}
-                        className="mt-1 h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20"
-                      />
-                    )}
-                    
-                    {getProductDisplayImage(product) ? (
-                      <img
-                        src={getProductDisplayImage(product)!}
-                        alt={product.name}
-                        className="h-20 w-20 rounded-lg object-cover ring-1 ring-border-default"
-                      />
-                    ) : (
-                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-bg-secondary ring-1 ring-border-default">
-                        <PhotoIcon className="h-8 w-8 text-text-tertiary" />
-                      </div>
-                    )}
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-medium text-text-primary line-clamp-2">{product.name}</p>
-                        <Badge variant={status.variant} size="sm">{status.label}</Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {product.isNew && <Badge variant="success" size="sm">NEW</Badge>}
-                        {product.isFeatured && <Badge variant="info" size="sm">FEATURED</Badge>}
-                      </div>
-                      <p className="text-xs text-text-tertiary line-clamp-1">{product.categories.join(' • ')}</p>
-                    </div>
-                  </div>
-
-                  {/* Details Grid */}
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    {/* Price */}
-                    <div>
-                      <p className="text-xs text-text-secondary mb-1">Price</p>
-                      {product.salePrice ? (
-                        <div>
-                          <p className="font-semibold text-rose-400">${product.salePrice.toFixed(2)}</p>
-                          <p className="text-xs text-text-tertiary line-through">${product.price.toFixed(2)}</p>
+                      {/* Product Image */}
+                      {getProductDisplayImage(product) ? (
+                        <div className="relative overflow-hidden rounded-xl ring-1 ring-border-default flex-shrink-0">
+                          <img
+                            src={getProductDisplayImage(product)!}
+                            alt={product.name}
+                            className="h-16 w-16 sm:h-20 sm:w-20 object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
                         </div>
                       ) : (
-                        <p className="font-semibold text-text-primary">${product.price.toFixed(2)}</p>
-                      )}
-                    </div>
-
-                    {/* Stock */}
-                    <div>
-                      <p className="text-xs text-text-secondary mb-1">Stock</p>
-                      <p className="font-semibold text-text-primary">{product.inventory} units</p>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border-default">
-                    <button
-                      onClick={() => onEdit(product)}
-                      className="group/edit-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-primary/10 hover:text-primary"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                      {/* Tooltip */}
-                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/edit-mobile:visible group-hover/edit-mobile:opacity-100">
-                        Edit Product
-                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => onManageVariants(product)}
-                      className="group/variants-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-emerald-500/10 hover:text-emerald-400"
-                    >
-                      <Squares2X2Icon className="h-5 w-5" />
-                      {/* Tooltip */}
-                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/variants-mobile:visible group-hover/variants-mobile:opacity-100">
-                        Manage Variants & SKUs
-                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
-                      </div>
-                    </button>
-
-                    {onDuplicate && (
-                      <button
-                        onClick={() => onDuplicate(product)}
-                        className="group/duplicate-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-blue-500/10 hover:text-blue-400"
-                      >
-                        <DocumentDuplicateIcon className="h-5 w-5" />
-                        {/* Tooltip */}
-                        <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/duplicate-mobile:visible group-hover/duplicate-mobile:opacity-100">
-                          Duplicate Product
-                          <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                        <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-xl bg-bg-secondary ring-1 ring-border-default flex-shrink-0">
+                          <PhotoIcon className="h-6 w-6 sm:h-8 sm:w-8 text-text-tertiary" />
                         </div>
-                      </button>
-                    )}
+                      )}
 
-                    <button
-                      onClick={() => onDelete(product)}
-                      className="group/delete-mobile relative rounded-lg p-2 text-text-secondary transition-colors hover:bg-rose-500/10 hover:text-rose-400"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                      {/* Tooltip */}
-                      <div className="invisible absolute bottom-full right-0 z-50 mb-2 whitespace-nowrap rounded-lg bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary shadow-lg ring-1 ring-border-default opacity-0 transition-all group-hover/delete-mobile:visible group-hover/delete-mobile:opacity-100">
-                        Delete Product
-                        <div className="absolute left-1/2 top-full -translate-x-1/2 -mt-1 h-2 w-2 rotate-45 bg-bg-elevated ring-1 ring-border-default ring-l-0 ring-t-0"></div>
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <h3 className="font-semibold text-base sm:text-lg text-text-primary group-hover:text-primary transition-colors line-clamp-2 flex-1 min-w-0">
+                            {product.name}
+                          </h3>
+                          <Badge variant={status.variant} size="sm" className="flex-shrink-0">
+                            {status.label}
+                          </Badge>
+                        </div>
+                        
+                        {/* Badges */}
+                        <div className="flex flex-wrap gap-1.5 mb-2">
+                          {product.isNew && (
+                            <span className="flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                              <StarSolidIcon className="h-3 w-3" />
+                              NEW
+                            </span>
+                          )}
+                          {product.isFeatured && (
+                            <span className="flex items-center gap-1 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-semibold text-primary">
+                              <TagIcon className="h-3 w-3" />
+                              FEATURED
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Short Description */}
+                        <p className="text-xs sm:text-sm text-text-secondary line-clamp-1 mb-2">
+                          {product.shortDescription}
+                        </p>
+
+                        {/* Categories */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {product.categories.slice(0, 3).map((cat, i) => (
+                            <span
+                              key={i}
+                              className="rounded-md bg-bg-secondary px-2 py-0.5 text-xs text-text-secondary"
+                            >
+                              {cat}
+                            </span>
+                          ))}
+                          {product.categories.length > 3 && (
+                            <span className="rounded-md bg-bg-secondary px-2 py-0.5 text-xs text-text-tertiary">
+                              +{product.categories.length - 3}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </button>
+                    </div>
+
+                    {/* Row 2: Stats Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 bg-bg-secondary/50 rounded-xl p-3 sm:p-4">
+                      {/* Price */}
+                      <div>
+                        <p className="text-xs text-text-tertiary mb-1 font-medium flex items-center gap-1">
+                          <CurrencyDollarIcon className="h-3.5 w-3.5" />
+                          Price
+                        </p>
+                        {product.salePrice ? (
+                          <div>
+                            <p className="font-bold text-base sm:text-lg text-rose-400">
+                              ${product.salePrice.toFixed(2)}
+                            </p>
+                            <p className="text-xs text-text-tertiary line-through">
+                              ${product.price.toFixed(2)}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="font-bold text-base sm:text-lg text-text-primary">
+                            ${product.price.toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Stock */}
+                      <div>
+                        <p className="text-xs text-text-tertiary mb-1 font-medium flex items-center gap-1">
+                          <CubeIcon className="h-3.5 w-3.5" />
+                          Stock
+                        </p>
+                        <p className="font-bold text-base sm:text-lg text-text-primary">
+                          {product.inventory}
+                        </p>
+                        <p className="text-xs text-text-tertiary">units</p>
+                      </div>
+
+                      {/* Sales - visible on sm+ */}
+                      <div className="hidden sm:block">
+                        <p className="text-xs text-text-tertiary mb-1 font-medium flex items-center gap-1">
+                          <ChartBarIcon className="h-3.5 w-3.5" />
+                          Sales
+                        </p>
+                        <p className="font-bold text-base sm:text-lg text-text-primary">
+                          {product.salesCount || 0}
+                        </p>
+                        <p className="text-xs text-text-tertiary">sold</p>
+                      </div>
+
+                      {/* Created - visible on lg+ */}
+                      <div className="hidden lg:block">
+                        <p className="text-xs text-text-tertiary mb-1 font-medium flex items-center gap-1">
+                          <CalendarIcon className="h-3.5 w-3.5" />
+                          Created
+                        </p>
+                        <p className="font-bold text-sm text-text-primary">
+                          {product.createdAt 
+                            ? new Date(product.createdAt).toLocaleDateString() 
+                            : '—'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Actions */}
+                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-border-default">
+                      <button
+                        onClick={() => onEdit(product)}
+                        className="group/edit flex items-center gap-2 rounded-lg px-3 py-2 text-text-secondary transition-all hover:bg-primary/10 hover:text-primary active:scale-95"
+                        title="Edit Product"
+                        aria-label="Edit Product"
+                      >
+                        <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="text-sm font-medium hidden sm:inline">Edit</span>
+                      </button>
+
+                      <button
+                        onClick={() => onManageVariants(product)}
+                        className="group/variants flex items-center gap-2 rounded-lg px-3 py-2 text-text-secondary transition-all hover:bg-emerald-500/10 hover:text-emerald-400 active:scale-95"
+                        title="Manage Variants"
+                        aria-label="Manage Variants"
+                      >
+                        <Squares2X2Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="text-sm font-medium hidden sm:inline">Variants</span>
+                      </button>
+
+                      {onDuplicate && (
+                        <button
+                          onClick={() => onDuplicate(product)}
+                          className="group/duplicate flex items-center gap-2 rounded-lg px-3 py-2 text-text-secondary transition-all hover:bg-blue-500/10 hover:text-blue-400 active:scale-95"
+                          title="Duplicate Product"
+                          aria-label="Duplicate Product"
+                        >
+                          <DocumentDuplicateIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <span className="text-sm font-medium hidden md:inline">Duplicate</span>
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => onDelete(product)}
+                        className="group/delete flex items-center gap-2 rounded-lg px-3 py-2 text-text-secondary transition-all hover:bg-rose-500/10 hover:text-rose-400 active:scale-95"
+                        title="Delete Product"
+                        aria-label="Delete Product"
+                      >
+                        <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="text-sm font-medium hidden sm:inline">Delete</span>
+                      </button>
+                    </div>
                   </div>
-                  </div>
-                </div>
+                </motion.div>
               </motion.div>
             );
           })}

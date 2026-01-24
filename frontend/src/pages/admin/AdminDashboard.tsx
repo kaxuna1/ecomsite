@@ -185,15 +185,15 @@ function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Recent Orders - Takes 2 columns */}
         <div className="lg:col-span-2">
-          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-xl text-text-primary">Recent Orders</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+            <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3 min-w-0">
+              <h2 className="font-display text-lg sm:text-xl text-text-primary">Recent Orders</h2>
               <Link
                 to="/admin/orders"
-                className="flex items-center gap-1 text-sm text-primary hover:text-text-primary transition-colors"
+                className="flex items-center gap-1 text-sm text-primary hover:text-text-primary transition-colors flex-shrink-0 whitespace-nowrap"
               >
                 View All
-                <ArrowRightIcon className="h-4 w-4" />
+                <ArrowRightIcon className="h-4 w-4 flex-shrink-0" />
               </Link>
             </div>
 
@@ -213,30 +213,30 @@ function AdminDashboard() {
                       key={order.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between rounded-2xl bg-bg-elevated p-4 transition-colors hover:bg-bg-secondary"
+                      className="flex items-center justify-between gap-3 rounded-2xl bg-bg-elevated p-3 sm:p-4 transition-colors hover:bg-bg-secondary overflow-hidden min-w-0"
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                           <Link
                             to={`/admin/orders`}
-                            className="font-semibold text-text-primary hover:text-primary"
+                            className="font-semibold text-text-primary hover:text-primary whitespace-nowrap"
                           >
                             Order #{order.id}
                           </Link>
-                          <Badge variant={badgeVariant} size="sm">
+                          <Badge variant={badgeVariant} size="sm" className="flex-shrink-0">
                             {order.status}
                           </Badge>
                         </div>
-                        <p className="mt-1 text-sm text-text-secondary">{order.customerName}</p>
+                        <p className="mt-1 text-sm text-text-secondary truncate">{order.customerName}</p>
                         <p className="mt-1 text-xs text-text-tertiary">{formatDate(order.createdAt)}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-text-primary">${order.total.toFixed(2)}</p>
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-semibold text-text-primary whitespace-nowrap">${order.total.toFixed(2)}</p>
                         {order.status === 'pending' && (
                           <button
                             onClick={() => updateStatusMutation.mutate({ id: order.id, status: 'confirmed' })}
                             disabled={updateStatusMutation.isPending}
-                            className="mt-2 rounded-full bg-interactive-default px-3 py-1 text-xs font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50"
+                            className="mt-2 rounded-full bg-interactive-default px-3 py-1 text-xs font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50 whitespace-nowrap"
                           >
                             Confirm
                           </button>
@@ -253,10 +253,10 @@ function AdminDashboard() {
         {/* Right Sidebar - Alerts & Quick Stats */}
         <div className="space-y-6">
           {/* Inventory Alerts */}
-          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <ExclamationTriangleIcon className="h-5 w-5 text-amber-400" />
-              <h2 className="font-display text-lg text-text-primary">Inventory Alerts</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+            <div className="mb-4 flex items-center gap-2 min-w-0">
+              <ExclamationTriangleIcon className="h-5 w-5 text-amber-400 flex-shrink-0" />
+              <h2 className="font-display text-base sm:text-lg text-text-primary">Inventory Alerts</h2>
             </div>
 
             {isLoading ? (
@@ -265,12 +265,12 @@ function AdminDashboard() {
               <div className="space-y-4">
                 {/* Out of Stock */}
                 {metrics.outOfStockProducts.length > 0 && (
-                  <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4">
-                    <div className="flex items-center gap-2">
-                      <XCircleIcon className="h-5 w-5 text-rose-400" />
-                      <div>
+                  <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-3 sm:p-4 overflow-hidden">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <XCircleIcon className="h-5 w-5 text-rose-400 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-rose-400">Out of Stock</p>
-                        <p className="text-xs text-text-secondary">
+                        <p className="text-xs text-text-secondary break-words">
                           {metrics.outOfStockProducts.length} {metrics.outOfStockProducts.length === 1 ? 'product' : 'products'}
                         </p>
                       </div>
@@ -280,12 +280,12 @@ function AdminDashboard() {
 
                 {/* Low Stock */}
                 {metrics.lowStockProducts.length > 0 && (
-                  <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4">
-                    <div className="flex items-center gap-2">
-                      <ExclamationTriangleIcon className="h-5 w-5 text-amber-400" />
-                      <div>
+                  <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 sm:p-4 overflow-hidden">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <ExclamationTriangleIcon className="h-5 w-5 text-amber-400 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-amber-400">Low Stock</p>
-                        <p className="text-xs text-text-secondary">
+                        <p className="text-xs text-text-secondary break-words">
                           {metrics.lowStockProducts.length} {metrics.lowStockProducts.length === 1 ? 'product' : 'products'} (≤10 units)
                         </p>
                       </div>
@@ -294,10 +294,10 @@ function AdminDashboard() {
                 )}
 
                 {metrics.outOfStockProducts.length === 0 && metrics.lowStockProducts.length === 0 && (
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
-                      <div>
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 sm:p-4 overflow-hidden">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <CheckCircleIcon className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-emerald-400">All Good</p>
                         <p className="text-xs text-text-secondary">No inventory issues</p>
                       </div>
@@ -309,60 +309,60 @@ function AdminDashboard() {
           </div>
 
           {/* Product Categories */}
-          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-            <h2 className="mb-4 font-display text-lg text-text-primary">Product Categories</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+            <h2 className="mb-4 font-display text-base sm:text-lg text-text-primary">Product Categories</h2>
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <SparklesIcon className="h-4 w-4 text-primary" />
-                  <span className="text-sm text-text-primary">New Arrivals</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <SparklesIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm text-text-primary truncate">New Arrivals</span>
                 </div>
-                <span className="font-semibold text-text-primary">{metrics.newProducts.length}</span>
+                <span className="font-semibold text-text-primary flex-shrink-0">{metrics.newProducts.length}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FireIcon className="h-4 w-4 text-red-400" />
-                  <span className="text-sm text-text-primary">Best Sellers</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <FireIcon className="h-4 w-4 text-red-400 flex-shrink-0" />
+                  <span className="text-sm text-text-primary truncate">Best Sellers</span>
                 </div>
-                <span className="font-semibold text-text-primary">{metrics.featuredProducts.length}</span>
+                <span className="font-semibold text-text-primary flex-shrink-0">{metrics.featuredProducts.length}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TagIcon className="h-4 w-4 text-rose-400" />
-                  <span className="text-sm text-text-primary">On Sale</span>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <TagIcon className="h-4 w-4 text-rose-400 flex-shrink-0" />
+                  <span className="text-sm text-text-primary truncate">On Sale</span>
                 </div>
-                <span className="font-semibold text-text-primary">{metrics.saleProducts.length}</span>
+                <span className="font-semibold text-text-primary flex-shrink-0">{metrics.saleProducts.length}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-            <h2 className="mb-4 font-display text-lg text-text-primary">Quick Actions</h2>
+          <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+            <h2 className="mb-4 font-display text-base sm:text-lg text-text-primary">Quick Actions</h2>
             <div className="space-y-3">
               <Link
                 to="/admin/products"
-                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
+                className="flex w-full items-center justify-between gap-2 rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated min-w-0"
               >
-                <span>Manage Products</span>
-                <ArrowRightIcon className="h-4 w-4" />
+                <span className="truncate">Manage Products</span>
+                <ArrowRightIcon className="h-4 w-4 flex-shrink-0" />
               </Link>
               <Link
                 to="/admin/orders"
-                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
+                className="flex w-full items-center justify-between gap-2 rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated min-w-0"
               >
-                <span>View All Orders</span>
-                <ArrowRightIcon className="h-4 w-4" />
+                <span className="truncate">View All Orders</span>
+                <ArrowRightIcon className="h-4 w-4 flex-shrink-0" />
               </Link>
               <Link
                 to="/admin/translations"
-                className="flex w-full items-center justify-between rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated"
+                className="flex w-full items-center justify-between gap-2 rounded-xl bg-bg-secondary p-3 text-sm text-text-primary transition-colors hover:bg-bg-elevated min-w-0"
               >
-                <div className="flex items-center gap-2">
-                  <LanguageIcon className="h-4 w-4" />
-                  <span>Manage Translations</span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <LanguageIcon className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">Manage Translations</span>
                 </div>
-                <ArrowRightIcon className="h-4 w-4" />
+                <ArrowRightIcon className="h-4 w-4 flex-shrink-0" />
               </Link>
             </div>
           </div>
@@ -370,38 +370,38 @@ function AdminDashboard() {
       </div>
 
       {/* Order Status Summary */}
-      <div className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-amber-500/20 p-3">
-              <ClockIcon className="h-5 w-5 text-amber-400" />
+      <div className="grid gap-4 sm:gap-6 sm:grid-cols-3">
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="rounded-full bg-amber-500/20 p-2 sm:p-3 flex-shrink-0">
+              <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-text-primary">{metrics.pendingOrders}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xl sm:text-2xl font-bold text-text-primary">{metrics.pendingOrders}</p>
               <p className="text-xs text-text-secondary">Pending</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-blue-500/20 p-3">
-              <CheckCircleIcon className="h-5 w-5 text-blue-400" />
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="rounded-full bg-blue-500/20 p-2 sm:p-3 flex-shrink-0">
+              <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-text-primary">{metrics.confirmedOrders}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xl sm:text-2xl font-bold text-text-primary">{metrics.confirmedOrders}</p>
               <p className="text-xs text-text-secondary">Confirmed</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-emerald-500/20 p-3">
-              <CheckCircleIcon className="h-5 w-5 text-emerald-400" />
+        <div className="rounded-3xl bg-bg-elevated border border-border-default p-4 sm:p-6 overflow-hidden">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="rounded-full bg-emerald-500/20 p-2 sm:p-3 flex-shrink-0">
+              <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-text-primary">{metrics.completedOrders}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xl sm:text-2xl font-bold text-text-primary">{metrics.completedOrders}</p>
               <p className="text-xs text-text-secondary">Completed</p>
             </div>
           </div>

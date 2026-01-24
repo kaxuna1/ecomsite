@@ -23,6 +23,55 @@ const upload = multer({
 // ============================================================================
 
 /**
+ * GET /api/cms/global-blocks
+ * Get global blocks (e.g., header promotions) with targeting filter
+ * Query params:
+ *  - location: 'header' | 'footer' (required)
+ *  - lang: language code (default: 'en')
+ *  - path: current page path for targeting (optional)
+ *  - pageType: 'home' | 'products' | 'productDetail' | 'cms' | 'cart' | 'checkout' | 'account' (optional)
+ *  - cmsSlug: slug of current CMS page (optional, for CMS page targeting)
+ */
+router.get(
+  '/global-blocks',
+  [
+    query('location').isString().notEmpty().isIn(['header', 'footer']),
+    query('lang').optional().isString(),
+    query('path').optional().isString(),
+    query('pageType').optional().isString().isIn(['home', 'products', 'productDetail', 'cms', 'cart', 'checkout', 'account']),
+    query('cmsSlug').optional().isString()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const location = req.query.location as string;
+      const language = (req.query.lang as string) || 'en';
+
+      // Build targeting context if path/pageType provided
+      let context: any = undefined;
+      if (req.query.path || req.query.pageType) {
+        context = {
+          path: (req.query.path as string) || '/',
+          pageType: (req.query.pageType as string) || 'home',
+          cmsSlug: req.query.cmsSlug as string | undefined,
+          language
+        };
+      }
+
+      const blocks = await cmsService.getGlobalBlocks(location, language, context);
+      res.json(blocks);
+    } catch (error) {
+      console.error('Error fetching global blocks:', error);
+      res.status(500).json({ message: 'Error fetching global blocks' });
+    }
+  }
+);
+
+/**
  * GET /api/cms/pages/:slug/public
  * Get published page content for frontend
  */
@@ -1115,6 +1164,38 @@ router.post(
         return res.status(404).json({ message: 'Footer settings or language not found' });
       }
       res.status(500).json({ message: 'Error creating footer translation' });
+    }
+  }
+);
+
+// ============================================================================
+// GLOBAL BLOCKS ADMIN ROUTES
+// ============================================================================
+
+/**
+ * GET /api/cms/admin/global-blocks/:location
+ * Get global blocks for admin editing (includes disabled blocks)
+ */
+router.get(
+  '/admin/global-blocks/:location',
+  adminAuth,
+  [
+    param('location').isString().notEmpty().isIn(['header', 'footer']),
+    query('lang').optional().isString()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const language = (req.query.lang as string) || 'en';
+      const result = await cmsService.getGlobalBlocksAdmin(req.params.location, language);
+      res.json(result);
+    } catch (error) {
+      console.error('Error fetching global blocks for admin:', error);
+      res.status(500).json({ message: 'Error fetching global blocks' });
     }
   }
 );

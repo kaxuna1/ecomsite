@@ -20,7 +20,10 @@ import {
   PublicPageResponse,
   PageQueryFilters,
   BlockQueryFilters,
-  BlockContent
+  BlockContent,
+  GlobalBlockContext,
+  BlockTargeting,
+  BlockSettings
 } from '../types/cms';
 
 // ============================================================================
@@ -242,6 +245,178 @@ export async function updatePage(
 export async function deletePage(pageId: number): Promise<boolean> {
   const result = await pool.query('DELETE FROM cms_pages WHERE id = $1', [pageId]);
   return result.rowCount !== null && result.rowCount > 0;
+}
+
+// ============================================================================
+// GLOBAL BLOCKS (Promotions/Announcements)
+// ============================================================================
+
+/**
+ * System page slugs for global block locations
+ */
+const GLOBAL_PAGE_SLUGS: Record<string, string> = {
+  header: '_global-header',
+  footer: '_global-footer',
+};
+
+/**
+ * Get or create a system page for global blocks
+ */
+export async function getOrCreateSystemPage(location: string, adminId?: number): Promise<CMSPage> {
+  const slug = GLOBAL_PAGE_SLUGS[location];
+  if (!slug) {
+    throw new Error(`Invalid global block location: ${location}`);
+  }
+
+  // Try to find existing page
+  let page = await getPageBySlug(slug);
+
+  // Create if doesn't exist
+  if (!page) {
+    const result = await pool.query(
+      `INSERT INTO cms_pages (slug, title, meta_description, is_published, created_by)
+       VALUES ($1, $2, $3, true, $4)
+       RETURNING *`,
+      [slug, `Global ${location} blocks`, `System page for ${location} promotions`, adminId || null]
+    );
+    page = mapPageFromDb(result.rows[0]);
+    console.log(`Created system page for global ${location} blocks: ${slug}`);
+  }
+
+  return page;
+}
+
+/**
+ * Check if a block's targeting matches the given context
+ */
+export function matchesTargeting(
+  settings: BlockSettings | null,
+  context: GlobalBlockContext
+): boolean {
+  const targeting = settings?.targeting;
+
+  // No targeting config or disabled = show everywhere
+  if (!targeting || !targeting.enabled) {
+    return true;
+  }
+
+  const { include, exclude } = targeting;
+
+  // Check exclusions first (they take priority)
+  if (exclude) {
+    // Check page type exclusion
+    if (exclude.pageTypes?.includes(context.pageType)) {
+      return false;
+    }
+
+    // Check route prefix exclusion
+    if (exclude.routePrefixes?.some(prefix => context.path.startsWith(prefix))) {
+      return false;
+    }
+
+    // Check CMS slug exclusion
+    if (context.cmsSlug && exclude.cmsSlugs?.includes(context.cmsSlug)) {
+      return false;
+    }
+  }
+
+  // Check inclusions (if any specified, must match at least one category)
+  if (include) {
+    const hasIncludeRules =
+      (include.pageTypes && include.pageTypes.length > 0) ||
+      (include.routePrefixes && include.routePrefixes.length > 0) ||
+      (include.cmsSlugs && include.cmsSlugs.length > 0);
+
+    if (hasIncludeRules) {
+      let matchesAnyInclude = false;
+
+      // Check page type inclusion
+      if (include.pageTypes?.length && include.pageTypes.includes(context.pageType)) {
+        matchesAnyInclude = true;
+      }
+
+      // Check route prefix inclusion
+      if (include.routePrefixes?.length && include.routePrefixes.some(prefix => context.path.startsWith(prefix))) {
+        matchesAnyInclude = true;
+      }
+
+      // Check CMS slug inclusion
+      if (include.cmsSlugs?.length && context.cmsSlug && include.cmsSlugs.includes(context.cmsSlug)) {
+        matchesAnyInclude = true;
+      }
+
+      if (!matchesAnyInclude) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Public block response type for global blocks
+ */
+export interface GlobalBlock {
+  id: number;
+  blockType: string;
+  blockKey: string;
+  content: BlockContent;
+  settings: BlockSettings | null;
+  displayOrder: number;
+}
+
+/**
+ * Get global blocks for a location (e.g., header) with targeting filter
+ * Public endpoint for storefront consumption
+ */
+export async function getGlobalBlocks(
+  location: string,
+  language: string = 'en',
+  context?: GlobalBlockContext
+): Promise<GlobalBlock[]> {
+  const slug = GLOBAL_PAGE_SLUGS[location];
+  if (!slug) {
+    return [];
+  }
+
+  // Query blocks for the system page with translations
+  const result = await pool.query(
+    `SELECT
+      b.id, b.block_type as "blockType", b.block_key as "blockKey",
+      COALESCE(bt.content, b.content) as content,
+      b.settings, b.display_order as "displayOrder"
+     FROM cms_pages p
+     JOIN cms_blocks b ON p.id = b.page_id AND b.is_enabled = true
+     LEFT JOIN cms_block_translations bt ON b.id = bt.block_id AND bt.language_code = $2
+     WHERE p.slug = $1 AND p.is_published = true
+     ORDER BY b.display_order ASC`,
+    [slug, language]
+  );
+
+  let blocks: GlobalBlock[] = result.rows;
+
+  // Apply targeting filter if context provided
+  if (context) {
+    blocks = blocks.filter(block => matchesTargeting(block.settings, context));
+  }
+
+  return blocks;
+}
+
+/**
+ * Get global blocks for admin (includes disabled, no targeting filter)
+ */
+export async function getGlobalBlocksAdmin(
+  location: string,
+  language: string = 'en'
+): Promise<{ page: CMSPage; blocks: CMSBlock[] }> {
+  const page = await getOrCreateSystemPage(location);
+
+  // Get all blocks including disabled
+  const blocks = await getBlocksByPageId(page.id);
+
+  return { page, blocks };
 }
 
 // ============================================================================

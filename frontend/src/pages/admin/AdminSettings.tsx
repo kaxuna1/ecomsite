@@ -13,7 +13,17 @@ import {
   DocumentDuplicateIcon,
   TrashIcon,
   SparklesIcon,
-  PhotoIcon
+  PhotoIcon,
+  DocumentTextIcon,
+  CreditCardIcon,
+  EnvelopeIcon,
+  CpuChipIcon,
+  ChartBarIcon,
+  TruckIcon,
+  CloudIcon,
+  MagnifyingGlassIcon,
+  MegaphoneIcon,
+  WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import { fetchSettings, updateSettings, uploadLogo, SiteSettings } from '../../api/settings';
@@ -39,9 +49,38 @@ interface APIKeyCategory {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: string; // Keep for backward compatibility, but we'll use getCategoryIcon instead
   keys: Omit<APIKey, 'category'>[];
 }
+
+// Helper function to get the icon component for each category
+const getCategoryIcon = (categoryId: string) => {
+  const iconProps = { className: 'h-8 w-8' };
+  switch (categoryId) {
+    case 'payment':
+      return <CreditCardIcon {...iconProps} />;
+    case 'communication':
+      return <EnvelopeIcon {...iconProps} />;
+    case 'ai':
+      return <CpuChipIcon {...iconProps} />;
+    case 'analytics':
+      return <ChartBarIcon {...iconProps} />;
+    case 'shipping':
+      return <TruckIcon {...iconProps} />;
+    case 'storage':
+      return <CloudIcon {...iconProps} />;
+    case 'cdn':
+      return <ShieldCheckIcon {...iconProps} />;
+    case 'search':
+      return <MagnifyingGlassIcon {...iconProps} />;
+    case 'marketing':
+      return <MegaphoneIcon {...iconProps} />;
+    case 'other':
+      return <WrenchScrewdriverIcon {...iconProps} />;
+    default:
+      return <Cog6ToothIcon {...iconProps} />;
+  }
+};
 
 // Define all possible API keys an e-commerce platform might need
 const API_KEY_CATEGORIES: APIKeyCategory[] = [
@@ -733,7 +772,7 @@ export default function AdminSettings() {
                           : 'border-border-default text-text-secondary hover:border-border-default'
                       }`}
                     >
-                      <div className="text-3xl mb-2">📝</div>
+                      <DocumentTextIcon className="h-8 w-8 mb-2" />
                       <div className="font-semibold">Text Logo</div>
                       <div className="text-xs opacity-70 mt-1">Use custom text</div>
                     </button>
@@ -747,7 +786,7 @@ export default function AdminSettings() {
                           : 'border-border-default text-text-secondary hover:border-border-default'
                       }`}
                     >
-                      <div className="text-3xl mb-2">🖼️</div>
+                      <PhotoIcon className="h-8 w-8 mb-2" />
                       <div className="font-semibold">Logo Image</div>
                       <div className="text-xs opacity-70 mt-1">Upload an image</div>
                     </button>
@@ -879,7 +918,7 @@ export default function AdminSettings() {
                       {/* Category Header */}
                       <div className="mb-6">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-3xl">{category.icon}</span>
+                          {getCategoryIcon(category.id)}
                           <h3 className="text-xl font-display text-text-primary">{category.name}</h3>
                         </div>
                         <p className="text-sm text-text-secondary">{category.description}</p>
@@ -1123,7 +1162,7 @@ export default function AdminSettings() {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
-                          <div className="text-4xl">🤖</div>
+                          <CpuChipIcon className="h-10 w-10" />
                           <div>
                             <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               OpenAI
@@ -1213,7 +1252,7 @@ export default function AdminSettings() {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
-                          <div className="text-4xl">✨</div>
+                          <SparklesIcon className="h-10 w-10" />
                           <div>
                             <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               Google Gemini
@@ -1303,7 +1342,7 @@ export default function AdminSettings() {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
-                          <div className="text-4xl">🧠</div>
+                          <CpuChipIcon className="h-10 w-10" />
                           <div>
                             <h3 className="text-xl font-display text-text-primary mb-1 flex items-center gap-2">
                               Anthropic Claude

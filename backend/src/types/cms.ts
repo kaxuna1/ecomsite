@@ -14,7 +14,9 @@ export type BlockType =
   | 'cta'
   | 'text_image'
   | 'stats'
-  | 'social_proof';
+  | 'social_proof'
+  | 'announcement'
+  | 'faq';
 
 export type PageStatus = 'draft' | 'published';
 
@@ -111,7 +113,9 @@ export type BlockContent =
   | CTAContent
   | TextImageContent
   | StatsContent
-  | SocialProofContent;
+  | SocialProofContent
+  | AnnouncementContent
+  | FAQContent;
 
 // Hero Block - Large banner with image, headline, and CTA
 export interface HeroContent {
@@ -299,6 +303,58 @@ export interface SocialProofContent {
   displayStyle?: 'grid' | 'marquee';
 }
 
+// Announcement/Promotion Bar Block - Global header/footer promotion
+export interface AnnouncementContent {
+  type: 'announcement';
+  message: string;
+  linkText?: string;
+  linkUrl?: string;
+  icon?: string; // Icon identifier (e.g., 'truck', 'tag', 'gift')
+  backgroundColor?: string;
+  textColor?: string;
+  dismissible?: boolean;
+}
+
+// FAQ Block - Expandable questions and answers
+export interface FAQContent {
+  type: 'faq';
+  title?: string;
+  subtitle?: string;
+  items: Array<{
+    id: string;
+    question: string;
+    answer: string;
+  }>;
+  displayStyle?: 'accordion' | 'list';
+}
+
+// ============================================================================
+// TARGETING CONFIGURATION (for global blocks)
+// ============================================================================
+
+export type PageType = 'home' | 'products' | 'productDetail' | 'cms' | 'cart' | 'checkout' | 'account';
+
+export interface BlockTargeting {
+  enabled: boolean;
+  include?: {
+    pageTypes?: PageType[];
+    routePrefixes?: string[];
+    cmsSlugs?: string[];
+  };
+  exclude?: {
+    pageTypes?: PageType[];
+    routePrefixes?: string[];
+    cmsSlugs?: string[];
+  };
+}
+
+export interface GlobalBlockContext {
+  path: string;
+  pageType: PageType;
+  cmsSlug?: string;
+  language?: string;
+}
+
 // ============================================================================
 // BLOCK SETTINGS
 // ============================================================================
@@ -332,6 +388,9 @@ export interface BlockSettings {
   // Custom CSS
   customCss?: string;
   customClasses?: string;
+
+  // Targeting (for global blocks)
+  targeting?: BlockTargeting;
 }
 
 // ============================================================================

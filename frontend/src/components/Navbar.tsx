@@ -28,7 +28,11 @@ import type { MenuItemHierarchical } from '../types/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchModal from './SearchModal';
 
-function Navbar() {
+interface NavbarProps {
+  hideAnnouncement?: boolean;
+}
+
+function Navbar({ hideAnnouncement = false }: NavbarProps) {
   const { items, total, removeItem } = useCart();
   const { user, isAuthenticated, userLogout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -235,13 +239,15 @@ function Navbar() {
 
   return (
     <>
-      {/* Announcement Bar */}
-      <div className="bg-text-primary py-2 text-center text-xs font-medium text-text-inverse">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
-          <TruckIcon className="h-4 w-4" />
-          <span>{t('header.announcement')}</span>
+      {/* Announcement Bar (fallback when no CMS blocks) */}
+      {!hideAnnouncement && (
+        <div className="bg-text-primary py-2 text-center text-xs font-medium text-text-inverse">
+          <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
+            <TruckIcon className="h-4 w-4" />
+            <span>{t('header.announcement')}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Header */}
       <header className="sticky top-0 z-50 border-b border-border-default bg-bg-primary/95 backdrop-blur-xl shadow-sm">

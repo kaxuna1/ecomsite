@@ -320,7 +320,7 @@ function NewBlockForm({
   const [content, setContent] = useState(getBlockTemplateJSON('hero'));
   const [useTemplate, setUseTemplate] = useState(true);
 
-  const blockTypes = ['hero', 'features', 'products', 'testimonials', 'newsletter', 'text_image', 'stats', 'cta', 'faq'];
+  const blockTypes = ['hero', 'features', 'products', 'testimonials', 'newsletter', 'text_image', 'stats', 'cta', 'faq', 'announcement'];
 
   // Update content when block type changes and template is enabled
   const handleBlockTypeChange = (newType: string) => {

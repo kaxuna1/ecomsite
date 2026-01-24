@@ -64,39 +64,44 @@ export default function StatCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className={`rounded-3xl bg-gradient-to-br ${colors.gradient} border ${colors.border} p-6 shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]`}
+      className={`relative rounded-3xl bg-gradient-to-br ${colors.gradient} border ${colors.border} p-4 sm:p-6 shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] overflow-hidden`}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-            {title}
-          </p>
-          <p className="mt-3 font-display text-3xl text-text-primary">{value}</p>
-          {subtitle && (
-            <p className="mt-2 text-xs text-text-secondary">{subtitle}</p>
-          )}
-          {trend && (
-            <div className="mt-3 flex items-center gap-1.5">
-              {trend.value >= 0 ? (
-                <ArrowTrendingUpIcon className="h-4 w-4 text-emerald-400" />
-              ) : (
-                <ArrowTrendingDownIcon className="h-4 w-4 text-rose-400" />
-              )}
-              <span
-                className={`text-xs font-semibold ${
-                  trend.value >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                }`}
-              >
-                {trend.value >= 0 ? '+' : ''}
-                {trend.value}%
-              </span>
-              <span className="text-xs text-text-tertiary">{trend.label}</span>
-            </div>
-          )}
-        </div>
-        <div className={`rounded-full ${colors.iconBg} p-3`}>
-          <div className={`h-6 w-6 ${colors.iconColor}`}>{icon}</div>
-        </div>
+      {/* Icon positioned absolutely in top-right, well within bounds */}
+      <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 rounded-full ${colors.iconBg} p-1.5 sm:p-2 flex-shrink-0`}>
+        <div className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.iconColor} flex items-center justify-center`}>{icon}</div>
+      </div>
+      
+      {/* Content area with padding to avoid icon overlap */}
+      <div className="pr-14 sm:pr-18 lg:pr-20 min-w-0">
+        <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+          {title}
+        </p>
+        <p className="mt-2 sm:mt-3 font-display text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-text-primary leading-tight whitespace-nowrap overflow-visible">
+          {typeof value === 'number' 
+            ? value.toLocaleString('en-US', { maximumFractionDigits: 2 })
+            : String(value)}
+        </p>
+        {subtitle && (
+          <p className="mt-1.5 sm:mt-2 text-xs text-text-secondary break-normal">{subtitle}</p>
+        )}
+        {trend && (
+          <div className="mt-2 sm:mt-3 flex items-center gap-1.5 flex-wrap">
+            {trend.value >= 0 ? (
+              <ArrowTrendingUpIcon className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            ) : (
+              <ArrowTrendingDownIcon className="h-4 w-4 text-rose-400 flex-shrink-0" />
+            )}
+            <span
+              className={`text-xs font-semibold whitespace-nowrap ${
+                trend.value >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {trend.value >= 0 ? '+' : ''}
+              {trend.value}%
+            </span>
+            <span className="text-xs text-text-tertiary line-clamp-1">{trend.label}</span>
+          </div>
+        )}
       </div>
     </motion.div>
   );

@@ -9,6 +9,7 @@ import TextImageBlockEditor from './TextImageBlockEditor';
 import StatsBlockEditor from './StatsBlockEditor';
 import CTABlockEditor from './CTABlockEditor';
 import FAQBlockEditor from './FAQBlockEditor';
+import AnnouncementBlockEditor from './AnnouncementBlockEditor';
 
 interface VisualBlockEditorProps {
   blockType: string;
@@ -73,6 +74,8 @@ export default function VisualBlockEditor({
         return <CTABlockEditor content={editedContent} onChange={handleContentChange} />;
       case 'faq':
         return <FAQBlockEditor content={editedContent} onChange={handleContentChange} />;
+      case 'announcement':
+        return <AnnouncementBlockEditor content={editedContent} onChange={handleContentChange} />;
       default:
         return (
           <div className="p-8 text-center text-champagne/50">
