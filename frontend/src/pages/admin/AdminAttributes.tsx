@@ -242,7 +242,7 @@ const AttributeCard = forwardRef<HTMLDivElement, AttributeCardProps>(function At
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.05 }}
-      className="rounded-2xl border border-border-default bg-bg-elevated p-6 backdrop-blur-sm"
+      className="rounded-2xl border border-border-default bg-bg-elevated p-3 backdrop-blur-sm sm:p-4 lg:p-6"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -371,18 +371,18 @@ function AttributeModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-2 backdrop-blur-sm sm:p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border-default bg-bg-elevated p-8"
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border-default bg-bg-elevated p-4 sm:rounded-3xl sm:p-6 lg:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
+        <div className="mb-4 flex items-center justify-between sm:mb-6">
+          <h2 className="font-display text-lg uppercase tracking-wider text-text-primary sm:text-xl sm:tracking-[0.2em] lg:text-2xl truncate pr-2">
             {attribute ? 'Edit Attribute' : 'Create Attribute'}
           </h2>
           <button
@@ -394,8 +394,8 @@ function AttributeModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm text-text-primary">Attribute Key *</label>
               <input
@@ -572,14 +572,14 @@ function DeleteConfirmModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-2 backdrop-blur-sm sm:p-4"
       onClick={onCancel}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
+        className="w-full max-w-md rounded-2xl border border-border-default bg-bg-elevated p-4 sm:rounded-3xl sm:p-6 lg:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="mb-4 font-display text-xl uppercase tracking-wider text-text-primary">

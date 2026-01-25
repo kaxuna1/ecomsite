@@ -536,7 +536,7 @@ export default function AdminStaticTranslations() {
             {sidebarOpen ? 'Hide Categories' : 'Show Categories & Keys'}
           </button>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
             {/* Sidebar: Namespace & Keys */}
             <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block col-span-1 space-y-4 lg:col-span-4`}>
             {/* Namespace Selector */}
@@ -650,7 +650,7 @@ export default function AdminStaticTranslations() {
             {/* Main Content: Translation Editor */}
             <div className="col-span-1 lg:col-span-8">
             {selectedKey ? (
-              <div className="space-y-6 rounded-2xl border border-border-default bg-bg-elevated p-6">
+              <div className="space-y-4 rounded-2xl border border-border-default bg-bg-elevated p-3 sm:space-y-6 sm:p-4 lg:p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-text-primary">
@@ -813,7 +813,7 @@ export default function AdminStaticTranslations() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-sm sm:max-w-md transform overflow-hidden rounded-3xl border border-border-default bg-bg-primary p-4 md:p-6 shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-sm sm:max-w-md transform overflow-hidden rounded-2xl border border-border-default bg-bg-primary p-3 sm:rounded-3xl sm:p-4 md:p-6 shadow-xl transition-all">
                   <Dialog.Title className="text-lg font-semibold text-text-primary mb-4">
                     Select Target Language
                   </Dialog.Title>

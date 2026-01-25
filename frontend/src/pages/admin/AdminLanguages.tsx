@@ -227,53 +227,54 @@ export default function AdminLanguages() {
       />
 
       {/* Languages Table */}
-      <div className="rounded-3xl border border-border-default bg-bg-elevated backdrop-blur overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-bg-elevated">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Code
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Name
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Native Name
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Default
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Order
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {languages?.map((language) => (
-                <tr key={language.code} className="hover:bg-bg-elevated transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-mono font-semibold text-text-primary">
+      <div className="rounded-2xl border border-border-default bg-bg-elevated backdrop-blur overflow-hidden sm:rounded-3xl">
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
+          <div className="inline-block min-w-full align-middle px-3 sm:px-0">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-bg-elevated">
+                <tr>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Code
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Name
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Native Name
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Status
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Default
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Order
+                  </th>
+                  <th className="px-3 py-3 text-right text-xs font-medium uppercase tracking-[0.2em] text-text-primary/60 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {languages?.map((language) => (
+                  <tr key={language.code} className="hover:bg-bg-elevated transition-colors">
+                    <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    <span className="text-xs font-mono font-semibold text-text-primary sm:text-sm">
                       {language.code.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-text-primary">{language.name}</span>
+                  <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    <span className="text-xs text-text-primary sm:text-sm">{language.name}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-text-primary">{language.nativeName}</span>
+                  <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    <span className="text-xs text-text-primary sm:text-sm">{language.nativeName}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
                     <button
                       type="button"
                       onClick={() => handleToggle(language)}
-                      className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors ${
+                      className={`px-2 py-0.5 text-xs font-semibold rounded-full uppercase tracking-wider transition-colors sm:px-3 sm:py-1 ${
                         language.isEnabled
                           ? 'bg-emerald-500/20 text-emerald-400'
                           : 'bg-text-secondary/20 text-text-primary/60'
@@ -282,18 +283,18 @@ export default function AdminLanguages() {
                       {language.isEnabled ? 'Enabled' : 'Disabled'}
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
                     {language.isDefault && (
-                      <span className="px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider bg-interactive-default/20 text-primary">
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full uppercase tracking-wider bg-interactive-default/20 text-primary sm:px-3 sm:py-1">
                         Default
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-text-primary">{language.displayOrder}</span>
+                  <td className="px-3 py-3 whitespace-nowrap sm:px-4 sm:py-4 lg:px-6">
+                    <span className="text-xs text-text-primary sm:text-sm">{language.displayOrder}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end gap-4">
+                  <td className="px-3 py-3 whitespace-nowrap text-right text-xs font-medium sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                    <div className="flex items-center justify-end gap-2 sm:gap-4">
                       <button
                         type="button"
                         onClick={() => openEditModal(language)}
@@ -321,13 +322,13 @@ export default function AdminLanguages() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-bg-primary border border-border-default rounded-3xl max-w-md w-full p-8">
-            <h2 className="font-display text-2xl uppercase tracking-[0.3em] mb-6">
+        <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-bg-primary border border-border-default rounded-2xl max-w-md w-full p-4 sm:rounded-3xl sm:p-6 lg:p-8">
+            <h2 className="font-display text-lg uppercase tracking-[0.2em] mb-4 sm:text-xl sm:tracking-[0.25em] sm:mb-5 lg:text-2xl lg:tracking-[0.3em] lg:mb-6">
               {editingLanguage ? 'Edit Language' : 'Add New Language'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6">
               {!editingLanguage ? (
                 /* Language Autocomplete - Only for creating new languages */
                 <div>

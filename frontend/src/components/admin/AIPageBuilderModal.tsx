@@ -255,7 +255,7 @@ export default function AIPageBuilderModal({ isOpen, onClose, onSuccess }: AIPag
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+          <div className="flex min-h-full items-center justify-center p-2 sm:p-4">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -265,9 +265,9 @@ export default function AIPageBuilderModal({ isOpen, onClose, onSuccess }: AIPag
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
+              <Dialog.Panel className="w-full max-w-full sm:max-w-4xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
                 {/* Header */}
-                <div className="border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4">
+                  <div className="border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">

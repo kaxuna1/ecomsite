@@ -341,10 +341,10 @@ export default function AdminCMSTranslations() {
 
       {/* Page Translations Tab */}
       {activeTab === 'pages' && (
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
           {/* Pages Sidebar */}
           <aside className="col-span-3">
-            <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+            <div className="rounded-2xl bg-bg-elevated border border-border-default p-3 sm:rounded-3xl sm:p-4 lg:p-6">
               <h2 className="font-display text-lg text-text-primary mb-4">CMS Pages</h2>
               {pagesLoading ? (
                 <p className="text-text-primary/60">Loading...</p>
@@ -372,7 +372,7 @@ export default function AdminCMSTranslations() {
           {/* Page Translation Editor */}
           <main className="col-span-9">
             {selectedPage ? (
-              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+              <div className="rounded-2xl bg-bg-elevated border border-border-default p-3 sm:rounded-3xl sm:p-4 lg:p-6">
                 {/* Language Selector & AI Translate Button */}
                 <div className="mb-6 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -428,7 +428,7 @@ export default function AdminCMSTranslations() {
 
                 {/* Translation Form */}
                 <form onSubmit={handlePageSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
                     {/* Original Column */}
                     <div>
                       <h3 className="font-display text-lg mb-4 text-text-primary">
@@ -523,7 +523,7 @@ export default function AdminCMSTranslations() {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="flex justify-end gap-3 pt-6 border-t border-border-default">
+                  <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3 sm:pt-6 border-t border-border-default">
                     <button
                       type="button"
                       onClick={() => setSelectedPage(null)}
@@ -544,7 +544,7 @@ export default function AdminCMSTranslations() {
                 </form>
               </div>
             ) : (
-              <div className="rounded-3xl bg-bg-elevated border border-border-default p-12 text-center">
+              <div className="rounded-2xl bg-bg-elevated border border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
                 <p className="text-text-primary/70 text-lg">
                   Select a page from the left to manage translations
                 </p>
@@ -556,11 +556,11 @@ export default function AdminCMSTranslations() {
 
       {/* Block Translations Tab */}
       {activeTab === 'blocks' && (
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
           {/* Pages & Blocks Sidebar */}
           <aside className="col-span-3 space-y-4">
             {/* Page Selection */}
-            <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+            <div className="rounded-2xl bg-bg-elevated border border-border-default p-3 sm:rounded-3xl sm:p-4 lg:p-6">
               <h2 className="font-display text-lg text-text-primary mb-4">Select Page</h2>
               {pagesLoading ? (
                 <p className="text-text-primary/60">Loading...</p>
@@ -588,7 +588,7 @@ export default function AdminCMSTranslations() {
 
             {/* Block Selection */}
             {selectedBlockPage && (
-              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+              <div className="rounded-2xl bg-bg-elevated border border-border-default p-3 sm:rounded-3xl sm:p-4 lg:p-6">
                 <h2 className="font-display text-lg text-text-primary mb-4">Blocks</h2>
                 {blocksLoading ? (
                   <p className="text-text-primary/60">Loading...</p>
@@ -619,7 +619,7 @@ export default function AdminCMSTranslations() {
           {/* Block Translation Editor */}
           <main className="col-span-9">
             {selectedBlock ? (
-              <div className="rounded-3xl bg-bg-elevated border border-border-default p-6">
+              <div className="rounded-2xl bg-bg-elevated border border-border-default p-3 sm:rounded-3xl sm:p-4 lg:p-6">
                 {/* Language Selector */}
                 <div className="mb-6 flex items-center gap-4">
                   <label className="font-semibold text-sm text-text-primary">
@@ -656,7 +656,7 @@ export default function AdminCMSTranslations() {
                   />
 
                   {/* Submit Button */}
-                  <div className="flex justify-end gap-3 pt-6 border-t border-border-default">
+                  <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3 sm:pt-6 border-t border-border-default">
                     <button
                       type="button"
                       onClick={() => setSelectedBlock(null)}
@@ -677,7 +677,7 @@ export default function AdminCMSTranslations() {
                 </form>
               </div>
             ) : (
-              <div className="rounded-3xl bg-bg-elevated border border-border-default p-12 text-center">
+              <div className="rounded-2xl bg-bg-elevated border border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
                 <p className="text-text-primary/70 text-lg">
                   {selectedBlockPage
                     ? 'Select a block from the left to manage translations'

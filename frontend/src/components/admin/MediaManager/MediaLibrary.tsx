@@ -113,10 +113,10 @@ export default function MediaLibrary({
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="border-b border-border-default bg-bg-elevated p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-text-primary">
+      <div className="border-b border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
+        <div className="mb-3 flex flex-col gap-3 sm:mb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-bold text-text-primary sm:text-xl lg:text-2xl truncate">
               {mode === 'select' ? 'Select Media' : 'Media Library'}
             </h2>
             <p className="mt-1 text-sm text-text-tertiary">
@@ -261,7 +261,7 @@ export default function MediaLibrary({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
         {showUploader && mode !== 'select' && (
           <div className="mb-6">
             <MediaUploader
@@ -287,8 +287,8 @@ export default function MediaLibrary({
 
       {/* Footer (for select mode) */}
       {mode === 'select' && (
-        <div className="border-t border-border-default bg-bg-elevated p-4">
-          <div className="flex items-center justify-between">
+        <div className="border-t border-border-default bg-bg-elevated p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-text-tertiary">
               {selectedMedia.size > 0 ? (
                 <span>
@@ -300,7 +300,7 @@ export default function MediaLibrary({
               )}
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               {onClose && (
                 <button
                   onClick={onClose}

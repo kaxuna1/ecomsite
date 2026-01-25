@@ -463,15 +463,15 @@ export default function ThemeEditorModal({ isOpen, onClose, theme }: ThemeEditor
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-midnight border border-white/20 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+        className="bg-midnight border border-white/20 rounded-2xl w-full max-w-full sm:max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-white/10">
+        <div className="flex flex-col gap-3 px-4 py-4 border-b border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 lg:px-8 lg:py-6">
           <div>
             <h2 className="text-2xl font-display text-champagne">
               {theme ? 'Edit Theme' : 'Create New Theme'}
@@ -505,8 +505,8 @@ export default function ThemeEditorModal({ isOpen, onClose, theme }: ThemeEditor
         </div>
 
         {/* Basic Info */}
-        <div className="px-8 py-6 border-b border-white/10 bg-white/5 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="px-4 py-4 border-b border-white/10 bg-white/5 space-y-3 sm:px-6 sm:py-5 sm:space-y-4 lg:px-8 lg:py-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <div>
               <label htmlFor="displayName" className="block text-sm font-semibold text-champagne mb-2">
                 Theme Name <span className="text-rose-400">*</span>

@@ -122,7 +122,7 @@ function AdminLayout() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <Dialog.Panel id="admin-mobile-sidebar" className="relative mr-16 flex w-full max-w-xs flex-1">
+              <Dialog.Panel id="admin-mobile-sidebar" className="relative mr-12 flex w-full max-w-[280px] flex-1 sm:mr-16 sm:max-w-xs">
                 <Transition.Child
                   as={Fragment}
                   enter="ease-in-out duration-300"
@@ -132,11 +132,12 @@ function AdminLayout() {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
+                  <div className="absolute left-full top-0 flex w-12 justify-center pt-4 sm:w-16 sm:pt-5">
                     <button
                       type="button"
                       className="-m-2.5 p-2.5"
                       onClick={() => setSidebarOpen(false)}
+                      aria-label="Close sidebar"
                     >
                       <span className="sr-only">Close sidebar</span>
                       <XMarkIcon className="h-6 w-6 text-text-primary" aria-hidden="true" />
@@ -144,14 +145,14 @@ function AdminLayout() {
                   </div>
                 </Transition.Child>
 
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-default bg-bg-elevated px-6 pb-4">
-                  <div className="flex h-16 shrink-0 items-center">
-                    <span className="font-display text-xl uppercase tracking-[0.3em] text-text-primary">
+                <div className="flex grow flex-col gap-y-4 overflow-y-auto border-r border-border-default bg-bg-elevated px-4 pb-4 sm:gap-y-5 sm:px-6">
+                  <div className="flex h-14 shrink-0 items-center sm:h-16">
+                    <span className="font-display text-lg uppercase tracking-[0.2em] text-text-primary sm:text-xl sm:tracking-[0.3em]">
                       Luxia Admin
                     </span>
                   </div>
                   <nav className="flex flex-1 flex-col" aria-label="Admin navigation">
-                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                    <ul role="list" className="flex flex-1 flex-col gap-y-6 sm:gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
                           {navigation.map((item) => {
@@ -164,16 +165,16 @@ function AdminLayout() {
                                 <NavLink
                                   to={item.href}
                                   onClick={() => setSidebarOpen(false)}
-                                  className={`group flex gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 transition-colors ${
+                                  className={`group flex gap-x-2.5 rounded-xl p-2.5 text-xs font-semibold leading-6 transition-colors sm:gap-x-3 sm:rounded-2xl sm:p-3 sm:text-sm ${
                                     isActive
                                       ? 'bg-interactive-default text-on-interactive'
                                       : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                                   }`}
                                 >
-                                  <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                  {item.name}
+                                  <item.icon className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" aria-hidden="true" />
+                                  <span className="truncate">{item.name}</span>
                                   {item.badge !== undefined && (
-                                    <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
+                                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary sm:h-6 sm:w-6">
                                       {item.badge}
                                     </span>
                                   )}
@@ -187,9 +188,9 @@ function AdminLayout() {
                         <button
                           type="button"
                           onClick={logout}
-                          className="group -mx-2 flex w-full gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 text-text-secondary transition-colors hover:bg-bg-elevated hover:text-error"
+                          className="group -mx-2 flex w-full gap-x-2.5 rounded-xl p-2.5 text-xs font-semibold leading-6 text-text-secondary transition-colors hover:bg-bg-elevated hover:text-error sm:gap-x-3 sm:rounded-2xl sm:p-3 sm:text-sm"
                         >
-                          <ArrowRightOnRectangleIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                          <ArrowRightOnRectangleIcon className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" aria-hidden="true" />
                           Sign Out
                         </button>
                       </li>
@@ -202,11 +203,12 @@ function AdminLayout() {
         </Dialog>
       </Transition.Root>
 
-      {/* Desktop sidebar */}
-      <div
-        className={`hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300 ${
+      {/* Desktop sidebar - Hidden on mobile, only visible on lg+ screens */}
+      <aside
+        className={`hidden lg:block lg:fixed lg:inset-y-0 lg:z-50 transition-all duration-300 ${
           sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'
         }`}
+        aria-label="Desktop sidebar navigation"
       >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border-default bg-bg-elevated/80 backdrop-blur px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center justify-between">
@@ -292,7 +294,7 @@ function AdminLayout() {
             </ul>
           </nav>
         </div>
-      </div>
+      </aside>
 
       {/* Main content */}
       <div
@@ -301,7 +303,7 @@ function AdminLayout() {
         }`}
       >
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border-default bg-bg-elevated/80 px-4 backdrop-blur sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-2 border-b border-border-default bg-bg-elevated/80 px-3 backdrop-blur sm:gap-x-4 sm:px-4 lg:gap-x-6 lg:px-8">
           <button
             type="button"
             className="-m-2.5 p-2.5 text-text-primary lg:hidden"
@@ -316,30 +318,30 @@ function AdminLayout() {
           {/* Separator */}
           <div className="h-6 w-px bg-border-default lg:hidden" aria-hidden="true" />
 
-          <div className="flex flex-1 items-center justify-between gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-1 items-center justify-between gap-x-2 self-stretch sm:gap-x-4 lg:gap-x-6 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 sm:gap-3">
               {currentPage && (
                 <>
-                  <currentPage.icon className="h-6 w-6 text-primary" />
-                  <h1 className="font-display text-lg uppercase tracking-wider text-text-primary">
+                  <currentPage.icon className="h-5 w-5 flex-shrink-0 text-primary sm:h-6 sm:w-6" />
+                  <h1 className="font-display text-sm uppercase tracking-wider text-text-primary truncate sm:text-base lg:text-lg">
                     {currentPage.name}
                   </h1>
                 </>
               )}
             </div>
 
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
+            <div className="flex items-center gap-x-2 sm:gap-x-4 lg:gap-x-6 flex-shrink-0">
               {/* Command Palette Trigger */}
               <button
                 type="button"
                 onClick={() => setCommandPaletteOpen(true)}
                 aria-label="Open command palette"
                 aria-keyshortcuts="Ctrl+K"
-                className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary"
+                className="flex items-center gap-1.5 rounded-full border border-border-default bg-bg-elevated px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary sm:gap-2 sm:px-4 sm:py-2 sm:text-sm"
               >
-                <MagnifyingGlassIcon className="h-4 w-4" />
+                <MagnifyingGlassIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">Search</span>
-                <kbd className="hidden rounded border border-border-default bg-bg-primary px-2 py-0.5 text-xs font-mono sm:inline">
+                <kbd className="hidden rounded border border-border-default bg-bg-primary px-1.5 py-0.5 text-xs font-mono sm:px-2 md:inline">
                   {navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'}K
                 </kbd>
               </button>
@@ -348,7 +350,7 @@ function AdminLayout() {
         </div>
 
         {/* Page content */}
-        <main id="admin-main" tabIndex={-1} className="px-4 py-8 sm:px-6 lg:px-8">
+        <main id="admin-main" tabIndex={-1} className="px-3 py-6 sm:px-4 sm:py-8 lg:px-8">
           <Outlet />
         </main>
       </div>

@@ -534,7 +534,7 @@ Total: $${order.total.toFixed(2)}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/95 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/95 p-2 backdrop-blur-sm sm:p-4"
         onClick={onClose}
       >
         <motion.div
@@ -542,12 +542,12 @@ Total: $${order.total.toFixed(2)}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-border-default bg-bg-elevated shadow-2xl"
+          className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border-default bg-bg-elevated shadow-2xl sm:rounded-3xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex-shrink-0 border-b border-border-default bg-bg-secondary px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
-            <div className="flex items-start justify-between gap-3">
+          <div className="flex-shrink-0 border-b border-border-default bg-bg-secondary px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-5 lg:px-8 lg:py-6">
+            <div className="flex items-start justify-between gap-2 sm:gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
                   <h2 className="font-display text-xl text-text-primary sm:text-2xl md:text-3xl">

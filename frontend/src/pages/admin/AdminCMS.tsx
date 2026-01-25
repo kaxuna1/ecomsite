@@ -383,7 +383,7 @@ export default function AdminCMS() {
 
       {/* Pages Grid */}
       {filteredPages.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredPages.map((page) => (
             <CMSPageCard
               key={page.id}
@@ -438,9 +438,9 @@ export default function AdminCMS() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-bg-elevated border-l border-border-default z-50 overflow-hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-full sm:max-w-3xl bg-bg-elevated border-l border-border-default z-50 overflow-hidden flex flex-col"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border-default bg-bg-elevated/95 backdrop-blur-sm">
+              <div className="flex items-center justify-between px-3 py-3 border-b border-border-default bg-bg-elevated/95 backdrop-blur-sm sm:px-4 sm:py-4 lg:px-6">
                 <div>
                   <h2 className="font-display text-2xl text-text-primary">Footer Editor</h2>
                   <p className="text-sm text-text-tertiary mt-1">Customize your site footer</p>
@@ -468,7 +468,7 @@ export default function AdminCMS() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
                 <FooterEditor
                   footer={footerSettings}
                   language={footerLanguage}
@@ -503,7 +503,7 @@ export default function AdminCMS() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-bg-elevated border border-border-default rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-border-default bg-bg-secondary flex-shrink-0">
+                <div className="flex items-center justify-between px-3 py-3 border-b border-border-default bg-bg-secondary flex-shrink-0 sm:px-4 sm:py-4 lg:px-6">
                   <div>
                     <h2 className="font-display text-2xl text-text-primary">Create New Page</h2>
                     <p className="text-sm text-text-tertiary mt-1">Add a new page to your site</p>
@@ -517,7 +517,7 @@ export default function AdminCMS() {
                   </button>
                 </div>
 
-                <div className="px-6 py-6 space-y-5 overflow-y-auto flex-1">
+                <div className="px-3 py-4 space-y-4 overflow-y-auto flex-1 sm:px-4 sm:py-5 sm:space-y-5 lg:px-6 lg:py-6">
                   {/* Template Selector */}
                   <div>
                     <label className="block text-sm font-semibold text-text-primary mb-3">
@@ -655,7 +655,7 @@ export default function AdminCMS() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-default bg-bg-secondary flex-shrink-0">
+                  <div className="flex flex-col gap-2 px-3 py-3 border-t border-border-default bg-bg-secondary flex-shrink-0 sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:px-4 sm:py-4 lg:px-6">
                   <button
                     onClick={() => setShowNewPageModal(false)}
                     className="px-5 py-2.5 text-text-secondary hover:bg-bg-elevated rounded-lg transition-colors font-medium"

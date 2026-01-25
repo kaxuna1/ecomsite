@@ -218,12 +218,12 @@ const PromoCodeCard = React.forwardRef<HTMLDivElement, PromoCodeCardProps>(
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ delay: index * 0.05 }}
-        className="group rounded-3xl border border-border-default bg-bg-elevated p-6 backdrop-blur"
+        className="group rounded-2xl border border-border-default bg-bg-elevated p-3 backdrop-blur sm:rounded-3xl sm:p-6"
       >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h3 className="font-display text-2xl uppercase tracking-wider text-primary">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h3 className="font-display text-lg uppercase tracking-wider text-primary sm:text-2xl break-all">
               {promo.code}
             </h3>
             <span
@@ -347,18 +347,18 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-2 backdrop-blur-sm sm:p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
-        className="w-full max-w-2xl rounded-3xl border border-border-default bg-bg-elevated p-8"
+        className="w-full max-w-2xl rounded-2xl border border-border-default bg-bg-elevated p-4 sm:rounded-3xl sm:p-6 lg:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl uppercase tracking-[0.3em] text-text-primary">
+        <div className="mb-4 flex items-center justify-between sm:mb-6">
+          <h2 className="font-display text-lg uppercase tracking-[0.2em] text-text-primary sm:text-xl sm:tracking-[0.3em] lg:text-2xl truncate pr-2">
             {promo ? 'Edit' : 'Create'} Promo Code
           </h2>
           <button
@@ -370,7 +370,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
             <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
               Code
@@ -387,7 +387,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             />
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Discount Type
@@ -423,7 +423,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             </div>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Min Purchase (Optional)
@@ -464,7 +464,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             </div>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium uppercase tracking-wider text-text-primary">
                 Valid From
@@ -509,7 +509,7 @@ function PromoCodeModal({ promo, onClose, onSubmit, isSubmitting }: PromoCodeMod
             </label>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <button
               type="button"
               onClick={onClose}

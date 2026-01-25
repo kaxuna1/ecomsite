@@ -425,7 +425,7 @@ export default function AdminTranslations() {
         </div>
 
         {/* Main Content */}
-        <div className="grid gap-6 lg:grid-cols-12">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-12">
           {/* Product List Sidebar */}
           <aside className={`lg:col-span-4 xl:col-span-3 ${showMobileProductList ? 'block' : 'hidden lg:block'}`}>
             <div className="sticky top-6 space-y-4">
@@ -561,8 +561,8 @@ export default function AdminTranslations() {
                 {/* Translation Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name */}
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Original Name</span>
                       </label>
@@ -571,7 +571,7 @@ export default function AdminTranslations() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Name *</span>
                         <button
@@ -601,8 +601,8 @@ export default function AdminTranslations() {
                   </div>
 
                   {/* Short Description */}
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Short Description
                       </label>
@@ -611,7 +611,7 @@ export default function AdminTranslations() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Short Description *</span>
                         <button
@@ -641,8 +641,8 @@ export default function AdminTranslations() {
                   </div>
 
                   {/* Description */}
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Description
                       </label>
@@ -651,7 +651,7 @@ export default function AdminTranslations() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Description *</span>
                         <button
@@ -678,8 +678,8 @@ export default function AdminTranslations() {
                   </div>
 
                   {/* Highlights */}
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Highlights
                       </label>
@@ -700,7 +700,7 @@ export default function AdminTranslations() {
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Translated Highlights
                       </label>
@@ -743,8 +743,8 @@ export default function AdminTranslations() {
                   </div>
 
                   {/* Usage */}
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         Original Usage
                       </label>
@@ -757,7 +757,7 @@ export default function AdminTranslations() {
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+                    <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                       <label className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                         <span>Translated Usage</span>
                         {selectedProduct.usage && (
@@ -787,7 +787,7 @@ export default function AdminTranslations() {
                       <SparklesIcon className="h-5 w-5 text-primary" />
                       SEO Metadata
                     </h3>
-                    <div className="grid gap-6 lg:grid-cols-2">
+                    <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
                       <div>
                         <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-text-primary/60">
                           Meta Title
@@ -872,7 +872,7 @@ export default function AdminTranslations() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex min-h-[500px] items-center justify-center rounded-3xl border border-border-default bg-bg-elevated p-12 text-center"
+                className="flex min-h-[500px] items-center justify-center rounded-2xl border border-border-default bg-bg-elevated p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12"
               >
                 <div>
                   <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-border-default bg-bg-elevated">

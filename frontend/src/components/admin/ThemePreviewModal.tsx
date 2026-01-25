@@ -71,15 +71,15 @@ export default function ThemePreviewModal({ isOpen, onClose, theme, onActivate }
   if (!isOpen || !theme) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-2 sm:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-midnight border border-white/20 rounded-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden flex flex-col shadow-2xl"
+        className="bg-midnight border border-white/20 rounded-2xl w-full max-w-full sm:max-w-7xl max-h-[95vh] overflow-hidden flex flex-col shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-white/10 bg-white/5">
+        <div className="flex flex-col gap-3 px-4 py-4 border-b border-white/10 bg-white/5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5 lg:px-8 lg:py-6">
           <div>
             <h2 className="text-2xl font-display text-champagne">
               Theme Preview: {theme.displayName}
@@ -109,7 +109,7 @@ export default function ThemePreviewModal({ isOpen, onClose, theme, onActivate }
 
         {/* Preview Content - Scrollable */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-8 space-y-12">
+          <div className="p-4 space-y-8 sm:p-6 sm:space-y-10 lg:p-8 lg:space-y-12">
             {/* Typography Showcase */}
             <section>
               <h3 className="text-xl font-display text-champagne mb-6 pb-2 border-b border-white/10">

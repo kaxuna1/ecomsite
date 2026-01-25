@@ -96,17 +96,17 @@ const AdminUserModal = ({ isOpen, onClose, onSave, user }: AdminUserModalProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="admin-user-modal-title"
-        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl"
+        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-4 sm:p-5 lg:p-6 shadow-2xl"
         onKeyDown={(event) => {
           if (event.key === 'Escape') onClose();
         }}
       >
-        <h2 id="admin-user-modal-title" className="text-2xl font-bold text-text-primary mb-6">
+        <h2 id="admin-user-modal-title" className="text-lg font-bold text-text-primary mb-4 sm:text-xl sm:mb-5 lg:text-2xl lg:mb-6">
           {user ? 'Edit Admin User' : 'Create Admin User'}
         </h2>
         <form onSubmit={handleSubmit}>
@@ -215,8 +215,8 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, userName }: DeleteConf
 
   return (
     <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-text-primary mb-4">Confirm Delete</h2>
+      <div className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-4 sm:p-5 lg:p-6 shadow-2xl">
+        <h2 className="text-lg font-bold text-text-primary mb-3 sm:text-xl sm:mb-4 lg:text-2xl">Confirm Delete</h2>
         <p className="text-text-primary mb-6">
           Are you sure you want to delete admin user <strong className="text-red-400">{userName}</strong>? This action cannot be undone.
         </p>
@@ -318,7 +318,7 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-3 space-y-4 sm:p-4 sm:space-y-5 lg:p-8 lg:space-y-6">
       <PageHeader
         title="Admin Users"
         description="Manage admin user accounts and permissions"
@@ -344,78 +344,81 @@ export default function AdminUsers() {
         </div>
       ) : (
         <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl overflow-hidden">
-          <table className="min-w-full divide-y divide-border-default">
-            <thead className="bg-bg-secondary">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Last Login
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-bg-elevated divide-y divide-border-default">
-              {adminUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-text-primary">{user.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-text-secondary">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.role === 'super_admin'
-                          ? 'bg-primary/20 text-primary border border-primary/30'
-                          : 'bg-primary/20 text-primary border border-primary/30'
-                      }`}
-                    >
-                      {user.role === 'super_admin' ? 'Super Admin' : 'Admin'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.isActive
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                      }`}
-                    >
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
-                    {formatDate(user.lastLogin)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
+          <div className="overflow-x-auto -mx-3 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-3 sm:px-0">
+              <table className="min-w-full divide-y divide-border-default">
+                <thead className="bg-bg-secondary">
+                  <tr>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Name
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Email
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Role
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Status
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Last Login
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-bg-elevated divide-y divide-border-default">
+                  {adminUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs font-medium text-text-primary sm:text-sm">{user.name}</div>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs text-text-secondary break-all sm:text-sm">{user.email}</div>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <span
+                          className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full sm:px-3 sm:py-1 ${
+                            user.role === 'super_admin'
+                              ? 'bg-primary/20 text-primary border border-primary/30'
+                              : 'bg-primary/20 text-primary border border-primary/30'
+                          }`}
+                        >
+                          {user.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <span
+                          className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full sm:px-3 sm:py-1 ${
+                            user.isActive
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                          }`}
+                        >
+                          {user.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 text-xs text-text-secondary sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                        {formatDate(user.lastLogin)}
+                      </td>
+                      <td className="px-3 py-3 text-xs font-medium sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                        <div className="flex gap-1.5 sm:gap-2">
                       <button
                         onClick={() => handleEdit(user)}
                         className="text-primary hover:text-primary/80 transition-colors"
                         title="Edit"
+                        aria-label="Edit"
                       >
-                        <PencilIcon className="h-5 w-5" />
+                        <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </button>
                       <button
                         onClick={() => setDeleteConfirm({ isOpen: true, user })}
                         className="text-red-400 hover:text-red-300 transition-colors"
                         title="Delete"
                       >
-                        <TrashIcon className="h-5 w-5" />
+                        <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </button>
                     </div>
                   </td>
@@ -423,6 +426,8 @@ export default function AdminUsers() {
               ))}
             </tbody>
           </table>
+            </div>
+          </div>
 
           {adminUsers.length === 0 && (
             <div className="text-center py-12">

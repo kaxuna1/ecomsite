@@ -299,7 +299,7 @@ export default function AdminThemes() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6"
+            className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 sm:p-4 lg:p-6"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
               <div className="rounded-xl bg-emerald-500/20 p-3">
@@ -339,7 +339,7 @@ export default function AdminThemes() {
         {/* My Themes Grid */}
         <div>
           <h2 className="text-2xl font-display text-text-primary mb-4">My Themes</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:gap-6">
             <AnimatePresence mode="popLayout">
               {themes.map((theme) => (
               <motion.div
@@ -392,7 +392,7 @@ export default function AdminThemes() {
                 </div>
 
                 {/* Theme Info */}
-                <div className="p-6 space-y-4">
+                <div className="p-3 space-y-3 sm:p-4 sm:space-y-4 lg:p-6">
                   <div>
                     <h3 className="text-lg font-display text-text-primary mb-1">
                       {theme.displayName}
@@ -498,7 +498,7 @@ export default function AdminThemes() {
                 Professional pre-built themes ready to use
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:gap-6">
               <AnimatePresence>
                 {presets.map((preset) => (
                   <motion.div
@@ -538,7 +538,7 @@ export default function AdminThemes() {
                     </div>
 
                     {/* Preset Info */}
-                    <div className="p-6 space-y-4">
+                    <div className="p-3 space-y-3 sm:p-4 sm:space-y-4 lg:p-6">
                       <div>
                         <h3 className="text-lg font-display text-text-primary mb-1">
                           {preset.displayName}

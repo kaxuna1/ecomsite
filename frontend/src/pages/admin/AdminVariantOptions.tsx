@@ -211,7 +211,7 @@ function AdminVariantOptions() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="rounded-2xl border border-border-default bg-bg-elevated p-6 backdrop-blur-sm"
+                className="rounded-2xl border border-border-default bg-bg-elevated p-3 backdrop-blur-sm sm:p-4 lg:p-6"
               >
                 <div className="mb-4 flex items-start justify-between">
                   <div>
@@ -268,17 +268,17 @@ function AdminVariantOptions() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-2 backdrop-blur-sm sm:p-4"
             onClick={() => setShowOptionModal(false)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
+              className="w-full max-w-md rounded-2xl border border-border-default bg-bg-elevated p-4 sm:rounded-3xl sm:p-6 lg:p-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-4 flex items-center justify-between sm:mb-6">
                 <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
                   Create Option Type
                 </h2>
@@ -314,7 +314,7 @@ function AdminVariantOptions() {
                   <p className="mt-1 text-xs text-text-tertiary">Lower numbers appear first</p>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:gap-3">
                   <button
                     type="button"
                     onClick={handleCreateOption}
@@ -344,7 +344,7 @@ function AdminVariantOptions() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-2 backdrop-blur-sm sm:p-4"
             onClick={() => {
               setShowValueModal(false);
               setSelectedOption(null);
@@ -354,10 +354,10 @@ function AdminVariantOptions() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-3xl border border-border-default bg-bg-elevated p-8"
+              className="w-full max-w-md rounded-2xl border border-border-default bg-bg-elevated p-4 sm:rounded-3xl sm:p-6 lg:p-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-4 flex items-center justify-between sm:mb-6">
                 <div>
                   <h2 className="font-display text-2xl uppercase tracking-wider text-text-primary">
                     Add Value
@@ -399,7 +399,7 @@ function AdminVariantOptions() {
                   <p className="mt-1 text-xs text-text-tertiary">Lower numbers appear first</p>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:gap-3">
                   <button
                     type="button"
                     onClick={handleCreateValue}

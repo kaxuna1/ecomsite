@@ -593,7 +593,7 @@ export default function AdminNavigation() {
   const availableParents = getAvailableParents();
 
   return (
-    <div className="min-h-screen bg-bg-primary p-6">
+    <div className="min-h-screen bg-bg-primary p-3 sm:p-4 lg:p-6">
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Navigation Menu"
@@ -649,10 +649,10 @@ export default function AdminNavigation() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
           {/* Left: Menu Tree */}
           <aside className="col-span-1 lg:col-span-5">
-            <div className="rounded-3xl border border-border-default bg-bg-elevated p-6">
+            <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:rounded-3xl sm:p-4 lg:p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-display text-lg text-text-primary">Menu Items</h2>
                 {itemsLoading && (
@@ -714,7 +714,7 @@ export default function AdminNavigation() {
           {/* Right: Edit Form */}
           <main className="col-span-1 lg:col-span-7">
             {selectedItemId || isCreatingNew ? (
-              <form onSubmit={handleSubmit} className="rounded-3xl border border-border-default bg-bg-elevated p-6">
+              <form onSubmit={handleSubmit} className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:rounded-3xl sm:p-4 lg:p-6">
                 <div className="mb-6 flex items-center justify-between">
                   <h2 className="font-display text-xl text-text-primary">
                     {isCreatingNew ? 'New Menu Item' : 'Edit Menu Item'}
@@ -937,8 +937,8 @@ export default function AdminNavigation() {
 
         {/* AI Generation Modal */}
         {showAIModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border-default bg-bg-primary p-8">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4">
+            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border-default bg-bg-primary p-4 sm:rounded-3xl sm:p-6 lg:p-8">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">

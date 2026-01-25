@@ -291,7 +291,7 @@ function AdminReviews() {
                 key={review.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-bg-elevated rounded-lg border border-border-default p-6"
+                className="bg-bg-elevated rounded-lg border border-border-default p-3 sm:p-4 lg:p-6"
               >
                 {/* Review Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -382,7 +382,7 @@ function AdminReviews() {
                 )}
 
                 {/* Actions - Using simple buttons with inline icons */}
-                <div className="flex items-center gap-2 pt-4 border-t border-border-default flex-wrap">
+                <div className="flex flex-col gap-2 pt-4 border-t border-border-default sm:flex-row sm:items-center sm:flex-wrap">
                   {review.status === 'pending' && (
                     <>
                       <button
@@ -501,12 +501,12 @@ function AdminReviews() {
       {/* Reject Modal */}
       <AnimatePresence>
         {showRejectModal && selectedReview && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/50 sm:p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+              className="bg-white rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Reject Review</h3>
@@ -561,12 +561,12 @@ function AdminReviews() {
       {/* Response Modal */}
       <AnimatePresence>
         {showResponseModal && selectedReview && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-primary/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-bg-primary/80 backdrop-blur-sm sm:p-4"
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-bg-elevated rounded-lg shadow-xl max-w-md w-full p-6 border border-border-default"
+              className="bg-bg-elevated rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 border border-border-default"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-text-primary">Add Response</h3>

@@ -202,7 +202,7 @@ export default function AdminNewsletter() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary p-6">
+    <div className="min-h-screen bg-bg-primary p-3 sm:p-4 lg:p-6">
       <div className="mx-auto max-w-7xl">
         <PageHeader
           title="Newsletter Subscriptions"
@@ -211,8 +211,8 @@ export default function AdminNewsletter() {
 
         {/* Statistics Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-bg-elevated border border-border-default rounded-lg p-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 mb-6 sm:mb-8">
+            <div className="bg-bg-elevated border border-border-default rounded-lg p-4 sm:p-5 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary/60 text-sm">Total Subscribers</p>
@@ -222,7 +222,7 @@ export default function AdminNewsletter() {
               </div>
             </div>
 
-            <div className="bg-bg-elevated border border-border-default rounded-lg p-6">
+            <div className="bg-bg-elevated border border-border-default rounded-lg p-4 sm:p-5 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary/60 text-sm">Active</p>
@@ -232,7 +232,7 @@ export default function AdminNewsletter() {
               </div>
             </div>
 
-            <div className="bg-bg-elevated border border-border-default rounded-lg p-6">
+            <div className="bg-bg-elevated border border-border-default rounded-lg p-4 sm:p-5 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary/60 text-sm">This Week</p>
@@ -242,7 +242,7 @@ export default function AdminNewsletter() {
               </div>
             </div>
 
-            <div className="bg-bg-elevated border border-border-default rounded-lg p-6">
+            <div className="bg-bg-elevated border border-border-default rounded-lg p-4 sm:p-5 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-text-primary/60 text-sm">This Month</p>
@@ -255,13 +255,13 @@ export default function AdminNewsletter() {
         )}
 
         {/* Filters */}
-        <div className="bg-bg-elevated border border-border-default rounded-lg p-6 mb-6">
+        <div className="bg-bg-elevated border border-border-default rounded-lg p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6">
           <div className="flex items-center gap-3 mb-4">
             <FunnelIcon className="h-5 w-5 text-emerald-400" />
             <h2 className="font-semibold text-text-primary">Filters</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
             <div>
               <label className="block text-sm text-text-primary/60 mb-2">Search</label>
               <SearchInput
@@ -367,46 +367,52 @@ export default function AdminNewsletter() {
         ) : (
           <>
             <div className="bg-bg-elevated border border-border-default rounded-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-bg-elevated border-b border-border-default">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider">Source</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider">Subscribed</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-text-primary/60 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/10">
-                    {subscriptions.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-bg-elevated">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">{sub.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary/80">{sub.name || '-'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">{getStatusBadge(sub.status)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary/80">{sub.source}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary/80">
-                          {format(new Date(sub.subscribed_at), 'MMM d, yyyy')}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button
-                            onClick={() => handleEdit(sub)}
-                            className="text-emerald-400 hover:text-emerald-400/80 mr-3"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(sub.id)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        </td>
+              <div className="overflow-x-auto -mx-3 sm:mx-0">
+                <div className="inline-block min-w-full align-middle px-3 sm:px-0">
+                  <table className="w-full">
+                    <thead className="bg-bg-elevated border-b border-border-default">
+                      <tr>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Email</th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Name</th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Status</th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Source</th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Subscribed</th>
+                        <th className="px-3 py-2.5 text-right text-xs font-medium text-text-primary/60 uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {subscriptions.map((sub) => (
+                        <tr key={sub.id} className="hover:bg-bg-elevated">
+                          <td className="px-3 py-3 text-xs text-text-primary sm:px-4 sm:py-4 sm:text-sm lg:px-6 break-all">{sub.email}</td>
+                          <td className="px-3 py-3 text-xs text-text-primary/80 sm:px-4 sm:py-4 sm:text-sm lg:px-6">{sub.name || '-'}</td>
+                          <td className="px-3 py-3 text-xs sm:px-4 sm:py-4 sm:text-sm lg:px-6">{getStatusBadge(sub.status)}</td>
+                          <td className="px-3 py-3 text-xs text-text-primary/80 sm:px-4 sm:py-4 sm:text-sm lg:px-6">{sub.source}</td>
+                          <td className="px-3 py-3 text-xs text-text-primary/80 sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                            {format(new Date(sub.subscribed_at), 'MMM d, yyyy')}
+                          </td>
+                          <td className="px-3 py-3 text-right text-xs font-medium sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                            <div className="flex items-center justify-end gap-2 sm:gap-3">
+                              <button
+                                onClick={() => handleEdit(sub)}
+                                className="text-emerald-400 hover:text-emerald-400/80"
+                                aria-label="Edit"
+                              >
+                                <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(sub.id)}
+                                className="text-red-400 hover:text-red-300"
+                                aria-label="Delete"
+                              >
+                                <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               {subscriptions.length === 0 && (
@@ -447,8 +453,8 @@ export default function AdminNewsletter() {
 
       {/* Edit Modal */}
       {editingSubscription && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-bg-primary border border-border-default rounded-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-bg-primary border border-border-default rounded-xl max-w-md w-full p-4 sm:p-5 lg:p-6">
             <h3 className="font-display text-xl text-text-primary mb-4">Edit Subscription</h3>
 
             <div className="space-y-4">

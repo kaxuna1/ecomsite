@@ -591,26 +591,27 @@ function AdminProducts() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-2 sm:p-4"
             onClick={closeModal}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-bg-elevated border border-border-default p-8 shadow-2xl"
+              className="max-h-[95vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-bg-elevated border border-border-default p-4 shadow-2xl sm:rounded-3xl sm:p-6 lg:p-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="font-display text-2xl text-text-primary">
+              <div className="mb-4 flex items-center justify-between gap-3 sm:mb-6">
+                <h2 className="font-display text-lg text-text-primary sm:text-xl lg:text-2xl truncate">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
                 </h2>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-full p-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+                  className="rounded-full p-1.5 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary flex-shrink-0 sm:p-2"
+                  aria-label="Close modal"
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
               </div>
 
@@ -1083,19 +1084,19 @@ function AdminProducts() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/90 backdrop-blur-sm p-2 sm:p-4"
             onClick={() => setVariantProduct(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-bg-elevated border border-border-default p-8 shadow-2xl"
+              className="max-h-[95vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-bg-elevated border border-border-default p-4 shadow-2xl sm:rounded-3xl sm:p-6 lg:p-8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <h2 className="font-display text-2xl text-text-primary">
+              <div className="mb-4 flex items-center justify-between gap-3 sm:mb-6">
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-display text-lg text-text-primary sm:text-xl lg:text-2xl truncate">
                     Product Variants
                   </h2>
                   <p className="mt-1 text-sm text-text-secondary">

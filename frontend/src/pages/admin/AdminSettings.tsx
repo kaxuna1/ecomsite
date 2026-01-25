@@ -725,7 +725,7 @@ export default function AdminSettings() {
                 type="button"
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`relative flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 ${
                   activeTab === tab.id
                     ? 'text-text-primary'
                     : 'text-text-secondary hover:text-text-primary'
@@ -757,15 +757,15 @@ export default function AdminSettings() {
               transition={{ duration: 0.2 }}
               className="max-w-3xl"
             >
-              <div className="rounded-2xl border border-border-default bg-bg-elevated p-6 space-y-6">
+              <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 space-y-4 sm:p-4 sm:space-y-5 lg:p-6 lg:space-y-6">
                 {/* Logo Type Selection */}
                 <div>
                   <label className="block text-text-primary font-semibold mb-3">Logo Type</label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                     <button
                       type="button"
                       onClick={() => setLogoType('text')}
-                      className={`flex flex-col items-center px-6 py-4 rounded-xl border-2 transition-all ${
+                      className={`flex flex-col items-center px-4 py-3 rounded-xl border-2 transition-all sm:px-5 sm:py-3.5 lg:px-6 lg:py-4 ${
                         logoType === 'text'
                           ? 'border-primary bg-primary/10 text-primary'
                           : 'border-border-default text-text-secondary hover:border-border-default'
@@ -779,7 +779,7 @@ export default function AdminSettings() {
                     <button
                       type="button"
                       onClick={() => setLogoType('image')}
-                      className={`flex flex-col items-center px-6 py-4 rounded-xl border-2 transition-all ${
+                      className={`flex flex-col items-center px-4 py-3 rounded-xl border-2 transition-all sm:px-5 sm:py-3.5 lg:px-6 lg:py-4 ${
                         logoType === 'image'
                           ? 'border-primary bg-primary/10 text-primary'
                           : 'border-border-default text-text-secondary hover:border-border-default'
@@ -816,7 +816,7 @@ export default function AdminSettings() {
                     </p>
 
                     {/* Preview */}
-                    <div className="mt-4 p-6 bg-bg-secondary border border-border-default rounded-xl">
+                    <div className="mt-4 p-4 bg-bg-secondary border border-border-default rounded-xl sm:p-5 lg:p-6">
                       <p className="text-text-secondary text-xs mb-3 uppercase tracking-wider">Preview:</p>
                       <div className="text-3xl font-display text-text-primary tracking-wider">
                         {logoText || 'Your Brand'}
@@ -836,7 +836,7 @@ export default function AdminSettings() {
 
                     {/* Preview */}
                     {previewImage && (
-                      <div className="mb-4 p-6 bg-bg-secondary border border-border-default rounded-xl">
+                      <div className="mb-4 p-4 bg-bg-secondary border border-border-default rounded-xl sm:p-5 lg:p-6">
                         <p className="text-text-secondary text-xs mb-3 uppercase tracking-wider">Preview:</p>
                         <img
                           src={previewImage}
@@ -912,7 +912,7 @@ export default function AdminSettings() {
                   {API_KEY_CATEGORIES.map((category) => (
                     <div
                       key={category.id}
-                      className="rounded-2xl border border-border-default bg-bg-elevated p-6"
+                      className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6"
                     >
                       {/* Category Header */}
                       <div className="mb-6">
@@ -1136,7 +1136,7 @@ export default function AdminSettings() {
               className="max-w-4xl space-y-6"
             >
               {/* AI Provider Configuration */}
-              <div className="rounded-2xl border border-border-default bg-bg-elevated p-6">
+              <div className="rounded-2xl border border-border-default bg-bg-elevated p-3 sm:p-4 lg:p-6">
                 <div className="mb-6">
                   <h2 className="text-2xl font-display text-text-primary mb-2">AI Provider & Model Configuration</h2>
                   <p className="text-sm text-text-secondary">
@@ -1157,7 +1157,7 @@ export default function AdminSettings() {
                     <button
                       type="button"
                       onClick={() => setAiProvider('openai')}
-                      className="w-full text-left p-6"
+                      className="w-full text-left p-4 sm:p-5 lg:p-6"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -1179,7 +1179,7 @@ export default function AdminSettings() {
                     </button>
 
                     {/* Model Selector for OpenAI */}
-                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                    <div className={`px-4 pb-4 space-y-3 transition-opacity sm:px-5 sm:pb-5 lg:px-6 lg:pb-6 ${
                       aiProvider !== 'openai' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
                       <label className="block text-sm font-semibold text-text-primary mb-2">
@@ -1247,7 +1247,7 @@ export default function AdminSettings() {
                     <button
                       type="button"
                       onClick={() => setAiProvider('gemini')}
-                      className="w-full text-left p-6"
+                      className="w-full text-left p-4 sm:p-5 lg:p-6"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -1269,7 +1269,7 @@ export default function AdminSettings() {
                     </button>
 
                     {/* Model Selector for Gemini */}
-                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                    <div className={`px-4 pb-4 space-y-3 transition-opacity sm:px-5 sm:pb-5 lg:px-6 lg:pb-6 ${
                       aiProvider !== 'gemini' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
                       <label className="block text-sm font-semibold text-text-primary mb-2">
@@ -1337,7 +1337,7 @@ export default function AdminSettings() {
                     <button
                       type="button"
                       onClick={() => setAiProvider('anthropic')}
-                      className="w-full text-left p-6"
+                      className="w-full text-left p-4 sm:p-5 lg:p-6"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -1359,7 +1359,7 @@ export default function AdminSettings() {
                     </button>
 
                     {/* Model Selector for Anthropic */}
-                    <div className={`px-6 pb-6 space-y-3 transition-opacity ${
+                    <div className={`px-4 pb-4 space-y-3 transition-opacity sm:px-5 sm:pb-5 lg:px-6 lg:pb-6 ${
                       aiProvider !== 'anthropic' ? 'opacity-50 pointer-events-none' : ''
                     }`}>
                       <label className="block text-sm font-semibold text-text-primary mb-2">

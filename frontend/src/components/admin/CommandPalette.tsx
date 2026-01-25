@@ -236,7 +236,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-10 overflow-y-auto p-2 sm:p-4 md:p-6 lg:p-20">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -246,7 +246,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-border-default overflow-hidden rounded-3xl border border-border-default bg-bg-elevated shadow-2xl transition-all">
+            <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-border-default overflow-hidden rounded-2xl border border-border-default bg-bg-elevated shadow-2xl transition-all sm:rounded-3xl">
               <Combobox onChange={(command: CommandItem | null) => command?.action()}>
                 <div className="relative">
                   <MagnifyingGlassIcon

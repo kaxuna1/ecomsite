@@ -62,17 +62,17 @@ const EditUserModal = ({ isOpen, onClose, onSave, user }: EditUserModalProps) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-customer-title"
-        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl"
+        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-4 sm:p-5 lg:p-6 shadow-2xl"
         onKeyDown={(event) => {
           if (event.key === 'Escape') onClose();
         }}
       >
-        <h2 id="edit-customer-title" className="text-2xl font-bold text-text-primary mb-6">Edit Customer</h2>
+        <h2 id="edit-customer-title" className="text-lg font-bold text-text-primary mb-4 sm:text-xl sm:mb-5 lg:text-2xl lg:mb-6">Edit Customer</h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -363,84 +363,88 @@ export default function RegularUsers() {
         </div>
       ) : (
         <div className="bg-bg-elevated border border-border-default rounded-lg shadow-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-champagne/20">
-              <thead className="bg-midnight/80">
-                <tr>
-                  <th
-                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
-                    onClick={() => handleSort('name')}
-                  >
-                    Name{getSortIcon('name')}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th
-                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
-                    onClick={() => handleSort('orderCount')}
-                  >
-                    Orders{getSortIcon('orderCount')}
-                  </th>
-                  <th
-                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
-                    onClick={() => handleSort('totalSpent')}
-                  >
-                    Total Spent{getSortIcon('totalSpent')}
-                  </th>
-                  <th
-                    className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors"
-                    onClick={() => handleSort('createdAt')}
-                  >
-                    Joined{getSortIcon('createdAt')}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-text-primary uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-bg-elevated divide-y divide-border-default">
-                {filteredAndSortedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-text-primary">{user.name}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-text-secondary">{user.email}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-text-primary">{user.orderCount}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-emerald-400">
-                        {formatCurrency(user.totalSpent)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
-                      {formatDate(user.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(user)}
-                          className="text-primary hover:text-primary/80 transition-colors"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm({ isOpen: true, user })}
-                          className="text-red-400 hover:text-red-300 transition-colors"
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
+          <div className="overflow-x-auto -mx-3 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-3 sm:px-0">
+              <table className="min-w-full divide-y divide-champagne/20">
+                <thead className="bg-midnight/80">
+                  <tr>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors sm:px-4 sm:py-3 lg:px-6"
+                      onClick={() => handleSort('name')}
+                    >
+                      Name{getSortIcon('name')}
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Email
+                    </th>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors sm:px-4 sm:py-3 lg:px-6"
+                      onClick={() => handleSort('orderCount')}
+                    >
+                      Orders{getSortIcon('orderCount')}
+                    </th>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors sm:px-4 sm:py-3 lg:px-6"
+                      onClick={() => handleSort('totalSpent')}
+                    >
+                      Total Spent{getSortIcon('totalSpent')}
+                    </th>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider cursor-pointer hover:bg-bg-elevated transition-colors sm:px-4 sm:py-3 lg:px-6"
+                      onClick={() => handleSort('createdAt')}
+                    >
+                      Joined{getSortIcon('createdAt')}
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-medium text-text-primary uppercase tracking-wider sm:px-4 sm:py-3 lg:px-6">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-bg-elevated divide-y divide-border-default">
+                  {filteredAndSortedUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-bg-secondary transition-colors">
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs font-medium text-text-primary sm:text-sm">{user.name}</div>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs text-text-secondary break-all sm:text-sm">{user.email}</div>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs text-text-primary sm:text-sm">{user.orderCount}</div>
+                      </td>
+                      <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+                        <div className="text-xs font-semibold text-emerald-400 sm:text-sm">
+                          {formatCurrency(user.totalSpent)}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-xs text-text-secondary sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                        {formatDate(user.createdAt)}
+                      </td>
+                      <td className="px-3 py-3 text-xs font-medium sm:px-4 sm:py-4 sm:text-sm lg:px-6">
+                        <div className="flex gap-1.5 sm:gap-2">
+                          <button
+                            onClick={() => handleEdit(user)}
+                            className="text-primary hover:text-primary/80 transition-colors"
+                            title="Edit"
+                            aria-label="Edit"
+                          >
+                            <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm({ isOpen: true, user })}
+                            className="text-red-400 hover:text-red-300 transition-colors"
+                            title="Delete"
+                            aria-label="Delete"
+                          >
+                            <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {filteredAndSortedUsers.length === 0 && (
