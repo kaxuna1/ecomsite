@@ -8,6 +8,7 @@ import {
   updateAdminUser,
   deleteAdminUser,
 } from '../../api/users';
+import PageHeader from '../../components/admin/PageHeader';
 
 interface AdminUserModalProps {
   isOpen: boolean;
@@ -96,8 +97,16 @@ const AdminUserModal = ({ isOpen, onClose, onSave, user }: AdminUserModalProps) 
 
   return (
     <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-text-primary mb-6">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-user-modal-title"
+        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onClose();
+        }}
+      >
+        <h2 id="admin-user-modal-title" className="text-2xl font-bold text-text-primary mb-6">
           {user ? 'Edit Admin User' : 'Create Admin User'}
         </h2>
         <form onSubmit={handleSubmit}>
@@ -309,26 +318,24 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-2">
-            <UserGroupIcon className="h-8 w-8" />
-            Admin Users
-          </h1>
-          <p className="text-text-secondary mt-1">Manage admin user accounts and permissions</p>
-        </div>
-        <button
-          onClick={() => {
-            setEditingUser(null);
-            setIsModalOpen(true);
-          }}
-          className="bg-interactive-default text-on-interactive px-6 py-2 rounded-md hover:bg-interactive-hover transition-colors flex items-center gap-2"
-        >
-          <PlusIcon className="h-5 w-5" />
-          Create Admin User
-        </button>
-      </div>
+    <div className="p-8 space-y-6">
+      <PageHeader
+        title="Admin Users"
+        description="Manage admin user accounts and permissions"
+        actions={(
+          <button
+            type="button"
+            onClick={() => {
+              setEditingUser(null);
+              setIsModalOpen(true);
+            }}
+            className="bg-interactive-default text-on-interactive px-6 py-2 rounded-md hover:bg-interactive-hover transition-colors flex items-center gap-2"
+          >
+            <PlusIcon className="h-5 w-5" />
+            Create Admin User
+          </button>
+        )}
+      />
 
       {loading ? (
         <div className="text-center py-12">

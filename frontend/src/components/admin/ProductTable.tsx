@@ -7,6 +7,8 @@ import {
   CheckIcon,
   XMarkIcon,
   ChevronUpDownIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
   DocumentDuplicateIcon,
   EyeIcon,
   EyeSlashIcon,
@@ -206,6 +208,7 @@ export default function ProductTable({
                 type="checkbox"
                 checked={selectedIds.length === products.length}
                 onChange={toggleSelectAll}
+                aria-label="Select all products"
                 className="h-4 w-4 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20 flex-shrink-0"
               />
               <span className="text-sm text-text-secondary whitespace-nowrap">
@@ -217,25 +220,64 @@ export default function ProductTable({
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            type="button"
             onClick={() => handleSort('name')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
+            aria-pressed={sortColumn === 'name'}
+            aria-label={`Sort by name${sortColumn === 'name' ? ` (${sortDirection})` : ''}`}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap ${
+              sortColumn === 'name' ? 'text-text-primary bg-bg-secondary/60' : 'text-text-secondary'
+            }`}
           >
             Name
-            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            {sortColumn === 'name' ? (
+              sortDirection === 'asc' ? (
+                <ChevronUpIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              ) : (
+                <ChevronDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              )
+            ) : (
+              <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            )}
           </button>
           <button
+            type="button"
             onClick={() => handleSort('price')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
+            aria-pressed={sortColumn === 'price'}
+            aria-label={`Sort by price${sortColumn === 'price' ? ` (${sortDirection})` : ''}`}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap ${
+              sortColumn === 'price' ? 'text-text-primary bg-bg-secondary/60' : 'text-text-secondary'
+            }`}
           >
             Price
-            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            {sortColumn === 'price' ? (
+              sortDirection === 'asc' ? (
+                <ChevronUpIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              ) : (
+                <ChevronDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              )
+            ) : (
+              <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            )}
           </button>
           <button
+            type="button"
             onClick={() => handleSort('inventory')}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap"
+            aria-pressed={sortColumn === 'inventory'}
+            aria-label={`Sort by stock${sortColumn === 'inventory' ? ` (${sortDirection})` : ''}`}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-bg-secondary hover:text-text-primary whitespace-nowrap ${
+              sortColumn === 'inventory' ? 'text-text-primary bg-bg-secondary/60' : 'text-text-secondary'
+            }`}
           >
             Stock
-            <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            {sortColumn === 'inventory' ? (
+              sortDirection === 'asc' ? (
+                <ChevronUpIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              ) : (
+                <ChevronDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+              )
+            ) : (
+              <ChevronUpDownIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            )}
           </button>
         </div>
       </div>
@@ -288,7 +330,7 @@ export default function ProductTable({
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleSelect(product.id)}
-                          title="Select product"
+                          aria-label={`Select ${product.name}`}
                           className="mt-1 h-5 w-5 rounded border-border-default bg-bg-elevated text-primary focus:ring-2 focus:ring-primary/20 flex-shrink-0"
                         />
                       )}

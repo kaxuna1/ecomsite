@@ -19,6 +19,9 @@ import type { VariantOption, VariantOptionValue } from '../../types/product';
 import { AIVariantOptionsGenerator } from '../../components/admin/AIVariantOptionsGenerator';
 import { AIVariantOptionsTypeGenerator } from '../../components/admin/AIVariantOptionsTypeGenerator';
 import type { GeneratedVariantValue, GeneratedVariantOptionType } from '../../api/ai';
+import PageHeader from '../../components/admin/PageHeader';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
 
 function AdminVariantOptions() {
   const queryClient = useQueryClient();
@@ -159,60 +162,45 @@ function AdminVariantOptions() {
   }, {} as Record<number, VariantOptionValue[]>);
 
   if (optionsLoading || valuesLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
+    return <LoadingState message="Loading variant options..." />;
   }
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl uppercase tracking-[0.3em] text-text-primary">
-            Variant Options
-          </h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Manage product variant option types (Size, Color, etc.) and their values
-          </p>
-        </div>
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-          <AIVariantOptionsTypeGenerator
-            existingOptions={options.map(o => o.name)}
-            onOptionsGenerated={handleAIOptionsGenerated}
-          />
-          <motion.button
-            type="button"
-            onClick={() => setShowOptionModal(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Option Type
-          </motion.button>
-        </div>
-      </div>
+      <PageHeader
+        title="Variant Options"
+        description="Manage product variant option types (Size, Color, etc.) and their values"
+        actions={(
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <AIVariantOptionsTypeGenerator
+              existingOptions={options.map(o => o.name)}
+              onOptionsGenerated={handleAIOptionsGenerated}
+            />
+            <motion.button
+              type="button"
+              onClick={() => setShowOptionModal(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add Option Type
+            </motion.button>
+          </div>
+        )}
+      />
 
       {/* Options List */}
       {options.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
-        >
-          <Squares2X2Icon className="mb-4 h-16 w-16 text-text-tertiary" />
-          <p className="text-lg text-text-secondary">No variant options yet</p>
-          <button
-            type="button"
-            onClick={() => setShowOptionModal(true)}
-            className="mt-4 text-sm text-primary hover:underline transition-colors"
-          >
-            Create your first option type
-          </button>
-        </motion.div>
+        <EmptyState
+          icon={<Squares2X2Icon className="h-12 w-12" />}
+          title="No variant options yet"
+          description="Create your first option type to start adding sizes, colors, and other variants."
+          action={{
+            label: 'Create option type',
+            onClick: () => setShowOptionModal(true)
+          }}
+        />
       ) : (
         <div className="grid gap-6">
           {options.map((option, index) => {

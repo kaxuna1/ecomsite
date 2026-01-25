@@ -8,7 +8,7 @@ import {
   PlusIcon,
   CheckIcon,
   SparklesIcon,
-  MagnifyingGlassIcon,
+  DocumentTextIcon,
   FunnelIcon,
   Bars3BottomLeftIcon
 } from '@heroicons/react/24/outline';
@@ -28,6 +28,10 @@ import FooterEditor from '../../components/cms/editors/FooterEditor';
 import AIPageBuilderModal from '../../components/admin/AIPageBuilderModal';
 import { CMSPageCard } from '../../components/admin/cms';
 import { PAGE_TEMPLATES, type PageTemplate } from '../../config/pageTemplates';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
 
 type StatusFilter = 'all' | 'published' | 'draft';
 type SortOrder = 'updated' | 'title' | 'created';
@@ -41,6 +45,7 @@ export default function AdminCMS() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [sortOrder, setSortOrder] = useState<SortOrder>('updated');
   const [expandedPageId, setExpandedPageId] = useState<number | null>(null);
+  const hasActiveFilters = Boolean(searchQuery || statusFilter !== 'all' || sortOrder !== 'updated');
 
   // Modal states
   const [showFooterEditor, setShowFooterEditor] = useState(false);
@@ -270,62 +275,64 @@ export default function AdminCMS() {
     };
   }, [pages]);
 
+  const resetFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('all');
+    setSortOrder('updated');
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingState message="Loading CMS pages..." />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl uppercase tracking-wider text-text-primary">
-            CMS Management
-          </h1>
-          <p className="mt-1 text-sm text-text-tertiary">
-            {stats.total} pages &middot; {stats.published} published &middot; {stats.draft} drafts
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleOpenFooterEditor}
-            className="px-4 py-2 bg-primary/20 text-text-primary rounded-lg hover:bg-primary/30 transition-colors font-semibold"
-          >
-            Edit Footer
-          </button>
-          <button
-            onClick={() => setShowAIPageBuilder(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl"
-          >
-            <SparklesIcon className="h-5 w-5" />
-            AI Page Builder
-          </button>
-          <button
-            onClick={() => setShowNewPageModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
-          >
-            <PlusIcon className="h-5 w-5" />
-            New Page
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="CMS Management"
+        description={`${stats.total} pages · ${stats.published} published · ${stats.draft} drafts`}
+        actions={(
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handleOpenFooterEditor}
+              className="px-4 py-2 bg-primary/20 text-text-primary rounded-lg hover:bg-primary/30 transition-colors font-semibold"
+            >
+              Edit Footer
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAIPageBuilder(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl"
+            >
+              <SparklesIcon className="h-5 w-5" />
+              AI Page Builder
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowNewPageModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
+            >
+              <PlusIcon className="h-5 w-5" />
+              New Page
+            </button>
+          </div>
+        )}
+      />
 
       {/* Filters & Search */}
       <div className="bg-bg-elevated rounded-xl border border-border-default p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
-          <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-tertiary" />
-            <input
-              type="text"
+          <div className="flex-1">
+            <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onClear={searchQuery ? () => setSearchQuery('') : undefined}
               placeholder="Search pages by title or slug..."
-              className="w-full pl-10 pr-4 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              label="Search CMS pages"
+              resultsCount={filteredPages.length}
+              resultsLabel="pages"
+              className="rounded-lg px-10 py-2.5"
             />
           </div>
 
@@ -335,6 +342,7 @@ export default function AdminCMS() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              aria-label="Filter pages by status"
               className="px-3 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               title="Filter by status"
             >
@@ -350,6 +358,7 @@ export default function AdminCMS() {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+              aria-label="Sort pages"
               className="px-3 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               title="Sort pages"
             >
@@ -359,6 +368,17 @@ export default function AdminCMS() {
             </select>
           </div>
         </div>
+        {hasActiveFilters && (
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Pages Grid */}
@@ -379,33 +399,26 @@ export default function AdminCMS() {
           ))}
         </div>
       ) : (
-        <div className="bg-bg-elevated rounded-xl border border-border-default p-12 text-center">
-          {searchQuery || statusFilter !== 'all' ? (
-            <>
-              <p className="text-text-secondary">No pages match your filters.</p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setStatusFilter('all');
-                }}
-                className="mt-4 text-primary hover:underline"
-              >
-                Clear filters
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="text-text-secondary">No pages yet.</p>
-              <button
-                onClick={() => setShowNewPageModal(true)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
-              >
-                <PlusIcon className="h-5 w-5" />
-                Create your first page
-              </button>
-            </>
-          )}
-        </div>
+        <EmptyState
+          icon={<DocumentTextIcon className="h-12 w-12" />}
+          title={searchQuery || statusFilter !== 'all' ? 'No pages match your filters' : 'No pages yet'}
+          description={
+            searchQuery || statusFilter !== 'all'
+              ? 'Try adjusting your filters or search terms.'
+              : 'Create your first page to start building content.'
+          }
+          action={
+            searchQuery || statusFilter !== 'all'
+              ? {
+                  label: 'Clear filters',
+                  onClick: resetFilters
+                }
+              : {
+                  label: 'Create page',
+                  onClick: () => setShowNewPageModal(true)
+                }
+          }
+        />
       )}
 
       {/* Footer Editor Modal */}

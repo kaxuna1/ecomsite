@@ -13,6 +13,7 @@ export interface Column<T> {
   render?: (item: T) => ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
+  sortAccessor?: (item: T) => string | number | Date | boolean | null | undefined;
 }
 
 interface DataTableProps<T> {
@@ -56,14 +57,32 @@ export default function DataTable<T extends Record<string, any>>({
     setSortConfig({ key, direction });
   };
 
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const sortColumn = sortConfig ? columns.find((column) => column.key === sortConfig.key) : null;
+
+  const normalizeValue = (value: any) => {
+    if (value === null || value === undefined) return null;
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === 'boolean') return value ? 1 : 0;
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return value;
+    return value?.toString?.() ?? '';
+  };
+
+  const compareValues = (a: any, b: any) => {
+    if (a === b) return 0;
+    if (a === null || a === undefined) return 1;
+    if (b === null || b === undefined) return -1;
+    if (typeof a === 'number' && typeof b === 'number') return a - b;
+    if (typeof a === 'string' && typeof b === 'string') return collator.compare(a, b);
+    return a > b ? 1 : -1;
+  };
+
   const sortedData = sortConfig
     ? [...data].sort((a, b) => {
-        const aVal = a[sortConfig.key];
-        const bVal = b[sortConfig.key];
-
-        if (aVal === bVal) return 0;
-
-        const comparison = aVal > bVal ? 1 : -1;
+        const aRaw = sortColumn?.sortAccessor ? sortColumn.sortAccessor(a) : a[sortConfig.key];
+        const bRaw = sortColumn?.sortAccessor ? sortColumn.sortAccessor(b) : b[sortConfig.key];
+        const comparison = compareValues(normalizeValue(aRaw), normalizeValue(bRaw));
         return sortConfig.direction === 'asc' ? comparison : -comparison;
       })
     : data;
@@ -79,25 +98,45 @@ export default function DataTable<T extends Record<string, any>>({
     );
   };
 
+  const alignClasses: Record<'left' | 'center' | 'right', string> = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  };
+
   return (
     <div className="overflow-hidden rounded-3xl bg-white/5 border border-white/10">
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full" aria-busy={loading || undefined}>
           <thead className="border-b border-white/10 bg-white/5">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-4 text-${column.align || 'left'} text-xs font-semibold uppercase tracking-wider text-champagne/60 ${
-                    column.sortable !== false && sortable ? 'cursor-pointer hover:text-champagne' : ''
-                  }`}
+                  scope="col"
+                  aria-sort={
+                    sortConfig && sortConfig.key === column.key
+                      ? sortConfig.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
+                  className={`px-6 py-4 ${alignClasses[column.align || 'left']} text-xs font-semibold uppercase tracking-wider text-champagne/60`}
                   style={{ width: column.width }}
-                  onClick={() => column.sortable !== false && sortable && handleSort(column.key)}
                 >
-                  <div className="flex items-center gap-2">
-                    {column.label}
-                    {column.sortable !== false && sortable && getSortIcon(column.key)}
-                  </div>
+                  {column.sortable !== false && sortable ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSort(column.key)}
+                      className="flex items-center gap-2 hover:text-champagne"
+                      aria-label={`Sort by ${column.label}`}
+                    >
+                      {column.label}
+                      {getSortIcon(column.key)}
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2">{column.label}</div>
+                  )}
                 </th>
               ))}
             </tr>
@@ -131,11 +170,20 @@ export default function DataTable<T extends Record<string, any>>({
                     onRowClick ? 'cursor-pointer' : ''
                   } ${rowClassName ? rowClassName(item) : ''}`}
                   onClick={() => onRowClick?.(item)}
+                  tabIndex={onRowClick ? 0 : -1}
+                  role={onRowClick ? 'button' : undefined}
+                  onKeyDown={(event) => {
+                    if (!onRowClick) return;
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onRowClick(item);
+                    }
+                  }}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={`px-6 py-4 text-${column.align || 'left'} text-champagne`}
+                      className={`px-6 py-4 ${alignClasses[column.align || 'left']} text-champagne`}
                     >
                       {column.render ? column.render(item) : item[column.key]}
                     </td>

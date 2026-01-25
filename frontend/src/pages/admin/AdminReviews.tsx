@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
   FunnelIcon,
   StarIcon,
   CheckCircleIcon,
@@ -29,6 +28,7 @@ import EmptyState from '../../components/admin/EmptyState';
 import SearchInput from '../../components/admin/SearchInput';
 import Badge from '../../components/admin/Badge';
 import RatingStars from '../../components/reviews/RatingStars';
+import PageHeader from '../../components/admin/PageHeader';
 
 type FilterOption = 'all' | ReviewStatus;
 
@@ -43,6 +43,7 @@ function AdminReviews() {
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 20;
+  const hasActiveFilters = Boolean(searchQuery || filterOption !== 'all');
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-reviews', page, filterOption, searchQuery],
@@ -162,6 +163,12 @@ function AdminReviews() {
   const reviews = data?.reviews || [];
   const pagination = data?.pagination;
 
+  const resetFilters = () => {
+    setSearchQuery('');
+    setFilterOption('all');
+    setPage(1);
+  };
+
   return (
     <>
       <Helmet>
@@ -169,13 +176,10 @@ function AdminReviews() {
       </Helmet>
 
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary">Review Management</h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Moderate product reviews, respond to customers, and manage feedback
-          </p>
-        </div>
+        <PageHeader
+          title="Review Management"
+          description="Moderate product reviews, respond to customers, and manage feedback"
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
@@ -229,8 +233,18 @@ function AdminReviews() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <SearchInput
             value={searchQuery}
-            onChange={setSearchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+            onClear={() => {
+              setSearchQuery('');
+              setPage(1);
+            }}
             placeholder="Search reviews by product or reviewer..."
+            label="Search reviews"
+            resultsCount={pagination?.total ?? reviews.length}
+            resultsLabel="reviews"
             className="sm:w-96"
           />
 
@@ -238,7 +252,11 @@ function AdminReviews() {
             <FunnelIcon className="h-5 w-5 text-text-secondary" />
             <select
               value={filterOption}
-              onChange={(e) => setFilterOption(e.target.value as FilterOption)}
+              onChange={(e) => {
+                setFilterOption(e.target.value as FilterOption);
+                setPage(1);
+              }}
+              aria-label="Filter reviews by status"
               className="rounded-lg border-border-default bg-bg-elevated text-text-primary text-sm focus:border-primary focus:ring-primary/20 transition-colors"
             >
               <option value="all">All Reviews</option>
@@ -247,6 +265,15 @@ function AdminReviews() {
               <option value="rejected">Rejected</option>
               <option value="flagged">Flagged</option>
             </select>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         </div>
 

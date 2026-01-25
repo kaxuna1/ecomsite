@@ -41,6 +41,7 @@ import type {
   GeneratedMenuItem
 } from '../../types/navigation';
 import type { Language } from '../../types/language';
+import PageHeader from '../../components/admin/PageHeader';
 
 interface MenuItemFormData {
   label: string;
@@ -594,45 +595,43 @@ export default function AdminNavigation() {
   return (
     <div className="min-h-screen bg-bg-primary p-6">
       <div className="mx-auto max-w-7xl space-y-8">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-3xl text-text-primary">Navigation Menu</h1>
-            <p className="mt-1 text-sm text-text-primary/60">
-              Manage navigation menus across your site
-            </p>
-          </div>
+        <PageHeader
+          title="Navigation Menu"
+          description="Manage navigation menus across your site"
+          actions={(
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenAIModal}
+                disabled={aiGenerateMutation.isPending}
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-5 py-2.5 font-semibold text-white transition-all hover:shadow-lg disabled:opacity-50"
+              >
+                <SparklesIcon className="h-5 w-5" />
+                {aiGenerateMutation.isPending ? 'Generating...' : 'Generate with AI'}
+              </button>
 
-          <div className="flex flex-wrap items-center gap-3">
-            {/* AI Generate Button */}
-            <button
-              onClick={handleOpenAIModal}
-              disabled={aiGenerateMutation.isPending}
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-5 py-2.5 font-semibold text-white transition-all hover:shadow-lg disabled:opacity-50"
-            >
-              <SparklesIcon className="h-5 w-5" />
-              {aiGenerateMutation.isPending ? 'Generating...' : 'Generate with AI'}
-            </button>
-
-            <button
-              onClick={() => {
-                setIsCreatingNew(true);
-                setSelectedItemId(null);
-                setSelectedLanguage('en'); // Always create new items in English
-                resetFormData();
-              }}
-              className="flex items-center gap-2 rounded-full bg-interactive-default px-6 py-3 font-semibold text-on-interactive transition-all hover:bg-interactive-default/90 hover:shadow-lg"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Add Menu Item
-            </button>
-          </div>
-        </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreatingNew(true);
+                  setSelectedItemId(null);
+                  setSelectedLanguage('en'); // Always create new items in English
+                  resetFormData();
+                }}
+                className="flex items-center gap-2 rounded-full bg-interactive-default px-6 py-3 font-semibold text-on-interactive transition-all hover:bg-interactive-default/90 hover:shadow-lg"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Add Menu Item
+              </button>
+            </div>
+          )}
+        />
 
         {/* Location Tabs */}
         <div className="-mx-2 flex gap-2 overflow-x-auto border-b border-border-default pb-4 px-2">
           {locations.filter(location => !['footer', 'mobile'].includes(location.code)).map(location => (
             <button
+              type="button"
               key={location.id}
               onClick={() => {
                 setSelectedLocationId(location.id);

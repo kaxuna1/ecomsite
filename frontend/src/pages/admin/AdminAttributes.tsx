@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
   PencilIcon,
   TrashIcon,
   XMarkIcon,
@@ -21,6 +20,10 @@ import {
 import { AIAttributeGenerator } from '../../components/admin/AIAttributeGenerator';
 import { type GeneratedAttribute } from '../../api/ai';
 import toast from 'react-hot-toast';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
 
 const dataTypeLabels: Record<AttributeDefinition['dataType'], string> = {
   text: 'Text',
@@ -117,69 +120,59 @@ function AdminAttributes() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Product Attributes</h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Define custom attributes for product categorization and filtering
-          </p>
-        </div>
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-          <AIAttributeGenerator
-            existingAttributes={existingAttributeKeys}
-            onAttributesGenerated={handleAIGenerated}
-          />
-          <motion.button
-            type="button"
-            onClick={() => handleOpenModal()}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <PlusIcon className="h-5 w-5" />
-            Create Attribute
-          </motion.button>
-        </div>
-      </div>
+      <PageHeader
+        title="Product Attributes"
+        description="Define custom attributes for product categorization and filtering"
+        actions={(
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <AIAttributeGenerator
+              existingAttributes={existingAttributeKeys}
+              onAttributesGenerated={handleAIGenerated}
+            />
+            <motion.button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              Create Attribute
+            </motion.button>
+          </div>
+        )}
+      />
 
       {/* Search */}
-      <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
-        <input
-          type="text"
+      <div>
+        <SearchInput
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onClear={searchQuery ? () => setSearchQuery('') : undefined}
           placeholder="Search attributes..."
-          className="w-full rounded-full border border-border-default bg-bg-elevated py-3 pl-12 pr-4 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
+          label="Search attributes"
+          resultsCount={filteredAttributes.length}
+          resultsLabel="attributes"
         />
       </div>
 
       {/* Attributes List */}
       {isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <LoadingState message="Loading attributes..." />
       ) : filteredAttributes.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
-        >
-          <SwatchIcon className="mb-4 h-16 w-16 text-text-tertiary" />
-          <p className="text-lg text-text-secondary">
-            {searchQuery ? 'No attributes found' : 'No attributes yet'}
-          </p>
-          {!searchQuery && (
-            <button
-              type="button"
-              onClick={() => handleOpenModal()}
-              className="mt-4 text-sm text-primary hover:underline transition-colors"
-            >
-              Create your first attribute
-            </button>
-          )}
-        </motion.div>
+        <EmptyState
+          icon={<SwatchIcon className="h-12 w-12" />}
+          title={searchQuery ? 'No attributes found' : 'No attributes yet'}
+          description={searchQuery ? 'Try adjusting your search.' : 'Create your first attribute to get started.'}
+          action={
+            !searchQuery
+              ? {
+                  label: 'Create attribute',
+                  onClick: () => handleOpenModal()
+                }
+              : undefined
+          }
+        />
       ) : (
         <div className="grid gap-4">
           <AnimatePresence mode="popLayout">

@@ -31,6 +31,7 @@ import {
 import { useTheme } from '../../context/ThemeContext';
 import ThemeEditorModal from '../../components/admin/ThemeEditorModal';
 import ThemePreviewModal from '../../components/admin/ThemePreviewModal';
+import PageHeader from '../../components/admin/PageHeader';
 
 export default function AdminThemes() {
   const queryClient = useQueryClient();
@@ -265,34 +266,33 @@ export default function AdminThemes() {
       </Helmet>
 
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-3xl text-text-primary">Theme Management</h1>
-            <p className="mt-1 text-sm text-text-primary/70">
-              Customize your store's visual identity with themes
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleImportTheme}
-              className="flex w-full items-center justify-center gap-2 px-5 py-3 bg-bg-secondary text-text-primary border border-border-default rounded-xl font-semibold hover:bg-bg-elevated transition-colors sm:w-auto"
-            >
-              <ArrowUpTrayIcon className="h-5 w-5" />
-              Import Theme
-            </button>
-            <button
-              onClick={() => {
-                setSelectedTheme(null);
-                setShowEditor(true);
-              }}
-              className="flex w-full items-center justify-center gap-2 px-6 py-3 bg-interactive-default text-on-interactive rounded-xl font-semibold hover:bg-interactive-default/90 transition-colors sm:w-auto"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Create Theme
-            </button>
-          </div>
-        </div>
+        <PageHeader
+          title="Theme Management"
+          description="Customize your store's visual identity with themes"
+          actions={(
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handleImportTheme}
+                className="flex w-full items-center justify-center gap-2 px-5 py-3 bg-bg-secondary text-text-primary border border-border-default rounded-xl font-semibold hover:bg-bg-elevated transition-colors sm:w-auto"
+              >
+                <ArrowUpTrayIcon className="h-5 w-5" />
+                Import Theme
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedTheme(null);
+                  setShowEditor(true);
+                }}
+                className="flex w-full items-center justify-center gap-2 px-6 py-3 bg-interactive-default text-on-interactive rounded-xl font-semibold hover:bg-interactive-default/90 transition-colors sm:w-auto"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Create Theme
+              </button>
+            </div>
+          )}
+        />
 
         {/* Active Theme Banner */}
         {activeThemeInfo && (

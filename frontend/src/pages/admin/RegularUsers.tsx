@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { PencilIcon, TrashIcon, UsersIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import type { RegularUser, UpdateRegularUserRequest, UserStats } from '../../types/user';
 import {
@@ -8,6 +8,8 @@ import {
   deleteUser,
   getUserStats,
 } from '../../api/users';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -61,8 +63,16 @@ const EditUserModal = ({ isOpen, onClose, onSave, user }: EditUserModalProps) =>
 
   return (
     <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-text-primary mb-6">Edit Customer</h2>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-customer-title"
+        className="bg-bg-elevated border-2 border-primary/30 rounded-lg max-w-md w-full p-6 shadow-2xl"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onClose();
+        }}
+      >
+        <h2 id="edit-customer-title" className="text-2xl font-bold text-text-primary mb-6">Edit Customer</h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -127,19 +137,29 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, userName }: DeleteConf
 
   return (
     <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-text-primary mb-4">Confirm Delete</h2>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-customer-title"
+        className="bg-bg-elevated border-2 border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onClose();
+        }}
+      >
+        <h2 id="delete-customer-title" className="text-2xl font-bold text-text-primary mb-4">Confirm Delete</h2>
         <p className="text-text-primary mb-6">
           Are you sure you want to delete customer <strong className="text-red-400">{userName}</strong>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 px-4 py-2 border border-border-default text-text-primary rounded-md hover:bg-bg-secondary transition-colors"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={onConfirm}
             className="flex-1 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
           >
@@ -281,14 +301,11 @@ export default function RegularUsers() {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-text-primary flex items-center gap-2">
-          <UsersIcon className="h-8 w-8" />
-          Customers
-        </h1>
-        <p className="text-text-secondary mt-1">Manage customer accounts and view statistics</p>
-      </div>
+    <div className="p-8 space-y-6">
+      <PageHeader
+        title="Customers"
+        description="Manage customer accounts and view statistics"
+      />
 
       {/* Stats Cards */}
       {stats && (
@@ -327,16 +344,16 @@ export default function RegularUsers() {
 
       {/* Search Bar */}
       <div className="mb-6">
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-text-tertiary" />
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-bg-elevated border border-border-default text-text-primary placeholder:text-text-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-          />
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onClear={searchQuery ? () => setSearchQuery('') : undefined}
+          placeholder="Search by name or email..."
+          label="Search customers"
+          resultsCount={filteredUsers.length}
+          resultsLabel="customers"
+          className="rounded-md px-10 py-2"
+        />
       </div>
 
       {loading ? (

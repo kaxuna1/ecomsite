@@ -27,6 +27,7 @@ import type { Product, Order } from '../../types/product';
 import StatCard from '../../components/admin/StatCard';
 import LoadingState from '../../components/admin/LoadingState';
 import Badge from '../../components/admin/Badge';
+import PageHeader from '../../components/admin/PageHeader';
 
 function AdminDashboard() {
   const queryClient = useQueryClient();
@@ -122,15 +123,10 @@ function AdminDashboard() {
         <title>Admin Dashboard — Luxia</title>
       </Helmet>
 
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl text-text-primary">Dashboard Overview</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Monitor your store performance and manage operations
-          </p>
-        </div>
-        <div className="flex gap-3">
+      <PageHeader
+        title="Dashboard Overview"
+        description="Monitor your store performance and manage operations"
+        actions={(
           <Link
             to="/admin/products"
             className="flex items-center gap-2 rounded-full bg-interactive-default px-5 py-2.5 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
@@ -138,8 +134,8 @@ function AdminDashboard() {
             <PlusIcon className="h-4 w-4" />
             Add Product
           </Link>
-        </div>
-      </div>
+        )}
+      />
 
       {/* Key Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

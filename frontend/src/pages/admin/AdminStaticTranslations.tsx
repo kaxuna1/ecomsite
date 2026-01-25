@@ -2,7 +2,6 @@ import { useState, useEffect, Fragment } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dialog, Transition } from '@headlessui/react';
 import {
-  MagnifyingGlassIcon,
   PlusIcon,
   PencilIcon,
   TrashIcon,
@@ -17,6 +16,8 @@ import * as staticTranslationsApi from '../../api/staticTranslations';
 import { fetchLanguages } from '../../api/languages';
 import SaveButton from '../../components/admin/SaveButton';
 import { toast } from 'react-hot-toast';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
 
 export default function AdminStaticTranslations() {
   const queryClient = useQueryClient();
@@ -449,44 +450,41 @@ export default function AdminStaticTranslations() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-display uppercase tracking-wider text-text-primary">
-            Static Translations
-          </h1>
-          <p className="mt-1 text-sm text-text-primary/60">
-            Manage UI text translations across all languages
-          </p>
-        </div>
+      <PageHeader
+        title="Static Translations"
+        description="Manage UI text translations across all languages"
+        actions={(
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handleBulkTranslate}
+              disabled={bulkTranslateMutation.isPending}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-xs font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:w-auto sm:text-sm"
+            >
+              <SparklesIcon className={`h-4 w-4 ${bulkTranslateMutation.isPending ? 'animate-spin' : ''}`} />
+              {bulkTranslateMutation.isPending ? 'Translating...' : 'Bulk AI Translate'}
+            </button>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleBulkTranslate}
-            disabled={bulkTranslateMutation.isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-xs font-semibold text-white hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 sm:w-auto sm:text-sm"
-          >
-            <SparklesIcon className={`h-4 w-4 ${bulkTranslateMutation.isPending ? 'animate-spin' : ''}`} />
-            {bulkTranslateMutation.isPending ? 'Translating...' : 'Bulk AI Translate'}
-          </button>
-
-          <button
-            onClick={() => {
-              queryClient.invalidateQueries({ queryKey: ['static-translations'] });
-              toast.success('Translations reloaded');
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-secondary px-4 py-2 text-xs font-semibold text-text-primary hover:bg-bg-elevated sm:w-auto sm:text-sm"
-          >
-            <ArrowPathIcon className="h-4 w-4" />
-            Reload
-          </button>
-        </div>
-      </div>
+            <button
+              type="button"
+              onClick={() => {
+                queryClient.invalidateQueries({ queryKey: ['static-translations'] });
+                toast.success('Translations reloaded');
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-secondary px-4 py-2 text-xs font-semibold text-text-primary hover:bg-bg-elevated sm:w-auto sm:text-sm"
+            >
+              <ArrowPathIcon className="h-4 w-4" />
+              Reload
+            </button>
+          </div>
+        )}
+      />
 
       {/* Tabs */}
       <div className="border-b border-border-default">
         <nav className="-mb-px flex gap-6 overflow-x-auto pb-2">
           <button
+            type="button"
             onClick={() => setActiveTab('browse')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'browse'
@@ -499,6 +497,7 @@ export default function AdminStaticTranslations() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('stats')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'stats'
@@ -511,6 +510,7 @@ export default function AdminStaticTranslations() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('missing')}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
               activeTab === 'missing'
@@ -559,19 +559,20 @@ export default function AdminStaticTranslations() {
             </div>
 
             {/* Search */}
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-primary/60" />
-              <input
-                type="text"
-                placeholder="Search keys..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-2xl border border-border-default bg-bg-elevated pl-12 pr-4 py-2 text-text-primary placeholder:text-text-tertiary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-            </div>
+            <SearchInput
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onClear={searchTerm ? () => setSearchTerm('') : undefined}
+              placeholder="Search keys..."
+              label="Search translation keys"
+              resultsCount={filteredKeys.length}
+              resultsLabel="keys"
+              className="rounded-2xl px-12 py-2"
+            />
 
             {/* Add New Key */}
             <button
+              type="button"
               onClick={() => setShowAddKey(!showAddKey)}
               className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border-default bg-bg-elevated px-4 py-3 text-sm font-semibold text-text-primary hover:bg-bg-secondary"
             >
@@ -590,6 +591,7 @@ export default function AdminStaticTranslations() {
                 />
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={handleAddKey}
                     disabled={!newKey.trim() || addKeyMutation.isPending}
                     className="flex-1 rounded-xl bg-interactive-default px-3 py-2 text-sm font-semibold text-on-interactive hover:bg-bg-elevated disabled:opacity-50"
@@ -597,6 +599,7 @@ export default function AdminStaticTranslations() {
                     {addKeyMutation.isPending ? 'Adding...' : 'Add'}
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       setShowAddKey(false);
                       setNewKey('');

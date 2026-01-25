@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   EnvelopeIcon,
-  MagnifyingGlassIcon,
   FunnelIcon,
   ArrowDownTrayIcon,
   TrashIcon,
@@ -12,6 +11,10 @@ import {
   ClockIcon
 } from '@heroicons/react/24/outline';
 import api from '../../api/client';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
 
 interface NewsletterSubscription {
   id: number;
@@ -201,14 +204,10 @@ export default function AdminNewsletter() {
   return (
     <div className="min-h-screen bg-bg-primary p-6">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-display text-3xl text-text-primary flex items-center gap-3">
-            <EnvelopeIcon className="h-8 w-8 text-emerald-400" />
-            Newsletter Subscriptions
-          </h1>
-          <p className="mt-2 text-text-primary/60">Manage newsletter subscribers and export data</p>
-        </div>
+        <PageHeader
+          title="Newsletter Subscriptions"
+          description="Manage newsletter subscribers and export data"
+        />
 
         {/* Statistics Cards */}
         {stats && (
@@ -265,16 +264,16 @@ export default function AdminNewsletter() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
               <label className="block text-sm text-text-primary/60 mb-2">Search</label>
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-primary/40" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Email or name..."
-                  className="w-full pl-10 pr-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary placeholder-champagne/30 focus:outline-none focus:border-primary"
-                />
-              </div>
+              <SearchInput
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onClear={search ? () => setSearch('') : undefined}
+                placeholder="Email or name..."
+                label="Search subscriptions"
+                resultsCount={total}
+                resultsLabel="subscribers"
+                className="rounded-lg px-10 py-2"
+              />
             </div>
 
             <div>
@@ -282,6 +281,7 @@ export default function AdminNewsletter() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
+                aria-label="Filter by subscription status"
                 className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
               >
                 <option value="">All Statuses</option>
@@ -296,6 +296,7 @@ export default function AdminNewsletter() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
+                aria-label="Filter by subscription source"
                 className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
               >
                 <option value="">All Sources</option>
@@ -312,6 +313,7 @@ export default function AdminNewsletter() {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                aria-label="Filter by start date"
                 className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
               />
             </div>
@@ -322,6 +324,7 @@ export default function AdminNewsletter() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                aria-label="Filter by end date"
                 className="w-full px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary focus:outline-none focus:border-primary"
               />
             </div>
@@ -329,12 +332,14 @@ export default function AdminNewsletter() {
 
           <div className="flex gap-3 mt-4">
             <button
+              type="button"
               onClick={handleClearFilters}
               className="px-4 py-2 bg-bg-elevated border border-border-default rounded-lg text-text-primary hover:bg-white/10 transition-colors"
             >
               Clear Filters
             </button>
             <button
+              type="button"
               onClick={handleExport}
               className="px-4 py-2 bg-jade text-midnight rounded-lg font-semibold hover:bg-jade/90 transition-colors flex items-center gap-2"
             >
@@ -352,7 +357,13 @@ export default function AdminNewsletter() {
         )}
 
         {loading ? (
-          <div className="text-center py-12 text-text-primary/60">Loading...</div>
+          <LoadingState message="Loading subscriptions..." />
+        ) : subscriptions.length === 0 ? (
+          <EmptyState
+            icon={<EnvelopeIcon className="h-12 w-12" />}
+            title="No subscribers found"
+            description="Try adjusting your filters or check back later."
+          />
         ) : (
           <>
             <div className="bg-bg-elevated border border-border-default rounded-lg overflow-hidden">

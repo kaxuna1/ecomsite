@@ -11,6 +11,7 @@ import {
 } from '../../api/languages';
 import type { Language, LanguagePayload, UpdateLanguagePayload } from '../../types/language';
 import { LanguageAutocomplete, type LanguageOption } from '../../components/admin/LanguageAutocomplete';
+import PageHeader from '../../components/admin/PageHeader';
 
 interface LanguageFormData {
   code: string;
@@ -211,21 +212,19 @@ export default function AdminLanguages() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Language Management</h1>
-          <p className="mt-2 text-sm text-text-primary/60">
-            Manage available languages and their settings
-          </p>
-        </div>
-        <button
-          onClick={openCreateModal}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-default/90 sm:w-auto sm:text-sm"
-        >
-          Add Language
-        </button>
-      </div>
+      <PageHeader
+        title="Language Management"
+        description="Manage available languages and their settings"
+        actions={(
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-default/90 sm:w-auto sm:text-sm"
+          >
+            Add Language
+          </button>
+        )}
+      />
 
       {/* Languages Table */}
       <div className="rounded-3xl border border-border-default bg-bg-elevated backdrop-blur overflow-hidden">

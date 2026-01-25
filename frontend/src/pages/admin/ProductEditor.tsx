@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { Helmet } from 'react-helmet-async';
 import { fetchProduct, createProduct, updateProduct } from '../../api/products';
 import { getAllAttributes } from '../../api/attributes';
 import { useUnsavedChanges } from '../../hooks/useUnsavedChanges';
@@ -230,7 +231,11 @@ export default function ProductEditor() {
   }
 
   return (
-    <EditorLayout
+    <>
+      <Helmet>
+        <title>{isNewProduct ? 'Create Product — Luxia Admin' : `Edit Product — ${product?.name || 'Luxia Admin'}`}</title>
+      </Helmet>
+      <EditorLayout
       title={isNewProduct ? 'Create New Product' : `Edit: ${product?.name || 'Product'}`}
       activeTab={activeTab}
       onTabChange={setActiveTab}
@@ -305,6 +310,7 @@ export default function ProductEditor() {
           <TranslationsTab productId={Number(id)} />
         )
       )}
-    </EditorLayout>
+      </EditorLayout>
+    </>
   );
 }

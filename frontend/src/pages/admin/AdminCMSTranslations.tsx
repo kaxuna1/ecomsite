@@ -10,6 +10,7 @@ import { fetchLanguages } from '../../api/languages';
 import { translateCMSPage } from '../../api/ai';
 import BlockTranslationEditor from '../../components/admin/BlockTranslationEditor';
 import SaveButton from '../../components/admin/SaveButton';
+import PageHeader from '../../components/admin/PageHeader';
 
 interface PageTranslation {
   id: number;
@@ -307,16 +308,15 @@ export default function AdminCMSTranslations() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="font-display text-3xl text-text-primary">CMS Translations</h1>
-        <p className="mt-1 text-sm text-text-primary/70">
-          Manage translations for CMS pages and blocks
-        </p>
-      </div>
+      <PageHeader
+        title="CMS Translations"
+        description="Manage translations for CMS pages and blocks"
+      />
 
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b border-border-default">
         <button
+          type="button"
           onClick={() => setActiveTab('pages')}
           className={`px-6 py-3 font-semibold text-sm uppercase tracking-wider transition-colors ${
             activeTab === 'pages'
@@ -327,6 +327,7 @@ export default function AdminCMSTranslations() {
           Page Translations
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('blocks')}
           className={`px-6 py-3 font-semibold text-sm uppercase tracking-wider transition-colors ${
             activeTab === 'blocks'

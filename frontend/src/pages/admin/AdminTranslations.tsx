@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
   CheckCircleIcon,
   ClockIcon,
   XMarkIcon,
@@ -22,6 +21,8 @@ import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/sol
 import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { fetchLanguages } from '../../api/languages';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
 
 interface Product {
   id: number;
@@ -347,47 +348,43 @@ export default function AdminTranslations() {
       </Helmet>
 
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex-1">
-            <h1 className="font-display text-3xl text-text-primary">Product Translations</h1>
-            <p className="mt-1 text-sm text-text-primary/70">
-              Manage product translations for different languages
-            </p>
-          </div>
+        <PageHeader
+          title="Product Translations"
+          description="Manage product translations for different languages"
+          actions={(
+            <div className="flex flex-col gap-3 sm:items-end">
+              {!languagesLoading && (
+                <div className="flex items-center gap-3">
+                  <GlobeAltIcon className="h-5 w-5 text-text-primary/60" />
+                  <select
+                    value={selectedLanguage}
+                    onChange={(e) => setSelectedLanguage(e.target.value)}
+                    aria-label="Select translation language"
+                    className="rounded-xl border border-border-default bg-bg-secondary px-4 py-2 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    {languages.map((lang) => (
+                      <option key={lang.code} value={lang.code} className="bg-bg-primary">
+                        {lang.nativeName} ({lang.code.toUpperCase()})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-          {/* Language Selector & Stats */}
-          <div className="flex flex-col gap-3 sm:items-end">
-            {!languagesLoading && (
-              <div className="flex items-center gap-3">
-                <GlobeAltIcon className="h-5 w-5 text-text-primary/60" />
-                <select
-                  value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
-                  className="rounded-xl border border-border-default bg-bg-secondary px-4 py-2 text-text-primary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                >
-                  {languages.map((lang) => (
-                    <option key={lang.code} value={lang.code} className="bg-bg-primary">
-                      {lang.nativeName} ({lang.code.toUpperCase()})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            
-            {products && products.length > 0 && (
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-3 py-1.5">
-                  <CheckCircleSolidIcon className="h-4 w-4 text-emerald-400" />
-                  <span className="text-text-primary/80">{overallCompletionPercentage}% Complete</span>
+              {products && products.length > 0 && (
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-3 py-1.5">
+                    <CheckCircleSolidIcon className="h-4 w-4 text-emerald-400" />
+                    <span className="text-text-primary/80">{overallCompletionPercentage}% Complete</span>
+                  </div>
+                  <div className="rounded-full border border-border-default bg-bg-elevated px-3 py-1.5 text-text-primary/80">
+                    {translationStatuses.filter(s => s.completionPercentage === 100).length} / {products.length}
+                  </div>
                 </div>
-                <div className="rounded-full border border-border-default bg-bg-elevated px-3 py-1.5 text-text-primary/80">
-                  {translationStatuses.filter(s => s.completionPercentage === 100).length} / {products.length}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+              )}
+            </div>
+          )}
+        />
 
         {/* Auto-save toggle */}
         <div className="flex items-center justify-between rounded-xl border border-border-default bg-bg-elevated px-4 py-3">
@@ -433,16 +430,16 @@ export default function AdminTranslations() {
           <aside className={`lg:col-span-4 xl:col-span-3 ${showMobileProductList ? 'block' : 'hidden lg:block'}`}>
             <div className="sticky top-6 space-y-4">
               {/* Search */}
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-primary/40" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full rounded-xl border border-border-default bg-bg-elevated py-2.5 pl-11 pr-4 text-text-primary placeholder:text-text-tertiary/40 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
+              <SearchInput
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onClear={searchQuery ? () => setSearchQuery('') : undefined}
+                placeholder="Search products..."
+                label="Search products"
+                resultsCount={filteredProducts.length}
+                resultsLabel="products"
+                className="rounded-xl px-11 py-2.5"
+              />
 
               {/* Product List */}
               <div className="max-h-[calc(100vh-300px)] overflow-y-auto rounded-2xl border border-border-default bg-bg-elevated">

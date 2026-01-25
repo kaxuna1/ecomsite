@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
   FunnelIcon,
   EllipsisVerticalIcon,
   CheckCircleIcon,
@@ -34,6 +33,7 @@ import Badge from '../../components/admin/Badge';
 import Button from '../../components/admin/Button';
 import Dropdown, { type DropdownItem } from '../../components/admin/Dropdown';
 import DataTable, { type Column } from '../../components/admin/DataTable';
+import PageHeader from '../../components/admin/PageHeader';
 
 type FilterOption = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
@@ -42,6 +42,7 @@ function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterOption, setFilterOption] = useState<FilterOption>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const hasActiveFilters = Boolean(searchQuery || filterOption !== 'all');
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
@@ -107,6 +108,11 @@ function AdminOrders() {
 
   const handleStatusChange = (orderId: number, newStatus: string) => {
     updateMutation.mutate({ id: orderId, status: newStatus });
+  };
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setFilterOption('all');
   };
 
   const columns: Column<Order>[] = [
@@ -235,23 +241,20 @@ function AdminOrders() {
         <title>Orders — Luxia Admin</title>
       </Helmet>
 
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl text-text-primary">Order Management</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            {filteredOrders.length} of {orders.length} orders
-          </p>
-        </div>
-        <Button
-          variant="secondary"
-          size="md"
-          icon={<ArrowDownTrayIcon />}
-          onClick={() => alert('Export functionality coming soon!')}
-        >
-          Export
-        </Button>
-      </div>
+      <PageHeader
+        title="Order Management"
+        description={`${filteredOrders.length} of ${orders.length} orders`}
+        actions={(
+          <Button
+            variant="secondary"
+            size="md"
+            icon={<ArrowDownTrayIcon />}
+            onClick={() => alert('Export functionality coming soon!')}
+          >
+            Export
+          </Button>
+        )}
+      />
 
       {/* Search and Filters */}
       <div className="grid gap-4 lg:grid-cols-3">
@@ -261,6 +264,9 @@ function AdminOrders() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => setSearchQuery('')}
             placeholder="Search by order ID, customer name, or email..."
+            label="Search orders"
+            resultsCount={filteredOrders.length}
+            resultsLabel="orders"
           />
         </div>
 
@@ -269,6 +275,7 @@ function AdminOrders() {
           <select
             value={filterOption}
             onChange={(e) => setFilterOption(e.target.value as FilterOption)}
+            aria-label="Filter orders by status"
             className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated px-12 py-3 text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           >
             <option value="all">All Orders</option>
@@ -278,6 +285,17 @@ function AdminOrders() {
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
+        {hasActiveFilters && (
+          <div className="lg:col-span-3 flex justify-end">
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Stats */}

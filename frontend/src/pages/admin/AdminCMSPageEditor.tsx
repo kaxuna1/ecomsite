@@ -18,6 +18,7 @@ import AnnouncementBlock from '../../components/cms/AnnouncementBlock';
 import BlockSummary from '../../components/cms/BlockSummary';
 import { getBlockTemplate, getBlockTemplateJSON } from '../../utils/blockTemplates';
 import type { AnnouncementContent } from '../../types/cms';
+import PageHeader from '../../components/admin/PageHeader';
 
 // Preview wrapper for announcement blocks (skips dismissal check)
 function AnnouncementBlockPreview({ content, blockId }: { content: any; blockId: number }) {
@@ -150,50 +151,50 @@ export default function AdminCMSPageEditor() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <Link
-            to="/admin/cms"
-            className="text-sm text-text-primary/60 hover:text-text-primary mb-2 inline-block"
-          >
-            ← Back to CMS
-          </Link>
-          <h1 className="font-display text-3xl uppercase tracking-wider text-text-primary">
-            Edit Page: {page.title}
-          </h1>
-          <p className="text-text-primary/60 mt-1">/{page.slug}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => setShowPreview(!showPreview)}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-              showPreview
-                ? 'bg-interactive-default text-on-interactive'
-                : 'bg-bg-secondary text-text-primary hover:bg-bg-elevated'
-            }`}
-          >
-            {showPreview ? '✓ Preview Mode' : 'Show Preview'}
-          </button>
-          <button
-            onClick={handleTogglePublish}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-              page.isPublished
-                ? 'bg-text-secondary/20 text-text-primary hover:bg-bg-elevated'
-                : 'bg-interactive-default text-on-interactive hover:bg-interactive-hover'
-            }`}
-          >
-            {page.isPublished ? 'Unpublish' : 'Publish'}
-          </button>
-          <Link
-            to={`/${page.slug}`}
-            target="_blank"
-            className="px-4 py-2 bg-bg-primary/50 text-text-primary rounded-lg hover:bg-bg-primary/70 transition-colors font-semibold"
-          >
-            Open Live Page
-          </Link>
-        </div>
-      </div>
+      <Link
+        to="/admin/cms"
+        className="text-sm text-text-primary/60 hover:text-text-primary mb-2 inline-block"
+      >
+        ← Back to CMS
+      </Link>
+      <PageHeader
+        title={`Edit Page: ${page.title}`}
+        description={`/${page.slug}`}
+        actions={(
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              aria-pressed={showPreview}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                showPreview
+                  ? 'bg-interactive-default text-on-interactive'
+                  : 'bg-bg-secondary text-text-primary hover:bg-bg-elevated'
+              }`}
+            >
+              {showPreview ? '✓ Preview Mode' : 'Show Preview'}
+            </button>
+            <button
+              type="button"
+              onClick={handleTogglePublish}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                page.isPublished
+                  ? 'bg-text-secondary/20 text-text-primary hover:bg-bg-elevated'
+                  : 'bg-interactive-default text-on-interactive hover:bg-interactive-hover'
+              }`}
+            >
+              {page.isPublished ? 'Unpublish' : 'Publish'}
+            </button>
+            <Link
+              to={`/${page.slug}`}
+              target="_blank"
+              className="px-4 py-2 bg-bg-primary/50 text-text-primary rounded-lg hover:bg-bg-primary/70 transition-colors font-semibold"
+            >
+              Open Live Page
+            </Link>
+          </div>
+        )}
+      />
 
       {/* Page Info */}
       <div className="bg-bg-primary/50 rounded-xl border border-border-default p-6">

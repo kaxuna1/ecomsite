@@ -60,6 +60,8 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      aria-disabled={disabled || loading || undefined}
       className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold uppercase tracking-wider transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${
         fullWidth ? 'w-full' : ''
       } ${className}`}

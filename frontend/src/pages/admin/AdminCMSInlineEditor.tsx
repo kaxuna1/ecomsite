@@ -162,6 +162,7 @@ export default function AdminCMSInlineEditor() {
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
+              type="button"
               onClick={() => setIsAddingBlock(true)}
               className="flex items-center gap-2 px-4 py-2 bg-interactive-default/20 text-primary hover:bg-primary/30 rounded-lg transition-colors font-medium text-sm"
             >
@@ -169,7 +170,9 @@ export default function AdminCMSInlineEditor() {
               Add Block
             </button>
             <button
+              type="button"
               onClick={handleTogglePublish}
+              aria-pressed={page.isPublished}
               className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
                 page.isPublished
                   ? 'bg-text-secondary/20 text-text-primary hover:bg-bg-elevated'
@@ -196,6 +199,7 @@ export default function AdminCMSInlineEditor() {
             <div className="text-center">
               <p className="text-text-tertiary mb-4">No blocks yet. Add your first block to get started!</p>
               <button
+                type="button"
                 onClick={() => setIsAddingBlock(true)}
                 className="px-6 py-3 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-default/90 transition-colors font-semibold"
               >

@@ -55,6 +55,7 @@ export default function EditorLayout({
           <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <button
+                type="button"
                 onClick={onCancel}
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
               >
@@ -92,14 +93,17 @@ export default function EditorLayout({
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
+                type="button"
                 onClick={onCancel}
                 className="w-full rounded-full border border-border-default px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-secondary sm:w-auto"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={onSave}
                 disabled={isSaving}
+                aria-busy={isSaving || undefined}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:opacity-50 sm:w-auto"
               >
                 {isSaving ? (
@@ -121,6 +125,7 @@ export default function EditorLayout({
           <div className="-mx-4 flex gap-1 overflow-x-auto pb-2 px-4 sm:mx-0 sm:pb-0 sm:px-0">
             {tabs.map((tab) => (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className="relative whitespace-nowrap px-4 py-3 text-xs font-semibold transition-colors sm:px-6 sm:text-sm"

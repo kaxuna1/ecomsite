@@ -143,6 +143,8 @@ export default function SaveButton({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
+      aria-busy={isLoading || undefined}
+      aria-live="polite"
       className={baseClasses}
     >
       {renderContent()}

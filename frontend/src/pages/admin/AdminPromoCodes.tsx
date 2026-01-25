@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
   PencilIcon,
   TrashIcon,
   XMarkIcon,
@@ -23,10 +22,15 @@ import type {
   UpdatePromoCodePayload,
   DiscountType
 } from '../../types/product';
+import PageHeader from '../../components/admin/PageHeader';
+import SearchInput from '../../components/admin/SearchInput';
+import LoadingState from '../../components/admin/LoadingState';
+import EmptyState from '../../components/admin/EmptyState';
 
 function AdminPromoCodes() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
+  const hasActiveFilters = Boolean(searchQuery);
   const [showModal, setShowModal] = useState(false);
   const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
@@ -74,6 +78,10 @@ function AdminPromoCodes() {
     promo.code.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const resetFilters = () => {
+    setSearchQuery('');
+  };
+
   const handleOpenModal = (promo?: PromoCode) => {
     setEditingPromo(promo || null);
     setShowModal(true);
@@ -86,63 +94,53 @@ function AdminPromoCodes() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl uppercase tracking-[0.3em]">Promo Codes</h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Manage discount codes for your customers
-          </p>
-        </div>
-        <motion.button
-          type="button"
-          onClick={() => handleOpenModal()}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <PlusIcon className="h-5 w-5" />
-          Create Code
-        </motion.button>
-      </div>
+      <PageHeader
+        title="Promo Codes"
+        description="Manage discount codes for your customers"
+        actions={(
+          <motion.button
+            type="button"
+            onClick={() => handleOpenModal()}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-interactive-default px-6 py-3 text-xs font-medium uppercase tracking-wider text-on-interactive transition-all hover:bg-interactive-hover sm:w-auto sm:text-sm"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <PlusIcon className="h-5 w-5" />
+            Create Code
+          </motion.button>
+        )}
+      />
 
       {/* Search */}
-      <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
-        <input
-          type="text"
+      <div>
+        <SearchInput
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onClear={hasActiveFilters ? resetFilters : undefined}
           placeholder="Search promo codes..."
-          className="w-full rounded-full border border-border-default bg-bg-elevated py-3 pl-12 pr-4 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none transition-colors"
+          label="Search promo codes"
+          resultsCount={filteredPromoCodes.length}
+          resultsLabel="codes"
         />
       </div>
 
       {/* Promo Codes List */}
       {isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <LoadingState message="Loading promo codes..." />
       ) : filteredPromoCodes.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex h-64 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border-default"
-        >
-          <TagIcon className="mb-4 h-16 w-16 text-text-tertiary" />
-          <p className="text-lg text-text-secondary">
-            {searchQuery ? 'No promo codes found' : 'No promo codes yet'}
-          </p>
-          {!searchQuery && (
-            <button
-              type="button"
-              onClick={() => handleOpenModal()}
-              className="mt-4 text-sm text-primary hover:underline transition-colors"
-            >
-              Create your first promo code
-            </button>
-          )}
-        </motion.div>
+        <EmptyState
+          icon={<TagIcon className="h-12 w-12" />}
+          title={searchQuery ? 'No promo codes found' : 'No promo codes yet'}
+          description={searchQuery ? 'Try adjusting your search.' : 'Create your first promo code to get started.'}
+          action={
+            !searchQuery
+              ? {
+                  label: 'Create promo code',
+                  onClick: () => handleOpenModal()
+                }
+              : undefined
+          }
+        />
       ) : (
         <div className="grid gap-6">
           <AnimatePresence mode="popLayout">

@@ -40,34 +40,50 @@ function AdminLogin() {
           <p className="mt-2 text-sm text-text-secondary">Sign in to manage products and orders.</p>
         </div>
         <div>
-          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
+          <label htmlFor="admin-email" className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
             Email
-            <input
-              type="email"
-              className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                errors.email
-                  ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
-                  : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
-              }`}
-              {...register('email', { required: 'Email is required' })}
-            />
           </label>
-          {errors.email && <p className="mt-1 text-xs text-error">{errors.email.message}</p>}
+          <input
+            id="admin-email"
+            type="email"
+            autoComplete="email"
+            aria-invalid={errors.email ? 'true' : 'false'}
+            aria-describedby={errors.email ? 'admin-email-error' : undefined}
+            className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+              errors.email
+                ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
+                : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
+            }`}
+            {...register('email', { required: 'Email is required' })}
+          />
+          {errors.email && (
+            <p id="admin-email-error" className="mt-1 text-xs text-error">
+              {errors.email.message}
+            </p>
+          )}
         </div>
         <div>
-          <label className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
+          <label htmlFor="admin-password" className="block text-sm font-semibold uppercase tracking-[0.3em] text-text-secondary">
             Password
-            <input
-              type="password"
-              className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-                errors.password
-                  ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
-                  : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
-              }`}
-              {...register('password', { required: 'Password is required' })}
-            />
           </label>
-          {errors.password && <p className="mt-1 text-xs text-error">{errors.password.message}</p>}
+          <input
+            id="admin-password"
+            type="password"
+            autoComplete="current-password"
+            aria-invalid={errors.password ? 'true' : 'false'}
+            aria-describedby={errors.password ? 'admin-password-error' : undefined}
+            className={`mt-2 w-full rounded-full border-2 px-4 py-3 text-text-primary bg-bg-elevated transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+              errors.password
+                ? 'border-error bg-error/10 focus:border-error focus:ring-error/50'
+                : 'border-[rgba(255,255,255,0.5)] focus:border-primary focus:ring-primary/50'
+            }`}
+            {...register('password', { required: 'Password is required' })}
+          />
+          {errors.password && (
+            <p id="admin-password-error" className="mt-1 text-xs text-error">
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <button
           type="submit"

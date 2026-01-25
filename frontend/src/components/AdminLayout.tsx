@@ -91,6 +91,12 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
+      <a
+        href="#admin-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-bg-elevated focus:px-4 focus:py-2 focus:text-sm focus:text-text-primary focus:shadow-lg"
+      >
+        Skip to content
+      </a>
       {/* Mobile sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
@@ -116,7 +122,7 @@ function AdminLayout() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
+              <Dialog.Panel id="admin-mobile-sidebar" className="relative mr-16 flex w-full max-w-xs flex-1">
                 <Transition.Child
                   as={Fragment}
                   enter="ease-in-out duration-300"
@@ -144,7 +150,7 @@ function AdminLayout() {
                       Luxia Admin
                     </span>
                   </div>
-                  <nav className="flex flex-1 flex-col">
+                  <nav className="flex flex-1 flex-col" aria-label="Admin navigation">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
@@ -217,6 +223,8 @@ function AdminLayout() {
             <button
               type="button"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              aria-expanded={!sidebarCollapsed}
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               className="rounded-full p-2 text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
             >
               {sidebarCollapsed ? (
@@ -226,7 +234,7 @@ function AdminLayout() {
               )}
             </button>
           </div>
-          <nav className="flex flex-1 flex-col">
+          <nav className="flex flex-1 flex-col" aria-label="Admin navigation">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
@@ -298,6 +306,8 @@ function AdminLayout() {
             type="button"
             className="-m-2.5 p-2.5 text-text-primary lg:hidden"
             onClick={() => setSidebarOpen(true)}
+            aria-expanded={sidebarOpen}
+            aria-controls="admin-mobile-sidebar"
           >
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -323,6 +333,8 @@ function AdminLayout() {
               <button
                 type="button"
                 onClick={() => setCommandPaletteOpen(true)}
+                aria-label="Open command palette"
+                aria-keyshortcuts="Ctrl+K"
                 className="flex items-center gap-2 rounded-full border border-border-default bg-bg-elevated px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary"
               >
                 <MagnifyingGlassIcon className="h-4 w-4" />
@@ -336,7 +348,7 @@ function AdminLayout() {
         </div>
 
         {/* Page content */}
-        <main className="px-4 py-8 sm:px-6 lg:px-8">
+        <main id="admin-main" tabIndex={-1} className="px-4 py-8 sm:px-6 lg:px-8">
           <Outlet />
         </main>
       </div>

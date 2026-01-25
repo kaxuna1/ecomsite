@@ -5,7 +5,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
   PlusIcon,
   XMarkIcon,
   PhotoIcon,
@@ -23,6 +22,7 @@ import Button from '../../components/admin/Button';
 import ProductTable from '../../components/admin/ProductTable';
 import BulkActionsBar from '../../components/admin/BulkActionsBar';
 import VariantManager from '../../components/admin/VariantManager';
+import PageHeader from '../../components/admin/PageHeader';
 
 interface ProductForm {
   name: string;
@@ -68,6 +68,9 @@ function AdminProducts() {
   const [highlightInput, setHighlightInput] = useState('');
   const [variantProduct, setVariantProduct] = useState<Product | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const hasActiveFilters = Boolean(
+    searchQuery || filterOption !== 'all' || sortOption !== 'newest'
+  );
 
   const {
     register,
@@ -167,6 +170,12 @@ function AdminProducts() {
 
     return sorted;
   }, [products, searchQuery, filterOption, sortOption]);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setFilterOption('all');
+    setSortOption('newest');
+  };
 
   const createMutation = useMutation({
     mutationFn: (data: FormData) => createProduct(data),
@@ -430,41 +439,38 @@ function AdminProducts() {
         <title>Manage Products — Luxia Admin</title>
       </Helmet>
 
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <h1 className="font-display text-2xl sm:text-3xl text-text-primary">Product Management</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            {filteredAndSortedProducts.length} of {products.length} products
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 sm:gap-3 sm:flex-nowrap">
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={<ArrowDownTrayIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
-            onClick={() => {
-              // Export functionality placeholder
-              alert('Export functionality coming soon!');
-            }}
-            className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-5 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            <span className="whitespace-nowrap">Export</span>
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
-            onClick={openCreateModal}
-            className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-6 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
-          >
-            <span className="whitespace-nowrap">
-              <span className="hidden sm:inline">Add Product</span>
-              <span className="sm:hidden">Add</span>
-            </span>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Product Management"
+        description={`${filteredAndSortedProducts.length} of ${products.length} products`}
+        actions={(
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<ArrowDownTrayIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
+              onClick={() => {
+                // Export functionality placeholder
+                alert('Export functionality coming soon!');
+              }}
+              className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-5 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95"
+            >
+              <span className="whitespace-nowrap">Export</span>
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />}
+              onClick={openCreateModal}
+              className="flex-1 sm:flex-none min-w-0 !px-4 !py-2.5 sm:!px-6 sm:!py-3 !text-xs sm:!text-sm min-h-[44px] sm:min-h-[48px] transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+            >
+              <span className="whitespace-nowrap">
+                <span className="hidden sm:inline">Add Product</span>
+                <span className="sm:hidden">Add</span>
+              </span>
+            </Button>
+          </>
+        )}
+      />
 
       {/* Search and Filters */}
       <div className="space-y-4">
@@ -475,6 +481,9 @@ function AdminProducts() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => setSearchQuery('')}
             placeholder="Search products by name, description, or category..."
+            label="Search products"
+            resultsCount={filteredAndSortedProducts.length}
+            resultsLabel="products"
             className="w-full"
           />
         </div>
@@ -487,6 +496,7 @@ function AdminProducts() {
             <select
               value={filterOption}
               onChange={(e) => setFilterOption(e.target.value as FilterOption)}
+              aria-label="Filter products"
               className="w-full appearance-none rounded-full border border-border-default bg-bg-elevated pl-12 pr-4 py-3 text-sm sm:text-base text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
             >
               <option value="all">All Products</option>
@@ -506,6 +516,7 @@ function AdminProducts() {
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value as SortOption)}
+                aria-label="Sort products"
                 className="w-full rounded-full border border-border-default bg-bg-elevated px-4 py-3 text-sm sm:text-base text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
               >
                 <option value="newest">Newest First</option>
@@ -519,6 +530,17 @@ function AdminProducts() {
               </select>
             </div>
           </div>
+          {hasActiveFilters && (
+            <div className="flex justify-end sm:col-span-2 lg:col-span-3">
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

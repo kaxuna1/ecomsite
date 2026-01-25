@@ -32,6 +32,7 @@ import { OPENAI_MODELS, ANTHROPIC_MODELS, GEMINI_MODELS, AIModel, getBadgeColor 
 import MediaSelector from '../../components/admin/MediaManager/MediaSelector';
 import type { CMSMedia } from '../../api/media';
 import SaveButton from '../../components/admin/SaveButton';
+import PageHeader from '../../components/admin/PageHeader';
 
 type TabType = 'general' | 'api-keys' | 'ai-settings';
 
@@ -706,13 +707,10 @@ export default function AdminSettings() {
       </Helmet>
 
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="font-display text-3xl text-text-primary">Settings</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Configure your site settings and integrations
-          </p>
-        </div>
+        <PageHeader
+          title="Settings"
+          description="Configure your site settings and integrations"
+        />
 
         {/* Tabs */}
         <div className="flex gap-2 border-b border-border-default">
@@ -724,6 +722,7 @@ export default function AdminSettings() {
             const Icon = tab.icon;
             return (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
                 className={`relative flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors ${

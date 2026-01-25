@@ -36,6 +36,8 @@ export default function EmptyState({ icon, title, description, action }: EmptySt
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10 bg-white/5 px-8 py-16 text-center"
+      role="status"
+      aria-live="polite"
     >
       {icon && (
         <motion.div
