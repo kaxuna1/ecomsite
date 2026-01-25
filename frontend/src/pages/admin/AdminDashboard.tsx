@@ -23,8 +23,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { fetchAllProducts } from '../../api/products';
 import { fetchOrders, updateOrderStatus } from '../../api/orders';
-import type { Product } from '../../types/product';
-import type { Order } from '../../types/order';
+import type { Product, Order } from '../../types/product';
 import StatCard from '../../components/admin/StatCard';
 import LoadingState from '../../components/admin/LoadingState';
 import Badge from '../../components/admin/Badge';

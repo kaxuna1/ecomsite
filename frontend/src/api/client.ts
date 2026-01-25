@@ -17,18 +17,22 @@ api.interceptors.request.use((config) => {
     // Check if we're in the admin area
     const isInAdminArea = window.location.pathname.startsWith('/admin');
 
-    // Check if it's an admin-specific route
+    const url = config.url ?? '';
     const adminRoutes = ['/auth/', '/admin/', '/ai/'];
-    const isAdminRoute = adminRoutes.some(route => config.url?.startsWith(route));
+    const isAdminRoute = adminRoutes.some(route => url.startsWith(route));
+    const isUserRoute = url.startsWith('/user/');
 
-    if (isInAdminArea || isAdminRoute) {
-      // Use admin token for admin area or admin-specific routes
+    if (isUserRoute) {
+      const userToken = window.localStorage.getItem('luxia-user-token');
+      if (userToken) {
+        config.headers.Authorization = `Bearer ${userToken}`;
+      }
+    } else if (isInAdminArea || isAdminRoute) {
       const adminToken = window.localStorage.getItem('luxia-admin-token');
       if (adminToken) {
         config.headers.Authorization = `Bearer ${adminToken}`;
       }
     } else {
-      // Use user token for user routes
       const userToken = window.localStorage.getItem('luxia-user-token');
       if (userToken) {
         config.headers.Authorization = `Bearer ${userToken}`;

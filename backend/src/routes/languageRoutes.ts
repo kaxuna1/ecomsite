@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { languageService } from '../services/languageService';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -48,7 +48,7 @@ router.get('/default/language', async (req, res) => {
 // Create new language
 router.post(
   '/',
-  authenticate,
+  adminAuthMiddleware,
   [
     body('code').trim().isLength({ min: 2, max: 5 }).withMessage('Language code must be 2-5 characters'),
     body('name').trim().notEmpty().withMessage('Language name is required'),
@@ -78,7 +78,7 @@ router.post(
 // Update language
 router.put(
   '/:code',
-  authenticate,
+  adminAuthMiddleware,
   [
     body('name').optional().trim().notEmpty().withMessage('Language name cannot be empty'),
     body('nativeName').optional().trim().notEmpty().withMessage('Native name cannot be empty'),
@@ -105,7 +105,7 @@ router.put(
 );
 
 // Delete language
-router.delete('/:code', authenticate, async (req, res) => {
+router.delete('/:code', adminAuthMiddleware, async (req, res) => {
   try {
     await languageService.delete(req.params.code);
     res.status(204).send();
@@ -121,7 +121,7 @@ router.delete('/:code', authenticate, async (req, res) => {
 });
 
 // Toggle language enabled status
-router.patch('/:code/toggle', authenticate, async (req, res) => {
+router.patch('/:code/toggle', adminAuthMiddleware, async (req, res) => {
   try {
     const language = await languageService.toggleEnabled(req.params.code);
     res.json(language);

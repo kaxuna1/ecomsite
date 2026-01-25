@@ -57,9 +57,75 @@ export interface BlockRegenerationPrompt {
 export class AIPageBuilderFeature implements IAIFeature {
   name = 'ai-page-builder';
   description = 'Generate complete CMS pages from natural language descriptions';
+  requiredCapabilities = ['text-generation', 'json-output'];
   version = '1.0.0';
 
   constructor(private aiManager: AIServiceManager) {}
+
+  async estimateCost(input: PagePrompt | BlockRegenerationPrompt): Promise<number> {
+    const providers = this.aiManager.getAvailableProviders();
+    if (providers.length === 0) {
+      return 0;
+    }
+
+    const provider = this.aiManager.getProvider(providers[0]);
+    if (!provider) {
+      return 0;
+    }
+
+    if (this.isBlockRegenerationPrompt(input)) {
+      const systemPrompt = this.getBlockRegenerationSystemPrompt(input.blockType);
+      const userPrompt = `
+Current Block Content:
+${JSON.stringify(input.currentContent, null, 2)}
+
+${input.pageContext ? `Page Context: ${input.pageContext}\n` : ''}
+
+User Feedback: ${input.feedback}
+
+Please regenerate this ${input.blockType} block incorporating the user's feedback while maintaining the block's structure and purpose.
+Return ONLY valid JSON matching the block type's schema.
+      `.trim();
+
+      return provider.estimateCost({
+        prompt: userPrompt,
+        systemPrompt,
+        temperature: 0.8,
+        maxTokens: 2000
+      });
+    }
+
+    const structureCost = provider.estimateCost({
+      prompt: this.buildPageStructureUserPrompt(input),
+      systemPrompt: this.buildPageStructureSystemPrompt(input),
+      temperature: 0.7,
+      maxTokens: 1500
+    });
+
+    const estimatedBlocks: BlockType[] = ['hero', 'features', 'products', 'testimonials', 'cta'];
+    const pageContext = input.description;
+
+    const blocksCost = estimatedBlocks.reduce((total, blockType) => {
+      const blockSystemPrompt = this.getBlockSystemPrompt(blockType, input);
+      const blockPrompt = `
+Page Context: ${pageContext}
+Block Purpose: Generate ${blockType} content relevant to the page.
+Tone: ${input.tone || 'professional'}
+
+Generate engaging, conversion-focused content for this ${blockType} block.
+Respond with ONLY valid JSON matching the block schema (no markdown, no explanations).
+      `.trim();
+
+      return total + provider.estimateCost({
+        prompt: blockPrompt,
+        systemPrompt: blockSystemPrompt,
+        temperature: 0.8,
+        maxTokens: 1500
+      });
+    }, 0);
+
+    return structureCost + blocksCost;
+  }
 
   async execute(input: any, options?: FeatureOptions): Promise<any> {
     if (this.isPagePrompt(input)) {
@@ -162,58 +228,9 @@ Return ONLY valid JSON matching the block type's schema.
       reasoning: string;
     }>;
   }> {
-    const systemPrompt = `You are an expert web designer and UX specialist. Generate page structures for a luxury e-commerce website.
+    const systemPrompt = this.buildPageStructureSystemPrompt(prompt);
 
-Available Block Types:
-- hero: Large banner with headline, description, CTA, and background image
-- features: Grid of features with icons, titles, and descriptions
-- products: Product showcase (grid/carousel) with selection methods
-- testimonials: Customer reviews with ratings and avatars
-- newsletter: Email signup form with title and description
-- cta: Call-to-action section with buttons
-- text_image: Two-column content with text and image
-- stats: Number highlights with labels
-- social_proof: Logos, badges, certifications
-
-${prompt.existingBranding ? `
-Brand Information:
-- Company: ${prompt.existingBranding.companyName || 'Luxia Products'}
-- Tagline: ${prompt.existingBranding.tagline || 'Premium scalp & hair care'}
-- Values: ${(prompt.existingBranding.values || []).join(', ')}
-- Brand Colors: ${(prompt.existingBranding.colors || []).join(', ')}
-` : ''}
-
-Generate a page structure that:
-1. Follows modern web design best practices
-2. Creates a logical content flow
-3. Includes appropriate block types for the page purpose
-4. Provides guidance for content generation of each block
-
-Respond with ONLY valid JSON (no markdown, no explanations).`;
-
-    const userPrompt = `
-Page Type: ${prompt.pageType || 'custom'}
-Tone: ${prompt.tone || 'professional'}
-${prompt.audience ? `Target Audience: ${prompt.audience}` : ''}
-${prompt.goals && prompt.goals.length > 0 ? `Goals: ${prompt.goals.join(', ')}` : ''}
-
-Description: ${prompt.description}
-
-Generate a page structure with the following JSON schema:
-{
-  "title": "Page title",
-  "slug": "url-friendly-slug",
-  "metaDescription": "SEO description (150-160 chars)",
-  "pageContext": "Brief description of page purpose for content generation",
-  "blocks": [
-    {
-      "blockType": "hero|features|products|testimonials|newsletter|cta|text_image|stats|social_proof",
-      "contentGuidance": "What this block should convey to users",
-      "reasoning": "Why this block is included"
-    }
-  ]
-}
-    `.trim();
+    const userPrompt = this.buildPageStructureUserPrompt(prompt);
 
     const response = await this.aiManager.generateText(
       {
@@ -233,6 +250,65 @@ Generate a page structure with the following JSON schema:
     }
 
     return this.parseJSON(response.content);
+  }
+
+  private buildPageStructureSystemPrompt(prompt: PagePrompt): string {
+    return `You are an expert web designer and UX specialist. Generate page structures for a luxury e-commerce website.
+
+Available Block Types:
+- hero: Large banner with headline, description, CTA, and background image
+- features: Grid of features with icons, titles, and descriptions
+- products: Product showcase (grid/carousel) with selection methods
+- testimonials: Customer reviews with ratings and avatars
+- newsletter: Email signup form with title and description
+- cta: Call-to-action section with buttons
+- text_image: Two-column content with text and image
+- stats: Number highlights with labels
+- social_proof: Logos, badges, certifications
+- announcement: Promotional announcement bar
+- faq: Frequently asked questions
+
+${prompt.existingBranding ? `
+Brand Information:
+- Company: ${prompt.existingBranding.companyName || 'Luxia Products'}
+- Tagline: ${prompt.existingBranding.tagline || 'Premium scalp & hair care'}
+- Values: ${(prompt.existingBranding.values || []).join(', ')}
+- Brand Colors: ${(prompt.existingBranding.colors || []).join(', ')}
+` : ''}
+
+Generate a page structure that:
+1. Follows modern web design best practices
+2. Creates a logical content flow
+3. Includes appropriate block types for the page purpose
+4. Provides guidance for content generation of each block
+
+Respond with ONLY valid JSON (no markdown, no explanations).`;
+  }
+
+  private buildPageStructureUserPrompt(prompt: PagePrompt): string {
+    return `
+Page Type: ${prompt.pageType || 'custom'}
+Tone: ${prompt.tone || 'professional'}
+${prompt.audience ? `Target Audience: ${prompt.audience}` : ''}
+${prompt.goals && prompt.goals.length > 0 ? `Goals: ${prompt.goals.join(', ')}` : ''}
+
+Description: ${prompt.description}
+
+Generate a page structure with the following JSON schema:
+{
+  "title": "Page title",
+  "slug": "url-friendly-slug",
+  "metaDescription": "SEO description (150-160 chars)",
+  "pageContext": "Brief description of page purpose for content generation",
+  "blocks": [
+    {
+      "blockType": "hero|features|products|testimonials|newsletter|cta|text_image|stats|social_proof|announcement|faq",
+      "contentGuidance": "What this block should convey to users",
+      "reasoning": "Why this block is included"
+    }
+  ]
+}
+    `.trim();
   }
 
   /**
@@ -431,7 +507,38 @@ Schema:
   "displayStyle": "grid"
 }
 
-Include 4-8 logos/badges.`
+Include 4-8 logos/badges.`,
+      announcement: `Generate announcement bar content. ${brandContext}
+
+Schema:
+{
+  "type": "announcement",
+  "message": "Short promotional message (max 120 chars)",
+  "linkText": "Optional link label",
+  "linkUrl": "/optional-link",
+  "icon": "tag",
+  "backgroundColor": "#111827",
+  "textColor": "#ffffff",
+  "dismissible": true
+}`,
+      faq: `Generate FAQ block content. ${brandContext}
+
+Schema:
+{
+  "type": "faq",
+  "title": "FAQ section title",
+  "subtitle": "Optional subtitle",
+  "items": [
+    {
+      "id": "unique-id",
+      "question": "Question text",
+      "answer": "Answer text"
+    }
+  ],
+  "displayStyle": "accordion"
+}
+
+Include 4-8 FAQs.`
     };
 
     return schemas[blockType] || 'Generate block content in valid JSON format.';
@@ -491,8 +598,9 @@ Respond with ONLY valid JSON (no markdown, no explanations).`;
     try {
       return JSON.parse(cleaned);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error('[AI Page Builder] Failed to parse JSON:', cleaned);
-      throw new Error(`Invalid JSON response from AI: ${error.message}`);
+      throw new Error(`Invalid JSON response from AI: ${errorMessage}`);
     }
   }
 

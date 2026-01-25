@@ -3,7 +3,7 @@
 
 import express, { Request, Response } from 'express';
 import { themeService } from '../services/themeService';
-import { adminAuthMiddleware } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import type { CreateThemeInput, UpdateThemeInput } from '../types/theme';
 
 const router = express.Router();
@@ -84,7 +84,7 @@ router.get('/fonts', async (req: Request, res: Response) => {
  * GET /api/themes
  * List all themes
  */
-router.get('/', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.get('/', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const includeInactive = req.query.include_inactive === 'true';
     const themes = await themeService.getAllThemes(includeInactive);
@@ -114,7 +114,7 @@ router.get('/', adminAuthMiddleware, async (req: Request, res: Response) => {
  * GET /api/themes/:id
  * Get theme by ID with full details
  */
-router.get('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.get('/:id', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
@@ -158,10 +158,10 @@ router.get('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
  * POST /api/themes
  * Create new theme
  */
-router.post('/', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.post('/', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const input: CreateThemeInput = req.body;
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
 
     // Validate required fields
     if (!input.name || !input.displayName || !input.tokens) {
@@ -203,11 +203,11 @@ router.post('/', adminAuthMiddleware, async (req: Request, res: Response) => {
  * PUT /api/themes/:id
  * Update theme
  */
-router.put('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.put('/:id', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const updates: UpdateThemeInput = req.body;
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
 
     if (isNaN(id)) {
       return res.status(400).json({
@@ -254,10 +254,10 @@ router.put('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
  * PATCH /api/themes/:id/activate
  * Activate theme
  */
-router.patch('/:id/activate', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.patch('/:id/activate', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
 
     if (isNaN(id)) {
       return res.status(400).json({
@@ -297,10 +297,10 @@ router.patch('/:id/activate', adminAuthMiddleware, async (req: Request, res: Res
  * PATCH /api/themes/:id/deactivate
  * Deactivate theme
  */
-router.patch('/:id/deactivate', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.patch('/:id/deactivate', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
 
     if (isNaN(id)) {
       return res.status(400).json({

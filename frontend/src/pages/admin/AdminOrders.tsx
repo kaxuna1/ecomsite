@@ -506,6 +506,10 @@ Total: $${order.total.toFixed(2)}
     return timeline;
   }, [order.status, order.createdAt]);
 
+  const orderSubtotal = useMemo(() => (
+    order.items.reduce((sum, item) => sum + (item.price ?? 0) * item.quantity, 0)
+  ), [order.items]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -738,7 +742,7 @@ Total: $${order.total.toFixed(2)}
                     <div className="mt-6 space-y-3 border-t border-border-default pt-6">
                       <div className="flex items-center justify-between text-text-secondary">
                         <span>Subtotal</span>
-                        <span>${order.total.toFixed(2)}</span>
+                        <span>${orderSubtotal.toFixed(2)}</span>
                       </div>
                       <div className="flex items-center justify-between text-text-secondary">
                         <span>Shipping</span>

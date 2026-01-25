@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as newsletterService from '../services/newsletterService';
 
 const router = Router();
@@ -120,7 +120,7 @@ router.post('/unsubscribe', async (req: Request, res: Response) => {
  * Get all newsletter subscriptions with filters and pagination
  * Admin only
  */
-router.get('/admin/subscriptions', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/subscriptions', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       status,
@@ -161,7 +161,7 @@ router.get('/admin/subscriptions', authenticate, async (req: AuthenticatedReques
  * Get single subscription by ID
  * Admin only
  */
-router.get('/admin/subscriptions/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/subscriptions/:id', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
@@ -200,7 +200,7 @@ router.get('/admin/subscriptions/:id', authenticate, async (req: AuthenticatedRe
  * Update subscription
  * Admin only
  */
-router.put('/admin/subscriptions/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/admin/subscriptions/:id', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
@@ -247,7 +247,7 @@ router.put('/admin/subscriptions/:id', authenticate, async (req: AuthenticatedRe
  * Delete subscription
  * Admin only
  */
-router.delete('/admin/subscriptions/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/admin/subscriptions/:id', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
@@ -287,7 +287,7 @@ router.delete('/admin/subscriptions/:id', authenticate, async (req: Authenticate
  * Get newsletter subscription statistics
  * Admin only
  */
-router.get('/admin/stats', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/stats', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const stats = await newsletterService.getSubscriptionStats();
 
@@ -310,7 +310,7 @@ router.get('/admin/stats', authenticate, async (req: AuthenticatedRequest, res: 
  * Export subscriptions to CSV
  * Admin only
  */
-router.get('/admin/export', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/export', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       status,

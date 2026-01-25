@@ -253,4 +253,29 @@ Generate ${numberOfFeatures} compelling, unique features now. Make each one dist
       provider: response.provider
     };
   }
+
+  async estimateCost(input: FeaturesGeneratorInput): Promise<number> {
+    const providers = this.aiService.getAvailableProviders();
+    if (providers.length === 0) {
+      return 0;
+    }
+
+    const provider = this.aiService.getProvider(providers[0]);
+    if (!provider) {
+      return 0;
+    }
+
+    const systemPrompt = this.getSystemPrompt(input);
+    const userPrompt = `Generate ${input.numberOfFeatures} features for: ${input.productOrService}`;
+    const temperature = input.tone === 'technical' ? 0.5 : 0.7;
+    const maxTokens = Math.max(4000, input.numberOfFeatures * 500);
+
+    return provider.estimateCost({
+      prompt: userPrompt,
+      systemPrompt,
+      maxTokens,
+      temperature,
+      responseFormat: 'json'
+    });
+  }
 }

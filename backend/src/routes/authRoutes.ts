@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { authService } from '../services/authService';
+import { strictRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 router.post(
   '/login',
+  strictRateLimiter,
   [body('email').isEmail(), body('password').isLength({ min: 6 })],
   async (req, res) => {
     const errors = validationResult(req);

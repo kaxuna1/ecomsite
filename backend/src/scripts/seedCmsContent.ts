@@ -92,6 +92,7 @@ async function seedCmsContent() {
       type: 'products',
       title: 'Our Bestsellers',
       subtitle: 'Discover our most-loved scalp care products',
+      selectionMethod: 'manual',
       productIds: [1, 2, 3, 4], // Assuming products with these IDs exist
       displayStyle: 'grid',
       showPrices: true,

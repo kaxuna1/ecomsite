@@ -14,7 +14,14 @@ import {
 } from '../../api/cmsAdmin';
 import VisualBlockEditor from '../../components/cms/editors/VisualBlockEditor';
 import BlockRenderer from '../../components/cms/BlockRenderer';
+import AnnouncementBlock from '../../components/cms/AnnouncementBlock';
 import { getBlockTemplate, getBlockTemplateJSON } from '../../utils/blockTemplates';
+import type { AnnouncementContent } from '../../types/cms';
+
+// Preview wrapper for announcement blocks (skips dismissal check)
+function AnnouncementBlockPreview({ content, blockId }: { content: any; blockId: number }) {
+  return <AnnouncementBlock content={content as AnnouncementContent} blockId={blockId} isPreview />;
+}
 
 export default function AdminCMSPageEditor() {
   const { id } = useParams<{ id: string }>();
@@ -316,22 +323,33 @@ export default function AdminCMSPageEditor() {
                   </div>
                 )}
 
-                {editingBlockId !== block.id && !showPreview && (
-                  <div className="mt-4 p-4 bg-bg-primary/30 rounded-lg">
-                    <pre className="text-xs text-text-primary/60 overflow-auto">
-                      {JSON.stringify(block.content, null, 2)}
-                    </pre>
-                  </div>
-                )}
-
-                {editingBlockId !== block.id && showPreview && (
-                  <div className="mt-4 bg-white rounded-lg overflow-hidden shadow-2xl">
-                    <div className="p-2 bg-bg-primary/90 text-text-primary/60 text-xs text-center border-b border-border-default">
-                      Live Preview
-                    </div>
-                    <div className="transform scale-90 origin-top">
-                      <BlockRenderer block={block} />
-                    </div>
+                {editingBlockId !== block.id && (
+                  <div className="mt-4">
+                    {/* Always show visual preview for announcement blocks, JSON toggle for others */}
+                    {block.blockType === 'announcement' ? (
+                      <div className="rounded-lg overflow-hidden border border-border-default">
+                        <div className="p-2 bg-bg-primary/90 text-text-primary/60 text-xs text-center border-b border-border-default flex items-center justify-center gap-2">
+                          <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+                          Announcement Preview
+                        </div>
+                        <AnnouncementBlockPreview content={block.content} blockId={block.id} />
+                      </div>
+                    ) : showPreview ? (
+                      <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
+                        <div className="p-2 bg-bg-primary/90 text-text-primary/60 text-xs text-center border-b border-border-default">
+                          Live Preview
+                        </div>
+                        <div className="transform scale-90 origin-top">
+                          <BlockRenderer block={block} />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-bg-primary/30 rounded-lg">
+                        <pre className="text-xs text-text-primary/60 overflow-auto">
+                          {JSON.stringify(block.content, null, 2)}
+                        </pre>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -9,8 +9,8 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { addFavorite, removeFavorite, getFavorites } from '../api/favorites';
-import { getProductVariants } from '../api/variants';
 import RatingStars from './reviews/RatingStars';
+import { useLocalizedPath } from '../hooks/useLocalizedPath';
 
 interface ProductCardProps {
   product: Product;
@@ -25,6 +25,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
   const { t, language } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const localizedPath = useLocalizedPath();
   const prefersReducedMotion = useReducedMotion();
 
   // Fetch favorites to check if this product is favorited
@@ -36,20 +37,14 @@ export default function ProductCard({ product, index }: ProductCardProps) {
 
   const isFavorited = favorites?.some(fav => fav.productId === product.id) || false;
 
-  // Fetch variants for this product
-  const { data: variants = [] } = useQuery({
-    queryKey: ['product-variants', product.id],
-    queryFn: () => getProductVariants(product.id),
-    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
-  });
-
   // Calculate variant info
-  const hasVariants = variants.length > 0;
-  const variantCount = variants.length;
-  const priceRange = hasVariants
+  const variantCount = product.variantCount ?? 0;
+  const hasVariants = variantCount > 0;
+  const priceRange = hasVariants && product.variantPriceMin !== null && product.variantPriceMin !== undefined
+    && product.variantPriceMax !== null && product.variantPriceMax !== undefined
     ? {
-        min: Math.min(...variants.map(v => v.price ?? product.price)),
-        max: Math.max(...variants.map(v => v.price ?? product.price))
+        min: product.variantPriceMin,
+        max: product.variantPriceMax
       }
     : null;
   const showPriceRange = priceRange && priceRange.min !== priceRange.max;
@@ -76,7 +71,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
 
     if (!isAuthenticated) {
       // Redirect to login if not authenticated
-      navigate('/login', { state: { from: window.location.pathname } });
+      navigate(localizedPath('/login'), { state: { from: window.location.pathname } });
       return;
     }
 

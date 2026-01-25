@@ -21,6 +21,7 @@ import type { AnnouncementContent } from '../../types/cms';
 interface AnnouncementBlockProps {
   content: AnnouncementContent;
   blockId?: number;
+  isPreview?: boolean; // When true, skips dismissal check (for admin preview)
 }
 
 // Icon mapping for announcement bar
@@ -36,7 +37,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   bolt: BoltIcon,
 };
 
-export default function AnnouncementBlock({ content, blockId }: AnnouncementBlockProps) {
+export default function AnnouncementBlock({ content, blockId, isPreview = false }: AnnouncementBlockProps) {
   const {
     message,
     linkText,
@@ -50,7 +51,10 @@ export default function AnnouncementBlock({ content, blockId }: AnnouncementBloc
   const [isDismissed, setIsDismissed] = useState(false);
 
   // Check localStorage for dismissal state (persisted by block ID)
+  // Skip this check when in preview mode (admin panel)
   useEffect(() => {
+    if (isPreview) return; // Don't check dismissal in preview mode
+    
     if (dismissible && blockId) {
       const dismissedKey = `announcement-dismissed-${blockId}`;
       const wasDismissed = localStorage.getItem(dismissedKey);
@@ -58,7 +62,7 @@ export default function AnnouncementBlock({ content, blockId }: AnnouncementBloc
         setIsDismissed(true);
       }
     }
-  }, [dismissible, blockId]);
+  }, [dismissible, blockId, isPreview]);
 
   const handleDismiss = () => {
     setIsDismissed(true);
@@ -69,7 +73,8 @@ export default function AnnouncementBlock({ content, blockId }: AnnouncementBloc
 
   const Icon = iconMap[icon] || TruckIcon;
 
-  if (isDismissed) {
+  // Don't hide in preview mode, even if dismissed
+  if (isDismissed && !isPreview) {
     return null;
   }
 

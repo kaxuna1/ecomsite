@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { authenticate } from '../../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../../middleware/authMiddleware';
 import * as productMediaService from '../../services/productMediaService';
 import { getMediaUrl } from '../../utils/urlHelper';
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
+// All routes require admin authentication
+router.use(adminAuthMiddleware);
 
 /**
  * GET /api/admin/products/:productId/media

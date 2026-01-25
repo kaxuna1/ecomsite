@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 import { adminUserService } from '../services/adminUserService';
 import { regularUserService } from '../services/regularUserService';
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
+// All routes require admin authentication
+router.use(adminAuthMiddleware);
 
 // ============ Admin Users Management ============
 

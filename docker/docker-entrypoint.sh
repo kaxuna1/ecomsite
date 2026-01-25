@@ -5,7 +5,16 @@ echo "Starting Luxia E-commerce Application..."
 
 # Export environment variables for child scripts
 export DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD
+export REDIS_HOST REDIS_PORT
 export INITIAL_ADMIN_EMAIL INITIAL_ADMIN_PASSWORD INITIAL_ADMIN_NAME
+
+if [ "${JWT_SECRET:-}" = "production-jwt-secret-change-me" ]; then
+    echo "⚠️  JWT_SECRET is using the default value. Set a secure secret for production."
+fi
+
+if [ "${INITIAL_ADMIN_PASSWORD:-}" = "LuxiaAdmin2024!" ]; then
+    echo "⚠️  INITIAL_ADMIN_PASSWORD is using the default value. Set a secure password for production."
+fi
 
 # Initialize PostgreSQL data directory if it doesn't exist
 if [ ! -s "/var/lib/postgresql/data/PG_VERSION" ]; then

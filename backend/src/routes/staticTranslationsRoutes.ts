@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Request } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import * as staticTranslationsService from '../services/staticTranslationsService';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ const router = express.Router();
  */
 router.get(
   '/admin/keys',
-  authenticate,
+  adminAuthMiddleware,
   query('namespace').optional().isString(),
   async (req, res) => {
     const errors = validationResult(req);
@@ -39,7 +39,7 @@ router.get(
  * ADMIN: Get all namespaces
  * GET /api/admin/static-translations/namespaces
  */
-router.get('/admin/namespaces', authenticate, async (req, res) => {
+router.get('/admin/namespaces', adminAuthMiddleware, async (req, res) => {
   try {
     const namespaces = await staticTranslationsService.getNamespaces();
 
@@ -56,7 +56,7 @@ router.get('/admin/namespaces', authenticate, async (req, res) => {
  */
 router.get(
   '/admin/key/:key',
-  authenticate,
+  adminAuthMiddleware,
   param('key').isString(),
   query('namespace').optional().isString(),
   async (req, res) => {
@@ -88,7 +88,7 @@ router.get(
  */
 router.post(
   '/admin',
-  authenticate,
+  adminAuthMiddleware,
   body('translationKey').isString().isLength({ min: 1, max: 255 }),
   body('languageCode').isString().isLength({ min: 2, max: 10 }),
   body('translationValue').isString(),
@@ -123,7 +123,7 @@ router.post(
  */
 router.post(
   '/admin/bulk',
-  authenticate,
+  adminAuthMiddleware,
   body('translations').isArray(),
   body('translations.*.translationKey').isString().isLength({ min: 1, max: 255 }),
   body('translations.*.languageCode').isString().isLength({ min: 2, max: 10 }),
@@ -154,7 +154,7 @@ router.post(
  */
 router.delete(
   '/admin',
-  authenticate,
+  adminAuthMiddleware,
   body('translationKey').isString(),
   body('languageCode').isString(),
   body('namespace').optional().isString(),
@@ -191,7 +191,7 @@ router.delete(
  */
 router.get(
   '/admin/search',
-  authenticate,
+  adminAuthMiddleware,
   query('q').isString().isLength({ min: 1 }),
   query('languageCode').optional().isString(),
   query('namespace').optional().isString(),
@@ -222,7 +222,7 @@ router.get(
  * ADMIN: Get translation statistics
  * GET /api/admin/static-translations/stats
  */
-router.get('/admin/stats', authenticate, async (req, res) => {
+router.get('/admin/stats', adminAuthMiddleware, async (req, res) => {
   try {
     const stats = await staticTranslationsService.getTranslationStats();
 
@@ -239,7 +239,7 @@ router.get('/admin/stats', authenticate, async (req, res) => {
  */
 router.get(
   '/admin/missing',
-  authenticate,
+  adminAuthMiddleware,
   query('sourceLanguage').optional().isString(),
   query('targetLanguage').isString(),
   async (req, res) => {
@@ -275,7 +275,7 @@ router.get(
 router.get(
   '/:languageCode',
   param('languageCode').isString().isLength({ min: 2, max: 10 }),
-  async (req, res) => {
+  async (req: Request<{ languageCode: string }>, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -301,7 +301,7 @@ router.get(
   '/:languageCode/:namespace',
   param('languageCode').isString().isLength({ min: 2, max: 10 }),
   param('namespace').isString().isLength({ min: 1, max: 50 }),
-  async (req, res) => {
+  async (req: Request<{ languageCode: string; namespace: string }>, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });

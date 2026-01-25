@@ -85,6 +85,7 @@ export interface FeatureOptions {
   timeout?: number; // Maximum execution time in ms
   useCache?: boolean; // Whether to use cached responses
   language?: string; // Target language for i18n features
+  userId?: string | number; // Optional user identifier for tracing/rate limits
   metadata?: Record<string, any>; // Additional tracking data
 }
 

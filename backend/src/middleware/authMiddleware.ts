@@ -9,6 +9,8 @@ export interface AuthenticatedRequest extends Request {
   role?: string;
 }
 
+const ADMIN_ROLES = new Set(['admin', 'super_admin']);
+
 export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
@@ -39,6 +41,16 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });
   }
+};
+
+// Admin-only authentication middleware
+export const adminAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  authenticate(req, res, () => {
+    if (!req.adminId || !req.role || !ADMIN_ROLES.has(req.role)) {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+    next();
+  });
 };
 
 // User-specific authentication middleware (requires userId in token)
@@ -105,4 +117,4 @@ export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: Nex
 // Export aliases for convenience
 export const optionalAuthMiddleware = optionalAuth;
 export const authMiddleware = userAuth;
-export const adminAuthMiddleware = authenticate;
+export const adminAuthMiddleware = adminAuth;

@@ -1,15 +1,25 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
-import { authenticate, AuthenticatedRequest } from '../../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../../middleware/authMiddleware';
 import * as mediaService from '../../services/mediaService';
 import { pool } from '../../db/client';
 import { checkStorageStatus } from '../../services/mediaService';
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
 
-// All routes require authentication
-router.use(authenticate);
+// All routes require admin authentication
+router.use(adminAuthMiddleware);
 
 /**
  * GET /api/admin/media

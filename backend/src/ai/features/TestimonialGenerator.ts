@@ -202,4 +202,29 @@ Generate ${numberOfTestimonials} unique, authentic testimonials now.`;
       provider: response.provider
     };
   }
+
+  async estimateCost(input: TestimonialGeneratorInput): Promise<number> {
+    const providers = this.aiService.getAvailableProviders();
+    if (providers.length === 0) {
+      return 0;
+    }
+
+    const provider = this.aiService.getProvider(providers[0]);
+    if (!provider) {
+      return 0;
+    }
+
+    const systemPrompt = this.getSystemPrompt(input);
+    const userPrompt = `Generate ${input.numberOfTestimonials} testimonials for: ${input.productName}`;
+    const temperature = input.tone === 'technical' ? 0.6 : 0.8;
+    const maxTokens = Math.max(4000, input.numberOfTestimonials * 500);
+
+    return provider.estimateCost({
+      prompt: userPrompt,
+      systemPrompt,
+      maxTokens,
+      temperature,
+      responseFormat: 'json'
+    });
+  }
 }

@@ -15,14 +15,17 @@ services:
       - DB_USER=luxia
       - DB_PASSWORD=luxia_secure_password
       - POSTGRES_PASSWORD=luxia_secure_password
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
+      - RUN_SEEDS=true
 
       # Backend Configuration
       - PORT=4000
       - NODE_ENV=production
       - JWT_SECRET=your-production-jwt-secret-change-me
       - ADMIN_EMAIL=admin@luxia.local
-      # Generate with: node -e "console.log(require('bcryptjs').hashSync('YourPassword', 10))"
-      - ADMIN_PASSWORD_HASH=
+      - TRUST_PROXY=1
+      # - CORS_ORIGINS=https://your-domain.com,https://admin.your-domain.com
 
       # Initial Admin User (created on first run)
       - INITIAL_ADMIN_EMAIL=admin@luxia.local
@@ -46,7 +49,7 @@ services:
       # Persist uploaded product images
       - uploads_data:/app/backend/uploads
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/api/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost/api/health >/dev/null && redis-cli ping >/dev/null && pg_isready -h localhost -U luxia -d luxia"]
       interval: 30s
       timeout: 10s
       retries: 3

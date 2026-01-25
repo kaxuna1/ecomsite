@@ -139,6 +139,9 @@ export async function regenerateBlockWithFeedback(
     { content: newContent },
     options.updatedBy
   );
+  if (!updatedBlock) {
+    throw new Error(`Failed to update block ${options.blockId}`);
+  }
 
   console.log(
     `[AI Page Builder Service] Regenerated block ${options.blockId} (${updatedBlock.blockType})`

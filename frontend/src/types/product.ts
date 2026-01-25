@@ -31,6 +31,9 @@ export interface Product {
   shortDescription: string;
   price: number;
   salePrice?: number | null;
+  variantCount?: number;
+  variantPriceMin?: number | null;
+  variantPriceMax?: number | null;
   imageUrl: string;
   inventory: number;
   categories: string[];
@@ -83,7 +86,7 @@ export interface Order extends OrderPayload {
   id: number;
   status: string;
   createdAt: string;
-  items: Array<{ productId: number; quantity: number; name?: string; price?: number }>;
+  items: Array<{ productId: number; quantity: number; name?: string; price?: number; variantId?: number }>;
 }
 
 export interface User {

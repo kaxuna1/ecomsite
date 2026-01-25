@@ -6,6 +6,7 @@ This directory contains all the necessary configuration files to build and run t
 
 The Docker image contains:
 - **PostgreSQL 14**: Database server
+- **Redis**: Cache and background storage
 - **Node.js 20**: Backend Express.js application
 - **Nginx**: Reverse proxy and static file server
 - **Supervisor**: Process manager for all services
@@ -84,6 +85,9 @@ docker buildx build \
 - `JWT_SECRET`: Secret key for JWT token signing
 - `DB_PASSWORD`: PostgreSQL password
 - `POSTGRES_PASSWORD`: Must match DB_PASSWORD
+- `INITIAL_ADMIN_EMAIL`: Initial admin user email
+- `INITIAL_ADMIN_PASSWORD`: Initial admin user password
+- `INITIAL_ADMIN_NAME`: Initial admin display name
 
 ### Optional Variables
 
@@ -93,7 +97,11 @@ docker buildx build \
 - `DB_NAME`: Database name (default: luxia)
 - `DB_USER`: Database user (default: luxia)
 - `ADMIN_EMAIL`: Admin login email (default: concierge@luxia.local)
-- `ADMIN_PASSWORD_HASH`: Bcrypt hash of admin password
+- `REDIS_HOST`: Redis host (default: localhost)
+- `REDIS_PORT`: Redis port (default: 6379)
+- `RUN_SEEDS`: Run seed scripts on first boot (default: true)
+- `CORS_ORIGINS`: Comma-separated list of allowed origins for cross-origin requests (default: allow all in dev, none in prod)
+- `TRUST_PROXY`: Express trust proxy setting (default: `1` in production, `false` otherwise)
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`: Email notifications
 - `SMS_WEBHOOK_URL`, `SMS_API_KEY`, `SMS_FROM`: SMS notifications
 - `NOTIFY_FROM`: Email sender address
@@ -140,8 +148,9 @@ tail -f /var/log/supervisor/postgresql.log
 1. **PostgreSQL Initialization**: If first run, PostgreSQL data directory is initialized
 2. **Database Creation**: Creates database and user
 3. **Migrations**: Runs database migrations to create tables
-4. **Backend Start**: Starts Express.js API server
-5. **Nginx Start**: Starts reverse proxy and static file server
+4. **Seeding (first run)**: Seeds admin user, products, CMS content, and translations when empty
+5. **Backend Start**: Starts Express.js API server
+6. **Nginx Start**: Starts reverse proxy and static file server
 
 ## URLs
 
@@ -149,6 +158,7 @@ tail -f /var/log/supervisor/postgresql.log
 - **API**: http://localhost/api/
 - **Health Check**: http://localhost/api/health
 - **Product Images**: http://localhost/uploads/
+- **Redis**: localhost:6379 (internal to container)
 
 ## Troubleshooting
 
@@ -197,7 +207,7 @@ docker exec luxia-app cat /var/log/nginx/error.log
 
 - [ ] Change all default passwords
 - [ ] Set a strong `JWT_SECRET`
-- [ ] Use `ADMIN_PASSWORD_HASH` instead of default password
+- [ ] Set `INITIAL_ADMIN_*` env vars for first-time admin creation
 - [ ] Configure HTTPS/TLS (use a reverse proxy like Traefik or nginx)
 - [ ] Set up regular database backups
 - [ ] Configure email notifications (SMTP settings)

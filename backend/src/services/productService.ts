@@ -57,6 +57,60 @@ const getProductImages = async (productId: number): Promise<ProductMedia[]> => {
   }));
 };
 
+const getProductImagesByProductIds = async (productIds: number[]): Promise<Map<number, ProductMedia[]>> => {
+  const imagesByProductId = new Map<number, ProductMedia[]>();
+  if (productIds.length === 0) return imagesByProductId;
+
+  const result = await pool.query(
+    `SELECT
+      pm.id,
+      pm.product_id,
+      pm.media_id,
+      pm.is_featured,
+      pm.display_order,
+      m.filename,
+      m.original_name,
+      m.mime_type,
+      m.size_bytes,
+      m.width,
+      m.height,
+      m.alt_text,
+      m.caption,
+      m.file_path
+    FROM product_media pm
+    JOIN cms_media m ON pm.media_id = m.id
+    WHERE pm.product_id = ANY($1) AND m.is_deleted = FALSE
+    ORDER BY pm.product_id ASC, pm.display_order ASC, pm.created_at ASC`,
+    [productIds]
+  );
+
+  for (const row of result.rows) {
+    const media: ProductMedia = {
+      id: row.id,
+      productId: row.product_id,
+      mediaId: row.media_id,
+      isFeatured: row.is_featured,
+      displayOrder: row.display_order,
+      filename: row.filename,
+      originalName: row.original_name,
+      mimeType: row.mime_type,
+      sizeBytes: row.size_bytes,
+      width: row.width,
+      height: row.height,
+      altText: row.alt_text,
+      caption: row.caption,
+      url: getMediaUrl(row.filename)
+    };
+
+    if (!imagesByProductId.has(row.product_id)) {
+      imagesByProductId.set(row.product_id, []);
+    }
+    imagesByProductId.get(row.product_id)!.push(media);
+  }
+
+  return imagesByProductId;
+};
+
 const mapProduct = (row: any) => ({
   id: row.id,
   name: row.name,
@@ -79,6 +133,13 @@ const mapProduct = (row: any) => ({
   ogImageUrl: row.og_image_url ?? undefined,
   canonicalUrl: row.canonical_url ?? undefined,
   customAttributes: row.custom_attributes ?? undefined,
+  variantCount: row.variant_count !== undefined ? Number(row.variant_count) : undefined,
+  variantPriceMin: row.variant_price_min !== undefined && row.variant_price_min !== null
+    ? parseFloat(row.variant_price_min)
+    : null,
+  variantPriceMax: row.variant_price_max !== undefined && row.variant_price_max !== null
+    ? parseFloat(row.variant_price_max)
+    : null,
   images: row.images ?? [] // Initialize images array
 });
 
@@ -143,22 +204,21 @@ export const productService = {
 
         // Handle boolean values
         if (typeof value === 'boolean') {
-          whereClause += ` AND p.custom_attributes->>'${key}' = $${whereParamIndex}`;
-          whereParams.push(String(value));
-          whereParamIndex++;
+          whereClause += ` AND p.custom_attributes ->> $${whereParamIndex} = $${whereParamIndex + 1}`;
+          whereParams.push(key, String(value));
+          whereParamIndex += 2;
         }
         // Handle array values (multiselect) - check if product has ALL selected values
         else if (Array.isArray(value) && value.length > 0) {
-          whereClause += ` AND p.custom_attributes->>'${key}' IS NOT NULL
-            AND p.custom_attributes->'${key}' @> $${whereParamIndex}::jsonb`;
-          whereParams.push(JSON.stringify(value));
-          whereParamIndex++;
+          whereClause += ` AND p.custom_attributes -> $${whereParamIndex} @> $${whereParamIndex + 1}::jsonb`;
+          whereParams.push(key, JSON.stringify(value));
+          whereParamIndex += 2;
         }
         // Handle single select values
         else {
-          whereClause += ` AND p.custom_attributes->>'${key}' = $${whereParamIndex}`;
-          whereParams.push(String(value));
-          whereParamIndex++;
+          whereClause += ` AND p.custom_attributes ->> $${whereParamIndex} = $${whereParamIndex + 1}`;
+          whereParams.push(key, String(value));
+          whereParamIndex += 2;
         }
       }
     }
@@ -218,9 +278,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       WHERE 1=1 ${mainWhereClause}
       ${orderByClause}
       LIMIT $${limitParamIndex} OFFSET $${offsetParamIndex}
@@ -229,9 +300,9 @@ export const productService = {
     const result = await pool.query(query, [language, ...whereParams, limit, offset]);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return {
@@ -265,9 +336,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $2
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       WHERE p.id = $1
     `;
     const result = await pool.query(query, [id, language]);
@@ -575,10 +657,21 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt
         ON p.id = pt.product_id AND pt.language_code = $2
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       WHERE p.slug = $1 OR pt.slug = $1
     `;
     const result = await pool.query(query, [slug, language]);
@@ -604,37 +697,32 @@ export const productService = {
   // Search functionality
   async search(query: string, language: string = 'en', limit: number = 20) {
     const result = await pool.query(
-      'SELECT * FROM search_products($1, $2, $3)',
+      `SELECT
+        sp.*,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
+      FROM search_products($1, $2, $3) sp
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = sp.id AND pv.is_active = TRUE
+      ) variant_stats ON true`,
       [query, language, limit]
     );
+
     const products = result.rows.map(row => ({
-      id: row.id,
-      name: row.name,
-      shortDescription: row.short_description,
-      description: row.description,
-      price: parseFloat(row.price),
-      salePrice: row.sale_price ? parseFloat(row.sale_price) : null,
-      imageUrl: row.image_url,
-      inventory: row.inventory,
-      categories: row.categories,
-      highlights: row.highlights ?? undefined,
-      usage: row.usage ?? undefined,
-      isNew: row.is_new ?? false,
-      isFeatured: row.is_featured ?? false,
-      salesCount: row.sales_count ?? 0,
-      slug: row.slug,
-      metaTitle: row.meta_title ?? undefined,
-      metaDescription: row.meta_description ?? undefined,
-      metaKeywords: row.meta_keywords ?? undefined,
-      ogImageUrl: row.og_image_url ?? undefined,
-      canonicalUrl: row.canonical_url ?? undefined,
+      ...mapProduct(row),
       searchRank: row.search_rank,
-      images: [] as ProductMedia[] // Will be populated below
+      images: [] as ProductMedia[]
     }));
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -655,9 +743,9 @@ export const productService = {
       images: [] as ProductMedia[] // Will be populated below
     }));
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -710,39 +798,48 @@ export const productService = {
       })) : []
     }));
 
-    // Calculate counts for each attribute option
+    const attributeKeys = attributes.map((attr) => attr.attributeKey);
+    const countsByAttribute = new Map<string, Map<string, number>>();
+
+    if (attributeKeys.length > 0) {
+      const countsResult = await pool.query(
+        `WITH attribute_values AS (
+          SELECT
+            kv.key AS attribute_key,
+            CASE
+              WHEN jsonb_typeof(kv.value) = 'array' THEN arr.value
+              ELSE kv.value #>> '{}'
+            END AS option_value
+          FROM products p
+          JOIN LATERAL jsonb_each(p.custom_attributes) kv ON true
+          LEFT JOIN LATERAL jsonb_array_elements_text(
+            CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END
+          ) arr(value) ON true
+          WHERE kv.key = ANY($1)
+        )
+        SELECT attribute_key, option_value, COUNT(*)::int as count
+        FROM attribute_values
+        WHERE option_value IS NOT NULL
+        GROUP BY attribute_key, option_value`,
+        [attributeKeys]
+      );
+
+      for (const row of countsResult.rows) {
+        const key = row.attribute_key as string;
+        const value = String(row.option_value);
+        const count = Number(row.count) || 0;
+        const existing = countsByAttribute.get(key) ?? new Map<string, number>();
+        existing.set(value, count);
+        countsByAttribute.set(key, existing);
+      }
+    }
+
     for (const attr of attributes) {
+      const attributeCounts = countsByAttribute.get(attr.attributeKey);
       if (attr.options && attr.options.length > 0) {
         for (const option of attr.options) {
-          let countQuery: string;
-          let params: any[];
-
-          if (attr.dataType === 'boolean') {
-            countQuery = `
-              SELECT COUNT(*)::int as count
-              FROM products
-              WHERE custom_attributes->>'${attr.attributeKey}' = $1
-            `;
-            params = [String(option.value === 'true' || option.value === true)];
-          } else if (attr.dataType === 'multiselect') {
-            countQuery = `
-              SELECT COUNT(*)::int as count
-              FROM products
-              WHERE custom_attributes->'${attr.attributeKey}' @> $1::jsonb
-            `;
-            params = [JSON.stringify([option.value])];
-          } else {
-            // select type
-            countQuery = `
-              SELECT COUNT(*)::int as count
-              FROM products
-              WHERE custom_attributes->>'${attr.attributeKey}' = $1
-            `;
-            params = [option.value];
-          }
-
-          const countResult = await pool.query(countQuery, params);
-          option.count = countResult.rows[0]?.count || 0;
+          const key = String(option.value);
+          option.count = attributeCounts?.get(key) ?? 0;
         }
       }
     }
@@ -755,7 +852,11 @@ export const productService = {
 
   // Get random products for home page
   async getRandom(limit: number = 8, language: string = 'en') {
-    const query = `
+    const countResult = await pool.query('SELECT COUNT(*)::int as total FROM products');
+    const total = countResult.rows[0]?.total ?? 0;
+    const useRandomOrdering = total <= limit * 5;
+
+    let query = `
       SELECT
         p.id,
         p.price,
@@ -779,19 +880,47 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
-      ORDER BY RANDOM()
-      LIMIT $2
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
     `;
 
-    const result = await pool.query(query, [language, limit]);
+    let params: Array<string | number> = [language];
+
+    if (useRandomOrdering) {
+      query += `
+        ORDER BY RANDOM()
+        LIMIT $2
+      `;
+      params.push(limit);
+    } else {
+      const maxOffset = Math.max(total - limit, 0);
+      const offset = maxOffset > 0 ? Math.floor(Math.random() * (maxOffset + 1)) : 0;
+      query += `
+        ORDER BY p.id
+        OFFSET $2
+        LIMIT $3
+      `;
+      params.push(offset, limit);
+    }
+
+    const result = await pool.query(query, params);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -916,9 +1045,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       ${whereClause}
       ${orderByClause}
       LIMIT $${paramIndex}
@@ -929,9 +1069,9 @@ export const productService = {
     const result = await pool.query(query, params);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -1014,9 +1154,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       ${categoryCondition}
       ${orderByClause}
       LIMIT $${categories.length + 2}
@@ -1027,9 +1178,9 @@ export const productService = {
     const result = await pool.query(query, params);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -1062,16 +1213,17 @@ export const productService = {
 
       if (values.length === 1) {
         // Single value filter
-        whereConditions.push(`p.custom_attributes->>'${key}' = $${paramIndex}`);
-        params.push(values[0]);
-        paramIndex++;
+        whereConditions.push(`p.custom_attributes ->> $${paramIndex} = $${paramIndex + 1}`);
+        params.push(key, values[0]);
+        paramIndex += 2;
       } else {
         // Multiple values - product should match at least one
-        const valueChecks = values.map(() => {
-          const check = `p.custom_attributes->>'${key}' = $${paramIndex}`;
-          params.push(values[paramIndex - 2]);
-          paramIndex++;
-          return check;
+        const valueChecks = values.map((value) => {
+          const keyParamIndex = paramIndex;
+          const valueParamIndex = paramIndex + 1;
+          params.push(key, value);
+          paramIndex += 2;
+          return `p.custom_attributes ->> $${keyParamIndex} = $${valueParamIndex}`;
         });
         whereConditions.push(`(${valueChecks.join(' OR ')})`);
       }
@@ -1133,9 +1285,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $1
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       ${whereClause}
       ${orderByClause}
       LIMIT $${paramIndex}
@@ -1146,9 +1309,9 @@ export const productService = {
     const result = await pool.query(query, params);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -1235,10 +1398,21 @@ export const productService = {
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
         COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max,
         pv.viewed_at
       FROM product_views pv
       JOIN products p ON pv.product_id = p.id
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $${languageParamIndex}
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv2.sale_price, pv2.price)) as variant_price_min,
+          MAX(COALESCE(pv2.sale_price, pv2.price)) as variant_price_max
+        FROM product_variants pv2
+        WHERE pv2.product_id = p.id AND pv2.is_active = TRUE
+      ) variant_stats ON true
       ${whereClause}
       ORDER BY p.id, pv.viewed_at DESC
       LIMIT $${limitParamIndex}
@@ -1247,9 +1421,9 @@ export const productService = {
     const result = await pool.query(query, params);
     const products = result.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -1298,10 +1472,21 @@ export const productService = {
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
         COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max,
         pr.score
       FROM product_recommendations pr
       JOIN products p ON pr.recommended_product_id = p.id
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $2
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       WHERE pr.source_product_id = $1
         AND pr.recommendation_type = $3
       ORDER BY pr.score DESC, p.sales_count DESC
@@ -1313,9 +1498,9 @@ export const productService = {
     if (result.rows.length > 0) {
       const products = result.rows.map(mapProduct);
 
-      // Fetch images for all products
+      const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
       for (const product of products) {
-        product.images = await getProductImages(product.id);
+        product.images = imagesByProductId.get(product.id) ?? [];
       }
 
       return products;
@@ -1356,9 +1541,20 @@ export const productService = {
         COALESCE(pt.usage, p.usage) as usage,
         COALESCE(pt.slug, p.slug) as slug,
         COALESCE(pt.meta_title, p.meta_title) as meta_title,
-        COALESCE(pt.meta_description, p.meta_description) as meta_description
+        COALESCE(pt.meta_description, p.meta_description) as meta_description,
+        variant_stats.variant_count,
+        variant_stats.variant_price_min,
+        variant_stats.variant_price_max
       FROM products p
       LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = $2
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int as variant_count,
+          MIN(COALESCE(pv.sale_price, pv.price)) as variant_price_min,
+          MAX(COALESCE(pv.sale_price, pv.price)) as variant_price_max
+        FROM product_variants pv
+        WHERE pv.product_id = p.id AND pv.is_active = TRUE
+      ) variant_stats ON true
       WHERE p.id != $1
         AND p.categories && $3::jsonb
       ORDER BY p.sales_count DESC, p.created_at DESC
@@ -1374,9 +1570,9 @@ export const productService = {
 
     const products = fallbackResult.rows.map(mapProduct);
 
-    // Fetch images for all products
+    const imagesByProductId = await getProductImagesByProductIds(products.map(product => product.id));
     for (const product of products) {
-      product.images = await getProductImages(product.id);
+      product.images = imagesByProductId.get(product.id) ?? [];
     }
 
     return products;
@@ -1391,7 +1587,23 @@ export const productService = {
     `);
 
     const products = productsResult.rows;
-    const statuses = [];
+    const statuses: Array<{
+      productId: number;
+      productName: string;
+      languageCode: string;
+      completionPercentage: number;
+      hasTranslation: boolean;
+      fields: {
+        name: boolean;
+        shortDescription: boolean;
+        description: boolean;
+        highlights: boolean;
+        usage: boolean;
+        slug: boolean;
+        metaTitle: boolean;
+        metaDescription: boolean;
+      };
+    }> = [];
 
     // Get translation status for each product
     for (const product of products) {

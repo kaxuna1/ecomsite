@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { attributeService } from '../services/attributeService';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -58,7 +58,7 @@ router.get('/:key/values', async (req: Request, res: Response) => {
 });
 
 // Admin routes - for managing attribute definitions
-router.post('/', authenticate, async (req: Request, res: Response) => {
+router.post('/', adminAuthMiddleware, async (req: Request, res: Response) => {
   try {
     const payload = req.body;
 
@@ -100,7 +100,7 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-router.put('/:id', authenticate, async (req: Request, res: Response) => {
+router.put('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -131,7 +131,7 @@ router.put('/:id', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/:id', authenticate, async (req: Request, res: Response) => {
+router.delete('/:id', adminAuthMiddleware, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

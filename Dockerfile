@@ -32,6 +32,9 @@ RUN npm ci
 # Copy backend source (we'll run TypeScript directly with tsx)
 COPY backend/ ./
 
+# Build backend for production
+RUN npm run build
+
 # Stage 3: Final Production Image
 FROM ubuntu:22.04
 
@@ -41,11 +44,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install required packages including libvips for sharp
 RUN apt-get update && apt-get install -y \
     postgresql-14 \
+    redis-server \
     nginx \
     supervisor \
     nodejs \
     npm \
     curl \
+    ca-certificates \
+    python3 \
+    make \
+    g++ \
     libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -55,11 +63,16 @@ RUN npm install -g n && n 20 && hash -r
 # Create app directory
 WORKDIR /app
 
-# Copy backend source and dependencies
-COPY --from=backend-builder /app/backend/src ./backend/src
-COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules
-COPY --from=backend-builder /app/backend/package.json ./backend/
-COPY --from=backend-builder /app/backend/tsconfig.json ./backend/
+# Install backend production dependencies
+COPY backend/package*.json ./backend/
+WORKDIR /app/backend
+RUN npm ci --omit=dev
+WORKDIR /app
+
+# Copy backend build output
+COPY --from=backend-builder /app/backend/dist ./backend/dist
+RUN mkdir -p /app/backend/dist/scripts
+COPY backend/src/scripts/translationsSeed.sql ./backend/dist/scripts/
 
 # Copy frontend build
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
@@ -73,6 +86,7 @@ COPY docker/nginx.conf /etc/nginx/sites-available/default
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/init-postgres.sh /docker-entrypoint-initdb.d/
 COPY docker/run-migrations.sh /usr/local/bin/
+COPY docker/start-backend.sh /usr/local/bin/
 COPY docker/docker-entrypoint.sh /usr/local/bin/
 
 # Note: backend source already copied above
@@ -80,12 +94,16 @@ COPY docker/docker-entrypoint.sh /usr/local/bin/
 # Make scripts executable
 RUN chmod +x /docker-entrypoint-initdb.d/init-postgres.sh
 RUN chmod +x /usr/local/bin/run-migrations.sh
+RUN chmod +x /usr/local/bin/start-backend.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Setup PostgreSQL
 RUN mkdir -p /var/lib/postgresql/data && \
     chown -R postgres:postgres /var/lib/postgresql && \
     chmod 700 /var/lib/postgresql/data
+
+# Create app state directory
+RUN mkdir -p /var/run/luxia
 
 # Create log directories
 RUN mkdir -p /var/log/supervisor /var/log/nginx /var/log/app
@@ -100,6 +118,9 @@ ENV PORT=4000 \
     JWT_SECRET=production-jwt-secret-change-me \
     ADMIN_EMAIL=concierge@luxia.local \
     POSTGRES_PASSWORD=luxia_secure_password \
+    REDIS_HOST=localhost \
+    REDIS_PORT=6379 \
+    RUN_SEEDS=true \
     NODE_ENV=production \
     INITIAL_ADMIN_EMAIL=admin@luxia.local \
     INITIAL_ADMIN_PASSWORD=LuxiaAdmin2024! \
@@ -111,7 +132,7 @@ EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost/api/health || exit 1
+    CMD bash -c "curl -f http://localhost/api/health >/dev/null && redis-cli ping >/dev/null && pg_isready -h localhost -U $DB_USER -d $DB_NAME"
 
 # Start all services
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

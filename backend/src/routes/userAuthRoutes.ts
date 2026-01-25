@@ -2,12 +2,14 @@ import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { userAuthService } from '../services/userAuthService';
 import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { strictRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // POST /api/user/auth/register - Register new user
 router.post(
   '/register',
+  strictRateLimiter,
   [
     body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
@@ -37,6 +39,7 @@ router.post(
 // POST /api/user/auth/login - Login user
 router.post(
   '/login',
+  strictRateLimiter,
   [
     body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required')

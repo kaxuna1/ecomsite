@@ -6,7 +6,7 @@
  */
 
 import { Router, Response } from 'express';
-import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import { getAIServiceManager } from '../ai';
 import { productService } from '../services/productService';
 import { updateMedia } from '../services/mediaService';
@@ -43,7 +43,7 @@ const router = Router();
  */
 router.post(
   '/generate-description',
-  authenticate,
+  adminAuthMiddleware,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const {
@@ -129,7 +129,7 @@ router.post(
  * - provider: string (optional filter)
  * - feature: string (optional filter)
  */
-router.get('/usage-stats', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/usage-stats', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       startDate: startDateStr,
@@ -188,7 +188,7 @@ router.get('/usage-stats', authenticate, async (req: AuthenticatedRequest, res: 
  *
  * Get list of available AI providers and their status
  */
-router.get('/providers', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/providers', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const aiService = await getAIServiceManager();
     const providers = aiService.getAvailableProviders();
@@ -217,7 +217,7 @@ router.get('/providers', authenticate, async (req: AuthenticatedRequest, res: Re
  *
  * Clear AI response cache
  */
-router.post('/clear-cache', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/clear-cache', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const aiService = await getAIServiceManager();
     aiService.clearCache();
@@ -243,7 +243,7 @@ router.post('/clear-cache', authenticate, async (req: AuthenticatedRequest, res:
  * Query params:
  * - limit: number (default: 50, max: 200)
  */
-router.get('/recent-logs', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/recent-logs', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const limit = Math.min(parseInt(req.query.limit as string) || 50, 200);
 
@@ -290,7 +290,7 @@ router.get('/recent-logs', authenticate, async (req: AuthenticatedRequest, res: 
  *     estimatedCTR: string
  *   }
  */
-router.post('/generate-seo', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-seo', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       productName,
@@ -369,7 +369,7 @@ router.post('/generate-seo', authenticate, async (req: AuthenticatedRequest, res
  *     seoKeywords: string[]
  *   }
  */
-router.post('/generate-alt-text', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-alt-text', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       imageUrl,
@@ -445,7 +445,7 @@ router.post('/generate-alt-text', authenticate, async (req: AuthenticatedRequest
  *     results: Array<{ productId: number, success: boolean, data?: any, error?: string }>
  *   }
  */
-router.post('/bulk-operation', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/bulk-operation', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { operation, productIds, options } = req.body;
 
@@ -685,7 +685,7 @@ router.post('/bulk-operation', authenticate, async (req: AuthenticatedRequest, r
  *     qualityScore: number
  *   }
  */
-router.post('/translate-product', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/translate-product', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       productId,
@@ -789,7 +789,7 @@ router.post('/translate-product', authenticate, async (req: AuthenticatedRequest
  *     callToAction: string
  *   }
  */
-router.post('/generate-email-campaign', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-email-campaign', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       campaignType,
@@ -893,7 +893,7 @@ router.post('/generate-email-campaign', authenticate, async (req: AuthenticatedR
  *     faqSchemaMarkup: string (JSON-LD for SEO)
  *   }
  */
-router.post('/generate-faq', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-faq', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       productName,
@@ -993,7 +993,7 @@ router.post('/generate-faq', authenticate, async (req: AuthenticatedRequest, res
  *     provider: string
  *   }
  */
-router.post('/generate-hero', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-hero', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       brandName,
@@ -1056,7 +1056,7 @@ router.post('/generate-hero', authenticate, async (req: AuthenticatedRequest, re
  * POST /api/admin/ai/generate-testimonials
  * Generate authentic customer testimonials with AI
  */
-router.post('/generate-testimonials', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-testimonials', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       productName,
@@ -1142,7 +1142,7 @@ router.post('/generate-testimonials', authenticate, async (req: AuthenticatedReq
  * - tokensUsed: Token count
  * - provider: AI provider used
  */
-router.post('/generate-features', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-features', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       productOrService,
@@ -1228,7 +1228,7 @@ router.post('/generate-features', authenticate, async (req: AuthenticatedRequest
  *     provider: string
  *   }
  */
-router.post('/translate-cms-page', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/translate-cms-page', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       fields,
@@ -1347,7 +1347,7 @@ router.post('/translate-cms-page', authenticate, async (req: AuthenticatedReques
  *     provider: string
  *   }
  */
-router.post('/translate-static-text', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/translate-static-text', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       text,
@@ -1448,7 +1448,7 @@ router.post('/translate-static-text', authenticate, async (req: AuthenticatedReq
  *     provider: string
  *   }
  */
-router.post('/generate-footer', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-footer', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       brandName,
@@ -1583,7 +1583,7 @@ router.post('/generate-footer', authenticate, async (req: AuthenticatedRequest, 
  *     provider: string
  *   }
  */
-router.post('/translate-footer', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/translate-footer', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       fields,
@@ -1704,7 +1704,7 @@ router.post('/translate-footer', authenticate, async (req: AuthenticatedRequest,
  *     provider: string
  *   }
  */
-router.post('/generate-attributes', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-attributes', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { productCategory, productType, brandFocus, numberOfAttributes, existingAttributes } = req.body;
 
@@ -1774,7 +1774,7 @@ router.post('/generate-attributes', authenticate, async (req: AuthenticatedReque
  * POST /api/admin/ai/generate-variant-options
  * Generate variant option types using AI
  */
-router.post('/generate-variant-options', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-variant-options', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { productCategory, productType, numberOfOptions, existingOptions } = req.body;
 
@@ -1823,7 +1823,7 @@ router.post('/generate-variant-options', authenticate, async (req: Authenticated
  * POST /api/admin/ai/generate-variant-values
  * Generate variant option values using AI
  */
-router.post('/generate-variant-values', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/generate-variant-values', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { optionName, productCategory, productType, numberOfValues, existingValues } = req.body;
 

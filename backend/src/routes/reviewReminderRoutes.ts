@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import { sendBatchReviewReminders } from '../services/notificationService';
 import { pool } from '../db/client';
 
@@ -10,7 +10,7 @@ const router = Router();
  * Send review reminders to customers who recently made purchases
  * Admin only - typically called by a cron job
  */
-router.post('/send', authenticate, async (req: AuthenticatedRequest, res) => {
+router.post('/send', adminAuthMiddleware, async (req: AuthenticatedRequest, res) => {
   try {
     const { daysAgo = 7, limit = 50 } = req.body;
 
@@ -87,7 +87,7 @@ router.post('/send', authenticate, async (req: AuthenticatedRequest, res) => {
  * Preview which customers would receive reminders
  * Admin only - useful for testing before sending
  */
-router.get('/preview', authenticate, async (req: AuthenticatedRequest, res) => {
+router.get('/preview', adminAuthMiddleware, async (req: AuthenticatedRequest, res) => {
   try {
     const daysAgo = parseInt(req.query.daysAgo as string) || 7;
     const limit = parseInt(req.query.limit as string) || 50;

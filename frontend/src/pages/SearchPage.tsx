@@ -7,12 +7,14 @@ import { searchProducts } from '../api/products';
 import { getFilterableAttributes } from '../api/attributes';
 import { SearchBar } from '../components/SearchBar';
 import { useI18n } from '../context/I18nContext';
+import { useLocalizedPath } from '../hooks/useLocalizedPath';
 import type { Product } from '../types/product';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const { t } = useI18n();
+  const localizedPath = useLocalizedPath();
 
   const [filters, setFilters] = useState({
     isNew: false,
@@ -315,7 +317,7 @@ export default function SearchPage() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Link
-                    to={`/products/${product.id}`}
+                    to={localizedPath(`/products/${product.id}`)}
                     className="group block overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] transition-all hover:border-[var(--color-primary)] hover:shadow-lg"
                   >
                     <div className="aspect-square overflow-hidden bg-[var(--color-surface)]">

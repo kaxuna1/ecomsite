@@ -290,4 +290,24 @@ Generate comprehensive, practical attributes that merchants will actually use an
       throw error;
     }
   }
+
+  async estimateCost(input: AttributeGenerationInput): Promise<number> {
+    const providers = this.aiManager.getAvailableProviders();
+    if (providers.length === 0) {
+      return 0;
+    }
+
+    const provider = this.aiManager.getProvider(providers[0]);
+    if (!provider) {
+      return 0;
+    }
+
+    return provider.estimateCost({
+      prompt: this.buildPrompt(input),
+      systemPrompt: this.buildSystemPrompt(),
+      maxTokens: 6000,
+      temperature: 0.7,
+      responseFormat: 'json'
+    });
+  }
 }

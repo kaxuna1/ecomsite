@@ -94,8 +94,10 @@ function LanguageWrapper() {
         ? preferredLanguage
         : defaultLanguage;
 
+      const pathWithoutLang = location.pathname.replace(/^\/[^/]+/, '') || '/';
+      const normalizedPath = pathWithoutLang.startsWith('/') ? pathWithoutLang : `/${pathWithoutLang}`;
       console.log('[LanguageWrapper] Invalid language detected:', lang, '- Redirecting to', languageToUse);
-      navigate(`/${languageToUse}${location.pathname}`, { replace: true });
+      navigate(`/${languageToUse}${normalizedPath === '/' ? '' : normalizedPath}`, { replace: true });
     }
   }, [lang, i18n, navigate, location.pathname, languages, isLoading]);
 

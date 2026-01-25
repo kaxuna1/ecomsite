@@ -20,6 +20,44 @@ import type {
   ReviewStatistics
 } from '../types/reviews';
 
+const mapRowToReviewWithDetails = (row: any): ReviewWithDetails => ({
+  id: row.id,
+  productId: row.product_id,
+  userId: row.user_id,
+  orderId: row.order_id,
+  rating: row.rating,
+  title: row.title,
+  reviewText: row.review_text,
+  isVerifiedPurchase: row.is_verified_purchase,
+  images: row.images || [],
+  videos: row.videos || [],
+  status: row.status,
+  moderatedBy: row.moderated_by,
+  moderatedAt: row.moderated_at,
+  rejectionReason: row.rejection_reason,
+  reviewerName: row.reviewer_name || row.user_name,
+  reviewerEmail: row.reviewer_email,
+  helpfulCount: row.helpful_count,
+  notHelpfulCount: row.not_helpful_count,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+  productName: row.product_name,
+  productImageUrl: row.product_image_url,
+  userName: row.user_name,
+  userEmail: row.user_email,
+  response: row.response_id ? {
+    id: row.response_id,
+    reviewId: row.id,
+    adminUserId: row.response_admin_id,
+    responseText: row.response_text,
+    createdAt: row.response_created_at,
+    updatedAt: row.response_created_at,
+    adminUserName: row.response_admin_name
+  } : undefined,
+  userHasVoted: row.user_voted_helpful !== null && row.user_voted_helpful !== undefined,
+  userVotedHelpful: row.user_voted_helpful ?? undefined
+});
+
 /**
  * Get reviews for a product with pagination and filters
  */
@@ -298,7 +336,7 @@ export async function getUserReviewForProduct(
     return null;
   }
 
-  return mapRowToReviewWithDetails(result.rows[0], userId);
+  return mapRowToReviewWithDetails(result.rows[0]);
 }
 
 /**
@@ -783,8 +821,8 @@ export async function moderateReview(
       );
       const product = productResult.rows[0];
 
-      let userEmail = review.reviewerEmail;
-      let userName = review.reviewerName;
+      let userEmail: string | undefined = review.reviewerEmail ?? undefined;
+      let userName: string | undefined = review.reviewerName ?? undefined;
 
       if (review.userId) {
         const userResult = await pool.query(
@@ -792,8 +830,8 @@ export async function moderateReview(
           [review.userId]
         );
         if (userResult.rows.length > 0) {
-          userEmail = userEmail || userResult.rows[0].email;
-          userName = userName || userResult.rows[0].name;
+          userEmail = userEmail ?? userResult.rows[0].email ?? undefined;
+          userName = userName ?? userResult.rows[0].name ?? undefined;
         }
       }
 

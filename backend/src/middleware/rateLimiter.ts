@@ -5,6 +5,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
+import type { AuthenticatedRequest } from './authMiddleware';
+import { getRedisClient } from '../utils/redisClient';
 
 interface RateLimitEntry {
   count: number;
@@ -53,7 +55,9 @@ export function createRateLimiter(options: RateLimitOptions) {
     skipFailedRequests = false
   } = options;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  const redisClientPromise = getRedisClient();
+
+  const applyMemoryLimit = (req: Request, res: Response, next: NextFunction) => {
     const key = keyGenerator(req);
     const now = Date.now();
 
@@ -116,6 +120,62 @@ export function createRateLimiter(options: RateLimitOptions) {
 
     next();
   };
+
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if (skipSuccessfulRequests || skipFailedRequests) {
+      return applyMemoryLimit(req, res, next);
+    }
+
+    const key = keyGenerator(req);
+    const redisClient = await redisClientPromise;
+
+    if (!redisClient) {
+      return applyMemoryLimit(req, res, next);
+    }
+
+    try {
+      const now = Date.now();
+      const result = await redisClient.eval(
+        `local current = redis.call("INCR", KEYS[1])
+         if current == 1 then
+           redis.call("PEXPIRE", KEYS[1], ARGV[1])
+         end
+         local ttl = redis.call("PTTL", KEYS[1])
+         return { current, ttl }`,
+        {
+          keys: [`rate:${key}`],
+          arguments: [windowMs.toString()]
+        }
+      );
+
+      const [countValue, ttlValue] = result as [number | string, number | string];
+      const count = Number(countValue) || 0;
+      const ttl = Number(ttlValue);
+      const resetTime = now + (ttl > 0 ? ttl : windowMs);
+
+      if (count > maxRequests) {
+        const retryAfter = Math.ceil((resetTime - now) / 1000);
+        res.setHeader('X-RateLimit-Limit', maxRequests.toString());
+        res.setHeader('X-RateLimit-Remaining', '0');
+        res.setHeader('X-RateLimit-Reset', resetTime.toString());
+        res.setHeader('Retry-After', retryAfter.toString());
+
+        return res.status(429).json({
+          message: 'Too many requests, please try again later',
+          retryAfter: retryAfter
+        });
+      }
+
+      res.setHeader('X-RateLimit-Limit', maxRequests.toString());
+      res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - count).toString());
+      res.setHeader('X-RateLimit-Reset', resetTime.toString());
+
+      return next();
+    } catch (error) {
+      console.error('Rate limiter Redis error:', error);
+      return applyMemoryLimit(req, res, next);
+    }
+  };
 }
 
 /**
@@ -146,10 +206,11 @@ export const apiKeysRateLimiter = createRateLimiter({
   maxRequests: 30,
   keyGenerator: (req: Request) => {
     // Use combination of IP and admin user ID for more granular control
-    const user = (req as any).user;
+    const authReq = req as AuthenticatedRequest;
+    const actorId = authReq.adminId ?? authReq.userId ?? 'anonymous';
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim()
       || req.socket.remoteAddress
       || 'unknown';
-    return `api-keys:${user?.id || 'anonymous'}:${ip}`;
+    return `api-keys:${actorId}:${ip}`;
   }
 });

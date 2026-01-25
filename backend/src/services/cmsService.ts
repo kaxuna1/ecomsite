@@ -75,8 +75,34 @@ export async function getAllPages(
 
   // Optionally include blocks for each page
   if (includeBlocks) {
+    const pageIds = pages.map((page) => page.id);
+    const blocksByPageId = new Map<number, CMSBlock[]>();
+
+    if (pageIds.length > 0) {
+      const blocksResult = await pool.query(
+        `SELECT *
+         FROM (
+           SELECT
+             *,
+             ROW_NUMBER() OVER (PARTITION BY page_id ORDER BY display_order ASC) AS row_number
+           FROM cms_blocks
+           WHERE page_id = ANY($1)
+         ) blocks
+         WHERE row_number <= $2
+         ORDER BY page_id, display_order ASC`,
+        [pageIds, 100]
+      );
+
+      for (const row of blocksResult.rows) {
+        const block = mapBlockFromDb(row);
+        const existing = blocksByPageId.get(block.pageId) ?? [];
+        existing.push(block);
+        blocksByPageId.set(block.pageId, existing);
+      }
+    }
+
     for (const page of pages) {
-      (page as any).blocks = await getBlocksByPageId(page.id);
+      (page as any).blocks = blocksByPageId.get(page.id) ?? [];
     }
   }
 
@@ -173,7 +199,7 @@ export async function getPublicPage(slug: string, language: string = 'en'): Prom
  */
 export async function createPage(
   payload: CreatePagePayload,
-  adminId: number
+  adminId?: number
 ): Promise<CMSPage> {
   const { slug, title, metaDescription, metaKeywords, isPublished = false } = payload;
 
@@ -181,7 +207,7 @@ export async function createPage(
     `INSERT INTO cms_pages (slug, title, meta_description, meta_keywords, is_published, created_by)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
-    [slug, title, metaDescription || null, metaKeywords || null, isPublished, adminId]
+    [slug, title, metaDescription || null, metaKeywords || null, isPublished, adminId ?? null]
   );
 
   return mapPageFromDb(result.rows[0]);

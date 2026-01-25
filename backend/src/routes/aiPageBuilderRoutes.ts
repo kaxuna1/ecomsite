@@ -5,7 +5,7 @@
  */
 
 import express, { Request, Response } from 'express';
-import { adminAuthMiddleware } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import {
   generatePageFromPrompt,
   regenerateBlockWithFeedback,
@@ -21,7 +21,7 @@ const router = express.Router();
  * @desc    Generate a complete CMS page from a prompt
  * @access  Private (Admin)
  */
-router.post('/generate', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.post('/generate', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { prompt, autoPublish } = req.body;
 
@@ -35,7 +35,7 @@ router.post('/generate', adminAuthMiddleware, async (req: Request, res: Response
     const result = await generatePageFromPrompt({
       prompt: prompt as PagePrompt,
       autoPublish: autoPublish || false,
-      createdBy: req.user?.userId
+      createdBy: req.adminId
     });
 
     res.status(201).json({
@@ -130,7 +130,7 @@ router.post('/estimate', adminAuthMiddleware, async (req: Request, res: Response
  * @desc    Regenerate a specific block with feedback
  * @access  Private (Admin)
  */
-router.post('/blocks/:blockId/regenerate', adminAuthMiddleware, async (req: Request, res: Response) => {
+router.post('/blocks/:blockId/regenerate', adminAuthMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const blockId = parseInt(req.params.blockId);
     const { feedback, pageContext } = req.body;
@@ -153,7 +153,7 @@ router.post('/blocks/:blockId/regenerate', adminAuthMiddleware, async (req: Requ
       blockId,
       feedback,
       pageContext,
-      updatedBy: req.user?.userId
+      updatedBy: req.adminId
     });
 
     res.status(200).json({

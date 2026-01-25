@@ -19,12 +19,136 @@ CREATE TABLE IF NOT EXISTS products (
   categories JSONB NOT NULL,
   highlights JSONB,
   usage TEXT,
+  slug VARCHAR(255),
+  meta_title VARCHAR(255),
+  meta_description TEXT,
+  meta_keywords TEXT[],
+  og_image_url TEXT,
+  canonical_url TEXT,
   is_new BOOLEAN DEFAULT FALSE,
   is_featured BOOLEAN DEFAULT FALSE,
   sales_count INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Ensure SEO columns exist for older schemas
+ALTER TABLE products
+  ADD COLUMN IF NOT EXISTS slug VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS meta_title VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS meta_description TEXT,
+  ADD COLUMN IF NOT EXISTS meta_keywords TEXT[],
+  ADD COLUMN IF NOT EXISTS og_image_url TEXT,
+  ADD COLUMN IF NOT EXISTS canonical_url TEXT;
+
+-- Enable pg_trgm for fuzzy search
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Full-text search support
+ALTER TABLE products ADD COLUMN IF NOT EXISTS search_vector tsvector;
+CREATE INDEX IF NOT EXISTS idx_products_search_vector ON products USING gin(search_vector);
+CREATE INDEX IF NOT EXISTS idx_products_name_trgm ON products USING gin(name gin_trgm_ops);
+
+CREATE OR REPLACE FUNCTION update_product_search_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.search_vector :=
+    setweight(to_tsvector('english', COALESCE(NEW.name, '')), 'A') ||
+    setweight(to_tsvector('english', COALESCE(NEW.short_description, '')), 'B') ||
+    setweight(to_tsvector('english', COALESCE(NEW.description, '')), 'C') ||
+    setweight(to_tsvector('english', COALESCE(array_to_string(ARRAY(SELECT jsonb_array_elements_text(NEW.categories)), ' '), '')), 'B') ||
+    setweight(to_tsvector('english', COALESCE(NEW.slug, '')), 'D');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_update_product_search_vector ON products;
+CREATE TRIGGER trigger_update_product_search_vector
+  BEFORE INSERT OR UPDATE ON products
+  FOR EACH ROW
+  EXECUTE FUNCTION update_product_search_vector();
+
+UPDATE products SET search_vector =
+  setweight(to_tsvector('english', COALESCE(name, '')), 'A') ||
+  setweight(to_tsvector('english', COALESCE(short_description, '')), 'B') ||
+  setweight(to_tsvector('english', COALESCE(description, '')), 'C') ||
+  setweight(to_tsvector('english', COALESCE(array_to_string(ARRAY(SELECT jsonb_array_elements_text(categories)), ' '), '')), 'B') ||
+  setweight(to_tsvector('english', COALESCE(slug, '')), 'D')
+WHERE search_vector IS NULL;
+
+DROP FUNCTION IF EXISTS search_products(TEXT, TEXT, INTEGER);
+
+CREATE OR REPLACE FUNCTION search_products(
+  search_query TEXT,
+  lang_code TEXT DEFAULT 'en',
+  max_results INTEGER DEFAULT 20
+)
+RETURNS TABLE(
+  id INTEGER,
+  name TEXT,
+  short_description TEXT,
+  description TEXT,
+  price NUMERIC,
+  sale_price NUMERIC,
+  image_url TEXT,
+  inventory INTEGER,
+  categories TEXT,
+  highlights TEXT,
+  usage TEXT,
+  is_new BOOLEAN,
+  is_featured BOOLEAN,
+  sales_count INTEGER,
+  slug TEXT,
+  meta_title TEXT,
+  meta_description TEXT,
+  meta_keywords TEXT[],
+  og_image_url TEXT,
+  canonical_url TEXT,
+  search_rank REAL
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    p.id,
+    COALESCE(pt.name, p.name)::TEXT as name,
+    COALESCE(pt.short_description, p.short_description)::TEXT as short_description,
+    COALESCE(pt.description, p.description)::TEXT as description,
+    p.price,
+    p.sale_price,
+    p.image_url::TEXT,
+    p.inventory,
+    p.categories::TEXT,
+    COALESCE(pt.highlights, p.highlights)::TEXT as highlights,
+    COALESCE(pt.usage, p.usage)::TEXT as usage,
+    p.is_new,
+    p.is_featured,
+    p.sales_count,
+    COALESCE(pt.slug, p.slug)::TEXT as slug,
+    COALESCE(pt.meta_title, p.meta_title)::TEXT as meta_title,
+    COALESCE(pt.meta_description, p.meta_description)::TEXT as meta_description,
+    p.meta_keywords,
+    p.og_image_url::TEXT,
+    p.canonical_url::TEXT,
+    (
+      CASE WHEN COALESCE(pt.name, p.name) ILIKE '%' || search_query || '%' THEN 20 ELSE 0 END +
+      ts_rank(p.search_vector, websearch_to_tsquery('english', search_query)) * 10 +
+      similarity(COALESCE(pt.name, p.name), search_query) * 5 +
+      CASE WHEN COALESCE(pt.description, p.description) ILIKE '%' || search_query || '%' THEN 2 ELSE 0 END +
+      CASE WHEN p.is_featured THEN 2 ELSE 0 END +
+      CASE WHEN p.is_new THEN 1 ELSE 0 END
+    )::REAL as search_rank
+  FROM products p
+  LEFT JOIN product_translations pt ON p.id = pt.product_id AND pt.language_code = lang_code
+  WHERE
+    COALESCE(pt.name, p.name) ILIKE '%' || search_query || '%'
+    OR p.search_vector @@ websearch_to_tsquery('english', search_query)
+    OR similarity(COALESCE(pt.name, p.name), search_query) > 0.05
+    OR COALESCE(pt.description, p.description) ILIKE '%' || search_query || '%'
+    OR COALESCE(pt.short_description, p.short_description) ILIKE '%' || search_query || '%'
+  ORDER BY search_rank DESC, p.sales_count DESC
+  LIMIT max_results;
+END;
+$$ LANGUAGE plpgsql STABLE;
 
 CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
@@ -1486,6 +1610,12 @@ CREATE TABLE IF NOT EXISTS product_variants (
 CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON product_variants(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_variants_sku ON product_variants(sku);
 CREATE INDEX IF NOT EXISTS idx_product_variants_is_active ON product_variants(is_active);
+
+-- Optional variant reference for order items
+ALTER TABLE order_items
+  ADD COLUMN IF NOT EXISTS variant_id INTEGER REFERENCES product_variants(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_order_items_variant_id ON order_items(variant_id);
 
 -- Junction table linking variants to their option values
 CREATE TABLE IF NOT EXISTS product_variant_options (

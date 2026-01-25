@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { variantService } from '../services/variantService';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -94,7 +94,7 @@ router.get('/variants/sku/:sku', async (req, res) => {
 // Admin routes - Create, update, delete variants and options
 
 // Create a new variant option type
-router.post('/variant-options', authenticate, [
+router.post('/variant-options', adminAuthMiddleware, [
   body('name').isString().trim().notEmpty(),
   body('displayOrder').optional().isInt({ min: 0 })
 ], async (req, res) => {
@@ -115,7 +115,7 @@ router.post('/variant-options', authenticate, [
 });
 
 // Create a new variant option value
-router.post('/variant-options/:optionId/values', authenticate, [
+router.post('/variant-options/:optionId/values', adminAuthMiddleware, [
   body('value').isString().trim().notEmpty(),
   body('displayOrder').optional().isInt({ min: 0 })
 ], async (req, res) => {
@@ -138,7 +138,7 @@ router.post('/variant-options/:optionId/values', authenticate, [
 });
 
 // Create a new variant for a product
-router.post('/products/:productId/variants', authenticate, [
+router.post('/products/:productId/variants', adminAuthMiddleware, [
   body('sku').isString().trim().notEmpty(),
   body('inventory').isInt({ min: 0 }),
   body('price').optional().isFloat({ min: 0 }),
@@ -180,7 +180,7 @@ router.post('/products/:productId/variants', authenticate, [
 });
 
 // Update a variant
-router.put('/variants/:id', authenticate, [
+router.put('/variants/:id', adminAuthMiddleware, [
   body('sku').optional().isString().trim().notEmpty(),
   body('inventory').optional().isInt({ min: 0 }),
   body('price').optional().isFloat({ min: 0 }),
@@ -212,7 +212,7 @@ router.put('/variants/:id', authenticate, [
 });
 
 // Delete a variant
-router.delete('/variants/:id', authenticate, async (req, res) => {
+router.delete('/variants/:id', adminAuthMiddleware, async (req, res) => {
   try {
     const variantId = Number(req.params.id);
     const success = await variantService.deleteVariant(variantId);
@@ -226,7 +226,7 @@ router.delete('/variants/:id', authenticate, async (req, res) => {
 });
 
 // Set a variant as default
-router.put('/variants/:id/default', authenticate, async (req, res) => {
+router.put('/variants/:id/default', adminAuthMiddleware, async (req, res) => {
   try {
     const variantId = Number(req.params.id);
     const variant = await variantService.setDefaultVariant(variantId);

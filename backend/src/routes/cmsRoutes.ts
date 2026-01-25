@@ -4,7 +4,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { body, param, query, validationResult } from 'express-validator';
-import { authenticate as adminAuth } from '../middleware/authMiddleware';
+import { adminAuthMiddleware as adminAuth } from '../middleware/authMiddleware';
 import * as cmsService from '../services/cmsService';
 import * as mediaService from '../services/mediaService';
 
@@ -15,6 +15,13 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
   }
 });
 

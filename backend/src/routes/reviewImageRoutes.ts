@@ -7,6 +7,13 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: reviewImageService.getMaxFileSize()
+  },
+  fileFilter: (req, file, cb) => {
+    if (reviewImageService.isValidImageType(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid image type'));
+    }
   }
 });
 

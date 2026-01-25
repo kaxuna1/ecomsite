@@ -29,38 +29,58 @@ const STATIC_ROUTES = [
 const DEFAULT_HEADER_MENU: MenuItemHierarchical[] = [
   {
     id: -1,
+    locationId: 0,
+    parentId: null,
     label: 'Products',
     linkType: 'internal',
     linkUrl: '/products',
     cmsPageId: null,
+    displayOrder: 0,
+    isEnabled: true,
     openInNewTab: false,
+    cssClass: null,
     children: []
   },
   {
     id: -2,
+    locationId: 0,
+    parentId: null,
     label: 'New Arrivals',
     linkType: 'internal',
     linkUrl: '/new-arrivals',
     cmsPageId: null,
+    displayOrder: 1,
+    isEnabled: true,
     openInNewTab: false,
+    cssClass: null,
     children: []
   },
   {
     id: -3,
+    locationId: 0,
+    parentId: null,
     label: 'Best Sellers',
     linkType: 'internal',
     linkUrl: '/best-sellers',
     cmsPageId: null,
+    displayOrder: 2,
+    isEnabled: true,
     openInNewTab: false,
+    cssClass: null,
     children: []
   },
   {
     id: -4,
+    locationId: 0,
+    parentId: null,
     label: 'Sale',
     linkType: 'internal',
     linkUrl: '/sale',
     cmsPageId: null,
+    displayOrder: 3,
+    isEnabled: true,
     openInNewTab: false,
+    cssClass: null,
     children: []
   }
 ];

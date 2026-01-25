@@ -3,7 +3,7 @@
 
 import { Router, Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
-import { authenticate as adminAuth, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { adminAuthMiddleware as adminAuth, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as navigationService from '../services/navigationService';
 import { getAIServiceManager } from '../ai';
 
@@ -378,7 +378,7 @@ router.post(
         req.body,
         {
           metadata: {
-            adminUserId: req.admin?.id,
+            adminUserId: req.adminId,
             locationCode: req.body.locationCode
           }
         }
@@ -427,7 +427,7 @@ router.post(
         req.body,
         {
           metadata: {
-            adminUserId: req.admin?.id,
+            adminUserId: req.adminId,
             targetLanguage: req.body.targetLanguage
           }
         }

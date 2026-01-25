@@ -33,8 +33,8 @@ export async function notifyReviewSubmitted(
     productName: review.productName || 'Product',
     productUrl: `${SITE_URL}/en/products/${review.productId}`,
     rating: review.rating,
-    reviewTitle: review.title,
-    reviewText: review.reviewText,
+    reviewTitle: review.title ?? undefined,
+    reviewText: review.reviewText ?? undefined,
     siteUrl: SITE_URL,
   });
 
@@ -62,8 +62,8 @@ export async function notifyReviewApproved(
     productName: review.productName || 'Product',
     productUrl: `${SITE_URL}/en/products/${review.productId}#reviews`,
     rating: review.rating,
-    reviewTitle: review.title,
-    reviewText: review.reviewText,
+    reviewTitle: review.title ?? undefined,
+    reviewText: review.reviewText ?? undefined,
     siteUrl: SITE_URL,
   });
 
@@ -92,8 +92,8 @@ export async function notifyReviewResponse(
     productName: review.productName || 'Product',
     productUrl: `${SITE_URL}/en/products/${review.productId}#reviews`,
     rating: review.rating,
-    reviewTitle: review.title,
-    reviewText: review.reviewText,
+    reviewTitle: review.title ?? undefined,
+    reviewText: review.reviewText ?? undefined,
     responseText,
     siteUrl: SITE_URL,
   });
@@ -154,8 +154,8 @@ export async function notifyAdminNewReview(
     reviewerEmail: review.reviewerEmail || review.userEmail || '',
     isVerifiedPurchase: review.isVerifiedPurchase,
     rating: review.rating,
-    reviewTitle: review.title,
-    reviewText: review.reviewText,
+    reviewTitle: review.title ?? undefined,
+    reviewText: review.reviewText ?? undefined,
     adminReviewUrl: `${ADMIN_URL}/reviews`,
     siteUrl: SITE_URL,
   });

@@ -4,8 +4,8 @@
  * Admin-only routes for managing API keys and secrets
  */
 
-import { Router, Request, Response } from 'express';
-import { authenticate } from '../middleware/authMiddleware';
+import { Router, Response } from 'express';
+import { adminAuthMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import { apiKeysRateLimiter } from '../middleware/rateLimiter';
 import {
   getAllAPIKeys,
@@ -24,7 +24,7 @@ import { checkStorageStatus } from '../services/mediaService';
 const router = Router();
 
 // All routes require admin authentication
-router.use(authenticate);
+router.use(adminAuthMiddleware);
 
 // Apply rate limiting to all API keys routes (30 requests per 15 minutes)
 router.use(apiKeysRateLimiter);
@@ -32,11 +32,10 @@ router.use(apiKeysRateLimiter);
 /**
  * Helper function to extract audit context from request
  */
-function getAuditContext(req: Request) {
-  const user = (req as any).user;
+function getAuditContext(req: AuthenticatedRequest) {
   return {
-    adminUserId: user?.id,
-    adminUserEmail: user?.email,
+    adminUserId: req.adminId,
+    adminUserEmail: req.user?.email,
     ipAddress: (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress,
     userAgent: req.headers['user-agent']
   };
@@ -70,7 +69,7 @@ async function reinitializeAIProvidersIfNeeded(keyNames: string[]) {
  * GET /api/admin/api-keys
  * Get all API keys (masked values for display)
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Only return masked values for display in UI
     const keys = await getAllAPIKeys(false);
@@ -90,7 +89,7 @@ router.get('/', async (req: Request, res: Response) => {
  * Get audit log entries for API key access and modifications
  * NOTE: This route must be defined BEFORE /:keyName to avoid being caught by it
  */
-router.get('/audit-log', async (req: Request, res: Response) => {
+router.get('/audit-log', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keyName, limit } = req.query;
 
@@ -114,7 +113,7 @@ router.get('/audit-log', async (req: Request, res: Response) => {
  * Get current storage configuration status
  * NOTE: This route must be defined BEFORE /:keyName to avoid being caught by it
  */
-router.get('/storage-status', async (req: Request, res: Response) => {
+router.get('/storage-status', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const status = await checkStorageStatus();
     
@@ -134,7 +133,7 @@ router.get('/storage-status', async (req: Request, res: Response) => {
  * GET /api/admin/api-keys/:keyName
  * Get a specific API key (returns actual value - use carefully!)
  */
-router.get('/:keyName', async (req: Request, res: Response) => {
+router.get('/:keyName', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keyName } = req.params;
     const { decrypt: shouldDecrypt } = req.query;
@@ -164,7 +163,7 @@ router.get('/:keyName', async (req: Request, res: Response) => {
  * 
  * Body: { keys: { keyName: value, ... } }
  */
-router.put('/', async (req: Request, res: Response) => {
+router.put('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keys } = req.body;
     
@@ -175,7 +174,7 @@ router.put('/', async (req: Request, res: Response) => {
     }
     
     // Get admin user ID from auth middleware
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
     
     const count = await setMultipleAPIKeys(keys, adminUserId);
 
@@ -208,7 +207,7 @@ router.put('/', async (req: Request, res: Response) => {
  *   isActive?: boolean
  * }
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keyName, keyValue, category, description, isActive } = req.body;
 
@@ -218,7 +217,7 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
-    const adminUserId = (req as any).user?.id;
+    const adminUserId = req.adminId;
     const auditContext = getAuditContext(req);
 
     const result = await setAPIKey(
@@ -254,7 +253,7 @@ router.post('/', async (req: Request, res: Response) => {
  * DELETE /api/admin/api-keys/:keyName
  * Permanently delete an API key
  */
-router.delete('/:keyName', async (req: Request, res: Response) => {
+router.delete('/:keyName', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keyName } = req.params;
     const auditContext = getAuditContext(req);
@@ -285,7 +284,7 @@ router.delete('/:keyName', async (req: Request, res: Response) => {
  * PATCH /api/admin/api-keys/:keyName/deactivate
  * Soft delete (deactivate) an API key
  */
-router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
+router.patch('/:keyName/deactivate', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { keyName } = req.params;
     const auditContext = getAuditContext(req);
@@ -316,7 +315,7 @@ router.patch('/:keyName/deactivate', async (req: Request, res: Response) => {
  * POST /api/admin/api-keys/validate/:feature
  * Validate if required API keys are configured for a specific feature
  */
-router.post('/validate/:feature', async (req: Request, res: Response) => {
+router.post('/validate/:feature', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { feature } = req.params;
 
@@ -336,7 +335,7 @@ router.post('/validate/:feature', async (req: Request, res: Response) => {
  * POST /api/admin/api-keys/test-s3
  * Test S3 connection with current configuration
  */
-router.post('/test-s3', async (req: Request, res: Response) => {
+router.post('/test-s3', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await testS3Connection();
     

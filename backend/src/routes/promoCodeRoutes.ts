@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { promoCodeService } from '../services/promoCodeService';
-import { authenticate, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { adminAuthMiddleware, AuthenticatedRequest, optionalAuth } from '../middleware/authMiddleware';
 
 const router = Router();
 
 // PUBLIC ROUTE - Validate promo code
 router.post(
   '/validate',
+  optionalAuth,
   [
     body('code').isString().trim().notEmpty().withMessage('Promo code is required'),
     body('cartTotal').isFloat({ min: 0 }).withMessage('Valid cart total is required')
@@ -48,7 +49,7 @@ router.post(
 
 // ADMIN ROUTES - Protected
 // Get all promo codes
-router.get('/', authenticate, async (req, res) => {
+router.get('/', adminAuthMiddleware, async (req, res) => {
   try {
     const promoCodes = await promoCodeService.list();
     res.json(promoCodes);
@@ -58,7 +59,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Get single promo code
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/:id', adminAuthMiddleware, async (req, res) => {
   try {
     const promoCode = await promoCodeService.getById(Number(req.params.id));
 
@@ -73,7 +74,7 @@ router.get('/:id', authenticate, async (req, res) => {
 });
 
 // Get promo code statistics
-router.get('/:id/stats', authenticate, async (req, res) => {
+router.get('/:id/stats', adminAuthMiddleware, async (req, res) => {
   try {
     const stats = await promoCodeService.getStats(Number(req.params.id));
     res.json(stats);
@@ -85,7 +86,7 @@ router.get('/:id/stats', authenticate, async (req, res) => {
 // Create promo code
 router.post(
   '/',
-  authenticate,
+  adminAuthMiddleware,
   [
     body('code').isString().trim().notEmpty().withMessage('Code is required'),
     body('discountType')
@@ -106,7 +107,7 @@ router.post(
         ...req.body,
         validFrom: new Date(req.body.validFrom),
         validUntil: new Date(req.body.validUntil),
-        createdBy: req.userId
+        createdBy: req.adminId
       });
 
       res.status(201).json(promoCode);
@@ -123,7 +124,7 @@ router.post(
 // Update promo code
 router.patch(
   '/:id',
-  authenticate,
+  adminAuthMiddleware,
   [
     body('code').optional().isString().trim().notEmpty(),
     body('discountType').optional().isIn(['PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING']),
@@ -164,7 +165,7 @@ router.patch(
 );
 
 // Delete promo code
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', adminAuthMiddleware, async (req, res) => {
   try {
     const deleted = await promoCodeService.delete(Number(req.params.id));
 

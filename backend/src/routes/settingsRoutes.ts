@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 import {
   getAllSettings,
   updateSettings,
@@ -68,7 +68,7 @@ router.get('/public', async (req, res) => {
  * GET /api/settings
  * Get all settings (admin only)
  */
-router.get('/', authenticate, async (req, res) => {
+router.get('/', adminAuthMiddleware, async (req, res) => {
   try {
     const settings = await getAllSettings();
     res.json(settings);
@@ -82,7 +82,7 @@ router.get('/', authenticate, async (req, res) => {
  * PUT /api/settings
  * Update multiple settings at once (admin only)
  */
-router.put('/', authenticate, async (req, res) => {
+router.put('/', adminAuthMiddleware, async (req, res) => {
   try {
     const {
       logoType,
@@ -173,7 +173,7 @@ router.put('/', authenticate, async (req, res) => {
  * POST /api/settings/logo
  * Upload logo image (admin only)
  */
-router.post('/logo', authenticate, uploadLogo.single('logo'), async (req, res) => {
+router.post('/logo', adminAuthMiddleware, uploadLogo.single('logo'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'Logo image is required' });

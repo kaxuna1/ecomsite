@@ -8,6 +8,26 @@ const required = (value: string | undefined, fallback?: string) => {
   throw new Error('Missing required environment variable');
 };
 
+const parseCsv = (value: string | undefined) =>
+  (value ?? '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => entry.replace(/\/$/, ''));
+
+const parseTrustProxy = (value: string | undefined, nodeEnv: string) => {
+  if (!value) {
+    return nodeEnv === 'production' ? 1 : false;
+  }
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  const numeric = Number(value);
+  if (!Number.isNaN(numeric)) return numeric;
+  return value;
+};
+
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+
 export const env = {
   port: Number(process.env.PORT ?? 4000),
   dbHost: process.env.DB_HOST ?? 'localhost',
@@ -24,10 +44,17 @@ export const env = {
   smtpPassword: process.env.SMTP_PASSWORD,
   notifyFrom: process.env.NOTIFY_FROM ?? 'Luxia Products <no-reply@luxia.local>',
   notifyAdminEmail: process.env.NOTIFY_ADMIN_EMAIL,
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   smsFrom: process.env.SMS_FROM,
   smsWebhookUrl: process.env.SMS_WEBHOOK_URL,
   smsApiKey: process.env.SMS_API_KEY,
+  corsOrigins: parseCsv(process.env.CORS_ORIGINS),
+  trustProxy: parseTrustProxy(process.env.TRUST_PROXY, nodeEnv),
+  redisUrl: process.env.REDIS_URL,
+  redisHost: process.env.REDIS_HOST,
+  redisPort: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
+  redisPassword: process.env.REDIS_PASSWORD,
+  redisTls: process.env.REDIS_TLS === 'true',
   // S3 Configuration (optional)
   s3Endpoint: process.env.S3_ENDPOINT,
   s3Region: process.env.S3_REGION ?? 'us-east-1',

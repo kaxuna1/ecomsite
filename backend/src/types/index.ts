@@ -116,7 +116,7 @@ export interface OrderPayload {
     address: string;
   };
   addressId?: number; // Optional: ID of saved address if user selected one
-  items: Array<{ productId: number; quantity: number }>;
+  items: Array<{ productId: number; quantity: number; variantId?: number }>;
   total: number;
   promoCode?: {
     id: number;

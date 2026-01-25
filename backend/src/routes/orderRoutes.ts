@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
 import { orderService } from '../services/orderService';
-import { authenticate, optionalAuth } from '../middleware/authMiddleware';
+import { authenticate, optionalAuth, adminAuthMiddleware } from '../middleware/authMiddleware';
 import { sendOrderConfirmation } from '../utils/notifications';
+import { moderateRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.get('/', authenticate, async (req: any, res) => {
 router.post(
   '/',
   optionalAuth,
+  moderateRateLimiter,
   [
     body('customer.name').isString().notEmpty(),
     body('customer.email').isEmail(),
@@ -56,7 +58,7 @@ router.post(
   }
 );
 
-router.patch('/:id', authenticate, [body('status').isString().notEmpty()], async (req, res) => {
+router.patch('/:id', adminAuthMiddleware, [body('status').isString().notEmpty()], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });

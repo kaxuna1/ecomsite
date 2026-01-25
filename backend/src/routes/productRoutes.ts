@@ -2,9 +2,19 @@ import { Router } from 'express';
 import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 import { productService } from '../services/productService';
-import { authenticate } from '../middleware/authMiddleware';
+import { adminAuthMiddleware } from '../middleware/authMiddleware';
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
 
 const router = Router();
 
@@ -33,7 +43,7 @@ router.get('/filter-metadata', async (req, res) => {
 });
 
 // Get translation status for all products (admin only)
-router.get('/translations/status', authenticate, async (req, res) => {
+router.get('/translations/status', adminAuthMiddleware, async (req, res) => {
   try {
     const languageCode = req.query.lang as string;
 
@@ -395,7 +405,7 @@ const productValidators = [
   body('inventory').isInt({ min: 0 })
 ];
 
-router.post('/', authenticate, upload.single('image'), productValidators, async (req, res) => {
+router.post('/', adminAuthMiddleware, upload.single('image'), productValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -438,7 +448,7 @@ router.post('/', authenticate, upload.single('image'), productValidators, async 
   }
 });
 
-router.put('/:id', authenticate, upload.single('image'), productValidators, async (req, res) => {
+router.put('/:id', adminAuthMiddleware, upload.single('image'), productValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -483,7 +493,7 @@ router.put('/:id', authenticate, upload.single('image'), productValidators, asyn
   }
 });
 
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', adminAuthMiddleware, async (req, res) => {
   try {
     const success = await productService.remove(Number(req.params.id));
     if (!success) {
@@ -574,7 +584,7 @@ const translationValidators = [
   body('description').isString().trim().notEmpty()
 ];
 
-router.post('/:id/translations/:lang', authenticate, translationValidators, async (req, res) => {
+router.post('/:id/translations/:lang', adminAuthMiddleware, translationValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });

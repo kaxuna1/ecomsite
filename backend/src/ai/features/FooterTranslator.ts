@@ -141,7 +141,7 @@ export class FooterTranslator implements IAIFeature {
     const { fields, sourceLanguage, targetLanguage, preserveTerms, tone } = input;
 
     // Build context
-    const context = [];
+    const context: string[] = [];
     if (tone) context.push(`Tone: ${tone}`);
     if (preserveTerms && preserveTerms.length > 0) {
       context.push(`Preserve these terms (do NOT translate): ${preserveTerms.join(', ')}`);

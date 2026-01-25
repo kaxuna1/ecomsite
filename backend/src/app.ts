@@ -1,8 +1,11 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import { env } from './config/env';
 import authRoutes from './routes/authRoutes';
 import userAuthRoutes from './routes/userAuthRoutes';
 import productRoutes from './routes/productRoutes';
@@ -31,9 +34,43 @@ import themeRoutes from './routes/themeRoutes';
 
 const app = express();
 
-app.use(cors({ origin: true, credentials: true }));
+app.set('trust proxy', env.trustProxy);
+app.disable('x-powered-by');
+
+const allowedOrigins = env.corsOrigins;
+const normalizeOrigin = (origin: string) => origin.replace(/\/$/, '');
+const isOriginAllowed = (origin?: string) => {
+  if (!origin) return true;
+  if (allowedOrigins.length === 0) {
+    return env.nodeEnv !== 'production';
+  }
+  return allowedOrigins.includes(normalizeOrigin(origin));
+};
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Accept-Language', 'X-Requested-With', 'X-Request-Id'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  maxAge: 86400
+};
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(cookieParser());
 app.use(morgan('dev'));
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
