@@ -141,7 +141,7 @@ export default function AdminCMSInlineEditor() {
   }
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-bg-primary relative">
       {/* Fixed Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-bg-primary/95 backdrop-blur-xl border-b border-primary/30 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -190,7 +190,7 @@ export default function AdminCMSInlineEditor() {
       </div>
 
       {/* Page Content with Editable Blocks */}
-      <div>
+      <div className="cms-page pt-20">
         {blocks.length === 0 ? (
           <div className="min-h-[60vh] flex items-center justify-center">
             <div className="text-center">
