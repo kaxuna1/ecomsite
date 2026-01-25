@@ -109,7 +109,8 @@ RUN mkdir -p /var/run/luxia
 RUN mkdir -p /var/log/supervisor /var/log/nginx /var/log/app
 
 # Environment variables with defaults
-ENV PORT=4000 \
+ENV BACKEND_PORT=4000 \
+    PORT=4000 \
     DB_HOST=localhost \
     DB_PORT=5432 \
     DB_NAME=luxia \

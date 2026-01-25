@@ -91,7 +91,8 @@ docker buildx build \
 
 ### Optional Variables
 
-- `PORT`: Backend port (default: 4000)
+- `BACKEND_PORT`: Backend port inside the container (default: 4000)
+- `PORT`: Platform-provided port (default: 4000). Use `BACKEND_PORT` to avoid conflicts when platforms set `PORT` for the web proxy.
 - `DB_HOST`: Database host (default: localhost)
 - `DB_PORT`: Database port (default: 5432)
 - `DB_NAME`: Database name (default: luxia)

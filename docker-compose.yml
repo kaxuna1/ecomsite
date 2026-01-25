@@ -20,6 +20,7 @@ services:
       - RUN_SEEDS=true
 
       # Backend Configuration
+      - BACKEND_PORT=4000
       - PORT=4000
       - NODE_ENV=production
       - JWT_SECRET=your-production-jwt-secret-change-me

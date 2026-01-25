@@ -29,7 +29,7 @@ const parseTrustProxy = (value: string | undefined, nodeEnv: string) => {
 const nodeEnv = process.env.NODE_ENV ?? 'development';
 
 export const env = {
-  port: Number(process.env.PORT ?? 4000),
+  port: Number(process.env.BACKEND_PORT ?? process.env.PORT ?? 4000),
   dbHost: process.env.DB_HOST ?? 'localhost',
   dbPort: Number(process.env.DB_PORT ?? 5432),
   dbName: process.env.DB_NAME ?? 'luxia',
