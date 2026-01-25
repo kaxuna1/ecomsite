@@ -113,13 +113,13 @@ export default function MediaLibrary({
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="border-b border-white/10 bg-midnight/50 p-6">
+      <div className="border-b border-border-default bg-bg-elevated p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-champagne">
+            <h2 className="text-2xl font-bold text-text-primary">
               {mode === 'select' ? 'Select Media' : 'Media Library'}
             </h2>
-            <p className="mt-1 text-sm text-champagne/60">
+            <p className="mt-1 text-sm text-text-tertiary">
               {mode === 'select'
                 ? `Select ${multiple ? 'one or more images' : 'an image'}`
                 : 'Manage your uploaded media files'}
@@ -130,7 +130,7 @@ export default function MediaLibrary({
             {mode === 'select' && onClose && (
               <button
                 onClick={onClose}
-                className="rounded-full p-2 text-champagne/60 transition-colors hover:bg-white/10 hover:text-champagne"
+                className="rounded-full p-2 text-text-tertiary transition-colors hover:bg-bg-secondary hover:text-text-primary"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -142,13 +142,13 @@ export default function MediaLibrary({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
           <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-champagne/40" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
             <input
               type="text"
               placeholder="Search by filename or alt text..."
               value={filters.search || ''}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full rounded-full border border-white/20 bg-white/5 py-2 pl-10 pr-4 text-champagne placeholder-champagne/40 transition-colors focus:border-blush focus:outline-none focus:ring-2 focus:ring-blush/20"
+              className="w-full rounded-full border border-border-default bg-bg-primary py-2 pl-10 pr-4 text-text-primary placeholder-text-tertiary transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -158,8 +158,8 @@ export default function MediaLibrary({
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
                 showFilters
-                  ? 'border-blush bg-blush text-midnight'
-                  : 'border-white/20 bg-white/5 text-champagne hover:border-blush hover:bg-white/10'
+                  ? 'border-primary bg-interactive-default text-on-interactive'
+                  : 'border-border-default bg-bg-secondary text-text-secondary hover:border-primary hover:bg-bg-elevated'
               }`}
             >
               <FunnelIcon className="h-4 w-4" />
@@ -169,7 +169,7 @@ export default function MediaLibrary({
             {mode !== 'select' && (
               <button
                 onClick={() => setShowUploader(!showUploader)}
-                className="flex items-center gap-2 rounded-full bg-blush px-4 py-2 text-sm font-semibold text-midnight transition-colors hover:bg-champagne"
+                className="flex items-center gap-2 rounded-full bg-interactive-default px-4 py-2 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover"
               >
                 <PlusIcon className="h-4 w-4" />
                 Upload
@@ -180,10 +180,10 @@ export default function MediaLibrary({
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mt-4 rounded-xl border border-border-default bg-bg-secondary p-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
                   Min Width
                 </label>
                 <input
@@ -195,13 +195,13 @@ export default function MediaLibrary({
                       minWidth: e.target.value ? Number(e.target.value) : undefined
                     }))
                   }
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-2 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none"
+                  className="w-full rounded-full border border-border-default bg-bg-primary px-4 py-2 text-text-primary placeholder-text-tertiary focus:border-primary focus:outline-none"
                   placeholder="e.g. 800"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
                   Min Height
                 </label>
                 <input
@@ -213,13 +213,13 @@ export default function MediaLibrary({
                       minHeight: e.target.value ? Number(e.target.value) : undefined
                     }))
                   }
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-2 text-champagne placeholder-champagne/40 focus:border-blush focus:outline-none"
+                  className="w-full rounded-full border border-border-default bg-bg-primary px-4 py-2 text-text-primary placeholder-text-tertiary focus:border-primary focus:outline-none"
                   placeholder="e.g. 600"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-champagne/60">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
                   File Type
                 </label>
                 <select
@@ -230,7 +230,7 @@ export default function MediaLibrary({
                       mimeType: e.target.value || undefined
                     }))
                   }
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-2 text-champagne focus:border-blush focus:outline-none"
+                  className="w-full rounded-full border border-border-default bg-bg-primary px-4 py-2 text-text-primary focus:border-primary focus:outline-none"
                 >
                   <option value="">All types</option>
                   <option value="image/jpeg">JPEG</option>
@@ -250,7 +250,7 @@ export default function MediaLibrary({
                       offset: 0
                     })
                   }
-                  className="w-full rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-champagne transition-colors hover:border-rose-500 hover:bg-rose-500/10 hover:text-rose-400"
+                  className="w-full rounded-full border border-border-default bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-error hover:bg-error/10 hover:text-error"
                 >
                   Clear Filters
                 </button>
@@ -287,9 +287,9 @@ export default function MediaLibrary({
 
       {/* Footer (for select mode) */}
       {mode === 'select' && (
-        <div className="border-t border-white/10 bg-midnight/50 p-4">
+        <div className="border-t border-border-default bg-bg-elevated p-4">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-champagne/60">
+            <div className="text-sm text-text-tertiary">
               {selectedMedia.size > 0 ? (
                 <span>
                   {selectedMedia.size} selected
@@ -304,7 +304,7 @@ export default function MediaLibrary({
               {onClose && (
                 <button
                   onClick={onClose}
-                  className="rounded-full border border-white/20 bg-white/5 px-6 py-2 text-sm font-semibold text-champagne transition-colors hover:border-white/40 hover:bg-white/10"
+                  className="rounded-full border border-border-default bg-bg-secondary px-6 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-border-strong hover:bg-bg-elevated"
                 >
                   Cancel
                 </button>
@@ -313,7 +313,7 @@ export default function MediaLibrary({
               <button
                 onClick={handleConfirmSelection}
                 disabled={selectedMedia.size === 0}
-                className="rounded-full bg-blush px-6 py-2 text-sm font-semibold text-midnight transition-colors hover:bg-champagne disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full bg-interactive-default px-6 py-2 text-sm font-semibold text-on-interactive transition-colors hover:bg-interactive-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Select ({selectedMedia.size})
               </button>

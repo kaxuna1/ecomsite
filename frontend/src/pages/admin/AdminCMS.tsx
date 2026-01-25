@@ -1,11 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, EyeIcon, GlobeAltIcon, PlusIcon, CheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import {
+  XMarkIcon,
+  GlobeAltIcon,
+  PlusIcon,
+  CheckIcon,
+  SparklesIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  Bars3BottomLeftIcon
+} from '@heroicons/react/24/outline';
 import {
   fetchCMSPages,
-  fetchPageBlocks,
   createCMSPageWithBlocks,
   updateCMSPage,
   deleteCMSPage,
@@ -13,23 +21,30 @@ import {
   updateFooterSettings,
   createFooterTranslation,
   type CMSPage,
-  type CMSBlock,
   type FooterSettings,
   type CreatePagePayload
 } from '../../api/cmsAdmin';
 import FooterEditor from '../../components/cms/editors/FooterEditor';
 import AIPageBuilderModal from '../../components/admin/AIPageBuilderModal';
+import { CMSPageCard } from '../../components/admin/cms';
 import { PAGE_TEMPLATES, type PageTemplate } from '../../config/pageTemplates';
+
+type StatusFilter = 'all' | 'published' | 'draft';
+type SortOrder = 'updated' | 'title' | 'created';
 
 export default function AdminCMS() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
+
+  // Filter and sort state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('updated');
+  const [expandedPageId, setExpandedPageId] = useState<number | null>(null);
+
+  // Modal states
   const [showFooterEditor, setShowFooterEditor] = useState(false);
   const [footerLanguage, setFooterLanguage] = useState('en');
-
-  // Debug logging for language changes
-  console.log('🌍 AdminCMS render - footerLanguage:', footerLanguage);
   const [showNewPageModal, setShowNewPageModal] = useState(false);
   const [showAIPageBuilder, setShowAIPageBuilder] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate>(PAGE_TEMPLATES[0]);
@@ -41,30 +56,62 @@ export default function AdminCMS() {
     isPublished: false
   });
 
+  // Queries
   const { data: pages, isLoading } = useQuery({
     queryKey: ['cms-pages'],
     queryFn: fetchCMSPages
   });
 
-  const { data: blocks } = useQuery({
-    queryKey: ['cms-blocks', selectedPageId],
-    queryFn: () => fetchPageBlocks(selectedPageId!),
-    enabled: !!selectedPageId
-  });
-
   const { data: footerSettings } = useQuery({
     queryKey: ['footer-settings', footerLanguage],
-    queryFn: () => {
-      console.log('⚡ React Query: Fetching footer with language:', footerLanguage);
-      return fetchFooterSettings(footerLanguage);
-    },
+    queryFn: () => fetchFooterSettings(footerLanguage),
     enabled: showFooterEditor,
-    staleTime: 0, // Always consider data stale
-    gcTime: 0, // Don't cache in memory or localStorage
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: false
   });
 
+  // Filter and sort pages
+  const filteredPages = useMemo(() => {
+    if (!pages) return [];
+
+    let result = [...pages];
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (page) =>
+          page.title.toLowerCase().includes(query) ||
+          page.slug.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter === 'published') {
+      result = result.filter((page) => page.isPublished);
+    } else if (statusFilter === 'draft') {
+      result = result.filter((page) => !page.isPublished);
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      switch (sortOrder) {
+        case 'title':
+          return a.title.localeCompare(b.title);
+        case 'created':
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        case 'updated':
+        default:
+          return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime();
+      }
+    });
+
+    return result;
+  }, [pages, searchQuery, statusFilter, sortOrder]);
+
+  // Mutations
   const statusMutation = useMutation({
     mutationFn: ({ pageId, isPublished }: { pageId: number; isPublished: boolean }) =>
       updateCMSPage(pageId, { isPublished }),
@@ -77,7 +124,7 @@ export default function AdminCMS() {
     mutationFn: deleteCMSPage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-pages'] });
-      setSelectedPageId(null);
+      setExpandedPageId(null);
     }
   });
 
@@ -89,7 +136,7 @@ export default function AdminCMS() {
   });
 
   const footerTranslationMutation = useMutation({
-    mutationFn: ({ languageCode, payload }: { languageCode: string; payload: any }) =>
+    mutationFn: ({ languageCode, payload }: { languageCode: string; payload: Partial<FooterSettings> }) =>
       createFooterTranslation(languageCode, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['footer-settings'] });
@@ -99,7 +146,7 @@ export default function AdminCMS() {
   const createPageMutation = useMutation({
     mutationFn: ({ pagePayload, blocks }: {
       pagePayload: CreatePagePayload;
-      blocks: Array<{ blockType: string; blockKey: string; content: any; displayOrder: number }>
+      blocks: Array<{ blockType: string; blockKey: string; content: Record<string, unknown>; displayOrder: number }>
     }) => createCMSPageWithBlocks(pagePayload, blocks),
     onSuccess: (newPage) => {
       queryClient.invalidateQueries({ queryKey: ['cms-pages'] });
@@ -112,33 +159,29 @@ export default function AdminCMS() {
         isPublished: false
       });
       setSelectedTemplate(PAGE_TEMPLATES[0]);
-      // Redirect to inline editor for the new page
       navigate(`/admin/cms/inline-edit/${newPage.id}`);
     }
   });
 
+  // Handlers
   const handleToggleStatus = (page: CMSPage) => {
-    const newStatus = !page.isPublished;
-    statusMutation.mutate({ pageId: page.id, isPublished: newStatus });
+    statusMutation.mutate({ pageId: page.id, isPublished: !page.isPublished });
   };
 
   const handleDeletePage = (pageId: number) => {
-    if (confirm('Are you sure you want to delete this page?')) {
+    if (confirm('Are you sure you want to delete this page? This action cannot be undone.')) {
       deleteMutation.mutate(pageId);
     }
   };
 
-  const handleFooterChange = (updates: Partial<FooterSettings>) => {
-    console.log('=== FRONTEND handleFooterChange ===');
-    console.log('Language:', footerLanguage);
-    console.log('Updates received:', updates);
+  const handleToggleExpand = (pageId: number) => {
+    setExpandedPageId(expandedPageId === pageId ? null : pageId);
+  };
 
+  const handleFooterChange = (updates: Partial<FooterSettings>) => {
     if (footerLanguage === 'en') {
-      console.log('>>> Calling English mutation');
-      // Update base footer settings for English
       footerMutation.mutate(updates);
     } else {
-      // Extract only translatable fields for non-English languages
       const translatableFields = {
         ...(updates.brandName !== undefined && { brandName: updates.brandName }),
         ...(updates.brandTagline !== undefined && { brandTagline: updates.brandTagline }),
@@ -152,21 +195,11 @@ export default function AdminCMS() {
         ...(updates.bottomLinks !== undefined && { bottomLinks: updates.bottomLinks })
       };
 
-      console.log('>>> Translatable fields extracted:', translatableFields);
-      console.log('>>> Field count:', Object.keys(translatableFields).length);
-
-      // Only mutate if there are translatable fields
       if (Object.keys(translatableFields).length > 0) {
-        console.log('>>> Calling translation mutation with:', {
-          languageCode: footerLanguage,
-          payload: translatableFields
-        });
         footerTranslationMutation.mutate({
           languageCode: footerLanguage,
           payload: translatableFields
         });
-      } else {
-        console.log('>>> No translatable fields, skipping mutation');
       }
     }
   };
@@ -176,7 +209,7 @@ export default function AdminCMS() {
   };
 
   const handleOpenFooterEditor = () => {
-    setFooterLanguage('en'); // Reset to English when opening editor
+    setFooterLanguage('en');
     setShowFooterEditor(true);
   };
 
@@ -184,16 +217,15 @@ export default function AdminCMS() {
     return title
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   };
 
   const handleTemplateSelect = (template: PageTemplate) => {
     setSelectedTemplate(template);
-    // Auto-fill fields if blank
     if (template.id !== 'blank') {
-      setNewPageData(prev => ({
+      setNewPageData((prev) => ({
         ...prev,
         title: prev.title || template.name,
         slug: prev.slug || template.suggestedSlug,
@@ -228,10 +260,15 @@ export default function AdminCMS() {
     });
   };
 
-  const handleViewLive = (slug: string) => {
-    const url = `/en/${slug}`;
-    window.open(url, '_blank');
-  };
+  // Stats
+  const stats = useMemo(() => {
+    if (!pages) return { total: 0, published: 0, draft: 0 };
+    return {
+      total: pages.length,
+      published: pages.filter((p) => p.isPublished).length,
+      draft: pages.filter((p) => !p.isPublished).length
+    };
+  }, [pages]);
 
   if (isLoading) {
     return (
@@ -243,8 +280,16 @@ export default function AdminCMS() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-3xl uppercase tracking-wider">CMS Management</h1>
+        <div>
+          <h1 className="font-display text-3xl uppercase tracking-wider text-text-primary">
+            CMS Management
+          </h1>
+          <p className="mt-1 text-sm text-text-tertiary">
+            {stats.total} pages &middot; {stats.published} published &middot; {stats.draft} drafts
+          </p>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleOpenFooterEditor}
@@ -269,188 +314,147 @@ export default function AdminCMS() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pages List */}
-        <div className="bg-bg-elevated rounded-xl border border-border-default overflow-hidden">
-          <div className="border-b border-border-default px-6 py-4">
-            <h2 className="font-display text-xl uppercase tracking-wide text-text-primary">Pages</h2>
+      {/* Filters & Search */}
+      <div className="bg-bg-elevated rounded-xl border border-border-default p-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-tertiary" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search pages by title or slug..."
+              className="w-full pl-10 pr-4 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
           </div>
-          <div className="divide-y divide-border-default">
-            {pages?.map((page) => (
-              <div
-                key={page.id}
-                className={`p-6 cursor-pointer transition-colors ${
-                  selectedPageId === page.id ? 'bg-primary/10' : 'hover:bg-bg-secondary'
-                }`}
-                onClick={() => setSelectedPageId(page.id)}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-text-primary">{page.title}</h3>
-                    <div className="flex items-center gap-2 mt-2">
-                      <GlobeAltIcon className="h-4 w-4 text-primary" />
-                      <p className="text-sm text-text-secondary font-mono">/{page.slug}</p>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                      page.isPublished
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-amber-500/20 text-amber-400'
-                    }`}
-                  >
-                    {page.isPublished ? 'Published' : 'Draft'}
-                  </span>
-                </div>
-                <div className="flex flex-col sm:flex-row flex-wrap gap-2 mt-4">
-                  {page.isPublished && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleViewLive(page.slug);
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-interactive-default text-on-interactive rounded hover:bg-interactive-hover transition-colors text-sm font-semibold w-full sm:w-auto justify-center sm:justify-start"
-                    >
-                      <EyeIcon className="h-4 w-4" />
-                      View Live
-                    </button>
-                  )}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleStatus(page);
-                    }}
-                    className={`px-3 py-1 rounded hover:bg-opacity-80 transition-colors text-sm w-full sm:w-auto ${
-                      page.isPublished
-                        ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'
-                        : 'bg-primary/20 text-primary hover:bg-primary/30'
-                    }`}
-                  >
-                    {page.isPublished ? 'Unpublish' : 'Publish'}
-                  </button>
-                  <Link
-                    to={`/admin/cms/inline-edit/${page.id}`}
-                    className="px-3 py-1 bg-primary/20 text-text-primary rounded hover:bg-primary/30 transition-colors text-sm w-full sm:w-auto text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Inline Edit
-                  </Link>
-                  <Link
-                    to={`/admin/cms/edit/${page.id}`}
-                    className="px-3 py-1 bg-bg-secondary text-text-primary rounded hover:bg-bg-elevated transition-colors text-sm w-full sm:w-auto text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Advanced
-                  </Link>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeletePage(page.id);
-                    }}
-                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors text-sm w-full sm:w-auto"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-            {pages?.length === 0 && (
-              <div className="p-12 text-center text-text-tertiary">
-                No pages yet. Create your first page!
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Blocks Preview */}
-        <div className="bg-bg-elevated rounded-xl border border-border-default overflow-hidden">
-          <div className="border-b border-border-default px-6 py-4">
-            <h2 className="font-display text-xl uppercase tracking-wide text-text-primary">Page Blocks</h2>
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <FunnelIcon className="h-5 w-5 text-text-tertiary" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              className="px-3 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              title="Filter by status"
+            >
+              <option value="all">All Status</option>
+              <option value="published">Published</option>
+              <option value="draft">Drafts</option>
+            </select>
           </div>
-          {selectedPageId ? (
-            <div className="p-6">
-              {blocks && blocks.length > 0 ? (
-                <div className="space-y-3">
-                  {blocks.map((block) => (
-                    <div
-                      key={block.id}
-                      className="p-4 bg-bg-secondary rounded-lg border border-border-default"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-text-primary">{block.blockKey}</p>
-                          <p className="text-sm text-text-secondary mt-1">Type: {block.blockType}</p>
-                        </div>
-                        <span className="text-xs text-text-tertiary">Position: {block.displayOrder}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-text-tertiary text-center py-12">No blocks in this page</p>
-              )}
-            </div>
-          ) : (
-            <div className="p-12 text-center text-text-tertiary">
-              Select a page to view its blocks
-            </div>
-          )}
+
+          {/* Sort */}
+          <div className="flex items-center gap-2">
+            <Bars3BottomLeftIcon className="h-5 w-5 text-text-tertiary" />
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+              className="px-3 py-2.5 bg-bg-primary border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              title="Sort pages"
+            >
+              <option value="updated">Recently Updated</option>
+              <option value="created">Recently Created</option>
+              <option value="title">Title A-Z</option>
+            </select>
+          </div>
         </div>
       </div>
+
+      {/* Pages Grid */}
+      {filteredPages.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredPages.map((page) => (
+            <CMSPageCard
+              key={page.id}
+              id={page.id}
+              title={page.title}
+              slug={page.slug}
+              isPublished={page.isPublished}
+              isExpanded={expandedPageId === page.id}
+              onToggleExpand={() => handleToggleExpand(page.id)}
+              onToggleStatus={() => handleToggleStatus(page)}
+              onDelete={() => handleDeletePage(page.id)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-bg-elevated rounded-xl border border-border-default p-12 text-center">
+          {searchQuery || statusFilter !== 'all' ? (
+            <>
+              <p className="text-text-secondary">No pages match your filters.</p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('all');
+                }}
+                className="mt-4 text-primary hover:underline"
+              >
+                Clear filters
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-text-secondary">No pages yet.</p>
+              <button
+                onClick={() => setShowNewPageModal(true)}
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Create your first page
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Footer Editor Modal */}
       <AnimatePresence>
         {showFooterEditor && footerSettings && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowFooterEditor(false)}
-              className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm z-40"
             />
 
-            {/* Slide-out Panel */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-midnight border-l border-white/10 z-50 overflow-hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-3xl bg-bg-elevated border-l border-border-default z-50 overflow-hidden flex flex-col"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-midnight/95 backdrop-blur-sm">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border-default bg-bg-elevated/95 backdrop-blur-sm">
                 <div>
-                  <h2 className="font-display text-2xl text-champagne">Footer Editor</h2>
-                  <p className="text-sm text-champagne/60 mt-1">Customize your site footer</p>
+                  <h2 className="font-display text-2xl text-text-primary">Footer Editor</h2>
+                  <p className="text-sm text-text-tertiary mt-1">Customize your site footer</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  {/* Language Switcher */}
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10">
-                    <GlobeAltIcon className="h-4 w-4 text-champagne/60" />
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-bg-secondary rounded-lg border border-border-default">
+                    <GlobeAltIcon className="h-4 w-4 text-text-tertiary" />
                     <select
                       value={footerLanguage}
-                      onChange={(e) => {
-                        console.log('🔄 Language dropdown changed from', footerLanguage, 'to', e.target.value);
-                        setFooterLanguage(e.target.value);
-                      }}
-                      className="bg-transparent text-sm text-champagne border-none focus:outline-none focus:ring-0 cursor-pointer"
+                      onChange={(e) => setFooterLanguage(e.target.value)}
+                      className="bg-transparent text-sm text-text-primary border-none focus:outline-none focus:ring-0 cursor-pointer"
+                      title="Select language"
                     >
-                      <option value="en" className="bg-midnight">English</option>
-                      <option value="ka" className="bg-midnight">ქართული</option>
+                      <option value="en" className="bg-bg-elevated">English</option>
+                      <option value="ka" className="bg-bg-elevated">ქართული</option>
                     </select>
                   </div>
                   <button
                     onClick={() => setShowFooterEditor(false)}
-                    className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2 text-text-tertiary hover:text-text-primary hover:bg-bg-secondary rounded-lg transition-colors"
+                    title="Close footer editor"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
               </div>
 
-              {/* Content */}
               <div className="flex-1 overflow-y-auto px-6 py-6">
                 <FooterEditor
                   footer={footerSettings}
@@ -469,16 +473,14 @@ export default function AdminCMS() {
       <AnimatePresence>
         {showNewPageModal && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowNewPageModal(false)}
-              className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm z-40"
             />
 
-            {/* Modal */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -487,26 +489,25 @@ export default function AdminCMS() {
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-midnight border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-jade/10 to-champagne/10 flex-shrink-0">
+              <div className="bg-bg-elevated border border-border-default rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-border-default bg-bg-secondary flex-shrink-0">
                   <div>
-                    <h2 className="font-display text-2xl text-champagne">Create New Page</h2>
-                    <p className="text-sm text-champagne/60 mt-1">Add a new page to your site</p>
+                    <h2 className="font-display text-2xl text-text-primary">Create New Page</h2>
+                    <p className="text-sm text-text-tertiary mt-1">Add a new page to your site</p>
                   </div>
                   <button
                     onClick={() => setShowNewPageModal(false)}
-                    className="p-2 text-champagne/60 hover:text-champagne hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2 text-text-tertiary hover:text-text-primary hover:bg-bg-elevated rounded-lg transition-colors"
+                    title="Close modal"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
 
-                {/* Content - Scrollable */}
                 <div className="px-6 py-6 space-y-5 overflow-y-auto flex-1">
                   {/* Template Selector */}
                   <div>
-                    <label className="block text-sm font-semibold text-champagne mb-3">
+                    <label className="block text-sm font-semibold text-text-primary mb-3">
                       Start with Template
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2">
@@ -517,24 +518,24 @@ export default function AdminCMS() {
                           onClick={() => handleTemplateSelect(template)}
                           className={`relative p-4 rounded-xl border-2 transition-all text-left ${
                             selectedTemplate.id === template.id
-                              ? 'border-jade bg-jade/10 shadow-lg'
-                              : 'border-white/10 bg-white/5 hover:border-jade/50 hover:bg-white/10'
+                              ? 'border-primary bg-primary/10 shadow-lg'
+                              : 'border-border-default bg-bg-secondary hover:border-primary/50 hover:bg-bg-elevated'
                           }`}
                         >
                           {selectedTemplate.id === template.id && (
-                            <div className="absolute top-2 right-2 p-1 bg-jade rounded-full">
-                              <CheckIcon className="h-3 w-3 text-midnight" />
+                            <div className="absolute top-2 right-2 p-1 bg-interactive-default rounded-full">
+                              <CheckIcon className="h-3 w-3 text-on-interactive" />
                             </div>
                           )}
                           <div className="text-3xl mb-2">{template.icon}</div>
-                          <h4 className="font-semibold text-champagne text-sm mb-1">
+                          <h4 className="font-semibold text-text-primary text-sm mb-1">
                             {template.name}
                           </h4>
-                          <p className="text-xs text-champagne/60 line-clamp-2">
+                          <p className="text-xs text-text-tertiary line-clamp-2">
                             {template.description}
                           </p>
                           {template.blocks.length > 0 && (
-                            <div className="mt-2 flex items-center gap-1.5 text-xs text-jade">
+                            <div className="mt-2 flex items-center gap-1.5 text-xs text-primary">
                               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                               </svg>
@@ -544,17 +545,16 @@ export default function AdminCMS() {
                         </button>
                       ))}
                     </div>
-                    <p className="mt-2 text-xs text-champagne/50">
+                    <p className="mt-2 text-xs text-text-tertiary">
                       {selectedTemplate.id === 'blank'
                         ? 'You can add blocks after creating the page'
-                        : `This template includes ${selectedTemplate.blocks.length} pre-configured blocks`
-                      }
+                        : `This template includes ${selectedTemplate.blocks.length} pre-configured blocks`}
                     </p>
                   </div>
 
                   {/* Page Title */}
                   <div>
-                    <label className="block text-sm font-semibold text-champagne mb-2">
+                    <label className="block text-sm font-semibold text-text-primary mb-2">
                       Page Title *
                     </label>
                     <input
@@ -562,37 +562,37 @@ export default function AdminCMS() {
                       value={newPageData.title}
                       onChange={(e) => handleTitleChange(e.target.value)}
                       placeholder="e.g., About Us, Contact, Services"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                       autoFocus
                     />
-                    <p className="mt-1.5 text-xs text-champagne/50">
+                    <p className="mt-1.5 text-xs text-text-tertiary">
                       This will be displayed in the browser tab and search results
                     </p>
                   </div>
 
                   {/* URL Slug */}
                   <div>
-                    <label className="block text-sm font-semibold text-champagne mb-2">
+                    <label className="block text-sm font-semibold text-text-primary mb-2">
                       URL Slug *
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className="text-champagne/60 font-mono text-sm">/</span>
+                      <span className="text-text-tertiary font-mono text-sm">/</span>
                       <input
                         type="text"
                         value={newPageData.slug}
                         onChange={(e) => setNewPageData({ ...newPageData, slug: e.target.value })}
                         placeholder="about-us"
-                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all font-mono"
+                        className="flex-1 px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-mono"
                       />
                     </div>
-                    <p className="mt-1.5 text-xs text-champagne/50">
+                    <p className="mt-1.5 text-xs text-text-tertiary">
                       Auto-generated from title. Only lowercase letters, numbers, and hyphens.
                     </p>
                   </div>
 
                   {/* Meta Description */}
                   <div>
-                    <label className="block text-sm font-semibold text-champagne mb-2">
+                    <label className="block text-sm font-semibold text-text-primary mb-2">
                       Meta Description
                     </label>
                     <textarea
@@ -600,16 +600,16 @@ export default function AdminCMS() {
                       onChange={(e) => setNewPageData({ ...newPageData, metaDescription: e.target.value })}
                       placeholder="A brief description for search engines (150-160 characters recommended)"
                       rows={3}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all resize-none"
+                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
                     />
-                    <p className="mt-1.5 text-xs text-champagne/50">
+                    <p className="mt-1.5 text-xs text-text-tertiary">
                       {newPageData.metaDescription.length} characters
                     </p>
                   </div>
 
                   {/* Meta Keywords */}
                   <div>
-                    <label className="block text-sm font-semibold text-champagne mb-2">
+                    <label className="block text-sm font-semibold text-text-primary mb-2">
                       Meta Keywords
                     </label>
                     <input
@@ -617,47 +617,46 @@ export default function AdminCMS() {
                       value={newPageData.metaKeywords}
                       onChange={(e) => setNewPageData({ ...newPageData, metaKeywords: e.target.value })}
                       placeholder="keyword1, keyword2, keyword3"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-champagne placeholder-champagne/40 focus:outline-none focus:ring-2 focus:ring-jade focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-bg-primary border border-border-default rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     />
-                    <p className="mt-1.5 text-xs text-champagne/50">
+                    <p className="mt-1.5 text-xs text-text-tertiary">
                       Comma-separated keywords for SEO (optional)
                     </p>
                   </div>
 
                   {/* Publish Status */}
-                  <div className="flex items-center gap-3 p-4 bg-jade/5 border border-jade/20 rounded-lg">
+                  <div className="flex items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                     <input
                       type="checkbox"
                       id="publishStatus"
                       checked={newPageData.isPublished}
                       onChange={(e) => setNewPageData({ ...newPageData, isPublished: e.target.checked })}
-                      className="h-5 w-5 rounded border-jade/40 text-jade focus:ring-jade focus:ring-offset-0"
+                      className="h-5 w-5 rounded border-primary/40 text-primary focus:ring-primary focus:ring-offset-0"
                     />
-                    <label htmlFor="publishStatus" className="text-sm text-champagne cursor-pointer">
+                    <label htmlFor="publishStatus" className="text-sm text-text-primary cursor-pointer">
                       <span className="font-semibold">Publish immediately</span>
-                      <p className="text-xs text-champagne/60 mt-0.5">
+                      <p className="text-xs text-text-tertiary mt-0.5">
                         Uncheck to save as draft and publish later
                       </p>
                     </label>
                   </div>
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/10 bg-white/5 flex-shrink-0">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-default bg-bg-secondary flex-shrink-0">
                   <button
                     onClick={() => setShowNewPageModal(false)}
-                    className="px-5 py-2.5 text-champagne hover:bg-white/5 rounded-lg transition-colors font-medium"
+                    className="px-5 py-2.5 text-text-secondary hover:bg-bg-elevated rounded-lg transition-colors font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreatePage}
                     disabled={createPageMutation.isPending || !newPageData.title || !newPageData.slug}
-                    className="px-6 py-2.5 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2.5 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {createPageMutation.isPending ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-on-interactive"></div>
                         Creating...
                       </>
                     ) : (
@@ -680,7 +679,7 @@ export default function AdminCMS() {
         onClose={() => setShowAIPageBuilder(false)}
         onSuccess={(pageId) => {
           queryClient.invalidateQueries({ queryKey: ['cms-pages'] });
-          setSelectedPageId(pageId);
+          setExpandedPageId(pageId);
           setShowAIPageBuilder(false);
         }}
       />

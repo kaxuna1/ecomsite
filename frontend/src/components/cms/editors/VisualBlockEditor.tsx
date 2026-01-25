@@ -78,7 +78,7 @@ export default function VisualBlockEditor({
         return <AnnouncementBlockEditor content={editedContent} onChange={handleContentChange} />;
       default:
         return (
-          <div className="p-8 text-center text-champagne/50">
+          <div className="p-8 text-center text-text-tertiary">
             <p>No visual editor available for block type: {blockType}</p>
             <p className="mt-2 text-sm">Use the JSON editor below.</p>
           </div>
@@ -89,14 +89,14 @@ export default function VisualBlockEditor({
   return (
     <div className="space-y-4">
       {/* Editor Mode Toggle */}
-      <div className="flex gap-2 p-1 bg-white/5 rounded-lg border border-white/10">
+      <div className="flex gap-2 p-1 bg-bg-secondary rounded-lg border border-border-default">
         <button
           type="button"
           onClick={() => setShowJsonEditor(false)}
           className={`flex-1 px-4 py-2 rounded-md font-medium transition-all ${
             !showJsonEditor
-              ? 'bg-jade text-midnight shadow-lg'
-              : 'text-champagne hover:bg-white/5'
+              ? 'bg-interactive-default text-on-interactive shadow-lg'
+              : 'text-text-secondary hover:bg-bg-elevated'
           }`}
         >
           Visual Editor
@@ -106,8 +106,8 @@ export default function VisualBlockEditor({
           onClick={() => setShowJsonEditor(true)}
           className={`flex-1 px-4 py-2 rounded-md font-medium transition-all ${
             showJsonEditor
-              ? 'bg-jade text-midnight shadow-lg'
-              : 'text-champagne hover:bg-white/5'
+              ? 'bg-interactive-default text-on-interactive shadow-lg'
+              : 'text-text-secondary hover:bg-bg-elevated'
           }`}
         >
           JSON Editor
@@ -115,23 +115,23 @@ export default function VisualBlockEditor({
       </div>
 
       {/* Editor Content */}
-      <div className="bg-midnight/30 border border-white/10 rounded-lg p-6">
+      <div className="bg-bg-elevated border border-border-default rounded-lg p-6">
         {showJsonEditor ? (
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-champagne">
+            <label className="block text-sm font-medium text-text-primary">
               Block Content (JSON)
             </label>
             <textarea
               value={jsonText}
               onChange={(e) => handleJsonChange(e.target.value)}
               rows={20}
-              className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-champagne font-mono text-sm focus:outline-none focus:border-jade transition-colors ${
-                jsonError ? 'border-red-500' : 'border-white/10'
+              className={`w-full px-4 py-3 bg-bg-primary border rounded-lg text-text-primary font-mono text-sm focus:outline-none focus:border-primary transition-colors ${
+                jsonError ? 'border-error' : 'border-border-default'
               }`}
               spellCheck={false}
             />
             {jsonError && (
-              <p className="text-sm text-red-400">{jsonError}</p>
+              <p className="text-sm text-error">{jsonError}</p>
             )}
           </div>
         ) : (
@@ -144,7 +144,7 @@ export default function VisualBlockEditor({
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 bg-white/10 text-champagne rounded-lg hover:bg-white/20 transition-colors font-medium"
+          className="px-6 py-3 bg-bg-secondary text-text-primary rounded-lg hover:bg-bg-elevated transition-colors font-medium border border-border-default"
         >
           Cancel
         </button>
@@ -152,7 +152,7 @@ export default function VisualBlockEditor({
           type="button"
           onClick={handleSave}
           disabled={!!jsonError}
-          className="px-6 py-3 bg-jade text-midnight rounded-lg hover:bg-jade/90 transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-interactive-default text-on-interactive rounded-lg hover:bg-interactive-hover transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Save Changes
         </button>

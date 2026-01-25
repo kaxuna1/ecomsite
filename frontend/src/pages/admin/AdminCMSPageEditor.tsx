@@ -15,6 +15,7 @@ import {
 import VisualBlockEditor from '../../components/cms/editors/VisualBlockEditor';
 import BlockRenderer from '../../components/cms/BlockRenderer';
 import AnnouncementBlock from '../../components/cms/AnnouncementBlock';
+import BlockSummary from '../../components/cms/BlockSummary';
 import { getBlockTemplate, getBlockTemplateJSON } from '../../utils/blockTemplates';
 import type { AnnouncementContent } from '../../types/cms';
 
@@ -325,7 +326,7 @@ export default function AdminCMSPageEditor() {
 
                 {editingBlockId !== block.id && (
                   <div className="mt-4">
-                    {/* Always show visual preview for announcement blocks, JSON toggle for others */}
+                    {/* Always show visual preview for announcement blocks, smart summary or full preview for others */}
                     {block.blockType === 'announcement' ? (
                       <div className="rounded-lg overflow-hidden border border-border-default">
                         <div className="p-2 bg-bg-primary/90 text-text-primary/60 text-xs text-center border-b border-border-default flex items-center justify-center gap-2">
@@ -344,11 +345,7 @@ export default function AdminCMSPageEditor() {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-4 bg-bg-primary/30 rounded-lg">
-                        <pre className="text-xs text-text-primary/60 overflow-auto">
-                          {JSON.stringify(block.content, null, 2)}
-                        </pre>
-                      </div>
+                      <BlockSummary blockType={block.blockType} content={block.content} />
                     )}
                   </div>
                 )}
