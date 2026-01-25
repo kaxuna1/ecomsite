@@ -84,7 +84,7 @@ function BestSellersPage() {
       };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16">
+    <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-12 lg:py-16">
       <Helmet>
         <title>Best Sellers — {t('common.brand')}</title>
         <meta name="description" content="Our most popular luxury hair care products loved by customers" />
@@ -100,7 +100,7 @@ function BestSellersPage() {
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           >
             <FireIcon className="h-10 w-10 text-red-500" />
-            <h1 className="font-display text-4xl text-[var(--color-text-primary)] sm:text-5xl lg:text-6xl">
+            <h1 className="font-display text-3xl text-[var(--color-text-primary)] sm:text-4xl md:text-5xl lg:text-6xl">
               Best Sellers
             </h1>
           </motion.div>
@@ -144,7 +144,7 @@ function BestSellersPage() {
 
       {/* Filters */}
       <motion.div
-        className="mt-12 flex flex-wrap items-center justify-between gap-4"
+        className="mt-8 flex flex-wrap items-center justify-between gap-3 sm:mt-10 sm:gap-4 lg:mt-12"
         initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
         animate={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -221,7 +221,7 @@ function BestSellersPage() {
 
       {/* Products Grid */}
       {isLoading ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}

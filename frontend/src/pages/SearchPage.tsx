@@ -103,7 +103,7 @@ export default function SearchPage() {
 
   if (!query) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16">
+      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-12 lg:py-16">
         <div className="text-center">
           <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-[var(--color-text-tertiary)]" />
           <h1 className="mt-4 font-display text-3xl text-[var(--color-text-primary)]">Search Products</h1>
@@ -117,13 +117,13 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto max-w-7xl px-3 py-6 sm:px-4 sm:py-8">
       {/* Search Header */}
       <div className="mb-8">
         <div className="mb-4">
           <SearchBar />
         </div>
-        <h1 className="font-display text-2xl text-[var(--color-text-primary)] md:text-3xl">
+        <h1 className="font-display text-xl text-[var(--color-text-primary)] sm:text-2xl md:text-3xl">
           Search results for "{query}"
         </h1>
         <p className="mt-2 text-[var(--color-text-secondary)]">
@@ -133,10 +133,10 @@ export default function SearchPage() {
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[240px_1fr]">
         {/* Filters Sidebar */}
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4 sm:rounded-2xl sm:p-5 lg:p-6">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FunnelIcon className="h-5 w-5 text-[var(--color-primary)]" />
@@ -291,7 +291,7 @@ export default function SearchPage() {
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-jade/20 border-t-jade" />
             </div>
           ) : filteredResults.length === 0 ? (
-            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-12 text-center">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 text-center sm:rounded-2xl sm:p-8 lg:p-12">
               <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-[var(--color-text-tertiary)]" />
               <h3 className="mt-4 font-display text-xl text-[var(--color-text-primary)]">No products found</h3>
               <p className="mt-2 text-[var(--color-text-secondary)]">
@@ -308,7 +308,7 @@ export default function SearchPage() {
               )}
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
               {filteredResults.map((product, index) => (
                 <motion.div
                   key={product.id}
@@ -327,7 +327,7 @@ export default function SearchPage() {
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       />
                     </div>
-                    <div className="p-4">
+                    <div className="p-3 sm:p-4">
                       <div className="mb-2 flex flex-wrap gap-1">
                         {product.isNew && (
                           <span className="rounded-full bg-[var(--color-primary)]/10 px-2 py-0.5 text-xs font-semibold text-[var(--color-primary)]">

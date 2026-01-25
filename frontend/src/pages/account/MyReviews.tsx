@@ -85,11 +85,11 @@ const MyReviews = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-xl font-bold text-gray-900 mb-2 sm:text-2xl lg:text-3xl">
             {t('reviews.myReviews', { defaultValue: 'My Reviews' })}
           </h1>
           <p className="text-gray-600">
@@ -112,8 +112,8 @@ const MyReviews = () => {
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-          <div className="flex items-center gap-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 mb-4 sm:p-4 sm:mb-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <label className="text-sm font-medium text-gray-700">
               {t('reviews.filterByStatus', { defaultValue: 'Filter by status:' })}
             </label>
@@ -137,9 +137,9 @@ const MyReviews = () => {
         {data?.reviews && data.reviews.length > 0 ? (
           <div className="space-y-6">
             {data.reviews.map((review) => (
-              <div key={review.id} className="bg-white rounded-lg border border-gray-200 p-6">
+              <div key={review.id} className="bg-white rounded-lg border border-gray-200 p-4 sm:p-5 lg:p-6">
                 {/* Product Info */}
-                <div className="flex items-start gap-4 mb-4 pb-4 border-b border-gray-200">
+                <div className="flex flex-col gap-3 mb-4 pb-4 border-b border-gray-200 sm:flex-row sm:items-start sm:gap-4">
                   {review.productImageUrl && (
                     <img
                       src={review.productImageUrl}
@@ -225,7 +225,7 @@ const MyReviews = () => {
 
                   {/* Actions */}
                   {review.status !== 'approved' && (
-                    <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                    <div className="flex flex-col gap-2 pt-4 border-t border-gray-200 sm:flex-row sm:items-center sm:gap-3">
                       <button
                         onClick={() => setEditingReview(review)}
                         className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -248,7 +248,7 @@ const MyReviews = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-lg border border-gray-200 p-6 text-center sm:p-8 lg:p-12">
             <p className="text-gray-500 mb-4">
               {t('reviews.noReviews', { defaultValue: 'You haven\'t written any reviews yet' })}
             </p>

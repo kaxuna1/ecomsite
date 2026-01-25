@@ -147,7 +147,7 @@ function CartPage() {
       };
 
   return (
-    <div className="min-h-screen bg-bg-secondary/20 py-8 md:py-12">
+    <div className="min-h-screen bg-bg-secondary/20 py-6 sm:py-8 md:py-12">
       <Helmet>
         <title>{t('cart.title')} — {t('common.brand')}</title>
       </Helmet>
@@ -159,7 +159,7 @@ function CartPage() {
         onClose={() => setShowToast(false)}
       />
 
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4">
         {/* Header */}
         <motion.div className="mb-8" {...fadeInUp}>
           <Link
@@ -171,7 +171,7 @@ function CartPage() {
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-display text-3xl text-text-primary md:text-4xl">{t('cart.title')}</h1>
+              <h1 className="font-display text-2xl text-text-primary sm:text-3xl md:text-4xl">{t('cart.title')}</h1>
               {items.length > 0 && (
                 <p className="mt-2 text-sm text-text-primary/60">
                   {itemCount} {itemCount === 1 ? t('cart.item') : t('cart.items')} {t('cart.itemsInCart')}
@@ -219,7 +219,7 @@ function CartPage() {
             </Link>
           </motion.div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
             {/* Cart Items */}
             <div className="lg:col-span-2">
               <motion.ul className="space-y-4" aria-label={t('cart.title')} {...fadeInUp}>
@@ -233,7 +233,7 @@ function CartPage() {
                     <motion.li
                       key={uniqueKey}
                       layout
-                      className={`group relative overflow-hidden rounded-3xl border-2 bg-white p-6 shadow-md transition-all ${
+                      className={`group relative overflow-hidden rounded-2xl border-2 bg-white p-4 shadow-md transition-all sm:rounded-3xl sm:p-5 lg:p-6 ${
                         removingId === product.id
                           ? 'border-red-500 shadow-red-100'
                           : 'border-transparent hover:border-primary/20 hover:shadow-xl'
@@ -253,7 +253,7 @@ function CartPage() {
                         </motion.div>
                       )}
 
-                      <div className="flex gap-6">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                         {/* Product Image */}
                         <Link
                           to={`/${lang}/products/${product.id}`}
@@ -269,7 +269,7 @@ function CartPage() {
                               return product.imageUrl;
                             })()}
                             alt={product.name}
-                            className="h-32 w-32 object-cover transition-transform duration-500 group-hover/img:scale-110"
+                            className="h-24 w-24 object-cover transition-transform duration-500 group-hover/img:scale-110 sm:h-28 sm:w-28 lg:h-32 lg:w-32"
                             loading="lazy"
                             whileHover={{ scale: 1.05 }}
                           />
@@ -325,7 +325,7 @@ function CartPage() {
                           <div className="mt-4 flex items-end justify-between">
                             <div>
                               <p className="text-xs text-text-primary/50">{t('cart.price')}</p>
-                              <p className="text-2xl font-bold text-primary">${itemPrice.toFixed(2)}</p>
+                              <p className="text-xl font-bold text-primary sm:text-2xl">${itemPrice.toFixed(2)}</p>
                             </div>
 
                             {/* Quantity Selector */}
@@ -390,8 +390,8 @@ function CartPage() {
             <motion.div className="lg:col-span-1" {...fadeInUp}>
               <div className="sticky top-24 space-y-6">
                 {/* Summary Card */}
-                <div className="rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg">
-                  <h2 className="mb-6 font-display text-2xl text-text-primary">{t('cart.orderSummary')}</h2>
+                <div className="rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-lg sm:rounded-3xl sm:p-5 lg:p-6">
+                  <h2 className="mb-4 font-display text-xl text-text-primary sm:mb-5 sm:text-2xl lg:mb-6">{t('cart.orderSummary')}</h2>
 
                   <div className="space-y-4">
                     {/* Subtotal */}

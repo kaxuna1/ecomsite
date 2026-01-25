@@ -77,15 +77,15 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="py-12 bg-surface-base min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-6 sm:py-8 lg:py-12 bg-surface-base min-h-screen">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-text-primary mb-2">{t('profile.title')}</h1>
+          <h1 className="font-display text-2xl text-text-primary mb-2 sm:text-3xl lg:text-4xl">{t('profile.title')}</h1>
           <p className="text-text-secondary">{t('profile.subtitle')}</p>
         </motion.div>
 
@@ -94,7 +94,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
+          className="bg-surface-elevated rounded-xl shadow-xl border-2 border-border-default mb-4 sm:rounded-2xl sm:mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -107,7 +107,7 @@ export default function ProfilePage() {
                 <Link
                   key={tab.name}
                   to={tab.href}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-xs transition-all sm:gap-2 sm:px-4 sm:py-3 sm:rounded-xl sm:text-sm ${
                     isActive
                       ? 'bg-interactive-active text-on-interactive shadow-lg border-2 border-interactive-active'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
@@ -126,18 +126,18 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default overflow-hidden"
+          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default overflow-hidden sm:rounded-3xl"
         >
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-interactive-active via-primary to-primary px-8 py-12 text-on-primary">
-            <div className="flex items-center gap-6">
-              <div className="h-24 w-24 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border-4 border-white/30">
-                <span className="text-4xl font-display uppercase">
+          <div className="bg-gradient-to-r from-interactive-active via-primary to-primary px-4 py-8 text-on-primary sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border-4 border-white/30 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
+                <span className="text-2xl font-display uppercase sm:text-3xl lg:text-4xl">
                   {user.name.charAt(0)}
                 </span>
               </div>
               <div>
-                <h2 className="text-3xl font-display mb-2">{user.name}</h2>
+                <h2 className="text-xl font-display mb-2 text-center sm:text-left sm:text-2xl lg:text-3xl">{user.name}</h2>
                 <div className="flex items-center gap-2 text-on-primary/80">
                   <CalendarIcon className="h-4 w-4" />
                   <span className="text-sm">{t('profile.memberSince')} {memberSince}</span>
@@ -147,7 +147,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Form */}
-          <div className="p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             {/* Message */}
             {message && (
               <motion.div
@@ -220,14 +220,14 @@ export default function ProfilePage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:gap-4">
                 {!isEditing ? (
                   <motion.button
                     type="button"
                     onClick={() => setIsEditing(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 px-6 py-3 bg-interactive-active text-on-interactive rounded-xl font-semibold shadow-lg hover:bg-interactive-hover transition-all"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-interactive-active text-on-interactive rounded-lg font-semibold shadow-lg hover:bg-interactive-hover transition-all sm:px-5 sm:py-3 sm:rounded-xl lg:px-6"
                   >
                     <PencilIcon className="h-5 w-5" />
                     {t('profile.editProfile')}
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                       onClick={handleCancel}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-2 px-6 py-3 border-2 border-border-default bg-white text-text-primary rounded-xl font-semibold hover:bg-bg-secondary/30 transition-all"
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-border-default bg-white text-text-primary rounded-lg font-semibold hover:bg-bg-secondary/30 transition-all sm:px-5 sm:py-3 sm:rounded-xl lg:px-6"
                     >
                       <XMarkIcon className="h-5 w-5" />
                       {t('profile.cancel')}

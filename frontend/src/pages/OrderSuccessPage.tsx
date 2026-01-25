@@ -41,7 +41,7 @@ export default function OrderSuccessPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-champagne/30 to-white py-12">
+    <div className="min-h-screen bg-gradient-to-b from-champagne/30 to-white py-8 sm:py-10 lg:py-12">
       <Helmet>
         <title>Order Confirmation  Luxia Products</title>
       </Helmet>
@@ -74,7 +74,7 @@ export default function OrderSuccessPage() {
           transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
-          <h1 className="font-display text-4xl sm:text-5xl text-midnight mb-4">
+          <h1 className="font-display text-3xl text-midnight mb-3 sm:text-4xl sm:mb-4 lg:text-5xl">
             Order Confirmed!
           </h1>
           <p className="text-lg text-midnight/70 mb-2">
@@ -90,10 +90,10 @@ export default function OrderSuccessPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-2xl border border-champagne/40 overflow-hidden mb-6"
+          className="bg-white rounded-2xl shadow-2xl border border-champagne/40 overflow-hidden mb-4 sm:rounded-3xl sm:mb-6"
         >
           {/* Email Confirmation Notice */}
-          <div className="bg-gradient-to-r from-jade/10 to-jade/5 border-b border-jade/20 px-6 py-4">
+          <div className="bg-gradient-to-r from-jade/10 to-jade/5 border-b border-jade/20 px-4 py-3 sm:px-5 sm:py-4 lg:px-6">
             <div className="flex items-start gap-3">
               <EnvelopeIcon className="h-6 w-6 text-jade flex-shrink-0 mt-0.5" />
               <div>
@@ -106,8 +106,8 @@ export default function OrderSuccessPage() {
           </div>
 
           {/* Order Items */}
-          <div className="px-6 py-6 border-b border-champagne/30">
-            <h2 className="font-display text-xl text-midnight mb-4 flex items-center gap-2">
+          <div className="px-4 py-4 border-b border-champagne/30 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
+            <h2 className="font-display text-lg text-midnight mb-3 flex items-center gap-2 sm:text-xl sm:mb-4">
               <ShoppingBagIcon className="h-5 w-5" />
               Order Items
             </h2>
@@ -129,7 +129,7 @@ export default function OrderSuccessPage() {
           </div>
 
           {/* Delivery Information */}
-          <div className="px-6 py-6 bg-champagne/5">
+          <div className="px-4 py-4 bg-champagne/5 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
             <h3 className="font-semibold text-midnight mb-3">Delivery Information</h3>
             <div className="space-y-2 text-sm text-midnight/70">
               <p className="font-medium text-midnight">{order.customer.name}</p>
@@ -145,10 +145,10 @@ export default function OrderSuccessPage() {
           </div>
 
           {/* Order Total */}
-          <div className="bg-midnight px-6 py-6">
+          <div className="bg-midnight px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
             <div className="flex items-center justify-between">
               <span className="text-champagne text-lg font-semibold">Order Total</span>
-              <span className="text-3xl font-display text-jade">${order.total.toFixed(2)}</span>
+              <span className="text-2xl font-display text-jade sm:text-3xl">${order.total.toFixed(2)}</span>
             </div>
           </div>
         </motion.div>
@@ -158,9 +158,9 @@ export default function OrderSuccessPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white rounded-2xl shadow-lg border border-champagne/40 p-6 mb-8"
+          className="bg-white rounded-xl shadow-lg border border-champagne/40 p-4 mb-6 sm:rounded-2xl sm:p-5 sm:mb-8 lg:p-6"
         >
-          <h3 className="font-display text-xl text-midnight mb-4">What's Next?</h3>
+          <h3 className="font-display text-lg text-midnight mb-3 sm:text-xl sm:mb-4">What's Next?</h3>
           <div className="space-y-3 text-sm text-midnight/70">
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-jade/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -188,12 +188,12 @@ export default function OrderSuccessPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center"
         >
           {isAuthenticated && (
             <Link
               to={`/${lang}/account/orders`}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-jade text-on-primary rounded-xl font-semibold shadow-lg hover:bg-jade/90 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-jade text-on-primary rounded-lg text-sm font-semibold shadow-lg hover:bg-jade/90 transition-all sm:px-6 sm:py-3 sm:rounded-xl sm:text-base"
             >
               <UserIcon className="h-5 w-5" />
               View My Orders
@@ -208,7 +208,7 @@ export default function OrderSuccessPage() {
           </Link>
           <Link
             to={`/${lang}`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-champagne/50 text-midnight rounded-xl font-semibold hover:bg-champagne/70 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-champagne/50 text-midnight rounded-lg text-sm font-semibold hover:bg-champagne/70 transition-all sm:px-6 sm:py-3 sm:rounded-xl sm:text-base"
           >
             <HomeIcon className="h-5 w-5" />
             Back to Home

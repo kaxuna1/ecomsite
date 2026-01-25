@@ -75,7 +75,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ delay: index * 0.05 }}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border-2 border-border-default bg-surface-elevated shadow-lg transition-shadow duration-300 hover:shadow-2xl"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-border-default bg-surface-elevated shadow-lg transition-shadow duration-300 hover:shadow-2xl sm:rounded-3xl"
     >
       {/* Remove Button */}
       <button
@@ -116,9 +116,9 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
       </Link>
 
       {/* Product Info */}
-      <div className="flex flex-1 flex-col gap-3 p-6">
+      <div className="flex flex-1 flex-col gap-2 p-4 sm:gap-3 sm:p-5 lg:p-6">
         <Link to={`/${lang}/products/${product.id}`}>
-          <h2 className="font-display text-lg leading-tight text-text-primary line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="font-display text-base leading-tight text-text-primary line-clamp-2 group-hover:text-primary transition-colors sm:text-lg">
             {product.name}
           </h2>
         </Link>
@@ -128,7 +128,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
         {/* Price */}
         <div className="flex items-center gap-2 mt-auto">
           {showPriceRange ? (
-            <div className="text-xl font-bold text-primary">
+            <div className="text-lg font-bold text-primary sm:text-xl">
               ${priceRange!.min.toFixed(2)} - ${priceRange!.max.toFixed(2)}
             </div>
           ) : product.salePrice ? (
@@ -141,7 +141,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
               </span>
             </>
           ) : (
-            <div className="text-xl font-bold text-primary">
+            <div className="text-lg font-bold text-primary sm:text-xl">
               ${product.price.toFixed(2)}
             </div>
           )}
@@ -153,7 +153,7 @@ const FavoriteProductCard = forwardRef<HTMLElement, FavoriteProductCardProps>(
           disabled={product.inventory === 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-interactive-active px-4 py-3 text-sm font-semibold text-on-interactive shadow-lg transition-all hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-interactive-active px-3 py-2.5 text-xs font-semibold text-on-interactive shadow-lg transition-all hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed sm:mt-4 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
         >
           <ShoppingCartIcon className="h-5 w-5" />
           {product.inventory === 0
@@ -198,15 +198,15 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="py-12 bg-surface-base min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-6 sm:py-8 lg:py-12 bg-surface-base min-h-screen">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-text-primary mb-2">{t('favorites.title')}</h1>
+          <h1 className="font-display text-2xl text-text-primary mb-2 sm:text-3xl lg:text-4xl">{t('favorites.title')}</h1>
           <p className="text-text-secondary">{t('favorites.subtitle')}</p>
         </motion.div>
 
@@ -215,7 +215,7 @@ export default function FavoritesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
+          className="bg-surface-elevated rounded-xl shadow-xl border-2 border-border-default mb-4 sm:rounded-2xl sm:mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -228,7 +228,7 @@ export default function FavoritesPage() {
                 <Link
                   key={tab.name}
                   to={tab.href}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-xs transition-all sm:gap-2 sm:px-4 sm:py-3 sm:rounded-xl sm:text-sm ${
                     isActive
                       ? 'bg-interactive-active text-on-interactive shadow-lg'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
@@ -244,7 +244,7 @@ export default function FavoritesPage() {
 
         {/* Favorites Grid */}
         {isLoading ? (
-          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
+          <div className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
             <motion.div
               className="h-12 w-12 mx-auto border-4 border-primary/20 border-t-primary rounded-full"
               animate={{ rotate: 360 }}
@@ -253,7 +253,7 @@ export default function FavoritesPage() {
             <p className="mt-4 text-text-secondary">{t('favorites.loading')}</p>
           </div>
         ) : error ? (
-          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
+          <div className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
             <TrashIcon className="h-12 w-12 mx-auto text-red-500 mb-4" />
             <p className="text-text-secondary">{t('favorites.loadError')}</p>
           </div>
@@ -265,7 +265,7 @@ export default function FavoritesPage() {
             className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center"
           >
             <HeartIcon className="h-16 w-16 mx-auto text-text-primary/20 mb-4" />
-            <h3 className="font-display text-2xl text-text-primary mb-2">{t('favorites.noFavoritesTitle')}</h3>
+            <h3 className="font-display text-xl text-text-primary mb-2 sm:text-2xl">{t('favorites.noFavoritesTitle')}</h3>
             <p className="text-text-secondary mb-6">
               {t('favorites.noFavoritesMessage')}
             </p>
@@ -297,7 +297,7 @@ export default function FavoritesPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
             >
               <AnimatePresence mode="popLayout">
                 {favorites.map((favorite, index) => (

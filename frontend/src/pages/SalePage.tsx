@@ -92,7 +92,7 @@ function SalePage() {
       };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16">
+    <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-12 lg:py-16">
       <Helmet>
         <title>Sale — {t('common.brand')}</title>
         <meta name="description" content="Luxury hair care on sale - Save on premium products" />
@@ -108,7 +108,7 @@ function SalePage() {
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           >
             <TagIcon className="h-10 w-10 text-rose-500" />
-            <h1 className="font-display text-4xl text-[var(--color-text-primary)] sm:text-5xl lg:text-6xl">
+            <h1 className="font-display text-3xl text-[var(--color-text-primary)] sm:text-4xl md:text-5xl lg:text-6xl">
               Sale
             </h1>
           </motion.div>
@@ -152,7 +152,7 @@ function SalePage() {
 
       {/* Filters */}
       <motion.div
-        className="mt-12 flex flex-wrap items-center justify-between gap-4"
+        className="mt-8 flex flex-wrap items-center justify-between gap-3 sm:mt-10 sm:gap-4 lg:mt-12"
         initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
         animate={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -228,7 +228,7 @@ function SalePage() {
 
       {/* Products Grid */}
       {isLoading ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}

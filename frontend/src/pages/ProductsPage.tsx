@@ -223,7 +223,7 @@ function ProductsPage() {
   const FilterContent = () => (
     <div className="h-full flex flex-col">
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+      <div className="lg:hidden flex items-center justify-between p-3 border-b border-[var(--color-border)] sm:p-4">
         <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Filters</h2>
         <button
           onClick={() => setIsFilterDrawerOpen(false)}
@@ -234,7 +234,7 @@ function ProductsPage() {
       </div>
 
       {/* Filter Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-3 space-y-4 sm:p-4 sm:space-y-5 lg:space-y-6">
         {/* Active Filters Summary */}
         {activeFilterCount > 0 && (
           <div className="space-y-2">
@@ -400,7 +400,7 @@ function ProductsPage() {
       </div>
 
       {/* Mobile Apply Button */}
-      <div className="lg:hidden border-t border-[var(--color-border)] p-4">
+      <div className="lg:hidden border-t border-[var(--color-border)] p-3 sm:p-4">
         <button
           onClick={() => setIsFilterDrawerOpen(false)}
           className="w-full rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[var(--color-button-text)] shadow-lg hover:shadow-xl transition-shadow"
@@ -412,7 +412,7 @@ function ProductsPage() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16">
+    <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-12 lg:py-16">
       <Helmet>
         <title>
           {t('products.title')} — {t('common.brand')}
@@ -503,7 +503,7 @@ function ProductsPage() {
       <div className="flex gap-8">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
-          <div className="sticky top-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-sm">
+          <div className="sticky top-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-sm p-3 sm:p-4">
             <FilterContent />
           </div>
         </aside>
@@ -554,7 +554,7 @@ function ProductsPage() {
 
           {/* Products Grid */}
           {isLoading && currentPage === 1 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:gap-6 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}

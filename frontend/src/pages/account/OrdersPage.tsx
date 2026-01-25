@@ -85,15 +85,15 @@ export default function OrdersPage() {
   );
 
   return (
-    <div className="py-12 bg-surface-base min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-6 sm:py-8 lg:py-12 bg-surface-base min-h-screen">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-4xl text-text-primary mb-2">{t('orders.title')}</h1>
+          <h1 className="font-display text-2xl text-text-primary mb-2 sm:text-3xl lg:text-4xl">{t('orders.title')}</h1>
           <p className="text-text-secondary">{t('orders.subtitle')}</p>
         </motion.div>
 
@@ -102,7 +102,7 @@ export default function OrdersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default mb-6"
+          className="bg-surface-elevated rounded-xl shadow-xl border-2 border-border-default mb-4 sm:rounded-2xl sm:mb-6"
         >
           <nav className="flex space-x-1 p-2">
             {tabs.map((tab) => {
@@ -115,7 +115,7 @@ export default function OrdersPage() {
                 <Link
                   key={tab.name}
                   to={tab.href}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-xs transition-all sm:gap-2 sm:px-4 sm:py-3 sm:rounded-xl sm:text-sm ${
                     isActive
                       ? 'bg-interactive-active text-on-interactive shadow-lg'
                       : 'text-text-secondary hover:bg-bg-secondary/30 hover:text-text-primary'
@@ -153,7 +153,7 @@ export default function OrdersPage() {
 
         {/* Orders List */}
         {isLoading ? (
-          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
+          <div className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
             <motion.div
               className="h-12 w-12 mx-auto border-4 border-primary/20 border-t-primary rounded-full"
               animate={{ rotate: 360 }}
@@ -162,7 +162,7 @@ export default function OrdersPage() {
             <p className="mt-4 text-text-secondary">{t('orders.loading')}</p>
           </div>
         ) : error ? (
-          <div className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center">
+          <div className="bg-surface-elevated rounded-2xl shadow-xl border-2 border-border-default p-6 text-center sm:rounded-3xl sm:p-8 lg:p-12">
             <XCircleIcon className="h-12 w-12 mx-auto text-red-500 mb-4" />
             <p className="text-text-secondary">{t('orders.loadError')}</p>
           </div>
@@ -174,7 +174,7 @@ export default function OrdersPage() {
             className="bg-surface-elevated rounded-3xl shadow-xl border-2 border-border-default p-12 text-center"
           >
             <ShoppingCartIcon className="h-16 w-16 mx-auto text-text-primary/20 mb-4" />
-            <h3 className="font-display text-2xl text-text-primary mb-2">{t('orders.noOrdersTitle')}</h3>
+            <h3 className="font-display text-xl text-text-primary mb-2 sm:text-2xl">{t('orders.noOrdersTitle')}</h3>
             <p className="text-text-secondary mb-6">
               {selectedStatus === 'all'
                 ? t('orders.noOrdersMessage')
@@ -201,11 +201,11 @@ export default function OrdersPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-surface-elevated rounded-2xl shadow-lg border-2 border-border-default overflow-hidden"
+                className="bg-surface-elevated rounded-xl shadow-lg border-2 border-border-default overflow-hidden sm:rounded-2xl"
               >
                 {/* Order Header */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="p-4 sm:p-5 lg:p-6">
+                  <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-sm text-text-primary/60">{t('orders.orderNumber')}{order.id}</p>
                       <p className="text-xs text-text-primary/40 mt-1">
@@ -235,7 +235,7 @@ export default function OrdersPage() {
                         {order.items.length} {order.items.length === 1 ? t('orders.item') : t('orders.items')}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                       <p className="text-lg font-bold text-primary">${order.total.toFixed(2)}</p>
                       <button
                         onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
@@ -261,7 +261,7 @@ export default function OrdersPage() {
                       transition={{ duration: 0.2 }}
                       className="border-t border-border-default bg-bg-secondary/5"
                     >
-                      <div className="p-6 space-y-6">
+                      <div className="p-4 space-y-4 sm:p-5 sm:space-y-5 lg:p-6 lg:space-y-6">
                         {/* Order Status Timeline */}
                         <div>
                           <h4 className="font-semibold text-text-primary mb-4">{t('orders.orderStatus')}</h4>

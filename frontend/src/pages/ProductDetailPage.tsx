@@ -49,12 +49,12 @@ function ProductDetailPage() {
   });
 
   if (!productId || Number.isNaN(productId)) {
-    return <p className="p-8 text-center">{t('productDetail.notFound')}</p>;
+    return <p className="p-4 text-center sm:p-6 lg:p-8">{t('productDetail.notFound')}</p>;
   }
 
   if (isLoading || !product) {
     return (
-      <div className="p-8" role="status">
+      <div className="p-4 sm:p-6 lg:p-8" role="status">
         {t('productDetail.loading')}
       </div>
     );
@@ -101,7 +101,7 @@ function ProductDetailPage() {
       };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
+    <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-10 md:py-12 lg:py-16">
       <SEOHead product={product} />
 
       <Toast
@@ -111,7 +111,7 @@ function ProductDetailPage() {
         onClose={() => setShowToast(false)}
       />
 
-      <motion.div className="grid gap-8 lg:grid-cols-2 lg:gap-12" {...fadeIn}>
+      <motion.div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12" {...fadeIn}>
         {/* Image Section */}
         <motion.div {...fadeInUp}>
           <ProductImageGallery
@@ -122,13 +122,13 @@ function ProductDetailPage() {
 
           {/* Trust Badges */}
           <motion.div
-            className="mt-6 grid grid-cols-2 gap-4"
+            className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4"
             variants={staggerChildren}
             initial="initial"
             animate="animate"
           >
             <motion.div
-              className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-4"
+              className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-3 sm:gap-3 sm:rounded-2xl sm:p-4"
               variants={fadeInUp}
               whileHover={{ scale: 1.02, borderColor: 'var(--color-primary)' }}
             >
@@ -139,7 +139,7 @@ function ProductDetailPage() {
               </div>
             </motion.div>
             <motion.div
-              className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background)] p-4"
+              className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-3 sm:gap-3 sm:rounded-2xl sm:p-4"
               variants={fadeInUp}
               whileHover={{ scale: 1.02, borderColor: 'var(--color-primary)' }}
             >
@@ -196,7 +196,7 @@ function ProductDetailPage() {
           {/* Title & Description */}
           <div>
             <motion.h1
-              className="font-display text-3xl text-[var(--color-text-primary)] lg:text-4xl"
+              className="font-display text-2xl text-[var(--color-text-primary)] sm:text-3xl lg:text-4xl"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -240,7 +240,7 @@ function ProductDetailPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
           >
-            <span className="text-3xl font-bold text-[var(--color-primary)]">${finalPrice.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-[var(--color-primary)] sm:text-3xl">${finalPrice.toFixed(2)}</span>
             {displaySalePrice && (
               <span className="text-xl text-[var(--color-text-tertiary)] line-through">${displayPrice.toFixed(2)}</span>
             )}
@@ -287,7 +287,7 @@ function ProductDetailPage() {
           {/* Usage */}
           {product.usage && (
             <motion.div
-              className="rounded-2xl bg-[var(--color-surface)] p-6"
+              className="rounded-xl bg-[var(--color-surface)] p-4 sm:rounded-2xl sm:p-5 lg:p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
@@ -352,7 +352,7 @@ function ProductDetailPage() {
               type="button"
               onClick={handleAddToCart}
               disabled={isAdding || (selectedVariant?.inventory ?? product.inventory) === 0}
-              className="w-full rounded-full bg-[var(--color-primary)] px-8 py-4 text-base font-semibold text-[var(--color-button-text)] shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[var(--color-button-text)] shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed sm:px-7 sm:py-3.5 sm:text-base lg:px-8 lg:py-4"
               whileHover={product.inventory > 0 ? { scale: 1.02, y: -2 } : {}}
               whileTap={product.inventory > 0 ? { scale: 0.98 } : {}}
             >
@@ -400,7 +400,7 @@ function ProductDetailPage() {
       >
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
+            <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-2 sm:text-2xl">
               Customer Reviews
             </h2>
             {product.reviewCount && product.reviewCount > 0 && (
@@ -419,7 +419,7 @@ function ProductDetailPage() {
                   navigate(localizedPath('/login'), { state: { from: location.pathname } });
                 }
               }}
-              className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-button-text)] rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2"
+              className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-button-text)] rounded-full text-sm font-semibold hover:shadow-lg transition-all flex items-center gap-2 sm:px-5 sm:py-3 sm:text-base lg:px-6"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -431,7 +431,7 @@ function ProductDetailPage() {
 
         {/* Message when user already reviewed */}
         {isAuthenticated && canReviewData && !canReviewData.canReview && canReviewData.existingReview && (
-          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 sm:mb-8 sm:p-5 lg:p-6">
             <div className="flex items-start gap-3">
               <CheckIcon className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>

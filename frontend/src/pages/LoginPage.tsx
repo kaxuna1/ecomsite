@@ -59,7 +59,7 @@ export default function LoginPage() {
           >
             <ArrowRightOnRectangleIcon className="h-8 w-8 text-primary" />
           </motion.div>
-          <h2 className="font-display text-4xl text-text-primary mb-2">{t('login.title')}</h2>
+          <h2 className="font-display text-2xl text-text-primary mb-2 sm:text-3xl lg:text-4xl">{t('login.title')}</h2>
           <p className="text-text-primary/60">{t('login.subtitle')}</p>
         </div>
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl shadow-2xl p-8 border border-bg-secondary/40"
+          className="bg-white rounded-2xl shadow-2xl p-4 border border-bg-secondary/40 sm:rounded-3xl sm:p-6 lg:p-8"
         >
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Error Message */}

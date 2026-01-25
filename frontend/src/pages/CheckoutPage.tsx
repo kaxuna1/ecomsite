@@ -122,7 +122,7 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
+    <div className="mx-auto max-w-7xl px-3 py-8 sm:px-4 sm:py-12 lg:py-16">
       <Helmet>
         <title>{t('checkout.title')} — {t('common.brand')}</title>
       </Helmet>
@@ -137,21 +137,21 @@ function CheckoutPage() {
       </Link>
 
       <motion.div {...fadeIn} className="mb-8">
-        <h1 className="font-display text-3xl sm:text-4xl text-text-primary flex items-center gap-3">
+        <h1 className="font-display text-2xl text-text-primary flex items-center gap-2 sm:text-3xl sm:gap-3 lg:text-4xl">
           <ShoppingBagIcon className="h-8 w-8 text-primary" />
           {t('checkout.title')}
         </h1>
         <p className="mt-3 text-sm text-text-primary/70">{t('checkout.intro')}</p>
       </motion.div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
         {/* Left Column - Form */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* User Status */}
             {isAuthenticated && user && (
               <motion.div
-                className="flex items-center gap-3 rounded-2xl border-2 border-primary/20 bg-primary/10 p-4"
+                className="flex items-center gap-2 rounded-xl border-2 border-primary/20 bg-primary/10 p-3 sm:gap-3 sm:rounded-2xl sm:p-4"
                 {...fadeIn}
               >
                 <UserIcon className="h-5 w-5 text-primary" />
@@ -165,12 +165,12 @@ function CheckoutPage() {
             {/* Login CTA for Guest Users */}
             {!isAuthenticated && (
               <motion.div
-                className="rounded-2xl border-2 border-blush/20 bg-gradient-to-r from-blush/5 to-jade/5 p-6"
+                className="rounded-xl border-2 border-blush/20 bg-gradient-to-r from-blush/5 to-jade/5 p-4 sm:rounded-2xl sm:p-5 lg:p-6"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
                   <div className="rounded-full bg-blush/10 p-3">
                     <UserIcon className="h-6 w-6 text-blush" />
                   </div>
@@ -181,7 +181,7 @@ function CheckoutPage() {
                     <p className="text-sm text-text-primary/70 mb-4">
                       {t('checkout.loginBenefit')}
                     </p>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
                       <Link
                         to={`/${lang}/login?redirect=/${lang}/checkout`}
                         className="inline-flex items-center gap-2 rounded-full bg-blush px-5 py-2.5 text-sm font-semibold text-on-secondary transition-all hover:bg-blush/90 hover:shadow-md"
@@ -206,7 +206,7 @@ function CheckoutPage() {
 
             {/* Saved Addresses (for logged-in users) */}
             {isAuthenticated && (
-              <motion.div className="rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg" {...fadeIn}>
+              <motion.div className="rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-lg sm:rounded-3xl sm:p-5 lg:p-6" {...fadeIn}>
                 <AddressSelector
                   onSelect={handleAddressSelect}
                   selectedAddressId={selectedAddress?.id || null}
@@ -215,7 +215,7 @@ function CheckoutPage() {
             )}
 
             {/* Contact & Shipping Information */}
-            <motion.fieldset className="space-y-4 rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg" {...fadeIn}>
+            <motion.fieldset className="space-y-3 rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-lg sm:space-y-4 sm:rounded-3xl sm:p-5 lg:p-6" {...fadeIn}>
               <legend className="text-sm font-semibold uppercase tracking-[0.4em] text-text-primary/60 px-2">
                 <div className="flex items-center gap-2">
                   <TruckIcon className="h-4 w-4" />
@@ -325,7 +325,7 @@ function CheckoutPage() {
             <motion.button
               type="submit"
               disabled={mutation.isPending || isSubmitting}
-              className="w-full rounded-full bg-primary px-8 py-4 text-lg font-semibold text-on-primary transition-all hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-on-primary transition-all hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:px-7 sm:py-3.5 sm:text-lg lg:px-8 lg:py-4"
               whileHover={{ scale: mutation.isPending || isSubmitting ? 1 : 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -344,7 +344,7 @@ function CheckoutPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-red-50 border-2 border-red-200 px-4 py-3 text-sm text-red-800"
+                className="rounded-xl bg-red-50 border-2 border-red-200 px-3 py-2 text-sm text-red-800 sm:rounded-2xl sm:px-4 sm:py-2.5 lg:rounded-3xl lg:py-3"
               >
                 <div className="flex items-center gap-2">
                   <ExclamationCircleIcon className="h-5 w-5" />
@@ -356,7 +356,7 @@ function CheckoutPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-3xl bg-primary/10 border-2 border-primary px-4 py-3 text-sm text-primary"
+                className="rounded-xl bg-primary/10 border-2 border-primary px-3 py-2 text-sm text-primary sm:rounded-2xl sm:px-4 sm:py-2.5 lg:rounded-3xl lg:py-3"
               >
                 <div className="flex items-center gap-2">
                   <CheckCircleIcon className="h-5 w-5" />
@@ -372,7 +372,7 @@ function CheckoutPage() {
           <div className="sticky top-24 space-y-6">
             {/* Order Items */}
             <motion.div
-              className="rounded-3xl border-2 border-primary/20 bg-white p-6 shadow-lg"
+              className="rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-lg sm:rounded-3xl sm:p-5 lg:p-6"
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -428,7 +428,7 @@ function CheckoutPage() {
 
             {/* Price Summary */}
             <motion.section
-              className="space-y-4 rounded-3xl border-2 border-primary/20 bg-text-primary px-6 py-6 text-text-inverse shadow-lg"
+              className="space-y-3 rounded-2xl border-2 border-primary/20 bg-text-primary px-4 py-4 text-text-inverse shadow-lg sm:space-y-4 sm:rounded-3xl sm:px-5 sm:py-5 lg:px-6 lg:py-6"
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
