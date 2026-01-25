@@ -24,6 +24,7 @@ import { useLocalizedPath } from '../hooks/useLocalizedPath';
 import { getFavorites } from '../api/favorites';
 import { fetchMenu } from '../api/navigation';
 import { fetchPublicSettings } from '../api/settings';
+import { API_BASE_URL } from '../utils/apiBaseUrl';
 import type { MenuItemHierarchical } from '../types/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
 import SearchModal from './SearchModal';
@@ -267,7 +268,7 @@ function Navbar({ hideAnnouncement = false }: NavbarProps) {
             <Link to={localizedPath('/')} className="group flex items-center">
               {logoSettings?.logoType === 'image' && logoSettings.logoImageUrl ? (
                 <motion.img
-                  src={`http://localhost:4000${logoSettings.logoImageUrl}`}
+                  src={`${API_BASE_URL}${logoSettings.logoImageUrl}`}
                   alt={logoSettings.logoText || 'Logo'}
                   className="h-8 lg:h-10 object-contain transition-opacity group-hover:opacity-80"
                   whileHover={{ scale: 1.05 }}

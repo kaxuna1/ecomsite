@@ -2,6 +2,7 @@
 // RESTful client for theme management
 
 import api from './client';
+import { API_BASE_URL } from '../utils/apiBaseUrl';
 import type {
   Theme,
   ThemePreset,
@@ -24,8 +25,6 @@ export type {
   ActiveThemeResponse,
   DesignTokens
 };
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 /**
  * Get active theme (public endpoint, no auth required)

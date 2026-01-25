@@ -3,8 +3,7 @@
 
 import type { CMSPageResponse, GlobalBlock, PageType } from '../types/cms';
 import api from './client';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+import { API_BASE_URL } from '../utils/apiBaseUrl';
 
 // ============================================================================
 // GLOBAL BLOCKS (Promotions/Announcements)

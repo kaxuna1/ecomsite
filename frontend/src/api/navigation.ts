@@ -1,4 +1,5 @@
 import api from './client';
+import { API_BASE_URL } from '../utils/apiBaseUrl';
 import type {
   PublicMenuResponse,
   PageSuggestion,
@@ -9,8 +10,6 @@ import type {
   ReorderPayload,
   MenuItemTranslationPayload,
 } from '../types/navigation';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 // Public endpoints (no auth required)
 export async function fetchMenu(
